@@ -94,13 +94,6 @@ public class EventHandler
 					renderChunkBorder(coords[1] << 4, coords[2] << 4);
 				}
 			}
-			else if (chunkBorders)
-			{
-				EntityPlayer player = mc.player;
-				int chunkX = (int)player.posX>>4<<4;
-				int chunkZ = (int)player.posZ>>4<<4;
-				renderChunkBorder(chunkX, chunkZ);
-			}
 		}
 		GlStateManager.popMatrix();
 		

@@ -1,0 +1,15 @@
+[
+{
+  "modid": "immersivepetroleum",
+  "name": "Immersive Petroleum",
+  "description": "Adds oil and oil processing features to Immersive Engineering",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Flaxbeard"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": []
+}
+]

@@ -1,0 +1,15 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "forge:fluid",
+		"transform": "forge:default-item"
+	},
+	"variants": {
+		"diesel": [{
+			"custom": { "fluid": "diesel" }
+		}],
+		"oil": [{
+			"custom": { "fluid": "oil" }
+		}]
+	}
+}

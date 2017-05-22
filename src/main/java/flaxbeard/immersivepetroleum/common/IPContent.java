@@ -61,11 +61,11 @@ public class IPContent
 			fluidDiesel = FluidRegistry.getFluid("diesel");
 		FluidRegistry.addBucketForFluid(fluidDiesel);
 		
-		blockFluidCrudeOil = new BlockIPFluid("fluidCrudeOil", fluidCrudeOil, Material.WATER).setFlammability(60, 200);
-		blockFluidDiesel = new BlockIPFluid("fluidDiesel", fluidDiesel, Material.WATER).setFlammability(60, 200);
+		blockFluidCrudeOil = new BlockIPFluid("fluid_crude_oil", fluidCrudeOil, Material.WATER).setFlammability(60, 200);
+		blockFluidDiesel = new BlockIPFluid("fluid_diesel", fluidDiesel, Material.WATER).setFlammability(60, 200);
 		blockMetalMultiblock = new BlockIPMetalMultiblocks();
 
-		blockStoneDecoration = (BlockIPBase)new BlockIPBase("stoneDecoration", Material.ROCK, PropertyEnum.create("type", BlockTypes_IPStoneDecoration.class), ItemBlockIPBase.class).setHardness(2.0F).setResistance(10.0F);
+		blockStoneDecoration = (BlockIPBase)new BlockIPBase("stone_decoration", Material.ROCK, PropertyEnum.create("type", BlockTypes_IPStoneDecoration.class), ItemBlockIPBase.class).setHardness(2.0F).setResistance(10.0F);
 
 		itemMaterial = new ItemIPBase("material", 64,
 				"bitumen");

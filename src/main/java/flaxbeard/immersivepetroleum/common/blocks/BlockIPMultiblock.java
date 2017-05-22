@@ -40,7 +40,7 @@ public abstract class BlockIPMultiblock<E extends Enum<E> & BlockIPBase.IBlockEn
 		{
 			TileEntityMultiblockPart tile = (TileEntityMultiblockPart)tileEntity;
 			if(!tile.formed && tile.pos==-1 && tile.getOriginalBlock()!=null)
-				world.spawnEntityInWorld(new EntityItem(world, pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5, tile.getOriginalBlock().copy()));
+				world.spawnEntity(new EntityItem(world, pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5, tile.getOriginalBlock().copy()));
 
 			if(tileEntity instanceof IInventory)
 				InventoryHelper.dropInventoryItems(world, pos, (IInventory)tile);

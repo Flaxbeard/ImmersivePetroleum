@@ -50,7 +50,7 @@ public class MultiblockDistillationTowerRenderer extends TileEntitySpecialRender
 				GlStateManager.translate(0, 0, -3);
 			}
 			
-			float ticks = Minecraft.getMinecraft().thePlayer.ticksExisted + partialTicks;
+			float ticks = Minecraft.getMinecraft().player.ticksExisted + partialTicks;
 
 			if (te.mirrored)
 			{

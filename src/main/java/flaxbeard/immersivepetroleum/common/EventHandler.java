@@ -49,10 +49,10 @@ public class EventHandler
 	{
 		GlStateManager.pushMatrix();
 		Minecraft mc = Minecraft.getMinecraft();
-		if (IPConfig.sample_displayBorder && mc.thePlayer != null)
+		if (IPConfig.sample_displayBorder && mc.player != null)
 		{
-			ItemStack mainItem = mc.thePlayer.getHeldItemMainhand();
-			ItemStack secondItem = mc.thePlayer.getHeldItemOffhand();
+			ItemStack mainItem = mc.player.getHeldItemMainhand();
+			ItemStack secondItem = mc.player.getHeldItemOffhand();
 			
 			boolean main = mainItem != null && mainItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(mainItem, "coords");
 			boolean off = secondItem != null && secondItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(secondItem, "coords");
@@ -64,11 +64,11 @@ public class EventHandler
 				int[] coords = ItemNBTHelper.getIntArray(target, "coords");
 				World world = DimensionManager.getWorld(coords[0]);
 				
-				if (world.provider.getDimension() == mc.thePlayer.worldObj.provider.getDimension())
+				if (world.provider.getDimension() == mc.player.world.provider.getDimension())
 				{
-					EntityPlayer player = mc.thePlayer;
+					EntityPlayer player = mc.player;
 					
-					WorldBorder wb = player.worldObj.getWorldBorder();
+					WorldBorder wb = player.world.getWorldBorder();
 		
 					double x = wb.getCenterX();
 					double z = wb.getCenterZ();

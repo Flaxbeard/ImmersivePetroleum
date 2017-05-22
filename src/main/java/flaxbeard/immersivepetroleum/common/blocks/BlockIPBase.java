@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
@@ -226,7 +227,7 @@ public class BlockIPBase<E extends Enum<E> & BlockIPBase.IBlockEnum> extends Blo
 		return this;
 	}
 	@Override
-	public boolean canRenderInLayer(BlockRenderLayer layer)
+	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
 	{
 		if(cachedTileRequestState!=null)
 		{
@@ -302,17 +303,6 @@ public class BlockIPBase<E extends Enum<E> & BlockIPBase.IBlockEnum> extends Blo
 		return normalBlockCheck(state);
 	}
 
-	@Override
-	public boolean isVisuallyOpaque()
-	{
-		if(metaNotNormalBlock == null)
-			return true;
-		int majority = 0;
-		for(boolean b : metaNotNormalBlock)
-			if(b)
-				majority++;
-		return majority<metaNotNormalBlock.length/2;
-	}
 	@Override
 	public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos)
 	{
@@ -412,9 +402,10 @@ public class BlockIPBase<E extends Enum<E> & BlockIPBase.IBlockEnum> extends Blo
 	{
 		return getMetaFromState(state);
 	}
+	
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list)
+	public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list)
 	{
 		for(E type : this.enumValues)
 			if(type.listForCreative() && !this.isMetaHidden[type.getMeta()])

@@ -122,9 +122,9 @@ public class ImmersivePetroleum
 	public static CreativeTabs creativeTab = new CreativeTabs(MODID)
 	{
 		@Override
-		public Item getTabIconItem()
+		public ItemStack getTabIconItem()
 		{
-			return null;
+			return ItemStack.EMPTY;
 		}
 		@Override
 		public ItemStack getIconItemStack()
@@ -141,11 +141,11 @@ public class ImmersivePetroleum
 			World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
 			if(!world.isRemote)
 			{
-				IPSaveData worldData = (IPSaveData) world.loadItemData(IPSaveData.class, IPSaveData.dataName);
+				IPSaveData worldData = (IPSaveData) world.loadData(IPSaveData.class, IPSaveData.dataName);
 				if(worldData == null)
 				{
 					worldData = new IPSaveData(IPSaveData.dataName);
-					world.setItemData(IPSaveData.dataName, worldData);
+					world.setData(IPSaveData.dataName, worldData);
 				}
 				IPSaveData.setInstance(world.provider.getDimension(), worldData);
 			}

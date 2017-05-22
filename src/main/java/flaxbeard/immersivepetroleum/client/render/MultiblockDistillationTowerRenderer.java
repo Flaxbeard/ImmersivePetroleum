@@ -13,10 +13,10 @@ public class MultiblockDistillationTowerRenderer extends TileEntitySpecialRender
 	private static ModelDistillationTower model = new ModelDistillationTower(false);
 	private static ModelDistillationTower modelM = new ModelDistillationTower(true);
 
-	private static String texture = "immersivepetroleum:textures/models/distillationTower.png";
-	private static String textureOn = "immersivepetroleum:textures/models/furnaceHot.png";
-	private static String textureM = "immersivepetroleum:textures/models/distillationTowerM.png";
-	private static String textureOnM = "immersivepetroleum:textures/models/furnaceHotM.png";
+	private static String texture = "immersivepetroleum:textures/models/distillation_tower.png";
+	private static String textureOn = "immersivepetroleum:textures/models/furnace_hot.png";
+	private static String textureM = "immersivepetroleum:textures/models/distillation_tower_m.png";
+	private static String textureOnM = "immersivepetroleum:textures/models/furnace_hot_m.png";
 
 	@Override
 	public void renderTileEntityAt(TileEntityDistillationTower.TileEntityDistillationTowerParent te, double x, double y, double z, float partialTicks, int destroyStage)

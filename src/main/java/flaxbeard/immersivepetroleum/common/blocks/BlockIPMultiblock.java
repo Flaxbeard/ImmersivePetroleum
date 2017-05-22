@@ -58,7 +58,7 @@ public abstract class BlockIPMultiblock<E extends Enum<E> & BlockIPBase.IBlockEn
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 	{
 		ItemStack stack = getOriginalBlock(world, pos);
-		if(stack!=null)
+		if(!stack.isEmpty())
 			return stack;
 		return super.getPickBlock(state, target, world, pos, player);
 	}
@@ -67,6 +67,6 @@ public abstract class BlockIPMultiblock<E extends Enum<E> & BlockIPBase.IBlockEn
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof TileEntityMultiblockPart)
 			return ((TileEntityMultiblockPart)te).getOriginalBlock();
-		return null;
+		return ItemStack.EMPTY;
 	}
 }

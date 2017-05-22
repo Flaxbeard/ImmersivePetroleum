@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -19,7 +20,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
-import blusunrize.immersiveengineering.common.Config.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
@@ -29,8 +29,8 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.Lists;
 
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
-import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 
 public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPumpjack, IMultiblockRecipe> implements IAdvancedSelectionBounds,IAdvancedCollisionBounds, IGuiTile
@@ -69,17 +69,17 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	
 	public int availableOil()
 	{
-		return PumpjackHandler.getOilAmount(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return PumpjackHandler.getOilAmount(world, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
 	public boolean canGetResidualOil()
 	{
-		return PumpjackHandler.canGetResidualOil(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return PumpjackHandler.canGetResidualOil(world, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
 	public void extractOil(int amount)
 	{
-		PumpjackHandler.depleteOil(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4, amount);
+		PumpjackHandler.depleteOil(world, getPos().getX() >> 4, getPos().getZ() >> 4, amount);
 	}
 	
 	@Override
@@ -106,7 +106,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	{
 		//System.out.println("TEST");
 		super.update();
-		if(worldObj.isRemote || isDummy())
+		if(world.isRemote || isDummy())
 		{
 			if (wasActive)
 			{
@@ -128,7 +128,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 			active = true;
 			FluidStack out = new FluidStack(IPContent.fluidCrudeOil, Math.min(IPConfig.Machines.pumpjack_speed, oilAmnt));
 			BlockPos outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY().getOpposite(), 2).offset(EnumFacing.DOWN, 1);
-			IFluidHandler output = FluidUtil.getFluidHandler(worldObj, outputPos, facing);
+			IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
 			if(output != null)
 			{
 				int accepted = output.fill(out, false);
@@ -141,7 +141,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 			}
 			
 			outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY(), 2).offset(EnumFacing.DOWN, 1);
-			output = FluidUtil.getFluidHandler(worldObj, outputPos, facing);
+			output = FluidUtil.getFluidHandler(world, outputPos, facing);
 			if(output != null)
 			{
 				int accepted = output.fill(out, false);
@@ -465,7 +465,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	}
 
 	@Override
-	public ItemStack[] getInventory()
+	public NonNullList<ItemStack> getInventory()
 	{
 		return null;
 	}
@@ -525,7 +525,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		{
 			return this;
 		}
-		TileEntity te = worldObj.getTileEntity(getPos().add(-offset[0],-offset[1],-offset[2]));
+		TileEntity te = world.getTileEntity(getPos().add(-offset[0],-offset[1],-offset[2]));
 		return this.getClass().isInstance(te) ? (TileEntityPumpjack) te : null;
 	}
 	
@@ -533,7 +533,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	public TileEntityPumpjack getTileForPos(int targetPos)
 	{
 		BlockPos target = getBlockPosForPos(targetPos);
-		TileEntity tile = worldObj.getTileEntity(target);
+		TileEntity tile = world.getTileEntity(target);
 		return tile instanceof TileEntityPumpjack ? (TileEntityPumpjack) tile : null;
 	}
 }

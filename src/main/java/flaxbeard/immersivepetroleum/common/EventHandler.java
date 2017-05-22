@@ -54,8 +54,8 @@ public class EventHandler
 			ItemStack mainItem = mc.player.getHeldItemMainhand();
 			ItemStack secondItem = mc.player.getHeldItemOffhand();
 			
-			boolean main = mainItem != null && mainItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(mainItem, "coords");
-			boolean off = secondItem != null && secondItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(secondItem, "coords");
+			boolean main = !mainItem.isEmpty() && mainItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(mainItem, "coords");
+			boolean off = !secondItem.isEmpty() && secondItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(secondItem, "coords");
 			ItemStack target = main ? mainItem : secondItem;
 			
 			if (main || off)
@@ -111,7 +111,7 @@ public class EventHandler
 						drill = (TileEntitySampleDrill) te;
 					}
 				}
-				if (drill.sample != null)
+				if (!drill.sample.isEmpty())
 				{
 					if(ItemNBTHelper.hasKey(drill.sample, "coords"))
 					{

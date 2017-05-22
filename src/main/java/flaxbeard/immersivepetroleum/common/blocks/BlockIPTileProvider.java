@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -118,7 +119,7 @@ public abstract class BlockIPTileProvider<E extends Enum<E> & BlockIPBase.IBlock
 		if(tile instanceof ITileDrop)
 		{
 			ItemStack s = ((ITileDrop)tile).getTileDrop(player, state);
-			if(s!=null)
+			if(!s.isEmpty())
 			{
 				spawnAsEntity(world, pos, s);
 				return;
@@ -129,7 +130,7 @@ public abstract class BlockIPTileProvider<E extends Enum<E> & BlockIPBase.IBlock
 			Collection<ItemStack> stacks = ((IAdditionalDrops)tile).getExtraDrops(player, state);
 			if(stacks!=null && !stacks.isEmpty())
 				for(ItemStack s : stacks)
-					if(s!=null)
+					if(!s.isEmpty())
 						spawnAsEntity(world, pos, s);
 		}
 		super.harvestBlock(world, player, pos, state, tile, stack);
@@ -151,11 +152,11 @@ public abstract class BlockIPTileProvider<E extends Enum<E> & BlockIPBase.IBlock
 		if(tile instanceof ITileDrop)
 		{
 			ItemStack s = ((ITileDrop)tile).getTileDrop(player, world.getBlockState(pos));
-			if(s!=null)
+			if(!s.isEmpty())
 				return s;
 		}
 		Item item = Item.getItemFromBlock(this);
-		return item == null ? null : new ItemStack(item, 1, this.damageDropped(world.getBlockState(pos)));
+		return item == Items.AIR ? ItemStack.EMPTY : new ItemStack(item, 1, this.damageDropped(world.getBlockState(pos)));
 	}
 
 

@@ -131,7 +131,7 @@ public class MultiblockDistillationTower implements IMultiblock
 	@Override
 	public IBlockState getBlockstateFromStack(int index, ItemStack stack)
 	{
-		if(stack!=null)
+		if(!stack.isEmpty() && stack.getItem() instanceof ItemBlock)
 		{
 			return ((ItemBlock)stack.getItem()).getBlock().getStateFromMeta(stack.getItemDamage());
 		}

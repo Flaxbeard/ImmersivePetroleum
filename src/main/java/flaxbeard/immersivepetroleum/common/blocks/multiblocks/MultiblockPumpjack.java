@@ -107,7 +107,7 @@ public class MultiblockPumpjack implements IMultiblock
 	@Override
 	public IBlockState getBlockstateFromStack(int index, ItemStack stack)
 	{
-		if(stack!=null)
+		if(!stack.isEmpty() && stack.getItem() instanceof ItemBlock)
 		{
 			return ((ItemBlock)stack.getItem()).getBlock().getStateFromMeta(stack.getItemDamage());
 		}
@@ -137,9 +137,9 @@ public class MultiblockPumpjack implements IMultiblock
 		GlStateManager.translate(1, 1, -2);
 		
 		float pt = 0;
-		if (Minecraft.getMinecraft().thePlayer != null)
+		if (Minecraft.getMinecraft().player != null)
 		{
-			te.activeTicks = Minecraft.getMinecraft().thePlayer.ticksExisted;
+			te.activeTicks = Minecraft.getMinecraft().player.ticksExisted;
 			pt = Minecraft.getMinecraft().getRenderPartialTicks();
 		}
 		

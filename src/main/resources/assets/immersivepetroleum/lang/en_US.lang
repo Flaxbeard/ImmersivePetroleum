@@ -1,7 +1,7 @@
-tile.immersivepetroleum.fluidDiesel.name=Diesel
-tile.immersivepetroleum.fluidCrudeOil.name=Crude Oil
+tile.immersivepetroleum.fluid_diesel.name=Diesel
+tile.immersivepetroleum.fluid_crude_oil.name=Crude Oil
 
-tile.immersivepetroleum.stoneDecoration.asphalt.name=Asphalt Concrete
+tile.immersivepetroleum.stone_decoration.asphalt.name=Asphalt Concrete
 
 chat.immersivepetroleum.info.coresample.oil=%s mB Oil
 chat.immersivepetroleum.info.coresample.noOil=No Oil

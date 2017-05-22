@@ -24,7 +24,7 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 {
 	public BlockIPMetalMultiblocks()
 	{
-		super("metalMultiblock",Material.IRON, PropertyEnum.create("type", BlockTypes_IPMetalMultiblock.class), ItemBlockIPBase.class, IEProperties.DYNAMICRENDER,IEProperties.BOOLEANS[0],Properties.AnimationProperty,IEProperties.OBJ_TEXTURE_REMAP);
+		super("metal_multiblock",Material.IRON, PropertyEnum.create("type", BlockTypes_IPMetalMultiblock.class), ItemBlockIPBase.class, IEProperties.DYNAMICRENDER,IEProperties.BOOLEANS[0],Properties.AnimationProperty,IEProperties.OBJ_TEXTURE_REMAP);
 		setHardness(3.0F);
 		setResistance(15.0F);
 		this.setAllNotNormalBlock();

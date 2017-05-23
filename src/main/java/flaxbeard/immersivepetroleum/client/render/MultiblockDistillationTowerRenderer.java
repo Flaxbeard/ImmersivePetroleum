@@ -3,6 +3,7 @@ package flaxbeard.immersivepetroleum.client.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.EnumFacing;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.client.model.ModelDistillationTower;
@@ -18,6 +19,12 @@ public class MultiblockDistillationTowerRenderer extends TileEntitySpecialRender
 	private static String textureM = "immersivepetroleum:textures/models/distillation_tower_m.png";
 	private static String textureOnM = "immersivepetroleum:textures/models/furnace_hot_m.png";
 
+	@Override
+	public boolean isGlobalRenderer(TileEntityDistillationTower.TileEntityDistillationTowerParent te)
+    {
+        return true;
+    }
+	
 	@Override
 	public void renderTileEntityAt(TileEntityDistillationTower.TileEntityDistillationTowerParent te, double x, double y, double z, float partialTicks, int destroyStage)
 	{

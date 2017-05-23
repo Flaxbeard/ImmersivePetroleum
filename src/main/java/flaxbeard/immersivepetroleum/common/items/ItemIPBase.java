@@ -126,6 +126,6 @@ public class ItemIPBase extends Item implements IColouredItem
 					worldIn.setBlockState(pos.add(xo, yo, zo), Blocks.AIR.getDefaultState());
 				}
 					
-		return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);*/
-    }
+		return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+    }*/
 }

@@ -71,12 +71,12 @@ public class EventHandler
 			
 			boolean chunkBorders = false;
 			for(EnumHand hand : EnumHand.values())
-				if(OreDictionary.itemMatches(new ItemStack(IEContent.blockMetalDevice1,1, BlockTypes_MetalDevice1.SAMPLE_DRILL.getMeta()), ClientUtils.mc().thePlayer.getHeldItem(hand),true))
+				if(OreDictionary.itemMatches(new ItemStack(IEContent.blockMetalDevice1,1, BlockTypes_MetalDevice1.SAMPLE_DRILL.getMeta()), ClientUtils.mc().player.getHeldItem(hand),true))
 				{
 					chunkBorders = true;
 					break;
 				}
-			if(!chunkBorders && ClientUtils.mc().objectMouseOver!=null && ClientUtils.mc().objectMouseOver.typeOfHit==Type.BLOCK && ClientUtils.mc().theWorld.getTileEntity(ClientUtils.mc().objectMouseOver.getBlockPos()) instanceof TileEntitySampleDrill)
+			if(!chunkBorders && ClientUtils.mc().objectMouseOver!=null && ClientUtils.mc().objectMouseOver.typeOfHit==Type.BLOCK && ClientUtils.mc().world.getTileEntity(ClientUtils.mc().objectMouseOver.getBlockPos()) instanceof TileEntitySampleDrill)
 				chunkBorders = true;
 
 			ItemStack target = main ? mainItem : secondItem;
@@ -102,7 +102,7 @@ public class EventHandler
 	@SideOnly(Side.CLIENT)
 	public void renderChunkBorder(int chunkX, int chunkZ)
 	{
-		EntityPlayer player = ClientUtils.mc().thePlayer;
+		EntityPlayer player = ClientUtils.mc().player;
 
 		double px = TileEntityRendererDispatcher.staticPlayerX;
 		double py = TileEntityRendererDispatcher.staticPlayerY;

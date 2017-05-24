@@ -408,7 +408,7 @@ public class MultiblockPumpjack implements IMultiblock
 
 	static final IngredientStack[] materials = new IngredientStack[]{
 			new IngredientStack("scaffoldingSteel", 11),
-			new IngredientStack("fenceTreatedWood", 11),
+			new IngredientStack("fenceTreatedWood", 6),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDevice1, 4, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 2, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta())),

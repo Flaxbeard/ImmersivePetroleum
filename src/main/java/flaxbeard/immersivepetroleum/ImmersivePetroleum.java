@@ -141,7 +141,7 @@ public class ImmersivePetroleum
             IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
 			if (fluidHandler.fill(fs, true) == fs.amount)
 			{
-				return stack;
+				return fluidHandler.getContainer();
 			}
 			
 			return new ItemStack(IPContent.blockFluidDiesel,1,0);
@@ -157,7 +157,7 @@ public class ImmersivePetroleum
             IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
 			if (fluidHandler.fill(fs, true) == fs.amount)
 			{
-				list.add(stack);
+				list.add(fluidHandler.getContainer());
 			}
 			
 			stack = new ItemStack(bucket);
@@ -165,7 +165,7 @@ public class ImmersivePetroleum
             fluidHandler = new FluidBucketWrapper(stack);
         	if (fluidHandler.fill(fs, true) == fs.amount)
 			{
-				list.add(stack);
+				list.add(fluidHandler.getContainer());
 			}
 			
 			super.displayAllRelevantItems(list);

@@ -27,8 +27,8 @@ public class PumpjackHandler
 
 	public static int getOilAmount(World world, int chunkX, int chunkZ)
 	{
-		//if(world.isRemote)
-			//return 0;
+		if(world.isRemote)
+			return 0;
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
 		if (info == null || (info.capacity == 0) || (info.oil == 0 && replenishAmount == 0))
 			return 0;
@@ -59,8 +59,8 @@ public class PumpjackHandler
 	
 	public static OilWorldInfo getOilWorldInfo(World world, int chunkX, int chunkZ)
 	{
-		//if(world.isRemote)
-			//return null;
+		if(world.isRemote)
+			return null;
 
 		int dim = world.provider.getDimension();
 		DimensionChunkCoords coords = new DimensionChunkCoords(dim, chunkX / depositSize, chunkZ / depositSize);

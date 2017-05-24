@@ -124,13 +124,17 @@ public class MultiblockPumpjack implements IMultiblock
 		return true;
 	}
 	
-	@SideOnly(Side.CLIENT)
-	Object te = new TileEntityPumpjack.TileEntityPumpjackParent();
+	Object te;
 	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderFormedStructure()
 	{
+		if (te == null)
+		{
+			te = new TileEntityPumpjack.TileEntityPumpjackParent();
+		}
+		
 		GlStateManager.pushMatrix();
 		GlStateManager.rotate(-90, 0, 1, 0);
 		GlStateManager.translate(1, 1, -2);

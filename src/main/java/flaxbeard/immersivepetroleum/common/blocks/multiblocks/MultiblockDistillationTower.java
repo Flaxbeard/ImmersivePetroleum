@@ -149,13 +149,16 @@ public class MultiblockDistillationTower implements IMultiblock
 		return true;
 	}
 	
-	@SideOnly(Side.CLIENT)
-	Object te = new TileEntityDistillationTower.TileEntityDistillationTowerParent();
+	Object te = null;
 	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderFormedStructure()
 	{
+		if (te == null)
+		{
+			 te = new TileEntityDistillationTower.TileEntityDistillationTowerParent();
+		}
 		GlStateManager.pushMatrix();
 		GlStateManager.rotate(-90, 0, 1, 0);
 		GlStateManager.translate(0, 1, -4);

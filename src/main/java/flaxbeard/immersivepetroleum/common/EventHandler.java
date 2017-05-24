@@ -159,7 +159,7 @@ public class EventHandler
 	{
 		BlockPos pos = event.getPos();
 		IBlockState state = event.getWorld().getBlockState(pos);
-		if (state.getBlock() == IEContent.blockMetalDevice1)
+		if (!event.getWorld().isRemote && state.getBlock() == IEContent.blockMetalDevice1)
 		{
 			TileEntity te = event.getWorld().getTileEntity(pos);
 			if (te instanceof TileEntitySampleDrill)

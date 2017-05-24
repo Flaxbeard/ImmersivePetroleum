@@ -146,7 +146,6 @@ public class ClientProxy extends CommonProxy
 	{
 		String CAT_IP = "ip";
 		
-		ManualHelper.addEntry("asphalt", CAT_IP, new ManualPages.Crafting(ManualHelper.getManual(), "asphalt0", new ItemStack(IPContent.blockStoneDecoration,1,BlockTypes_IPStoneDecoration.ASPHALT.getMeta())));
 		
 		ManualHelper.addEntry("oil", CAT_IP,
 				new ManualPages.Text(ManualHelper.getManual(), "oil0"),
@@ -160,6 +159,9 @@ public class ClientProxy extends CommonProxy
 				new ManualPageBigMultiblock(ManualHelper.getManual(), MultiblockDistillationTower.instance),
 				new ManualPages.Text(ManualHelper.getManual(), "distillationTower0"),
 				new ManualPages.Text(ManualHelper.getManual(), "distillationTower1"));
+		
+		ManualHelper.addEntry("asphalt", CAT_IP, new ManualPages.Crafting(ManualHelper.getManual(), "asphalt0", new ItemStack(IPContent.blockStoneDecoration,1,BlockTypes_IPStoneDecoration.ASPHALT.getMeta())));
+
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDistillationTower.TileEntityDistillationTowerParent.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPumpjack.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());

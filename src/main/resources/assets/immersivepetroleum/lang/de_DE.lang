@@ -1,0 +1,33 @@
+tile.immersivepetroleum.fluid_diesel.name=Diesel
+tile.immersivepetroleum.fluid_crude_oil.name=Rohöl
+
+tile.immersivepetroleum.stone_decoration.asphalt.name=Asphalt
+
+chat.immersivepetroleum.info.coresample.oil=%s mB Öl
+chat.immersivepetroleum.info.coresample.noOil=Kein Öl
+
+fluid.diesel=Diesel
+fluid.oil=Rohöl
+
+item.immersivepetroleum.material.bitumen.name=Bitumen
+item.immersivepetroleum.material.petcoke.name=Petrolkoks
+
+itemGroup.immersivepetroleum=Immersive Petroleum
+
+ie.manual.entry.blank_text=
+
+desc.immersiveengineering.info.multiblock.IP:DistillationTower=Rektifikationskolonne
+
+ie.manual.entry.distillationTower.name=Rektifikationskolonne
+ie.manual.entry.distillationTower.subtext=Umweltunfreundlich
+
+ie.manual.entry.pumpjack.name=Tiefpumpe
+ie.manual.entry.pumpjack.subtext=Pump, pump it up
+
+ie.manual.entry.oil.name=Ölreservoirs
+ie.manual.entry.oil.subtext=Schwarzes Gold
+
+ie.manual.entry.asphalt.name=Asphalt
+ie.manual.entry.asphalt.subtext=Zeit für Autobahnen
+
+ie.manual.category.ip.name=Ölverarbeitung

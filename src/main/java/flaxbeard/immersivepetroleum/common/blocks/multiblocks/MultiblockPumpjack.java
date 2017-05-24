@@ -23,6 +23,7 @@ import blusunrize.immersiveengineering.common.blocks.BlockTypes_MetalsIE;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration0;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration1;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
+import blusunrize.immersiveengineering.common.blocks.wooden.BlockTypes_WoodenDecoration;
 import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_IPMetalMultiblock;
@@ -62,6 +63,10 @@ public class MultiblockPumpjack implements IMultiblock
 							|| (w != 1 && l == 3))
 					{
 						structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
+					}
+					else if (w != 1 && l == 3)
+					{
+						structure[h][l][w] = new ItemStack(IEContent.blockWoodenDecoration,1,BlockTypes_WoodenDecoration.FENCE.getMeta());
 					}
 					else if (h >= 2 && l == 5 && w == 1)
 					{
@@ -327,7 +332,7 @@ public class MultiblockPumpjack implements IMultiblock
 					}
 					else if (l == 3 && w != 0)
 					{
-						if (!Utils.isOreBlockAt(world, pos, "scaffoldingSteel"))
+						if (!Utils.isOreBlockAt(world, pos, "fenceTreatedWood"))
 							return false;
 					}
 					else if (w == 0 && h == 2 && l > 0 && l < 5)
@@ -402,7 +407,8 @@ public class MultiblockPumpjack implements IMultiblock
 	}
 
 	static final IngredientStack[] materials = new IngredientStack[]{
-			new IngredientStack("scaffoldingSteel", 17),
+			new IngredientStack("scaffoldingSteel", 11),
+			new IngredientStack("fenceTreatedWood", 11),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDevice1, 4, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 2, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta())),

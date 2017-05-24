@@ -94,8 +94,9 @@ public class ItemIPBase extends Item implements IColouredItem
 		return this;
 	}
 	
-	/*public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
+		boolean flipL = false;
 
 		boolean flipW = false;
 		boolean rotate = true;
@@ -127,5 +128,5 @@ public class ItemIPBase extends Item implements IColouredItem
 				}
 					
 		return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
-    }*/
+    }
 }

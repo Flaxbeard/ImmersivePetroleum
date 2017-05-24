@@ -1,12 +1,10 @@
 package flaxbeard.immersivepetroleum;
 
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeModContainer;
@@ -14,6 +12,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.UniversalBucket;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -138,7 +138,8 @@ public class ImmersivePetroleum
 			UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
 			ItemStack stack = new ItemStack(bucket);
             FluidStack fs = new FluidStack(IPContent.fluidCrudeOil, bucket.getCapacity());
-			if (bucket.fill(stack, fs, true) == fs.amount)
+            IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
+			if (fluidHandler.fill(fs, true) == fs.amount)
 			{
 				return stack;
 			}
@@ -148,19 +149,21 @@ public class ImmersivePetroleum
 		
 		@Override
 		@SideOnly(Side.CLIENT)
-		public void displayAllRelevantItems(List<ItemStack> list)
+		public void displayAllRelevantItems(NonNullList<ItemStack> list)
 		{
 			UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
 			ItemStack stack = new ItemStack(bucket);
             FluidStack fs = new FluidStack(IPContent.fluidCrudeOil, bucket.getCapacity());
-			if (bucket.fill(stack, fs, true) == fs.amount)
+            IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
+			if (fluidHandler.fill(fs, true) == fs.amount)
 			{
 				list.add(stack);
 			}
 			
 			stack = new ItemStack(bucket);
             fs = new FluidStack(IPContent.fluidDiesel, bucket.getCapacity());
-			if (bucket.fill(stack, fs, true) == fs.amount)
+            fluidHandler = new FluidBucketWrapper(stack);
+        	if (fluidHandler.fill(fs, true) == fs.amount)
 			{
 				list.add(stack);
 			}

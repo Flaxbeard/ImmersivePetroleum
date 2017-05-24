@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -126,7 +125,7 @@ public class MultiblockPumpjack implements IMultiblock
 	}
 	
 	@SideOnly(Side.CLIENT)
-	TileEntityPumpjack.TileEntityPumpjackParent te = new TileEntityPumpjack.TileEntityPumpjackParent();
+	Object te = new TileEntityPumpjack.TileEntityPumpjackParent();
 	
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -139,13 +138,13 @@ public class MultiblockPumpjack implements IMultiblock
 		float pt = 0;
 		if (Minecraft.getMinecraft().player != null)
 		{
-			te.activeTicks = Minecraft.getMinecraft().player.ticksExisted;
+			((TileEntityPumpjack.TileEntityPumpjackParent) te).activeTicks = Minecraft.getMinecraft().player.ticksExisted;
 			pt = Minecraft.getMinecraft().getRenderPartialTicks();
 		}
 		
-		TileEntitySpecialRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getSpecialRenderer(te);
+		TileEntitySpecialRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getSpecialRenderer((TileEntity) te);
 		
-		tesr.renderTileEntityAt(te, 0, 0, 0, pt, 0);
+		tesr.renderTileEntityAt((TileEntity) te, 0, 0, 0, pt, 0);
 		GlStateManager.popMatrix();
 	}
 

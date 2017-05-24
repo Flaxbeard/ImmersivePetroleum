@@ -150,7 +150,7 @@ public class MultiblockDistillationTower implements IMultiblock
 	}
 	
 	@SideOnly(Side.CLIENT)
-	TileEntityDistillationTower.TileEntityDistillationTowerParent te = new TileEntityDistillationTower.TileEntityDistillationTowerParent();
+	Object te = new TileEntityDistillationTower.TileEntityDistillationTowerParent();
 	
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -161,9 +161,9 @@ public class MultiblockDistillationTower implements IMultiblock
 		GlStateManager.translate(0, 1, -4);
 		
 		
-		TileEntitySpecialRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getSpecialRenderer(te);
+		TileEntitySpecialRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getSpecialRenderer((TileEntity) te);
 		
-		tesr.renderTileEntityAt(te, 0, 0, 0, 0, 0);
+		tesr.renderTileEntityAt((TileEntity) te, 0, 0, 0, 0, 0);
 		GlStateManager.popMatrix();
 	}
 

@@ -67,7 +67,7 @@ public class PumpjackHandler
 		OilWorldInfo worldInfo = oilCache.get(coords);
 		if(worldInfo == null)
 		{
-			Random r = world.getChunkFromChunkCoords(chunkX / depositSize, chunkZ / depositSize).getRandomWithSeed(940620);
+			Random r = world.getChunkFromChunkCoords(chunkX / depositSize, chunkZ / depositSize).getRandomWithSeed(90210); // Antidote
 			double dd = r.nextDouble();
 			boolean empty = dd > oilChance;
 			double size = r.nextDouble();

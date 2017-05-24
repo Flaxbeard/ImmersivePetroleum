@@ -59,8 +59,7 @@ public class MultiblockPumpjack implements IMultiblock
 					{
 						structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal,1,BlockTypes_MetalsAll.STEEL.getMeta());
 					}
-					else if ((h == 0 && (l < 5 || w == 1))
-							|| (w != 1 && l == 3))
+					else if ((h == 0 && (l < 5 || w == 1)))
 					{
 						structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
 					}

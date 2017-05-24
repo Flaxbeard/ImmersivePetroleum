@@ -13,7 +13,7 @@ public class Config
 	{
 		@Comment({"Display chunk border while holding Core Samples"})
 		public static boolean sample_displayBorder = true;
-		
+
 		public static Machines machines = new Machines();
 
 		public static class Machines
@@ -21,8 +21,7 @@ public class Config
 			//Multiblock Recipes
 			@Comment({"A modifier to apply to the energy costs of every Distillation Tower recipe"})
 			public static float distillationTower_energyModifier = 1;
-			@Mapped(mapClass = Config.class, mapName = "manual_int")
-			public static int distillationTower_operationCost = (int) (4096 * distillationTower_energyModifier);
+
 			@Comment({"A modifier to apply to the time of every Distillation recipe. Can't be lower than 1"})
 			public static float distillationTower_timeModifier = 1;
 			

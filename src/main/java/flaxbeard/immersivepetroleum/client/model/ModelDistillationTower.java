@@ -140,7 +140,7 @@ public class ModelDistillationTower extends ModelBase
 		this.base.addChild(floor3s4);
 		
 		this.ladder = new ModelRenderer(this, 376, 0);
-		this.ladder.addBox(18, 24, mirror ? 16 : 47, 12, 192, 1);
+		this.ladder.addBox(18, 24, mirror ? 16.01F : 46.99F, 12, 192, 1);
 		this.base.addChild(ladder);
 		
 		this.ladderS1 = new ModelRenderer(this, 402, -64);

@@ -82,7 +82,7 @@ public class IPContent
 		registerTile(TileEntityPumpjack.class);
 		registerTile(TileEntityPumpjack.TileEntityPumpjackParent.class);
 		
-		DistillationRecipe.addRecipe(new FluidStack(fluidDiesel, 50), new ItemStack(itemMaterial, 1, 0), new FluidStack(fluidCrudeOil, 50), 4096, 1, .1F);
+		DistillationRecipe.addRecipe(new FluidStack(fluidDiesel, 25), new ItemStack(itemMaterial, 1, 0), new FluidStack(fluidCrudeOil, 25), 2048, 1, .07F);
 
 		MultiblockHandler.registerMultiblock(MultiblockDistillationTower.instance);
 		MultiblockHandler.registerMultiblock(MultiblockPumpjack.instance);

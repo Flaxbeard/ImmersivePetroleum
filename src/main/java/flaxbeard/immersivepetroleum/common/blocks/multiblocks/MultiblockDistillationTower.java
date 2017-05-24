@@ -120,8 +120,8 @@ public class MultiblockDistillationTower implements IMultiblock
 				|| (iterator < 100 && iterator > 29 && (iterator - 29 - 17) % 34 == 0))
 		{
 			GlStateManager.pushMatrix();
-			GlStateManager.translate(0, 1, 0);
-			GlStateManager.rotate(90, 1, 0, 0);
+			//GlStateManager.translate(0, 1, 0);
+			//GlStateManager.rotate(90, 1, 0, 0);
 			ImmersiveEngineering.proxy.drawSpecificFluidPipe("000011");
 			GlStateManager.popMatrix();
 			return true;

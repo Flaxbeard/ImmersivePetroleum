@@ -1,0 +1,46 @@
+tile.immersivepetroleum.fluid_diesel.name=軽油
+tile.immersivepetroleum.fluid_crude_oil.name=原油
+
+tile.immersivepetroleum.stone_decoration.asphalt.name=アスファルト
+
+tile.immersivepetroleum.metal_multiblock.pumpjack.name=ポンプジャック
+tile.immersivepetroleum.metal_multiblock.distillation_tower.name=蒸留塔
+tile.immersivepetroleum.metal_multiblock.pumpjack_parent.name=ポンプジャック
+tile.immersivepetroleum.metal_multiblock.distillation_tower_parent.name=蒸留塔
+
+chat.immersivepetroleum.info.coresample.oil=%s mB オイル
+chat.immersivepetroleum.info.coresample.noOil=オイル無し
+
+fluid.diesel=軽油
+fluid.oil=原油
+
+item.immersivepetroleum.material.bitumen.name=瀝青
+item.immersivepetroleum.material.petcoke.name=石油コークス
+
+itemGroup.immersivepetroleum=Immersive Petroleum
+
+ie.manual.entry.blank_text=
+
+desc.immersiveengineering.info.multiblock.IP:DistillationTower=蒸留塔
+
+ie.manual.entry.distillationTower.name=蒸留塔
+ie.manual.entry.distillationTower.subtext=環境にやさしくない
+ie.manual.entry.distillationTower0=蒸留塔は、原油を多くの副生成物に分離する大規模なマルチブロック構造です。これは図示のように構築し、Engineer's HammerをRedstone Engineering Blockで使用することで形成されます。<br><br>原油は、青い点で示される後部のハッチから蒸留塔に注入することができます。蒸留塔では、それが複数の層に分離するまで加熱されます。これは軽油を生産し、副生成物として瀝青を生産することがあります。
+ie.manual.entry.distillationTower1=蒸留塔では、操作ごとに<config;i;distillationTower_operationCost>RFを使用し、ティックごとに原油をディーゼルに 25 mB変換します。生成された軽油は、オレンジ色の点で示される側面ハッチから排出されます。瀝青は前面ハッチから排出されます。これらの出力はそれぞれ<link;dieselgen;§o§n電力生産§r>や<link;asphalt;§o§nアスファルト§r>に使用できます。 <br><br>前面のコントロールパネルにレッドストーン信号を入力すると、機械のプロセスが停止しますが、この動作はEngineer's Hammerを使用して反転できます。
+
+ie.manual.entry.pumpjack.name=ポンプジャック
+ie.manual.entry.pumpjack.subtext=ポンプ、汲み上げるもの
+ie.manual.entry.pumpjack0=ポンプジャックは、岩盤の下から原油を抽出するマルチブロックです。これは図示のように構築し、Engineer's Hammerを第二層のHeavy Engineering Blockに使用することで形成されます。
+ie.manual.entry.pumpjack1=ポンプジャックタワーは、<config;i;pumpjack_speed> mB/tで原油を輸送するために<config;i;pumpjack_consumption> RF/t を使用します。 生成された原油は、オレンジ色の点で示される2つの側面ポートから自動的に排出されます。<br><br>埋蔵しているいる原油は平均<config;i;pumpjack_days>日程で枯渇するでしょう。さらに、ポンプジャックを増やすと高速化されます。<br><br>前面のコントロールパネルにレッドストーン信号を入力すると、機械のプロセスが停止しますが、この動作はEngineer's Hammerを使用して反転できます。
+
+//linkできたら()と()内消して
+ie.manual.entry.oil.name=原油溜まり
+ie.manual.entry.oil.subtext=黒い金
+ie.manual.entry.oil0=岩盤の近くで採掘すると、滑らかな黒い可燃性物質、原油に気づくかもしれません。あなたは、岩盤の下に、より多くが閉じ込められていると思ってもあなた自身で石油溜まりに行くことはできません。あなたは<link;pumpjack;§o§n特別に設計された機械§o§n(ポンプジャック)§r>を使って貴重な燃料を手に入れることができます。
+ie.manual.entry.oil1=<link;minerals;§o§nボーリングマシン§r>は、オイルがチャンクに含まれているかどうかを判断し、石油溜まりのサイズを把握します。<br><br>各石油溜まりの原油の量にかかわらず、枯渇したチャンクから少量（最大<config;i;oil_replenish> mB/t)が引き続き回収される可能性があります。枯渇チャンク内に複数のポンプジャックを使用しても、何のメリットもありません。
+
+ie.manual.entry.asphalt.name=アスファルト
+ie.manual.entry.asphalt.subtext=道路の材料
+ie.manual.entry.asphalt0=アスファルトは、べたつく瀝青によって作られ、コンクリートよりも暗い色です。<link;distillationTower;§n§o蒸留塔§r>で原油を処理した副産物、瀝青によって作られます。 
+
+ie.manual.category.ip.name=原油処理

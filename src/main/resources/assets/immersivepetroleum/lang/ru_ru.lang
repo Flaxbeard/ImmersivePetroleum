@@ -1,0 +1,45 @@
+tile.immersivepetroleum.fluid_diesel.name=Дизельное топливо
+tile.immersivepetroleum.fluid_crude_oil.name=Сырая нефть
+
+tile.immersivepetroleum.stone_decoration.asphalt.name=Асфальтобетон
+
+tile.immersivepetroleum.metal_multiblock.pumpjack.name=Станок-качалка
+tile.immersivepetroleum.metal_multiblock.distillation_tower.name=Ректификационная колонна
+tile.immersivepetroleum.metal_multiblock.pumpjack_parent.name=Станок-качалка
+tile.immersivepetroleum.metal_multiblock.distillation_tower_parent.name=Ректификационная колонна
+
+chat.immersivepetroleum.info.coresample.oil=%s мВ нефти
+chat.immersivepetroleum.info.coresample.noOil=Нет нефти
+
+fluid.diesel=Дизельное топливо
+fluid.oil=Сырая нефть
+
+item.immersivepetroleum.material.bitumen.name=Битум
+item.immersivepetroleum.material.petcoke.name=Нефтяной кокс
+
+itemGroup.immersivepetroleum=Immersive Petroleum
+
+ie.manual.entry.blank_text=
+
+desc.immersiveengineering.info.multiblock.IP:DistillationTower=Ректификационная колонна
+
+ie.manual.entry.distillationTower.name=Ректификационная колонна
+ie.manual.entry.distillationTower.subtext=Экологически недружелюбная
+ie.manual.entry.distillationTower0=Ректификационная колонна - крупная многоблочная структура, разделяющая нефть на фракции. Она строится, как показано на схеме и формируется ударом молота инженера по краснокаменному инженерному блоку.<br><br>Сырая нефть может быть загружена в ректификационную колонну через задний люк, помеченный синей точкой, где она будет нагреваться до тех пор, пока не распадётся на фракции. Производит дизельное топливо и имеет шанс производства битума, как побочного продукта.
+ie.manual.entry.distillationTower1=Ректификационная колонна использует <config;i;distillationTower_operationCost> Флакса на операцию, перегоняя 25мВ сырой нефти в дизельное топливо за тик. Полученное дизельное топливо можно вывести сбоку из люка, помеченного оранжевой точкой; битум же выводится спереди. Результаты перегонки можно использовать для <link;dieselgen;§o§nпроизводства §o§nэнергии§r> и крафта <link;asphalt;§o§nасфальтбетона§r> соответственно.<br><br>Подача редстоун-сигнала к панели управления спереди будет останавливать работу машины. Поведение панели управления можно инвертировать молотом инженера.
+
+ie.manual.entry.pumpjack.name=Станок-качалка
+ie.manual.entry.pumpjack.subtext=Давай-давай, выкачивай!
+ie.manual.entry.pumpjack0=Станок-качалка - многоблочная структура, добывающая сырую нефть из месторождений под коренной породой. Формируется ударом молота по тяжёлому инженерному блоку во втором слое.
+ie.manual.entry.pumpjack1=Станок-качалка использует <config;i;pumpjack_consumption> Флакса в тик для добычи <config;i;pumpjack_speed> мВ сырой нефти в тик. Полученная нефть автоматически выталкивается с боковых портов, помеченных оранжевыми точками.<br><br>Средних размеров месторождение будет исчерпано примерно за <config;i;pumpjack_days> дней. Добавление большего количества станков-качалок ускорит этот процесс<br><br>Подача редстоун-сигнала к панели управления будет останавливать работу машины. Поведение панели управления можно инвертировать молотом инженера.
+
+ie.manual.entry.oil.name=Нефтяные резервуары
+ie.manual.entry.oil.subtext=Черное золото
+ie.manual.entry.oil0=Копаясь недалеко от коренной породы, вы можете наткнуться на скользкую черную горючую субстанцию - нефть. Пока вы будете строить гипотезы, что же ещё может быть спрятано под этими непроницаемыми скалами, вы не сможете самостоятельно справиться с найденными нефтяными запасами, так что стройте <link;pumpjack;§o§nсозданную §o§nименно §o§nдля §o§nэтого §o§nмашину§r> и накладывайте свои руки на сие ценное топливо
+ie.manual.entry.oil1=<link;minerals;§o§nКолонковый §o§nбур§r> поможет определить, может ли нефть быть найдена в этом чанке, и дает представление о размере найденного месторождения.<br><br>Несмотря на конечные запасы нефти в месторождении, следовые количества (вплоть до <config;i;oil_replenish> мВ/тик) все ещё могут собираться в истощённых месторождениях. Использование более чем одного станка-качалки в истощенных чанках не приносит никакой пользы.
+
+ie.manual.entry.asphalt.name=Асфальтобетон
+ie.manual.entry.asphalt.subtext=Материал для скоростных трасс
+ie.manual.entry.asphalt0=Асфальтобетон, удерживаемый вместе липким битумом, является более темной альтернативой обычному бетону. Он может быть получен из побочных продуктов переработки сырой нефти в <link;distillationTower;§n§oректификационной §n§oколонне§r>.
+
+ie.manual.category.ip.name=Обработка нефти

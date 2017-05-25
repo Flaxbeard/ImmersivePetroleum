@@ -3,6 +3,11 @@ tile.immersivepetroleum.fluid_crude_oil.name=Rohöl
 
 tile.immersivepetroleum.stone_decoration.asphalt.name=Asphalt
 
+tile.immersivepetroleum.metal_multiblock.pumpjack.name=Tiefpumpe
+tile.immersivepetroleum.metal_multiblock.distillation_tower.name=Rektifikationskolonne
+tile.immersivepetroleum.metal_multiblock.pumpjack_parent.name=Tiefpumpe
+tile.immersivepetroleum.metal_multiblock.distillation_tower_parent.name=Rektifikationskolonne
+
 chat.immersivepetroleum.info.coresample.oil=%s mB Öl
 chat.immersivepetroleum.info.coresample.noOil=Kein Öl
 

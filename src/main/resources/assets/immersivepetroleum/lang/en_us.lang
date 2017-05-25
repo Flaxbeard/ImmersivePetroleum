@@ -3,6 +3,11 @@ tile.immersivepetroleum.fluid_crude_oil.name=Crude Oil
 
 tile.immersivepetroleum.stone_decoration.asphalt.name=Asphalt Concrete
 
+tile.immersivepetroleum.metal_multiblock.pumpjack.name=Pumpjack
+tile.immersivepetroleum.metal_multiblock.distillation_tower.name=Distillation Tower
+tile.immersivepetroleum.metal_multiblock.pumpjack_parent.name=Pumpjack
+tile.immersivepetroleum.metal_multiblock.distillation_tower_parent.name=Distillation Tower
+
 chat.immersivepetroleum.info.coresample.oil=%s mB Oil
 chat.immersivepetroleum.info.coresample.noOil=No Oil
 

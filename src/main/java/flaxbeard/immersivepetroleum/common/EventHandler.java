@@ -85,14 +85,13 @@ public class EventHandler
 			{
 			
 				int[] coords = ItemNBTHelper.getIntArray(target, "coords");
-				World world = DimensionManager.getWorld(coords[0]);
-				
-				if (world.provider.getDimension() == mc.player.world.provider.getDimension())
-				{
+
+				//World world = DimensionManager.getWorld(coords[0]);
+				//if (world.provider.getDimension() == mc.thePlayer.worldObj.provider.getDimension())
+				//{
 					EntityPlayer player = mc.player;
-					
 					renderChunkBorder(coords[1] << 4, coords[2] << 4);
-				}
+				//}
 			}
 		}
 		GlStateManager.popMatrix();

@@ -37,7 +37,8 @@ public class IPContent
 
 	public static BlockIPFluid blockFluidCrudeOil;
 	public static BlockIPFluid blockFluidDiesel;
-	
+	public static BlockIPFluid blockFluidLubricant;
+
 	public static BlockIPBase blockMetalMultiblock;
 	
 	public static BlockIPBase blockStoneDecoration;
@@ -48,6 +49,7 @@ public class IPContent
 
 	public static Fluid fluidCrudeOil;
 	public static Fluid fluidDiesel;
+	public static Fluid fluidLubricant;
 
 	public static void preInit()
 	{
@@ -61,8 +63,15 @@ public class IPContent
 			fluidDiesel = FluidRegistry.getFluid("diesel");
 		FluidRegistry.addBucketForFluid(fluidDiesel);
 		
+		fluidLubricant = new Fluid("lubricant", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/lubricant_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/lubricant_flow")).setDensity(925).setViscosity(2000);
+		if(!FluidRegistry.registerFluid(fluidLubricant))
+			fluidLubricant = FluidRegistry.getFluid("lubricant");
+		FluidRegistry.addBucketForFluid(fluidLubricant);
+		
 		blockFluidCrudeOil = new BlockIPFluid("fluid_crude_oil", fluidCrudeOil, Material.WATER).setFlammability(60, 200);
 		blockFluidDiesel = new BlockIPFluid("fluid_diesel", fluidDiesel, Material.WATER).setFlammability(60, 200);
+		blockFluidLubricant = new BlockIPFluid("fluid_lubricant", fluidLubricant, Material.WATER);
+
 		blockMetalMultiblock = new BlockIPMetalMultiblocks();
 
 		blockStoneDecoration = (BlockIPBase)new BlockIPBase("stone_decoration", Material.ROCK, PropertyEnum.create("type", BlockTypes_IPStoneDecoration.class), ItemBlockIPBase.class).setHardness(2.0F).setResistance(10.0F);
@@ -76,13 +85,14 @@ public class IPContent
 	{
 		blockFluidCrudeOil.setPotionEffects(new PotionEffect(IEPotions.flammable,100,1));
 		blockFluidDiesel.setPotionEffects(new PotionEffect(IEPotions.flammable,100,1));
-		
+		blockFluidLubricant.setPotionEffects(new PotionEffect(IEPotions.slippery,100,1));
+
 		registerTile(TileEntityDistillationTower.class);
 		registerTile(TileEntityDistillationTower.TileEntityDistillationTowerParent.class);
 		registerTile(TileEntityPumpjack.class);
 		registerTile(TileEntityPumpjack.TileEntityPumpjackParent.class);
 		
-		DistillationRecipe.addRecipe(new FluidStack(fluidDiesel, 25), new ItemStack(itemMaterial, 1, 0), new FluidStack(fluidCrudeOil, 25), 2048, 1, .07F);
+		DistillationRecipe.addRecipe(new FluidStack[] { new FluidStack(fluidLubricant, 25), new FluidStack(fluidDiesel, 25) }, new ItemStack(itemMaterial, 1, 0), new FluidStack(fluidCrudeOil, 25), 2048, 1, .07F);
 
 		MultiblockHandler.registerMultiblock(MultiblockDistillationTower.instance);
 		MultiblockHandler.registerMultiblock(MultiblockPumpjack.instance);

@@ -10,6 +10,9 @@
 		}],
 		"oil": [{
 			"custom": { "fluid": "oil" }
+		}],
+		"lubricant": [{
+			"custom": { "fluid": "lubricant" }
 		}]
 	}
 }

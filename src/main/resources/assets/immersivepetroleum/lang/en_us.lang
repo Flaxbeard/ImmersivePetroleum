@@ -1,5 +1,6 @@
 tile.immersivepetroleum.fluid_diesel.name=Diesel
 tile.immersivepetroleum.fluid_crude_oil.name=Crude Oil
+tile.immersivepetroleum.fluid_lubricant.name=Lubricant
 
 tile.immersivepetroleum.stone_decoration.asphalt.name=Asphalt Concrete
 
@@ -13,6 +14,7 @@ chat.immersivepetroleum.info.coresample.noOil=No Oil
 
 fluid.diesel=Diesel
 fluid.oil=Crude Oil
+fluid.lubricant=Lubricant
 
 item.immersivepetroleum.material.bitumen.name=Bitumen
 item.immersivepetroleum.material.petcoke.name=Petcoke

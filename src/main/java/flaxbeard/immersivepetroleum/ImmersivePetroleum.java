@@ -165,6 +165,13 @@ public class ImmersivePetroleum
 				list.add(stack);
 			}
 			
+			stack = new ItemStack(bucket);
+            fs = new FluidStack(IPContent.fluidLubricant, bucket.getCapacity());
+			if (bucket.fill(stack, fs, true) == fs.amount)
+			{
+				list.add(stack);
+			}
+			
 			super.displayAllRelevantItems(list);
 		}
 	};

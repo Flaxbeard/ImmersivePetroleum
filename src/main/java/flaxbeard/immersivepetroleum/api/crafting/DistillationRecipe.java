@@ -23,10 +23,10 @@ public class DistillationRecipe extends MultiblockRecipe
 	
 	public final float chance;
 
-	public final FluidStack fluidOutput;
+	public final FluidStack[] fluidOutput;
 	public final ItemStack itemOutput;
 	public final FluidStack input;
-	public DistillationRecipe(FluidStack fluidOutput, ItemStack itemOutput, FluidStack input, int energy, int time, float chance)
+	public DistillationRecipe(FluidStack[] fluidOutput, ItemStack itemOutput, FluidStack input, int energy, int time, float chance)
 	{
 		this.fluidOutput = fluidOutput;
 		this.itemOutput = itemOutput;
@@ -42,7 +42,7 @@ public class DistillationRecipe extends MultiblockRecipe
 	}
 
 	public static ArrayList<DistillationRecipe> recipeList = new ArrayList();
-	public static DistillationRecipe addRecipe(FluidStack fluidOutput, ItemStack itemOutput,  FluidStack input, int energy, int time, float chance)
+	public static DistillationRecipe addRecipe(FluidStack[] fluidOutput, ItemStack itemOutput,  FluidStack input, int energy, int time, float chance)
 	{
 		DistillationRecipe r = new DistillationRecipe(fluidOutput, itemOutput, input, energy, time, chance);
 		recipeList.add(r);

@@ -24,6 +24,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvanced
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 
 import com.google.common.collect.Lists;
 
@@ -48,7 +49,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 		super(MultiblockDistillationTower.instance, new int[]{16, 4, 4}, 16000, true);
 	}
 	
-	public FluidTank[] tanks = new FluidTank[]{new FluidTank(24000),new FluidTank(24000)};
+	public MultiFluidTank[] tanks = new MultiFluidTank[]{new MultiFluidTank(24000),new MultiFluidTank(24000)};
 	public ItemStack[] inventory = new ItemStack[4];
 	
 	@Override
@@ -453,11 +454,11 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 		{
 			if(pos == 0 && (side == null || side == facing.getOpposite()))
 			{
-				return new FluidTank[] {master.tanks[0]};
+				return new MultiFluidTank[] {master.tanks[0]};
 			}
 			else if (pos == 8 && (side == null || side == facing.getOpposite().rotateY()))
 			{
-				return new FluidTank[] {master.tanks[1]};
+				return new MultiFluidTank[] {master.tanks[1]};
 			}
 		}
 		return new FluidTank[0];

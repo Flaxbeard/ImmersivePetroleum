@@ -20,19 +20,20 @@ import net.minecraftforge.fml.common.registry.GameData;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
-import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
-import blusunrize.immersiveengineering.common.blocks.stone.BlockTypes_StoneDecoration;
 import blusunrize.lib.manual.ManualPages;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.page.ManualPageBigMultiblock;
+import flaxbeard.immersivepetroleum.client.render.MultiblockCokerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityCoker;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockCoker;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecoration;
@@ -162,9 +163,14 @@ public class ClientProxy extends CommonProxy
 		
 		ManualHelper.addEntry("asphalt", CAT_IP, new ManualPages.Crafting(ManualHelper.getManual(), "asphalt0", new ItemStack(IPContent.blockStoneDecoration,1,BlockTypes_IPStoneDecoration.ASPHALT.getMeta())));
 
+		ManualHelper.addEntry("coker", CAT_IP,
+				new ManualPageBigMultiblock(ManualHelper.getManual(), MultiblockCoker.instance),
+				new ManualPages.Text(ManualHelper.getManual(), "coker0"),
+				new ManualPages.Text(ManualHelper.getManual(), "coker1"));
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDistillationTower.TileEntityDistillationTowerParent.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPumpjack.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoker.TileEntityCokerParent.class, new MultiblockCokerRenderer());
 
 	}
 

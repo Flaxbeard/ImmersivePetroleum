@@ -12,7 +12,7 @@ public class MultiblockCokerRenderer extends TileEntitySpecialRenderer<TileEntit
 {
 	private static ModelCoker model = new ModelCoker(false);
 
-	private static String texture = "immersiveengineering:textures/blocks/storage_steel.png";
+	private static String texture = "immersivepetroleum:textures/models/coker.png";
 
 	@Override
 	public boolean isGlobalRenderer(TileEntityCoker.TileEntityCokerParent te)
@@ -39,6 +39,7 @@ public class MultiblockCokerRenderer extends TileEntitySpecialRenderer<TileEntit
 				GlStateManager.translate(0, 0, -5);
 			}
 
+			 texture = "immersivepetroleum:textures/models/coker9.png";
 			ClientUtils.bindTexture(texture);
 			model.render(null, 0, 0, 0, 0, 0, 0.0625F);
 

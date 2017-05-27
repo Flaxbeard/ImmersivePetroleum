@@ -1,12 +1,22 @@
 tile.immersivepetroleum.fluid_diesel.name=Diesel
 tile.immersivepetroleum.fluid_crude_oil.name=Crude Oil
 
-tile.immersivepetroleum.stone_decoration.asphalt.name=Asphalt Concrete
+tile.immersivepetroleum.stone_decoration.asphalt.name=Asphalt Concrete'
+
+tile.immersivepetroleum.metal_decoration_slabs.steel_scaffolding_0.name=Steel Scaffolding Slab
+tile.immersivepetroleum.metal_decoration_slabs.steel_scaffolding_1.name=Steel Scaffolding Slab
+tile.immersivepetroleum.metal_decoration_slabs.steel_scaffolding_2.name=Steel Scaffolding Slab
+tile.immersivepetroleum.metal_decoration_slabs.aluminum_scaffolding_0.name=Aluminium Scaffolding Slab
+tile.immersivepetroleum.metal_decoration_slabs.aluminum_scaffolding_1.name=Aluminium Scaffolding Slab
+tile.immersivepetroleum.metal_decoration_slabs.aluminum_scaffolding_2.name=Aluminium Scaffolding Slab
+
+tile.immersivepetroleum.wood_decoration_slabs.scaffolding.name=Treated Wood Scaffolding Slab
 
 tile.immersivepetroleum.metal_multiblock.pumpjack.name=Pumpjack
 tile.immersivepetroleum.metal_multiblock.distillation_tower.name=Distillation Tower
 tile.immersivepetroleum.metal_multiblock.pumpjack_parent.name=Pumpjack
 tile.immersivepetroleum.metal_multiblock.distillation_tower_parent.name=Distillation Tower
+
 
 chat.immersivepetroleum.info.coresample.oil=%s mB Oil
 chat.immersivepetroleum.info.coresample.noOil=No Oil

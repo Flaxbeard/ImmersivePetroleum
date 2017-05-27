@@ -1,0 +1,43 @@
+{
+	"forge_marker": 1,
+	"defaults":
+	{
+		"transform": "forge:default-block",
+		"model": "immersivepetroleum:scaffolding_slab",
+		"textures": {
+			"all": "immersiveengineering:blocks/sheetmetal_copper",
+			"bottom": "#all",
+			"top": "#all",
+			"side": "#all",
+			"particle": "#top"
+		}
+	},
+	"variants":
+	{
+		"inventory,type=steel_scaffolding_0": [{"textures": { "side": "immersivepetroleum:blocks/steel_scaffolding_slab_side", "top": "immersiveengineering:blocks/metalDecoration1_steelScaffolding_top", "bottom": "immersiveengineering:blocks/metalDecoration1_steelScaffolding_top"} }],
+		"inventory,type=steel_scaffolding_1": [{"textures": { "side": "immersivepetroleum:blocks/steel_scaffolding_slab_side", "top": "immersiveengineering:blocks/metalDecoration1_steelScaffolding_top1", "bottom": "immersiveengineering:blocks/metalDecoration1_steelScaffolding_top1"} }],
+		"inventory,type=steel_scaffolding_2": [{"textures": { "side": "immersivepetroleum:blocks/steel_scaffolding_slab_side", "top": "immersiveengineering:blocks/metalDecoration1_steelScaffolding_top2", "bottom": "immersiveengineering:blocks/metalDecoration1_steelScaffolding_top"} }],
+		"inventory,type=aluminum_scaffolding_0": [{"textures": { "side": "immersivepetroleum:blocks/aluminum_scaffolding_slab_side", "top": "immersiveengineering:blocks/metalDecoration1_aluminumScaffolding_top", "bottom": "immersiveengineering:blocks/metalDecoration1_aluminumScaffolding_top"} }],
+		"inventory,type=aluminum_scaffolding_1": [{"textures": { "side": "immersivepetroleum:blocks/aluminum_scaffolding_slab_side", "top": "immersiveengineering:blocks/metalDecoration1_aluminumScaffolding_top1", "bottom": "immersiveengineering:blocks/metalDecoration1_aluminumScaffolding_top1"} }],
+		"inventory,type=aluminum_scaffolding_2": [{"textures": { "side": "immersivepetroleum:blocks/aluminum_scaffolding_slab_side", "top": "immersiveengineering:blocks/metalDecoration1_aluminumScaffolding_top2", "bottom": "immersiveengineering:blocks/metalDecoration1_aluminumScaffolding_top"} }],
+		"type":
+		{
+			"steel_scaffolding_0": {"textures": { "side": "immersivepetroleum:blocks/steel_scaffolding_slab_side", "top": "immersiveengineering:blocks/metalDecoration1_steelScaffolding_top", "bottom": "immersiveengineering:blocks/metalDecoration1_steelScaffolding_top"} },
+			"steel_scaffolding_1": {"textures": { "side": "immersivepetroleum:blocks/steel_scaffolding_slab_side", "top": "immersiveengineering:blocks/metalDecoration1_steelScaffolding_top1", "bottom": "immersiveengineering:blocks/metalDecoration1_steelScaffolding_top1"} },
+			"steel_scaffolding_2": {"textures": { "side": "immersivepetroleum:blocks/steel_scaffolding_slab_side", "top": "immersiveengineering:blocks/metalDecoration1_steelScaffolding_top2", "bottom": "immersiveengineering:blocks/metalDecoration1_steelScaffolding_top"} },
+			"aluminum_scaffolding_0": {"textures": { "side": "immersivepetroleum:blocks/aluminum_scaffolding_slab_side", "top": "immersiveengineering:blocks/metalDecoration1_aluminumScaffolding_top", "bottom": "immersiveengineering:blocks/metalDecoration1_aluminumScaffolding_top"} },
+			"aluminum_scaffolding_1": {"textures": { "side": "immersivepetroleum:blocks/aluminum_scaffolding_slab_side", "top": "immersiveengineering:blocks/metalDecoration1_aluminumScaffolding_top1", "bottom": "immersiveengineering:blocks/metalDecoration1_aluminumScaffolding_top1"} },
+			"aluminum_scaffolding_2": {"textures": { "side": "immersivepetroleum:blocks/aluminum_scaffolding_slab_side", "top": "immersiveengineering:blocks/metalDecoration1_aluminumScaffolding_top2", "bottom": "immersiveengineering:blocks/metalDecoration1_aluminumScaffolding_top"} }
+		},
+		"slabtype":
+		{
+			0: {},
+			1: {
+				"model": "immersivepetroleum:scaffolding_slab_top"
+			},
+			2: {
+				"model": "immersiveengineering:ieScaffolding"
+			}
+		}
+	}
+}

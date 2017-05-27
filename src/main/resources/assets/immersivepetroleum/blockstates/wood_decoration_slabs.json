@@ -1,0 +1,33 @@
+{
+	"forge_marker": 1,
+	"defaults":
+	{
+		"transform": "forge:default-block",
+		"model": "immersivepetroleum:scaffolding_slab",
+		"textures": {
+			"all": "immersiveengineering:blocks/sheetmetal_copper",
+			"bottom": "#all",
+			"top": "#all",
+			"side": "#all",
+			"particle": "#top"
+		}
+	},
+	"variants":
+	{
+		"inventory,type=scaffolding": [{"textures": { "side": "immersivepetroleum:blocks/wood_scaffolding_slab_side", "top": "immersiveengineering:blocks/woodenDecoration_scaffolding_top", "bottom": "immersiveengineering:blocks/woodenDecoration_scaffolding_top"} }],
+		"type":
+		{
+			"scaffolding": {"textures": { "side": "immersivepetroleum:blocks/wood_scaffolding_slab_side", "top": "immersiveengineering:blocks/woodenDecoration_scaffolding_top", "bottom": "immersiveengineering:blocks/woodenDecoration_scaffolding_top"} }
+		},
+		"slabtype":
+		{
+			0: {},
+			1: {
+				"model": "immersivepetroleum:scaffolding_slab_top"
+			},
+			2: {
+				"model": "immersiveengineering:ieScaffolding"
+			}
+		}
+	}
+}

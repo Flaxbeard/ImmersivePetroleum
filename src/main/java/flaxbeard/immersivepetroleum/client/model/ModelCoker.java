@@ -155,12 +155,12 @@ public class ModelCoker extends ModelBase
 		catwalk36.addBox(16 * 4, 56 + 16 * 14, 16, 0, 8, 16*7);
 		this.base.addChild(catwalk36);
 		
-		ModelRenderer pipe1 = new ModelRenderer(this, 0, 0);
-		pipe1.addBox(36, 16 * 13, 44, 8, 16 * 10, 8);
+		ModelRenderer pipe1 = new ModelRenderer(this, 480, 0);
+		pipe1.addBox(36, 16 * 13, 48, 8, 16 * 10, 8);
 		this.base.addChild(pipe1);
 		
-		ModelRenderer pipe2 = new ModelRenderer(this, 0, 0);
-		pipe2.addBox(36, 16 * 13, 44 + 48, 8, 16 * 10, 8);
+		ModelRenderer pipe2 = new ModelRenderer(this, 480, 0);
+		pipe2.addBox(36, 16 * 13, 40 + 48, 8, 16 * 10, 8);
 		this.base.addChild(pipe2);
 		
 		ModelRenderer crosspost1 = new ModelRenderer(this, 44, 232);
@@ -196,10 +196,12 @@ public class ModelCoker extends ModelBase
 		crosspost8.addBox(6, 162, 138, 68, 4, 4);
 		this.base.addChild(crosspost8);
 		
+		float deg = 4;
+		
 		ModelRenderer tS11 = new ModelRenderer(this, 464, 0);
 		tS11.addBox(-2, 0, -2, 4, 16 * 10, 4);
 		tS11.setRotationPoint(22, 16 * 13, (16 * 9) / 2F);
-		tS11.rotateAngleZ = (float) Math.toRadians(-4);
+		tS11.rotateAngleZ = (float) Math.toRadians(-deg);
 		this.base.addChild(tS11);
 		
 		ModelRenderer tS12 = new ModelRenderer(this, 464, 0);
@@ -213,7 +215,7 @@ public class ModelCoker extends ModelBase
 		ModelRenderer tS21 = new ModelRenderer(this, 464, 0);
 		tS21.addBox(-2, 0, -2, 4, 16 * 10, 4);
 		tS21.setRotationPoint(16 * 5 - 22, 16 * 13, (16 * 9) / 2F);
-		tS21.rotateAngleZ = (float) Math.toRadians(4);
+		tS21.rotateAngleZ = (float) Math.toRadians(deg);
 		this.base.addChild(tS21);
 		
 		ModelRenderer tS22 = new ModelRenderer(this, 464, 0);
@@ -255,15 +257,118 @@ public class ModelCoker extends ModelBase
 		tS21.addChild(crosspostTop6);
 		
 		ModelRenderer crosspostTop7 = new ModelRenderer(this, 464, 0);
-		crosspostTop1.addBox(-1.99F, -38F, 0, 4, 76, 4);
+		crosspostTop1.addBox(-1.99F, -64F, 0, 4, 128, 4);
 		crosspostTop1.rotateAngleX = (float) -Math.toRadians(90);
 		tS11.addChild(crosspostTop1);
 		
 		ModelRenderer crosspostTop8 = new ModelRenderer(this, 464, 0);
-		crosspostTop8.addBox(-2.01F, -38F, 0, 4, 76, 4);
+		crosspostTop8.addBox(-2.01F, -64F, 0, 4, 128, 4);
 		crosspostTop8.rotateAngleX = (float) -Math.toRadians(90);
 		tS21.addChild(crosspostTop8);
-	}
+		
+		ModelRenderer crosspostTop9 = new ModelRenderer(this, 464, 0);
+		crosspostTop1.addBox(-1.99F, -38F, (5 * 16 - 6), 4, 76, 4);
+		crosspostTop1.rotateAngleX = (float) -Math.toRadians(90);
+		tS11.addChild(crosspostTop1);
+		
+		ModelRenderer crosspostTop10 = new ModelRenderer(this, 464, 0);
+		crosspostTop10.addBox(-2.01F, -38F, (5 * 16 - 6), 4, 76, 4);
+		crosspostTop10.rotateAngleX = (float) -Math.toRadians(90);
+		tS21.addChild(crosspostTop10);
+		
+		ModelRenderer crosspostTopSide11 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide11.addBox(30.01F, 40F - 28F, 16 * 13, 4, 56, 4);
+		crosspostTopSide11.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide11.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide11);
+
+		ModelRenderer crosspostTopSide12 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide12.addBox(30.01F + 40F, 40F - 28F, 16 * 13, 4, 56, 4);
+		crosspostTopSide12.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide12.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide12);
+
+		ModelRenderer crosspostTopSide13 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide13.addBox(30.01F + 80, 40F - 28F, 16 * 13, 4, 56, 4);
+		crosspostTopSide13.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide13.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide13);
+		
+		float mod = (float) Math.cos(Math.toRadians(deg));
+		ModelRenderer crosspostTopSide21 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide21.addBox(30.01F, 40F - 16F, 16 * 13 + (2.25F * 16 * mod), 4, 32, 4);
+		crosspostTopSide21.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide21.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide21);
+
+		ModelRenderer crosspostTopSide22 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide22.addBox(30.01F + 40F, 40F - 16F, 16 * 13 + (2.25F * 16 * mod), 4, 32, 4);
+		crosspostTopSide22.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide22.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide22);
+
+		ModelRenderer crosspostTopSide23 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide23.addBox(30.01F + 80, 40F - 16F, 16 * 13 + (2.25F * 16 * mod), 4, 32, 4);
+		crosspostTopSide23.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide23.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide23);
+		
+		ModelRenderer crosspostTopSide31 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide31.addBox(30.01F, 40F - 9F, 16 * 13 + (7.25F * 16 * mod), 4, 18, 4);
+		crosspostTopSide31.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide31.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide31);
+
+		ModelRenderer crosspostTopSide32 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide32.addBox(30.01F + 40F, 40F - 9F, 16 * 13 + (7.25F * 16 * mod), 4, 18, 4);
+		crosspostTopSide32.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide32.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide32);
+
+		ModelRenderer crosspostTopSide33 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide33.addBox(30.01F + 80, 40F - 9F, 16 * 13 + (7.25F * 16 * mod), 4, 18, 4);
+		crosspostTopSide33.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide33.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide33);
+		
+		ModelRenderer crosspostTopSide41 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide41.addBox(30.01F, 40F - 9F, 16 * 13 + ((10F * 16 - 4) * mod), 4, 18, 4);
+		crosspostTopSide41.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide41.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide41);
+
+		ModelRenderer crosspostTopSide42 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide42.addBox(30.01F + 40F, 40F - 9F, 16 * 13 + ((10F * 16 - 4) * mod), 4, 18, 4);
+		crosspostTopSide42.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide42.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide42);
+
+		ModelRenderer crosspostTopSide43 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide43.addBox(30.01F + 80, 40F - 9F, 16 * 13 + ((10F * 16 - 4) * mod), 4, 18, 4);
+		crosspostTopSide43.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide43.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide43);
+		
+		ModelRenderer crosspostTopSide51 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide51.addBox(30.01F, 40F - 12F, 16 * 13 + ((5 * 16 - 6)  * mod), 4, 24, 4);
+		crosspostTopSide51.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide51.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide51);
+
+		ModelRenderer crosspostTopSide52 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide52.addBox(30.01F + 40F, 40F - 12F, 16 * 13 + ((5 * 16 - 6)  * mod), 4, 24, 4);
+		crosspostTopSide52.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide52.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide52);
+
+		ModelRenderer crosspostTopSide53 = new ModelRenderer(this, 464, 0);
+		crosspostTopSide53.addBox(30.01F + 80, 40F - 12F, 16 * 13 + ((5 * 16 - 6) * mod), 4, 24, 4);
+		crosspostTopSide53.rotateAngleX = (float) -Math.toRadians(90);
+		crosspostTopSide53.rotateAngleY = (float) -Math.toRadians(90);
+		base.addChild(crosspostTopSide53);
+
+	}	
+
 	
 	@Override
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)

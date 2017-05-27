@@ -39,7 +39,6 @@ public class MultiblockCokerRenderer extends TileEntitySpecialRenderer<TileEntit
 				GlStateManager.translate(0, 0, -5);
 			}
 
-			 texture = "immersivepetroleum:textures/models/coker9.png";
 			ClientUtils.bindTexture(texture);
 			model.render(null, 0, 0, 0, 0, 0, 0.0625F);
 

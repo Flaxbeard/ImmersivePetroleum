@@ -18,7 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import blusunrize.immersiveengineering.common.items.IEItemInterfaces.IColouredItem;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockCoker;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
 
 public class ItemIPBase extends Item implements IColouredItem
 {
@@ -97,10 +97,10 @@ public class ItemIPBase extends Item implements IColouredItem
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
 		boolean flipW = false;
-		boolean flipL = false;
+		boolean flipL = true;
 		boolean rotate = true;
 		
-		ItemStack[][][] blocks = MultiblockCoker.instance.getStructureManual();
+		ItemStack[][][] blocks = MultiblockDistillationTower.instance.getStructureManual();
 		for(int h = 0; h < blocks.length; h++)
 			for(int l = 0; l < blocks[0].length; l++)
 				for(int w = 0; w < blocks[0][0].length; w++)

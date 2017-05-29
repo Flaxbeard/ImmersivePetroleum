@@ -50,6 +50,13 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		{
 			return false;
 		}
+		
+		@Override
+		@SideOnly(Side.CLIENT)
+		public double getMaxRenderDistanceSquared()
+		{
+			return super.getMaxRenderDistanceSquared()* IEConfig.increasedTileRenderdistance;
+		}
 	}
 	
 	public TileEntityPumpjack()

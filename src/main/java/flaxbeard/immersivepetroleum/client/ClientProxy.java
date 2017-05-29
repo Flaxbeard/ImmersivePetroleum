@@ -20,9 +20,7 @@ import net.minecraftforge.fml.common.registry.GameData;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
-import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
-import blusunrize.immersiveengineering.common.blocks.stone.BlockTypes_StoneDecoration;
 import blusunrize.lib.manual.ManualPages;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.page.ManualPageBigMultiblock;
@@ -138,7 +136,7 @@ public class ClientProxy extends CommonProxy
 	@Override
 	public void init()
 	{
-		
+		ShaderUtil.init();
 	}
 
 	@Override

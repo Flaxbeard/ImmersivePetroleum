@@ -10,6 +10,8 @@ tile.immersivepetroleum.metal_multiblock.distillation_tower_parent.name=Distilla
 
 chat.immersivepetroleum.info.coresample.oil=%s mB Oil
 chat.immersivepetroleum.info.coresample.noOil=No Oil
+chat.immersivepetroleum.info.schematic.noMultiblock=Craft with Engineer's Manual
+chat.immersivepetroleum.info.schematic.build=Instructions for making a %s
 
 fluid.diesel=Diesel
 fluid.oil=Crude Oil
@@ -17,11 +19,16 @@ fluid.oil=Crude Oil
 item.immersivepetroleum.material.bitumen.name=Bitumen
 item.immersivepetroleum.material.petcoke.name=Petcoke
 
+item.immersivepetroleum.schematic.name=%s Schematic
+
 itemGroup.immersivepetroleum=Immersive Petroleum
 
 ie.manual.entry.blank_text=
 
 desc.immersiveengineering.info.multiblock.IP:DistillationTower=Distillation Tower
+desc.immersiveengineering.info.multiblock.IP:Pumpjack=Pumpjack
+
+desc.immersiveengineering.info.multiblock.IE:AutoWorkbench=Automated Workbench
 
 ie.manual.entry.distillationTower.name=Distillation Tower
 ie.manual.entry.distillationTower.subtext=Environmentally unfriendly

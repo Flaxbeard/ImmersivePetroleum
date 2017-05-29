@@ -14,7 +14,7 @@ public class Config
 		@Comment({"Display chunk border while holding Core Samples"})
 		public static boolean sample_displayBorder = true;
 
-		public static Machines machines = new Machines();
+		public static Machines machines;
 
 		public static class Machines
 		{

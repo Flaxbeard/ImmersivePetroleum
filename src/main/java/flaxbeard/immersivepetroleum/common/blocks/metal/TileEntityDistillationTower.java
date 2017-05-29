@@ -19,6 +19,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import blusunrize.immersiveengineering.common.Config.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
@@ -40,6 +41,13 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 		{
 			BlockPos pos = getPos();
 			return new AxisAlignedBB(pos.add(-4, -16, -4), pos.add(4, 16, 4));
+		}
+		
+		@Override
+		@SideOnly(Side.CLIENT)
+		public double getMaxRenderDistanceSquared()
+		{
+			return super.getMaxRenderDistanceSquared()* IEConfig.increasedTileRenderdistance;
 		}
 	}
 	

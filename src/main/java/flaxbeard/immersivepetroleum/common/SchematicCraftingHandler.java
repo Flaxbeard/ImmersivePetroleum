@@ -106,7 +106,7 @@ public class SchematicCraftingHandler implements IRecipe
 					}
 					if (stack.getItem() == IEContent.itemTool && stack.getItemDamage() == 3)
 					{
-						if (!manual.isEmpty() && ItemNBTHelper.hasKey(stack, "lastMultiblock"))
+						if (manual.isEmpty() && ItemNBTHelper.hasKey(stack, "lastMultiblock"))
 						{
 							manual = stack;
 							manualStack = i;
@@ -118,7 +118,7 @@ public class SchematicCraftingHandler implements IRecipe
 					}
 					else if (stack.getItem() == IPContent.itemSchematic)
 					{
-						if (!manual.isEmpty() && ItemNBTHelper.hasKey(stack, "multiblock"))
+						if (manual.isEmpty() && ItemNBTHelper.hasKey(stack, "multiblock"))
 						{
 							manual = stack;
 							manualStack = i;

@@ -24,6 +24,7 @@ import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPMetalMultiblocks;
 import flaxbeard.immersivepetroleum.common.blocks.ItemBlockIPBase;
+import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_Dummy;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
@@ -42,6 +43,9 @@ public class IPContent
 	public static BlockIPBase blockMetalMultiblock;
 	
 	public static BlockIPBase blockStoneDecoration;
+	
+	public static BlockIPBase blockDummy;
+
 	
 	public static ArrayList<Item> registeredIPItems = new ArrayList<Item>();
 
@@ -68,6 +72,7 @@ public class IPContent
 		blockMetalMultiblock = new BlockIPMetalMultiblocks();
 
 		blockStoneDecoration = (BlockIPBase)new BlockIPBase("stone_decoration", Material.ROCK, PropertyEnum.create("type", BlockTypes_IPStoneDecoration.class), ItemBlockIPBase.class).setHardness(2.0F).setResistance(10.0F);
+		blockDummy = (BlockIPBase)new BlockIPBase("dummy", Material.ROCK, PropertyEnum.create("type", BlockTypes_Dummy.class), ItemBlockIPBase.class);
 
 		itemMaterial = new ItemIPBase("material", 64,
 				"bitumen");

@@ -35,6 +35,7 @@ import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.EventHandler;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
+import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 
 @Mod(modid = ImmersivePetroleum.MODID, version = ImmersivePetroleum.VERSION, dependencies = "required-after:immersiveengineering;")
 public class ImmersivePetroleum
@@ -59,6 +60,8 @@ public class ImmersivePetroleum
 		IPContent.preInit();
 		proxy.preInit();
 		proxy.preInitEnd();
+		
+		IPPacketHandler.preInit();
 	}
 	
 	@Mod.EventHandler

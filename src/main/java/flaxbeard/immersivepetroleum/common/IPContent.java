@@ -30,6 +30,7 @@ import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistilla
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecoration;
 import flaxbeard.immersivepetroleum.common.items.ItemIPBase;
+import flaxbeard.immersivepetroleum.common.items.ItemSchematic;
 
 public class IPContent
 {
@@ -45,6 +46,7 @@ public class IPContent
 	public static ArrayList<Item> registeredIPItems = new ArrayList<Item>();
 
 	public static Item itemMaterial;
+	public static Item itemSchematic;
 
 	public static Fluid fluidCrudeOil;
 	public static Fluid fluidDiesel;
@@ -69,6 +71,8 @@ public class IPContent
 
 		itemMaterial = new ItemIPBase("material", 64,
 				"bitumen");
+		
+		itemSchematic = new ItemSchematic("schematic");
 
 	}
 	
@@ -90,6 +94,7 @@ public class IPContent
 		IERecipes.addIngredientRecipe(new ItemStack(blockStoneDecoration, 8, BlockTypes_IPStoneDecoration.ASPHALT.getMeta()), "SCS", "GBG", "SCS", 'C', new ItemStack(itemMaterial, 1, 0), 'S', "sand", 'G', Blocks.GRAVEL, 'B', new FluidStack(FluidRegistry.WATER,1000)).allowQuarterTurn();
 		IERecipes.addIngredientRecipe(new ItemStack(blockStoneDecoration, 12, BlockTypes_IPStoneDecoration.ASPHALT.getMeta()), "SCS", "GBG", "SCS", 'C', new ItemStack(itemMaterial, 1, 0), 'S', "itemSlag", 'G', Blocks.GRAVEL, 'B', new FluidStack(FluidRegistry.WATER,1000)).allowQuarterTurn();
 	
+		GameRegistry.addRecipe(new SchematicCraftingHandler());
 
 	}
 	

@@ -24,6 +24,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBl
 import blusunrize.lib.manual.ManualPages;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.page.ManualPageBigMultiblock;
+import flaxbeard.immersivepetroleum.client.page.ManualPageSchematicCrafting;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
@@ -144,7 +145,10 @@ public class ClientProxy extends CommonProxy
 	{
 		String CAT_IP = "ip";
 		
-		
+		ManualHelper.addEntry("schematics", CAT_IP,
+				new ManualPageSchematicCrafting(ManualHelper.getManual(), "schematics0", new ItemStack(IPContent.itemSchematic, 1, 0)),
+				new ManualPages.Text(ManualHelper.getManual(), "schematics1"));
+
 		ManualHelper.addEntry("oil", CAT_IP,
 				new ManualPages.Text(ManualHelper.getManual(), "oil0"),
 				new ManualPages.Text(ManualHelper.getManual(), "oil1"));
@@ -158,9 +162,10 @@ public class ClientProxy extends CommonProxy
 				new ManualPages.Text(ManualHelper.getManual(), "distillationTower0"),
 				new ManualPages.Text(ManualHelper.getManual(), "distillationTower1"));
 		
-		ManualHelper.addEntry("asphalt", CAT_IP, new ManualPages.Crafting(ManualHelper.getManual(), "asphalt0", new ItemStack(IPContent.blockStoneDecoration,1,BlockTypes_IPStoneDecoration.ASPHALT.getMeta())));
+		ManualHelper.addEntry("asphalt", CAT_IP,
+				new ManualPages.Crafting(ManualHelper.getManual(), "asphalt0", new ItemStack(IPContent.blockStoneDecoration,1,BlockTypes_IPStoneDecoration.ASPHALT.getMeta())));
 
-		
+
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDistillationTower.TileEntityDistillationTowerParent.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPumpjack.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
 

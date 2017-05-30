@@ -65,8 +65,15 @@ public class SchematicCraftingHandler implements IRecipe
 			{
 				remaining = new ItemStack[9];
 				remaining[manualStack] = ItemStack.copyItemStack(manual);
-				
-				String last = ItemNBTHelper.getString(manual, "lastMultiblock");
+				String last = "";
+				if (ItemNBTHelper.hasKey(manual, "lastMultiblock"))
+				{
+					last = ItemNBTHelper.getString(manual, "lastMultiblock");
+				}
+				else
+				{
+					last = ItemNBTHelper.getString(manual, "multiblock");
+				}
 				ItemStack op = new ItemStack(IPContent.itemSchematic, 1, 0);
 				ItemNBTHelper.setString(op, "multiblock", last);
 				output = op;
@@ -99,6 +106,18 @@ public class SchematicCraftingHandler implements IRecipe
 					if (stack.getItem() == IEContent.itemTool && stack.getItemDamage() == 3)
 					{
 						if (manual == null && ItemNBTHelper.hasKey(stack, "lastMultiblock"))
+						{
+							manual = stack;
+							manualStack = i;
+						}
+						else
+						{
+							return false;
+						}
+					}
+					else if (stack.getItem() == IPContent.itemSchematic)
+					{
+						if (manual == null && ItemNBTHelper.hasKey(stack, "multiblock"))
 						{
 							manual = stack;
 							manualStack = i;

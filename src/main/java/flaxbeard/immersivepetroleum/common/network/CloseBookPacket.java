@@ -51,8 +51,8 @@ public class CloseBookPacket implements IMessage
 		@Override
 		public IMessage onMessage(CloseBookPacket message, MessageContext ctx)
 		{
-			EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-			DimensionManager.getWorld(player.worldObj.provider.getDimension()).addScheduledTask(new DoSync(player, message.name));
+			EntityPlayerMP player = ctx.getServerHandler().player;
+			DimensionManager.getWorld(player.world.provider.getDimension()).addScheduledTask(new DoSync(player, message.name));
 
 			return null;
 		}
@@ -79,8 +79,8 @@ public class CloseBookPacket implements IMessage
 				ItemStack mainItem = p.getHeldItemMainhand();
 				ItemStack offItem = p.getHeldItemOffhand();
 
-				boolean main = mainItem != null && mainItem.getItem() == IEContent.itemTool && mainItem.getItemDamage() == 3;
-				boolean off = offItem != null && offItem.getItem() == IEContent.itemTool && offItem.getItemDamage() == 3;
+				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IEContent.itemTool && mainItem.getItemDamage() == 3;
+				boolean off = !offItem.isEmpty() && offItem.getItem() == IEContent.itemTool && offItem.getItemDamage() == 3;
 				ItemStack target = main ? mainItem : offItem;
 				
 				if (main || off)

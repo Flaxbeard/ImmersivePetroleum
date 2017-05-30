@@ -119,13 +119,13 @@ public class EventHandler
 					}
 				}
 			}
-			EntityPlayer p = ClientUtils.mc().thePlayer;
+			EntityPlayer p = ClientUtils.mc().player;
 			
 			ItemStack mainItem = p.getHeldItemMainhand();
 			ItemStack offItem = p.getHeldItemOffhand();
 
-			boolean main = mainItem != null && mainItem.getItem() == IEContent.itemTool && mainItem.getItemDamage() == 3;
-			boolean off = offItem != null && offItem.getItem() == IEContent.itemTool && offItem.getItemDamage() == 3;
+			boolean main = !mainItem.isEmpty() && mainItem.getItem() == IEContent.itemTool && mainItem.getItemDamage() == 3;
+			boolean off = !offItem.isEmpty() && offItem.getItem() == IEContent.itemTool && offItem.getItemDamage() == 3;
 			ItemStack target = main ? mainItem : offItem;
 			
 			if (main || off)
@@ -156,16 +156,16 @@ public class EventHandler
 	public void handleKeypress(ClientTickEvent event)
 	{
 		Minecraft mc = ClientUtils.mc();
-		if (event.phase == Phase.START && mc.thePlayer != null)
+		if (event.phase == Phase.START && mc.player != null)
 		{
 			//
-			ItemStack mainItem = mc.thePlayer.getHeldItemMainhand();
-			ItemStack secondItem = mc.thePlayer.getHeldItemOffhand();
+			ItemStack mainItem = mc.player.getHeldItemMainhand();
+			ItemStack secondItem = mc.player.getHeldItemOffhand();
 			
-			boolean main = mainItem != null && mainItem.getItem() == IPContent.itemSchematic && ItemNBTHelper.hasKey(mainItem, "multiblock");
-			boolean off = secondItem != null && secondItem.getItem() == IPContent.itemSchematic && ItemNBTHelper.hasKey(secondItem, "multiblock");
+			boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.itemSchematic && ItemNBTHelper.hasKey(mainItem, "multiblock");
+			boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.itemSchematic && ItemNBTHelper.hasKey(secondItem, "multiblock");
 			ItemStack target = main ? mainItem : secondItem;
-			World world = mc.theWorld;
+			World world = mc.world;
 			
 			if (main || off)
 			{
@@ -179,7 +179,7 @@ public class EventHandler
 						{
 							if (!lastDown)
 							{
-								if (mc.thePlayer.isSneaking())
+								if (mc.player.isSneaking())
 								{
 									ItemSchematic.flipClient(target);
 								}
@@ -198,7 +198,7 @@ public class EventHandler
 						{
 							if (!lastDown)
 							{
-								if (mc.thePlayer.isSneaking())
+								if (mc.player.isSneaking())
 								{
 									ItemSchematic.flipClient(target);
 								}
@@ -258,7 +258,7 @@ public class EventHandler
 				int[] coords = ItemNBTHelper.getIntArray(target, "coords");
 
 				//World world = DimensionManager.getWorld(coords[0]);
-				//if (world.provider.getDimension() == mc.thePlayer.worldObj.provider.getDimension())
+				//if (world.provider.getDimension() == mc.player.worldObj.provider.getDimension())
 				//{
 					EntityPlayer player = mc.player;
 					renderChunkBorder(coords[1] << 4, coords[2] << 4);
@@ -269,15 +269,15 @@ public class EventHandler
 		
 		GlStateManager.pushMatrix();
 		
-		if (IPConfig.sample_displayBorder && mc.thePlayer != null)
+		if (IPConfig.sample_displayBorder && mc.player != null)
 		{
-			ItemStack mainItem = mc.thePlayer.getHeldItemMainhand();
-			ItemStack secondItem = mc.thePlayer.getHeldItemOffhand();
+			ItemStack mainItem = mc.player.getHeldItemMainhand();
+			ItemStack secondItem = mc.player.getHeldItemOffhand();
 			
-			boolean main = mainItem != null && mainItem.getItem() == IPContent.itemSchematic && ItemNBTHelper.hasKey(mainItem, "multiblock");
-			boolean off = secondItem != null && secondItem.getItem() == IPContent.itemSchematic && ItemNBTHelper.hasKey(secondItem, "multiblock");
+			boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.itemSchematic && ItemNBTHelper.hasKey(mainItem, "multiblock");
+			boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.itemSchematic && ItemNBTHelper.hasKey(secondItem, "multiblock");
 			ItemStack target = main ? mainItem : secondItem;
-			World world = mc.theWorld;
+			World world = mc.world;
 			
 			if (main || off)
 			{
@@ -321,7 +321,7 @@ public class EventHandler
 						}
 						
 						
-						Vec3d vec = mc.thePlayer.getLookVec();
+						Vec3d vec = mc.player.getLookVec();
 						EnumFacing facing = (Math.abs(vec.zCoord) > Math.abs(vec.xCoord)) ? (vec.zCoord > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.xCoord > 0 ? EnumFacing.EAST : EnumFacing.WEST);
 						
 						//rotate = (facing == EnumFacing.NORTH ? 0 : (facing == EnumFacing.SOUTH ? 2: (facing == EnumFacing.EAST ? 1 : 3)));
@@ -381,7 +381,7 @@ public class EventHandler
 	
 									GlStateManager.pushMatrix();
 									
-									if (mb.getStructureManual()[h][l][w] != null)
+									if (mb.getStructureManual()[h][l][w] != null && !mb.getStructureManual()[h][l][w].isEmpty())
 									{
 										BlockPos blockPos = new BlockPos(0, 0, 0);
 										
@@ -416,7 +416,7 @@ public class EventHandler
 										
 										ItemStack heldStack = main ? secondItem : mainItem;
 										IBlockState otherState = null;
-										if (heldStack != null && heldStack.getItem() instanceof ItemBlock)
+										if (!heldStack.isEmpty() && heldStack.getItem() instanceof ItemBlock)
 										{
 											otherState = ((ItemBlock)heldStack.getItem()).getBlock().getStateFromMeta(heldStack.getItemDamage());
 										}
@@ -437,7 +437,7 @@ public class EventHandler
 										}
 										
 										
-										if (heldStack != null && otherState != null)
+										if (!heldStack.isEmpty() && otherState != null)
 										{
 											int[] ids2 = OreDictionary.getOreIDs(heldStack);
 											for (int id2 : ids2)
@@ -525,7 +525,7 @@ public class EventHandler
 									GlStateManager.pushMatrix();
 									GlStateManager.disableDepth();
 	
-									if (mb.getStructureManual()[h][l][w] != null)
+									if (mb.getStructureManual()[h][l][w] != null && !mb.getStructureManual()[h][l][w].isEmpty())
 									{
 										BlockPos blockPos = new BlockPos(0, 0, 0);
 										
@@ -560,7 +560,7 @@ public class EventHandler
 										
 										ItemStack heldStack = main ? secondItem : mainItem;
 										IBlockState otherState = null;
-										if (heldStack != null && heldStack.getItem() instanceof ItemBlock)
+										if (!heldStack.isEmpty() && heldStack.getItem() instanceof ItemBlock)
 										{
 											otherState = ((ItemBlock)heldStack.getItem()).getBlock().getStateFromMeta(heldStack.getItemDamage());
 										}
@@ -581,7 +581,7 @@ public class EventHandler
 										}
 										
 										
-										if (heldStack != null && otherState != null)
+										if (!heldStack.isEmpty() && otherState != null)
 										{
 											int[] ids2 = OreDictionary.getOreIDs(heldStack);
 											for (int id2 : ids2)

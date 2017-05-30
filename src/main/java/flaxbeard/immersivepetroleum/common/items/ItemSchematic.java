@@ -13,6 +13,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -36,7 +37,7 @@ public class ItemSchematic extends ItemIPBase
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced)
 	{
 		if (ItemNBTHelper.hasKey(stack, "multiblock"))
 		{
@@ -115,7 +116,7 @@ public class ItemSchematic extends ItemIPBase
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs tab, List list)
+	public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> list)
 	{
 		List<IMultiblock> multiblocks = MultiblockHandler.getMultiblocks();
 		for (IMultiblock multiblock : multiblocks)
@@ -131,9 +132,11 @@ public class ItemSchematic extends ItemIPBase
 		list.add(stack);
 	}
 	
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	@Override
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
-		if (ItemNBTHelper.hasKey(stack, "pos") && playerIn.isSneaking())
+		ItemStack stack = player.getHeldItem(hand);
+		if (ItemNBTHelper.hasKey(stack, "pos") && player.isSneaking())
 		{
 			ItemNBTHelper.remove(stack, "pos");
 			return EnumActionResult.SUCCESS;
@@ -162,7 +165,7 @@ public class ItemSchematic extends ItemIPBase
 			int xd = (rotate % 2 == 0) ? ml :  mw;
 			int zd = (rotate % 2 == 0) ? mw :  ml;
 			
-			Vec3d vec = playerIn.getLookVec();
+			Vec3d vec = player.getLookVec();
 			EnumFacing look = (Math.abs(vec.zCoord) > Math.abs(vec.xCoord)) ? (vec.zCoord > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.xCoord > 0 ? EnumFacing.EAST : EnumFacing.WEST);
 			if (look == EnumFacing.NORTH || look == EnumFacing.SOUTH)
 			{
@@ -235,9 +238,9 @@ public class ItemSchematic extends ItemIPBase
 		ItemNBTHelper.setBoolean(stack, "flip", flip);
 	}
 
-	public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World worldIn, EntityPlayer playerIn, EnumHand hand)
+	public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand)
 	{
-		if (ItemNBTHelper.hasKey(stack, "pos") && playerIn.isSneaking())
+		if (ItemNBTHelper.hasKey(stack, "pos") && player.isSneaking())
 		{
 			ItemNBTHelper.remove(stack, "pos");
 			return new ActionResult(EnumActionResult.SUCCESS, stack);

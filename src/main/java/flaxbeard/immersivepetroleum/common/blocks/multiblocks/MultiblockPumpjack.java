@@ -71,6 +71,10 @@ public class MultiblockPumpjack implements IMultiblock
 					{
 						structure[h][l][w] = new ItemStack(IEContent.blockStorage,1,BlockTypes_MetalsIE.STEEL.getMeta());
 					}
+					
+					if (structure[h][l][w] == null) {
+						structure[h][l][w] = ItemStack.EMPTY;
+					}
 
 				}
 	}

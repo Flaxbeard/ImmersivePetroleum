@@ -4,6 +4,7 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
@@ -39,11 +40,11 @@ public class SchematicCraftingHandler implements IRecipe
 	@Override
 	public ItemStack getRecipeOutput()
 	{
-		return null;
+		return ItemStack.EMPTY;
 	}
 
 	@Override
-	public ItemStack[] getRemainingItems(InventoryCrafting inv)
+	public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
 	{
 		return new SchematicResult(inv).remaining;
 	}
@@ -51,7 +52,7 @@ public class SchematicCraftingHandler implements IRecipe
 	private class SchematicResult
 	{
 		private final boolean canCraft;
-		private final ItemStack[] remaining;
+		private final NonNullList<ItemStack> remaining;
 		private final ItemStack output;
 		
 		private ItemStack manual;
@@ -59,12 +60,12 @@ public class SchematicCraftingHandler implements IRecipe
 
 		public SchematicResult(InventoryCrafting inv)
 		{
-			this.manual = null;
+			this.manual = ItemStack.EMPTY;
 			this.canCraft = process(inv);
 			if (canCraft)
 			{
-				remaining = new ItemStack[9];
-				remaining[manualStack] = ItemStack.copyItemStack(manual);
+				remaining = NonNullList.withSize(9, ItemStack.EMPTY);
+				remaining.set(manualStack, manual.copy());
 				String last = "";
 				if (ItemNBTHelper.hasKey(manual, "lastMultiblock"))
 				{
@@ -80,8 +81,8 @@ public class SchematicCraftingHandler implements IRecipe
 			}
 			else
 			{
-				remaining = new ItemStack[9];
-				output = null;
+				remaining = NonNullList.withSize(9, ItemStack.EMPTY);
+				output = ItemStack.EMPTY;;
 			}
 		}
 		
@@ -91,7 +92,7 @@ public class SchematicCraftingHandler implements IRecipe
 			for (int i = 0; i < inv.getSizeInventory(); i++)
 			{
 				ItemStack stack = inv.getStackInSlot(i);
-				if (stack != null)
+				if (!stack.isEmpty())
 				{
 					int[] ids = OreDictionary.getOreIDs(stack);
 					boolean isPaper = false;
@@ -105,7 +106,7 @@ public class SchematicCraftingHandler implements IRecipe
 					}
 					if (stack.getItem() == IEContent.itemTool && stack.getItemDamage() == 3)
 					{
-						if (manual == null && ItemNBTHelper.hasKey(stack, "lastMultiblock"))
+						if (!manual.isEmpty() && ItemNBTHelper.hasKey(stack, "lastMultiblock"))
 						{
 							manual = stack;
 							manualStack = i;
@@ -117,7 +118,7 @@ public class SchematicCraftingHandler implements IRecipe
 					}
 					else if (stack.getItem() == IPContent.itemSchematic)
 					{
-						if (manual == null && ItemNBTHelper.hasKey(stack, "multiblock"))
+						if (!manual.isEmpty() && ItemNBTHelper.hasKey(stack, "multiblock"))
 						{
 							manual = stack;
 							manualStack = i;
@@ -145,7 +146,7 @@ public class SchematicCraftingHandler implements IRecipe
 					
 				}
 			}
-			return manual != null && hasPaper;
+			return !manual.isEmpty() && hasPaper;
 		}
 	}
 

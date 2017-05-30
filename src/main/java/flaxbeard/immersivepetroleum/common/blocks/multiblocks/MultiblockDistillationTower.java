@@ -38,6 +38,7 @@ public class MultiblockDistillationTower implements IMultiblock
 		for(int h=0;h<16;h++)
 			for(int l=0;l<4;l++)
 				for(int w=0;w<4;w++)
+				{
 					
 					if (h > 0 && l > 0 && l < 3 && w > 0 && w < 3)
 					{
@@ -73,6 +74,11 @@ public class MultiblockDistillationTower implements IMultiblock
 						if (w == 0 && l == 2)
 							structure[h][w][3-l] = new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
 					}
+		
+					if (structure[h][w][3-l] == null) {
+						structure[h][w][3-l] = ItemStack.EMPTY;
+					}
+				}
 	}
 
 	@Override

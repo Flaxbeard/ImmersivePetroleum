@@ -12,6 +12,7 @@ chat.immersivepetroleum.info.coresample.oil=%s mB Oil
 chat.immersivepetroleum.info.coresample.noOil=No Oil
 chat.immersivepetroleum.info.schematic.noMultiblock=Craft with Engineer's Manual
 chat.immersivepetroleum.info.schematic.build=Instructions for making a %s
+chat.immersivepetroleum.info.schematic.center=Centered at (%d, %d, %d)
 
 fluid.diesel=Diesel
 fluid.oil=Crude Oil
@@ -48,5 +49,10 @@ ie.manual.entry.oil1=The <link;minerals;§o§nCore §o§nSample §o§nDrill§r> 
 ie.manual.entry.asphalt.name=Asphalt Concrete
 ie.manual.entry.asphalt.subtext=Highway material
 ie.manual.entry.asphalt0=Asphalt Concrete, held together by gooey Bitumen, is a darker colored alternative to regular Concrete. It may be produced using the byproducts of processing Crude Oil in the <link;distillationTower;§n§oDistillation §n§oTower§r>. 
+
+ie.manual.entry.schematics.name=Multiblock Schematics
+ie.manual.entry.schematics.subtext=Invaluable instructions
+ie.manual.entry.schematics0=When it comes to building large multiblock structures, referring to your Engineer's Manual time and time again has grown tedious. If you turn your Engineer's Manual to the page of a multiblock structure and then place it in a crafting bench alongside a blank piece of paper, you can craft a Schematic for that structure. 
+ie.manual.entry.schematics1=Schematics act as three dimensional building guides. Holding one in your main hand or off hand will display the structure, right clicking will lock it into place. Pressing the pick block button will rotate the structure, and holding shift while doing so will mirror it.
 
 ie.manual.category.ip.name=Oil Processing

@@ -25,6 +25,9 @@ import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 
+import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
+import flaxbeard.immersivepetroleum.common.network.RotateSchematicPacket;
+
 public class ItemSchematic extends ItemIPBase
 {
 	public ItemSchematic(String name)
@@ -53,6 +56,16 @@ public class ItemSchematic extends ItemIPBase
 				int w = mb.getStructureManual()[0][0].length;
 
 				tooltip.add(ChatFormatting.DARK_GRAY + (l + " x " + h + " x " + w));
+				
+				if (ItemNBTHelper.hasKey(stack, "pos"))
+				{
+					NBTTagCompound pos = ItemNBTHelper.getTagCompound(stack, "pos");
+					int x = pos.getInteger("x");
+					int y = pos.getInteger("y");
+					int z = pos.getInteger("z");
+					tooltip.add(ChatFormatting.DARK_GRAY + I18n.format("chat.immersivepetroleum.info.schematic.center", x, y, z));
+				}
+
 				return;
 			}
 		}
@@ -144,7 +157,7 @@ public class ItemSchematic extends ItemIPBase
 			int ml = mb.getStructureManual()[0].length;
 			int mw = mb.getStructureManual()[0][0].length;
 			
-			int rotate = ((playerIn.ticksExisted / 10) % 4);
+			int rotate = getRotation(stack);
 			
 			int xd = (rotate % 2 == 0) ? ml :  mw;
 			int zd = (rotate % 2 == 0) ? mw :  ml;
@@ -178,15 +191,59 @@ public class ItemSchematic extends ItemIPBase
 		return EnumActionResult.PASS;
 	}
 	
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World worldIn, EntityPlayer playerIn, EnumHand hand)
-    {
-    	if (ItemNBTHelper.hasKey(stack, "pos") && playerIn.isSneaking())
+	public static int getRotation(ItemStack stack)
+	{
+		if (ItemNBTHelper.hasKey(stack, "rotate"))
+		{
+			return ItemNBTHelper.getInt(stack, "rotate");
+		}
+		return 0;
+	}
+	
+	public static boolean getFlipped(ItemStack stack)
+	{
+		if (ItemNBTHelper.hasKey(stack, "flip"))
+		{
+			return ItemNBTHelper.getBoolean(stack, "flip");
+		}
+		return false;
+	}
+	
+	public static void rotateClient(ItemStack stack)
+	{
+		int newRotate = (getRotation(stack) + 1) % 4;
+		boolean flip = getFlipped(stack);
+		setRotate(stack, newRotate);
+		IPPacketHandler.INSTANCE.sendToServer(new RotateSchematicPacket(newRotate, flip));
+	}
+	
+	public static void flipClient(ItemStack stack)
+	{
+		int newRotate = getRotation(stack);
+		boolean flip = !getFlipped(stack);
+		setFlipped(stack, flip);
+		IPPacketHandler.INSTANCE.sendToServer(new RotateSchematicPacket(newRotate, flip));
+	}
+
+	public static void setRotate(ItemStack stack, int rotate)
+	{
+		ItemNBTHelper.setInt(stack, "rotate", rotate);
+	}
+	
+	public static void setFlipped(ItemStack stack, boolean flip)
+	{
+		ItemNBTHelper.setBoolean(stack, "flip", flip);
+	}
+
+	public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World worldIn, EntityPlayer playerIn, EnumHand hand)
+	{
+		if (ItemNBTHelper.hasKey(stack, "pos") && playerIn.isSneaking())
 		{
 			ItemNBTHelper.remove(stack, "pos");
 			return new ActionResult(EnumActionResult.SUCCESS, stack);
 		}
-        return new ActionResult(EnumActionResult.PASS, stack);
-    }
+		return new ActionResult(EnumActionResult.PASS, stack);
+	}
 
 
 }

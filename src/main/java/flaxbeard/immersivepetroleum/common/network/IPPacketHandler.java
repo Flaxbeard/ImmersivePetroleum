@@ -5,6 +5,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.network.CloseBookPacket.CloseBookPacketHandler;
+import flaxbeard.immersivepetroleum.common.network.RotateSchematicPacket.RotateSchematicPacketHandler;
 
 public class IPPacketHandler
 {
@@ -13,6 +14,6 @@ public class IPPacketHandler
 	public static void preInit()
 	{	
 		INSTANCE.registerMessage(CloseBookPacketHandler.class, CloseBookPacket.class, 0, Side.SERVER);
-
+		INSTANCE.registerMessage(RotateSchematicPacketHandler.class, RotateSchematicPacket.class, 1, Side.SERVER);
 	}
 }

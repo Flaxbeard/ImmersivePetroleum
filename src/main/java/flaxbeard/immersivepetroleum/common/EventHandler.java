@@ -15,7 +15,9 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,11 +36,15 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBloc
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import blusunrize.immersiveengineering.api.Lib;
@@ -46,6 +52,7 @@ import blusunrize.immersiveengineering.api.ManualPageMultiblock;
 import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice0;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntitySampleDrill;
 import blusunrize.immersiveengineering.common.items.ItemCoresample;
@@ -140,6 +147,85 @@ public class EventHandler
 	}
 	
 	
+	
+	boolean lastDown = false;
+	private int tempCode = 99999;
+	
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void handleKeypress(ClientTickEvent event)
+	{
+		Minecraft mc = ClientUtils.mc();
+		if (event.phase == Phase.START && mc.thePlayer != null)
+		{
+			//
+			ItemStack mainItem = mc.thePlayer.getHeldItemMainhand();
+			ItemStack secondItem = mc.thePlayer.getHeldItemOffhand();
+			
+			boolean main = mainItem != null && mainItem.getItem() == IPContent.itemSchematic && ItemNBTHelper.hasKey(mainItem, "multiblock");
+			boolean off = secondItem != null && secondItem.getItem() == IPContent.itemSchematic && ItemNBTHelper.hasKey(secondItem, "multiblock");
+			ItemStack target = main ? mainItem : secondItem;
+			World world = mc.theWorld;
+			
+			if (main || off)
+			{
+				int code = mc.gameSettings.keyBindPickBlock.getKeyCode();
+				if (code != 99999 && !ItemNBTHelper.hasKey(target, "pos"))
+				{
+					if (code < 0)
+					{
+						code += 100;
+						if (Mouse.isButtonDown(code))
+						{
+							if (!lastDown)
+							{
+								if (mc.thePlayer.isSneaking())
+								{
+									ItemSchematic.flipClient(target);
+								}
+								else
+								{
+									ItemSchematic.rotateClient(target);
+								}
+							}
+							tempCode = code - 100;
+							mc.gameSettings.keyBindPickBlock.setKeyCode(99999);
+						}
+					}
+					else
+					{
+						if (Keyboard.isKeyDown(code))
+						{
+							if (!lastDown)
+							{
+								if (mc.thePlayer.isSneaking())
+								{
+									ItemSchematic.flipClient(target);
+								}
+								else
+								{
+									ItemSchematic.rotateClient(target);
+								}
+							}
+							tempCode = code;
+							mc.gameSettings.keyBindPickBlock.setKeyCode(99999);
+						}
+					}
+				}
+			}
+		}
+		else if (event.phase == Phase.END && tempCode != 99999)
+		{
+			mc.gameSettings.keyBindPickBlock.setKeyCode(tempCode);
+			tempCode = 99999;
+			lastDown = true;
+		}
+		else if (tempCode == 99999)
+		{
+			lastDown = false;
+		}
+	}
+	
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void renderLast(RenderWorldLastEvent event)
@@ -204,7 +290,8 @@ public class EventHandler
 					int ml = mb.getStructureManual()[0].length;
 					int mw = mb.getStructureManual()[0][0].length;
 					
-					int rotate = ((mc.thePlayer.ticksExisted / 10) % 4);
+					int rotate = ItemSchematic.getRotation(target);
+					boolean flip = ItemSchematic.getFlipped(target);
 					
 					int xd = (rotate % 2 == 0) ? ml :  mw;
 					int zd = (rotate % 2 == 0) ? mw :  ml;
@@ -257,8 +344,12 @@ public class EventHandler
 							hit = hit.add(-xd + 1, 0, 0);
 						}
 					}
-					if ( hit != null)
+					if (hit != null)
 					{
+						if (mb.getUniqueName().equals("IE:ExcavatorDemo"))
+						{
+							hit = hit.add(0, -2, 0);
+						}
 						double px = TileEntityRendererDispatcher.staticPlayerX;
 						double py = TileEntityRendererDispatcher.staticPlayerY;
 						double pz = TileEntityRendererDispatcher.staticPlayerZ;
@@ -312,6 +403,15 @@ public class EventHandler
 												xo = w;
 												break;
 										}
+										if (rotate % 2 == 1)
+										{
+											xo = flip ? xo : (mw - xo - 1);
+										}
+										else
+										{
+											zo = flip ? zo : (mw - zo - 1);
+										}
+										
 										BlockPos actualPos = hit.add(xo, h, zo);
 										
 										ItemStack heldStack = main ? secondItem : mainItem;
@@ -352,15 +452,51 @@ public class EventHandler
 											}
 										}
 										
-										if (!stateEqual)
+										if (!stateEqual && !(mb.getUniqueName().equals("IE:BottlingMachine") && h == 2))
 										{
 											perfect = false;
 											ShaderUtil.alpha(otherStateEqual ? .75F : .5F);
 											GlStateManager.translate(xo, h, zo);
 	
 											GlStateManager.translate(.5, .5, .5);
+											
+											if (state.getBlock() == IEContent.blockConveyor)
+											{
+												switch (rotate)
+												{
+													case 0:
+														GlStateManager.rotate(180, 0, 1, 0);
+														break;
+													case 1:
+														GlStateManager.rotate(90, 0, 1, 0);
+														break;
+													case 3:
+														GlStateManager.rotate(270, 0, 1, 0);
+														break;
+												}
+												if ((mb.getUniqueName().equals("IE:AutoWorkbench") && (w != 1 || l != 2))
+														|| mb.getUniqueName().equals("IE:BottlingMachine"))
+												{
+													GlStateManager.rotate(270, 0, 1, 0);
+												}
+												GlStateManager.scale(16F/20.1F, 16F/20.1F, 16F/20.1F);
+												GlStateManager.translate(6.25F/16F, 0, 0);
+												GlStateManager.rotate(90, 0, 1, 0);
+											}
+											else if (state.getBlock() == IEContent.blockMetalDevice0 && BlockTypes_MetalDevice0.values()[state.getBlock().getMetaFromState(state)]==BlockTypes_MetalDevice0.FLUID_PUMP)
+											{
+												GlStateManager.translate(0, .45F, 0);
+												GlStateManager.scale(.9F, .9F, .9F);
+											}
+											else if (state.getBlock() == Blocks.PISTON)
+											{
+												GlStateManager.rotate(180, 1, 0, 0);
+											}
+											
+											
 											GlStateManager.scale(2.01, 2.01, 2.01);
 											//GlStateManager.translate(-.5F, -.5F, -.5F);
+									
 											ClientUtils.mc().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.FIXED);
 											//ImmersiveEngineering.proxy.drawSpecificFluidPipe("001002");
 											//BlockRendererDispatcher brd = Minecraft.getMinecraft().getBlockRendererDispatcher();																						
@@ -411,6 +547,15 @@ public class EventHandler
 												xo = w;
 												break;
 										}
+										if (rotate % 2 == 1)
+										{
+											xo = flip ? xo : (mw - xo - 1);
+										}
+										else
+										{
+											zo = flip ? zo : (mw - zo - 1);
+										}
+										
 										BlockPos actualPos = hit.add(xo, h, zo);
 										
 										ItemStack heldStack = main ? secondItem : mainItem;

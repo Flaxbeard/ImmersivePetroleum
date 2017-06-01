@@ -676,6 +676,8 @@ public class ItemProjector extends ItemIPBase
 				}
 				
 				idx = 0;
+				GlStateManager.disableDepth();
+
 				for(int h = 0; h < mh; h++)
 				{
 					boolean slicePerfect = true;
@@ -686,7 +688,6 @@ public class ItemProjector extends ItemIPBase
 							BlockPos pos = new BlockPos(l, h, w);
 			
 							GlStateManager.pushMatrix();
-							GlStateManager.disableDepth();
 
 							if (mb.getStructureManual()[h][l][w] != null)
 							{
@@ -890,6 +891,7 @@ public class ItemProjector extends ItemIPBase
 				RenderHelper.disableStandardItemLighting();
 			}
 		}
+		GlStateManager.enableDepth();
 	}
 	
 	@SubscribeEvent

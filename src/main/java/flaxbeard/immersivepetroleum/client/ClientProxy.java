@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
@@ -147,6 +148,7 @@ public class ClientProxy extends CommonProxy
 		projector = new SoundEvent(location);
 		projector.setRegistryName(location);
 		GameRegistry.register(projector);
+		MinecraftForge.EVENT_BUS.register(IPCoreSampleModelHandler.instance);
 	}
 
 	@Override

@@ -9,6 +9,7 @@
 	{
 		"inventory,type=pipe": [{"model": "immersivepetroleum:dummy_pipe"}],
 		"inventory,type=conveyor": [{"model": "immersivepetroleum:dummy_conveyor"}],
+		"inventory,type=oil_deposit": [{"model": "cube_all", "textures": { "all": "immersivepetroleum:blocks/dummy_oil_ore" }}],
 		"type":
 		{
 			"pipe": {
@@ -16,6 +17,10 @@
 			},
 			"conveyor": {
 				"model": "immersivepetroleum:dummy_conveyor"
+			},
+			"oil_deposit": {
+				"model": "cube_all",
+				"textures": { "all": "immersivepetroleum:blocks/dummy_oil_ore" }
 			}
 		}
 	}

@@ -943,7 +943,7 @@ public class ItemProjector extends ItemIPBase
 	@SubscribeEvent
 	public void handleMultiblockComplete(MultiblockFormEvent event)
 	{
-		EntityPlayer player = event.getEntityPlayer();
+		/*EntityPlayer player = event.getEntityPlayer();
 		
 		
 		if (player != null)
@@ -959,7 +959,7 @@ public class ItemProjector extends ItemIPBase
 					}
 				}
 			}
-		}
+		}*/
 	}
 	
 	public boolean doesIntersect(EntityPlayer player, ItemStack target, BlockPos check)

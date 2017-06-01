@@ -50,7 +50,7 @@ public class ModelCoresampleExtended extends ModelCoresample
 									String[] newOres = new String[mix.ores.length + 1];
 									float[] newChances = new float[mix.chances.length + 1];
 									newOres[mix.ores.length] = "obsidian";
-									newChances[mix.ores.length] = 0.1f;
+									newChances[mix.ores.length] = 0.4f;
 									for (int i = 0; i < mix.ores.length; i++)
 									{
 										newOres[i] = mix.ores[i];
@@ -78,7 +78,7 @@ public class ModelCoresampleExtended extends ModelCoresample
 			{
 				if (!modelCache.containsKey(original))
 				{
-					MineralMix mix = new MineralMix(original, 1, new String[] { "obsidian", "stone" }, new float[] { 0.25F, 0.75F } );
+					MineralMix mix = new MineralMix(original, 1, new String[] { "obsidian", "stone" }, new float[] { 0.6F, 0.4F } );
 					mix.recalculateChances();
 					mix.oreOutput.set(0, new ItemStack(IPContent.blockDummy, 1, BlockTypes_Dummy.OIL_DEPOSIT.getMeta()));
 					modelCache.put(original, new ModelCoresample(mix));

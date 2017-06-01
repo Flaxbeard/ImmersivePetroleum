@@ -1,17 +1,15 @@
 package flaxbeard.immersivepetroleum.common.network;
 
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.items.ItemSchematic;
+import flaxbeard.immersivepetroleum.common.items.ItemProjector;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 
 public class RotateSchematicPacket implements IMessage
@@ -77,14 +75,14 @@ public class RotateSchematicPacket implements IMessage
 				ItemStack mainItem = p.getHeldItemMainhand();
 				ItemStack secondItem = p.getHeldItemOffhand();
 
-				boolean main = mainItem != null && mainItem.getItem() == IPContent.itemSchematic && ItemNBTHelper.hasKey(mainItem, "multiblock");
-				boolean off = secondItem != null && secondItem.getItem() == IPContent.itemSchematic && ItemNBTHelper.hasKey(secondItem, "multiblock");
+				boolean main = mainItem != null && mainItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
+				boolean off = secondItem != null && secondItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
 				ItemStack target = main ? mainItem : secondItem;
 				
 				if (main || off)
 				{
-					ItemSchematic.setFlipped(target, flip);
-					ItemSchematic.setRotate(target, rotate);
+					ItemProjector.setFlipped(target, flip);
+					ItemProjector.setRotate(target, rotate);
 				}
 			}
 		}

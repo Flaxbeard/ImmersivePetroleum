@@ -23,6 +23,6 @@ public enum BlockTypes_Dummy implements IStringSerializable, BlockIPBase.IBlockE
 	@Override
 	public boolean listForCreative()
 	{
-		return true;
+		return false;
 	}
 }

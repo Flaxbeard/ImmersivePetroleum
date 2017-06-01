@@ -66,15 +66,8 @@ public class SchematicCraftingHandler implements IRecipe
 				remaining = new ItemStack[9];
 				remaining[manualStack] = ItemStack.copyItemStack(manual);
 				String last = "";
-				if (ItemNBTHelper.hasKey(manual, "lastMultiblock"))
-				{
-					last = ItemNBTHelper.getString(manual, "lastMultiblock");
-				}
-				else
-				{
-					last = ItemNBTHelper.getString(manual, "multiblock");
-				}
-				ItemStack op = new ItemStack(IPContent.itemSchematic, 1, 0);
+				last = ItemNBTHelper.getString(manual, "lastMultiblock");
+				ItemStack op = new ItemStack(IPContent.itemProjector, 1, 0);
 				ItemNBTHelper.setString(op, "multiblock", last);
 				output = op;
 			}
@@ -92,17 +85,7 @@ public class SchematicCraftingHandler implements IRecipe
 			{
 				ItemStack stack = inv.getStackInSlot(i);
 				if (stack != null)
-				{
-					int[] ids = OreDictionary.getOreIDs(stack);
-					boolean isPaper = false;
-					for (int id : ids)
-					{
-						if (id == OreDictionary.getOreID("paper"))
-						{
-							isPaper = true;
-							break;
-						}
-					}
+				{					
 					if (stack.getItem() == IEContent.itemTool && stack.getItemDamage() == 3)
 					{
 						if (manual == null && ItemNBTHelper.hasKey(stack, "lastMultiblock"))
@@ -115,19 +98,7 @@ public class SchematicCraftingHandler implements IRecipe
 							return false;
 						}
 					}
-					else if (stack.getItem() == IPContent.itemSchematic)
-					{
-						if (manual == null && ItemNBTHelper.hasKey(stack, "multiblock"))
-						{
-							manual = stack;
-							manualStack = i;
-						}
-						else
-						{
-							return false;
-						}
-					}
-					else if (isPaper)
+					else if (stack.getItem() == IPContent.itemProjector)
 					{
 						if (!hasPaper)
 						{

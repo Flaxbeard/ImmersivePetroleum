@@ -8,7 +8,8 @@ import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
 public enum BlockTypes_Dummy implements IStringSerializable, BlockIPBase.IBlockEnum
 {
 	PIPE,
-	CONVEYOR;
+	CONVEYOR,
+	OIL_DEPOSIT;
 	
 	@Override
 	public String getName()

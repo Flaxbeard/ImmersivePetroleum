@@ -57,7 +57,7 @@ public class ModelCoresampleExtended extends ModelCoresample
 									}
 									MineralMix mix2 = new MineralMix(mix.name, mix.failChance, newOres, newChances);
 									mix2.recalculateChances();
-									mix2.oreOutput[mix2.oreOutput.length - 1] = new ItemStack(IPContent.blockFluidCrudeOil, 1, 0);
+									mix2.oreOutput.set(mix2.oreOutput.size() - 1, new ItemStack(IPContent.blockDummy, 1, 0));
 									
 									modelCache.put(indexName, new ModelCoresample(mix2));
 
@@ -79,7 +79,7 @@ public class ModelCoresampleExtended extends ModelCoresample
 				{
 					MineralMix mix = new MineralMix(original, 1, new String[] { "obsidian", "stone" }, new float[] { 0.25F, 0.75F } );
 					mix.recalculateChances();
-					mix.oreOutput[0] = new ItemStack(IPContent.blockFluidCrudeOil, 1, 0);
+					mix.oreOutput.set(0, new ItemStack(IPContent.blockFluidCrudeOil, 1, 0));
 					modelCache.put(original, new ModelCoresample(mix));
 				}
 				

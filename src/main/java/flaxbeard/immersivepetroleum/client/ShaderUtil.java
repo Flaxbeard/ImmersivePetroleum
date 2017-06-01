@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 
+import net.minecraft.client.Minecraft;
+
 import org.lwjgl.opengl.ARBFragmentShader;
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;
@@ -22,11 +24,13 @@ public class ShaderUtil
 		alpha = createShader(null, "/assets/immersivepetroleum/shaders/alpha.frag");
 	}
 	
-	public static void alpha(float av)
+	public static void alpha_static(float av, float ticks)
 	{
 		ARBShaderObjects.glUseProgramObjectARB(alpha);
 		int a = ARBShaderObjects.glGetUniformLocationARB(alpha, "alpha");
 		ARBShaderObjects.glUniform1fARB(a, av);
+		a = ARBShaderObjects.glGetUniformLocationARB(alpha, "time");
+		ARBShaderObjects.glUniform1fARB(a, ticks);
 	}
 	
 	public static void releaseShader()

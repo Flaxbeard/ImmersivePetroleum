@@ -186,7 +186,6 @@ public class MultiblockPumpjack implements IMultiblock
 			mirror = true;
 			b = structureCheck(world, pos.offset(side.getOpposite()), side, mirror);
 		}
-		System.out.println(b);
 		if(!b)
 			return false;
 		if (b)

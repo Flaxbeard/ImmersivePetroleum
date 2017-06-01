@@ -1,12 +1,10 @@
 package flaxbeard.immersivepetroleum.common;
 
-import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
-import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
@@ -67,15 +65,8 @@ public class SchematicCraftingHandler implements IRecipe
 				remaining = NonNullList.withSize(9, ItemStack.EMPTY);
 				remaining.set(manualStack, manual.copy());
 				String last = "";
-				if (ItemNBTHelper.hasKey(manual, "lastMultiblock"))
-				{
-					last = ItemNBTHelper.getString(manual, "lastMultiblock");
-				}
-				else
-				{
-					last = ItemNBTHelper.getString(manual, "multiblock");
-				}
-				ItemStack op = new ItemStack(IPContent.itemSchematic, 1, 0);
+				last = ItemNBTHelper.getString(manual, "lastMultiblock");
+				ItemStack op = new ItemStack(IPContent.itemProjector, 1, 0);
 				ItemNBTHelper.setString(op, "multiblock", last);
 				output = op;
 			}
@@ -92,18 +83,8 @@ public class SchematicCraftingHandler implements IRecipe
 			for (int i = 0; i < inv.getSizeInventory(); i++)
 			{
 				ItemStack stack = inv.getStackInSlot(i);
-				if (!stack.isEmpty())
-				{
-					int[] ids = OreDictionary.getOreIDs(stack);
-					boolean isPaper = false;
-					for (int id : ids)
-					{
-						if (id == OreDictionary.getOreID("paper"))
-						{
-							isPaper = true;
-							break;
-						}
-					}
+				if (stack.isEmpty())
+				{					
 					if (stack.getItem() == IEContent.itemTool && stack.getItemDamage() == 3)
 					{
 						if (manual.isEmpty() && ItemNBTHelper.hasKey(stack, "lastMultiblock"))
@@ -116,19 +97,7 @@ public class SchematicCraftingHandler implements IRecipe
 							return false;
 						}
 					}
-					else if (stack.getItem() == IPContent.itemSchematic)
-					{
-						if (manual.isEmpty() && ItemNBTHelper.hasKey(stack, "multiblock"))
-						{
-							manual = stack;
-							manualStack = i;
-						}
-						else
-						{
-							return false;
-						}
-					}
-					else if (isPaper)
+					else if (stack.getItem() == IPContent.itemProjector)
 					{
 						if (!hasPaper)
 						{

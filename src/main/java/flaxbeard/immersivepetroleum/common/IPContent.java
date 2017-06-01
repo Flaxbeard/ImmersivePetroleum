@@ -16,7 +16,9 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import blusunrize.immersiveengineering.api.MultiblockHandler;
+import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.IERecipes;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration2;
 import blusunrize.immersiveengineering.common.util.IEPotions;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
@@ -24,13 +26,14 @@ import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPMetalMultiblocks;
 import flaxbeard.immersivepetroleum.common.blocks.ItemBlockIPBase;
+import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_Dummy;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecoration;
 import flaxbeard.immersivepetroleum.common.items.ItemIPBase;
-import flaxbeard.immersivepetroleum.common.items.ItemSchematic;
+import flaxbeard.immersivepetroleum.common.items.ItemProjector;
 
 public class IPContent
 {
@@ -43,10 +46,13 @@ public class IPContent
 	
 	public static BlockIPBase blockStoneDecoration;
 	
+	public static BlockIPBase blockDummy;
+
+	
 	public static ArrayList<Item> registeredIPItems = new ArrayList<Item>();
 
 	public static Item itemMaterial;
-	public static Item itemSchematic;
+	public static Item itemProjector;
 
 	public static Fluid fluidCrudeOil;
 	public static Fluid fluidDiesel;
@@ -68,11 +74,12 @@ public class IPContent
 		blockMetalMultiblock = new BlockIPMetalMultiblocks();
 
 		blockStoneDecoration = (BlockIPBase)new BlockIPBase("stone_decoration", Material.ROCK, PropertyEnum.create("type", BlockTypes_IPStoneDecoration.class), ItemBlockIPBase.class).setHardness(2.0F).setResistance(10.0F);
+		blockDummy = (BlockIPBase)new BlockIPBase("dummy", Material.ROCK, PropertyEnum.create("type", BlockTypes_Dummy.class), ItemBlockIPBase.class);
 
 		itemMaterial = new ItemIPBase("material", 64,
 				"bitumen");
 		
-		itemSchematic = new ItemSchematic("schematic");
+		itemProjector = new ItemProjector("schematic");
 
 	}
 	
@@ -94,6 +101,13 @@ public class IPContent
 		IERecipes.addIngredientRecipe(new ItemStack(blockStoneDecoration, 8, BlockTypes_IPStoneDecoration.ASPHALT.getMeta()), "SCS", "GBG", "SCS", 'C', new ItemStack(itemMaterial, 1, 0), 'S', "sand", 'G', Blocks.GRAVEL, 'B', new FluidStack(FluidRegistry.WATER,1000)).allowQuarterTurn();
 		IERecipes.addIngredientRecipe(new ItemStack(blockStoneDecoration, 12, BlockTypes_IPStoneDecoration.ASPHALT.getMeta()), "SCS", "GBG", "SCS", 'C', new ItemStack(itemMaterial, 1, 0), 'S', "itemSlag", 'G', Blocks.GRAVEL, 'B', new FluidStack(FluidRegistry.WATER,1000)).allowQuarterTurn();
 	
+		IERecipes.addIngredientRecipe(new ItemStack(itemProjector, 1, 0), "S  ", "IL ", " IW", 
+				'W', "plankTreatedWood", 
+				'L', new ItemStack(IEContent.blockMetalDecoration2, 1, BlockTypes_MetalDecoration2.LANTERN.getMeta()), 
+				'S', new ItemStack(IEContent.itemToolUpgrades, 1, 8),
+				'I', "ingotIron");
+
+		
 		GameRegistry.addRecipe(new SchematicCraftingHandler());
 
 	}

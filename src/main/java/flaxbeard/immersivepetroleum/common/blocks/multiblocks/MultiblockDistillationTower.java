@@ -155,7 +155,7 @@ public class MultiblockDistillationTower implements IMultiblock
 		return true;
 	}
 	
-	Object te = null;
+	public Object te = null;
 	
 	@Override
 	@SideOnly(Side.CLIENT)

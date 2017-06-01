@@ -11,7 +11,8 @@ tile.immersivepetroleum.metal_multiblock.distillation_tower_parent.name=Distilla
 chat.immersivepetroleum.info.coresample.oil=%s mB Oil
 chat.immersivepetroleum.info.coresample.noOil=No Oil
 chat.immersivepetroleum.info.schematic.noMultiblock=Craft with Engineer's Manual
-chat.immersivepetroleum.info.schematic.build=Instructions for making a %s
+chat.immersivepetroleum.info.schematic.build0=Displays instructions
+chat.immersivepetroleum.info.schematic.build1=for making a %s
 chat.immersivepetroleum.info.schematic.center=Centered at (%d, %d, %d)
 
 fluid.diesel=Diesel
@@ -20,7 +21,7 @@ fluid.oil=Crude Oil
 item.immersivepetroleum.material.bitumen.name=Bitumen
 item.immersivepetroleum.material.petcoke.name=Petcoke
 
-item.immersivepetroleum.schematic.name=%s Schematic
+item.immersivepetroleum.schematic.name=%s Projector
 
 itemGroup.immersivepetroleum=Immersive Petroleum
 
@@ -30,6 +31,7 @@ desc.immersiveengineering.info.multiblock.IP:DistillationTower=Distillation Towe
 desc.immersiveengineering.info.multiblock.IP:Pumpjack=Pumpjack
 
 desc.immersiveengineering.info.multiblock.IE:AutoWorkbench=Automated Workbench
+desc.immersiveengineering.info.multiblock.IE:AlloySmelter=Alloy Smelter
 
 ie.manual.entry.distillationTower.name=Distillation Tower
 ie.manual.entry.distillationTower.subtext=Environmentally unfriendly
@@ -50,9 +52,10 @@ ie.manual.entry.asphalt.name=Asphalt Concrete
 ie.manual.entry.asphalt.subtext=Highway material
 ie.manual.entry.asphalt0=Asphalt Concrete, held together by gooey Bitumen, is a darker colored alternative to regular Concrete. It may be produced using the byproducts of processing Crude Oil in the <link;distillationTower;§n§oDistillation §n§oTower§r>. 
 
-ie.manual.entry.schematics.name=Multiblock Schematics
+ie.manual.entry.schematics.name=Multiblock Projector
 ie.manual.entry.schematics.subtext=Invaluable instructions
-ie.manual.entry.schematics0=When it comes to building large multiblock structures, referring to your Engineer's Manual time and time again has grown tedious. If you turn your Engineer's Manual to the page of a multiblock structure and then place it in a crafting bench alongside a blank piece of paper, you can craft a Schematic for that structure. 
-ie.manual.entry.schematics1=Schematics act as three dimensional building guides. Holding one in your main hand or off hand will display the structure, right clicking will lock it into place. Pressing the pick block button will rotate the structure, and holding shift while doing so will mirror it.
+ie.manual.entry.schematics0=When it comes to building large multiblock structures, referring to your Engineer's Manual time and time again has grown tedious. By crafting a primitive projector device, you believe you can project schematics of these structures into the world to use as a template.
+ie.manual.entry.schematics1=If you turn your Engineer's Manual to the page of a multiblock structure and then place it in a crafting bench alongside a Projector, you can set the internal slide to match that multiblock. The Projector will then act as a three dimensional building guide.
+ie.manual.entry.schematics2=Holding a Projector will display the structure. Pressing the pick block button will rotate the structure, and sneaking while doing so will mirror it. Right clicking will lock the image in place, where it will show as long as the Projector is in your hotbar.
 
 ie.manual.category.ip.name=Oil Processing

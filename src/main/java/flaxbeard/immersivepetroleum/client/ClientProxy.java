@@ -13,10 +13,12 @@ import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
@@ -40,6 +42,8 @@ import flaxbeard.immersivepetroleum.common.items.ItemIPBase;
 
 public class ClientProxy extends CommonProxy
 {
+	public static SoundEvent projector;
+	
 	@Override
 	public void preInit() {
 		
@@ -100,12 +104,12 @@ public class ClientProxy extends CommonProxy
 					for(int meta = 0; meta < ipMetaItem.getSubNames().length; meta++)
 					{
 						ResourceLocation loc = new ResourceLocation("immersivepetroleum", ipMetaItem.itemName + "/" + ipMetaItem.getSubNames()[meta]);
-						System.out.println(loc);
 
 						ModelBakery.registerItemVariants(ipMetaItem, loc);
 						ModelLoader.setCustomModelResourceLocation(ipMetaItem, meta, new ModelResourceLocation(loc, "inventory"));
 					}
-				} else
+				}
+				else
 				{
 					final ResourceLocation loc = new ResourceLocation("immersivepetroleum", ipMetaItem.itemName);
 					ModelBakery.registerItemVariants(ipMetaItem, loc);
@@ -118,7 +122,8 @@ public class ClientProxy extends CommonProxy
 						}
 					});
 				}
-			} else
+			} 
+			else
 			{
 				final ResourceLocation loc = GameData.getItemRegistry().getNameForObject(item);
 				ModelBakery.registerItemVariants(item, loc);
@@ -138,6 +143,10 @@ public class ClientProxy extends CommonProxy
 	public void init()
 	{
 		ShaderUtil.init();
+		ResourceLocation location = new ResourceLocation(ImmersivePetroleum.MODID, "projector");
+		projector = new SoundEvent(location);
+		projector.setRegistryName(location);
+		GameRegistry.register(projector);
 	}
 
 	@Override
@@ -146,8 +155,9 @@ public class ClientProxy extends CommonProxy
 		String CAT_IP = "ip";
 		
 		ManualHelper.addEntry("schematics", CAT_IP,
-				new ManualPageSchematicCrafting(ManualHelper.getManual(), "schematics0", new ItemStack(IPContent.itemSchematic, 1, 0)),
-				new ManualPages.Text(ManualHelper.getManual(), "schematics1"));
+				new ManualPages.Crafting(ManualHelper.getManual(), "schematics0", new ItemStack(IPContent.itemProjector, 1, 0)),
+				new ManualPageSchematicCrafting(ManualHelper.getManual(), "schematics1", new ItemStack(IPContent.itemProjector, 1, 0)),
+				new ManualPages.Text(ManualHelper.getManual(), "schematics2"));
 
 		ManualHelper.addEntry("oil", CAT_IP,
 				new ManualPages.Text(ManualHelper.getManual(), "oil0"),

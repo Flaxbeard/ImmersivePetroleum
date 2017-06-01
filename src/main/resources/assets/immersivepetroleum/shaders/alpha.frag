@@ -1,8 +1,17 @@
 #version 120
 
 uniform float alpha; // Passed in by callback
+uniform float time;
 uniform sampler2D bgl_RenderedTexture;
 
-void main() {
-    gl_FragColor = texture2D(bgl_RenderedTexture, vec2(gl_TexCoord[0])) * gl_Color * vec4(1.0, 1.0, 1.0, alpha);
+float noise(in vec2 coordinate, in float seed)
+{
+	vec2 coordActual = floor(vec2(4096, 2048) * coordinate);
+	return fract(sin(dot(coordActual*seed, vec2(12.9898, 78.233)))*43758.5453);
+}
+
+void main()
+{
+	float n = (noise(vec2(gl_TexCoord[0]), time) - 0.5) * 0.25;
+	gl_FragColor = texture2D(bgl_RenderedTexture, vec2(gl_TexCoord[0])) * gl_Color * vec4(1.0 + n, 1.0 + n, 1.0 + n, alpha);
 }

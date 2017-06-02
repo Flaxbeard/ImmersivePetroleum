@@ -505,11 +505,11 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		TileEntityPumpjack master = this.master();
 		if(master != null)
 		{
-			if (pos == 9 && (side == null || side == facing.getOpposite().rotateY()))
+			if (pos == 9 && (side == null || side == facing.rotateY() || side == facing.getOpposite().rotateY()))
 			{
 				return new FluidTank[] { fakeTank };
 			}
-			else if (pos == 11 && (side == null || side == facing.rotateY()))
+			else if (pos == 11 && (side == null || side == facing.rotateY() || side == facing.getOpposite().rotateY()))
 			{
 				return new FluidTank[] { fakeTank };
 			}

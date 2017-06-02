@@ -394,7 +394,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 	@Override
 	public void doProcessOutput(ItemStack output)
 	{
-		BlockPos pos = getPos().offset(facing,1).offset(facing.rotateY(), 2).offset(EnumFacing.DOWN, 1);
+		BlockPos pos = getPos().offset(facing,1).offset(this.mirrored ? facing.getOpposite().rotateY() : facing.rotateY(), 2).offset(EnumFacing.DOWN, 1);
 		TileEntity inventoryTile = this.world.getTileEntity(pos);
 		if (inventoryTile != null)
 			output = Utils.insertStackIntoInventory(inventoryTile, output, facing.getOpposite());
@@ -467,7 +467,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 			{
 				return new FluidTank[] {master.tanks[0]};
 			}
-			else if (pos == 8 && (side == null || side == facing.getOpposite().rotateY()))
+			else if (pos == 8 && (side == null || side == facing.getOpposite().rotateY() || side == facing.rotateY()))
 			{
 				return new FluidTank[] {master.tanks[1]};
 			}

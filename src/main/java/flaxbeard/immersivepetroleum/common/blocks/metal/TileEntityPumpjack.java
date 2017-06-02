@@ -11,6 +11,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
@@ -29,8 +30,8 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.Lists;
 
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
-import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 
 public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPumpjack, IMultiblockRecipe> implements IAdvancedSelectionBounds,IAdvancedCollisionBounds, IGuiTile
@@ -76,17 +77,22 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	
 	public int availableOil()
 	{
-		return PumpjackHandler.getOilAmount(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return PumpjackHandler.getFluidAmount(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
-	public boolean canGetResidualOil()
+	public Fluid availableFluid()
 	{
-		return PumpjackHandler.canGetResidualOil(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return PumpjackHandler.getFluid(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4);
+	}
+	
+	public int getResidualOil()
+	{
+		return PumpjackHandler.getResidualFluid(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
 	public void extractOil(int amount)
 	{
-		PumpjackHandler.depleteOil(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4, amount);
+		PumpjackHandler.depleteFluid(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4, amount);
 	}
 	
 	@Override
@@ -127,41 +133,45 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		int consumed = IPConfig.Machines.pumpjack_consumption;
 		int extracted = energyStorage.extractEnergy(consumed, true);
 		
-		if(extracted >= consumed && canExtract() && !this.isRSDisabled() && (availableOil() > 0 || canGetResidualOil()))
+		if(extracted >= consumed && canExtract() && !this.isRSDisabled())
 		{
-			int oilAmnt = availableOil() == 0 ? IPConfig.Machines.oil_replenish : availableOil();
-			
-			energyStorage.extractEnergy(consumed, false);
-			active = true;
-			FluidStack out = new FluidStack(IPContent.fluidCrudeOil, Math.min(IPConfig.Machines.pumpjack_speed, oilAmnt));
-			BlockPos outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY().getOpposite(), 2).offset(EnumFacing.DOWN, 1);
-			IFluidHandler output = FluidUtil.getFluidHandler(worldObj, outputPos, facing);
-			if(output != null)
+			int residual = getResidualOil();
+			if (availableOil() > 0 || residual > 0)
 			{
-				int accepted = output.fill(out, false);
-				if(accepted > 0)
+				int oilAmnt = availableOil() <= 0 ? residual : availableOil();
+				
+				energyStorage.extractEnergy(consumed, false);
+				active = true;
+				FluidStack out = new FluidStack(availableFluid(), Math.min(IPConfig.Machines.pumpjack_speed, oilAmnt));
+				BlockPos outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY().getOpposite(), 2).offset(EnumFacing.DOWN, 1);
+				IFluidHandler output = FluidUtil.getFluidHandler(worldObj, outputPos, facing);
+				if(output != null)
 				{
-					int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-					extractOil(drained);
-					out = Utils.copyFluidStackWithAmount(out, out.amount - drained, false);
+					int accepted = output.fill(out, false);
+					if(accepted > 0)
+					{
+						int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+						extractOil(drained);
+						out = Utils.copyFluidStackWithAmount(out, out.amount - drained, false);
+					}
 				}
-			}
-			
-			outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY(), 2).offset(EnumFacing.DOWN, 1);
-			output = FluidUtil.getFluidHandler(worldObj, outputPos, facing);
-			if(output != null)
-			{
-				int accepted = output.fill(out, false);
-				if(accepted > 0)
+				
+				outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY(), 2).offset(EnumFacing.DOWN, 1);
+				output = FluidUtil.getFluidHandler(worldObj, outputPos, facing);
+				if(output != null)
 				{
-					int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-					extractOil(drained);
-
+					int accepted = output.fill(out, false);
+					if(accepted > 0)
+					{
+						int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+						extractOil(drained);
+	
+					}
 				}
+							
+				
+				activeTicks++;
 			}
-						
-			
-			activeTicks++;
 		}
 
 		if(active != wasActive)

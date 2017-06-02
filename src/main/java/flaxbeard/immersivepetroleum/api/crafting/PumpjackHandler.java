@@ -1,20 +1,30 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
+import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 
-/**
- * @author BluSunrize - 03.06.2015
- *
- * The Handler for the Excavator. Chunk->Ore calculation is done here, as is registration
- */
+
 public class PumpjackHandler
 {
+	public static LinkedHashMap<ReservoirType, Integer> reservoirList = new LinkedHashMap<ReservoirType, Integer>();
+	private static Map<Integer, HashMap<String, Integer>> totalWeightMap = new HashMap<Integer, HashMap<String, Integer>>();
+
 	public static HashMap<DimensionChunkCoords, Long> timeCache = new HashMap<DimensionChunkCoords, Long>();
 	public static HashMap<DimensionChunkCoords, OilWorldInfo> oilCache = new HashMap<DimensionChunkCoords, OilWorldInfo>();
 	public static double oilChance = 100;
@@ -25,23 +35,34 @@ public class PumpjackHandler
 	
 	private static int depositSize = 1;
 
-	public static int getOilAmount(World world, int chunkX, int chunkZ)
+	public static int getFluidAmount(World world, int chunkX, int chunkZ)
 	{
 		if(world.isRemote)
 			return 0;
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
-		if (info == null || (info.capacity == 0) || (info.oil == 0 && replenishAmount == 0))
+		if (info == null || (info.capacity == 0) || info.type == null || info.type.fluid == null || (info.current == 0 && replenishAmount == 0))
 			return 0;
 
-		return info.oil;
+		return info.current;
 	}
 	
-	public static boolean canGetResidualOil(World world, int chunkX, int chunkZ)
+	public static Fluid getFluid(World world, int chunkX, int chunkZ)
+	{
+		if(world.isRemote)
+			return null;
+		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
+		if (info == null || (info.capacity == 0) || info.type == null || info.type.fluid == null || (info.current == 0 && replenishAmount == 0))
+			return null;
+
+		return FluidRegistry.getFluid(info.type.fluid);
+	}
+	
+	public static int getResidualFluid(World world, int chunkX, int chunkZ)
 	{
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
 		
-		if (info == null || (info.capacity == 0) || (info.oil == 0 && replenishAmount == 0))
-			return false;
+		if (info == null || info.type == null || info.type.fluid == null || (info.capacity == 0) || (info.current == 0 && replenishAmount == 0))
+			return 0;
 		
 		DimensionChunkCoords coords = new DimensionChunkCoords(world.provider.getDimension(), chunkX / depositSize, chunkZ / depositSize);
 
@@ -49,12 +70,12 @@ public class PumpjackHandler
 		if (l == null)
 		{
 			timeCache.put(coords, world.getTotalWorldTime());
-			return true;
+			return info.type.replenishRate;
 		}
 		
 		long lastTime = world.getTotalWorldTime();
 		timeCache.put(coords, world.getTotalWorldTime());
-		return lastTime != l;
+		return lastTime != l ? info.type.replenishRate : 0;
 	}
 	
 	public static OilWorldInfo getOilWorldInfo(World world, int chunkX, int chunkZ)
@@ -64,64 +85,271 @@ public class PumpjackHandler
 
 		int dim = world.provider.getDimension();
 		DimensionChunkCoords coords = new DimensionChunkCoords(dim, chunkX / depositSize, chunkZ / depositSize);
+
 		OilWorldInfo worldInfo = oilCache.get(coords);
 		if(worldInfo == null)
 		{
+			ReservoirType res = null;
+
 			Random r = world.getChunkFromChunkCoords(chunkX / depositSize, chunkZ / depositSize).getRandomWithSeed(90210); // Antidote
 			double dd = r.nextDouble();
-			boolean empty = dd > oilChance;
+			boolean empty = dd > 1;//oilChance;
 			double size = r.nextDouble();
+			int query = r.nextInt();
+
+			if (!empty)
+			{
+				Biome biome = world.getBiomeForCoordsBody(new BlockPos(chunkX << 4, 64, chunkZ << 4));
+				int weight = Math.abs(query % getTotalWeight(dim, biome));
+				System.out.println(weight + " " + getTotalWeight(dim, biome));
+				for (Map.Entry<ReservoirType, Integer> e : reservoirList.entrySet())
+					if (e.getKey().validDimension(dim) && e.getKey().validBiome(biome))
+					{
+						weight -= e.getValue();
+						if (weight < 0)
+						{
+							res = e.getKey();
+							break;
+						}
+					}
+			}
 			
 			int capacity = 0;
 			
-			if(!empty && isValidDimension(dim))
+			if (res != null)
 			{
-				capacity = (int) (size * (maxDeposit - minDeposit)) + minDeposit;
+				capacity = (int) (size * (res.maxSize - res.minSize)) + res.minSize;
 			}
+			System.out.println(capacity);
+
 			worldInfo = new OilWorldInfo();
 			worldInfo.capacity = capacity;
-			worldInfo.oil = capacity;
+			worldInfo.current = capacity;
+			worldInfo.type = res;
 			oilCache.put(coords, worldInfo);
 		}
 		return worldInfo;
 	}
-	
-	private static boolean isValidDimension(int dim)
-	{
-		if(dimensionBlacklist != null && dimensionBlacklist.length > 0)
-		{
-			for(int black : dimensionBlacklist)
-				if(dim == black)
-					return false;
-		}
-		return true;
-	}
-	public static void depleteOil(World world, int chunkX, int chunkZ, int amount)
+
+	public static void depleteFluid(World world, int chunkX, int chunkZ, int amount)
 	{
 		OilWorldInfo info = getOilWorldInfo(world,chunkX,chunkZ);
-		info.oil = Math.max(0, info.oil - amount);
+		info.current = Math.max(0, info.current - amount);
 		IPSaveData.setDirty(world.provider.getDimension());
 	}
 
 
 	public static class OilWorldInfo
 	{
+		public ReservoirType type;
 		public int capacity;
-		public int oil;
+		public int current;
 
 		public NBTTagCompound writeToNBT()
 		{
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setInteger("capacity", capacity);
-			tag.setInteger("oil", oil);
+			tag.setInteger("oil", current);
+			if (type != null)
+			{
+				tag.setString("type", type.name);
+			}
 			return tag;
 		}
+		
 		public static OilWorldInfo readFromNBT(NBTTagCompound tag)
 		{
 			OilWorldInfo info = new OilWorldInfo();
 			info.capacity = tag.getInteger("capacity");
-			info.oil = tag.getInteger("oil");
+			info.current = tag.getInteger("oil");
+			
+			if (tag.hasKey("type"))
+			{
+				String s = tag.getString("type");
+				for (ReservoirType res : reservoirList.keySet())
+					if (s.equalsIgnoreCase(res.name))
+						info.type = res;
+			}
 			return info;
+		}
+	}
+	
+	public static int getTotalWeight(int dim, Biome biome)
+	{
+		if (!totalWeightMap.containsKey(dim))
+		{
+			totalWeightMap.put(dim, new HashMap<String, Integer>());
+		}
+		
+		Map<String, Integer> dimMap = totalWeightMap.get(dim);
+		String biomeName = getBiomeName(biome);
+		
+		if (dimMap.containsKey(biomeName))
+		{
+			return dimMap.get(biomeName);
+		}
+		
+		int totalWeight = 0;
+		for(Map.Entry<ReservoirType, Integer> e : reservoirList.entrySet())
+		{
+			if (e.getKey().validDimension(dim) && e.getKey().validBiome(biome))
+				totalWeight += e.getValue();
+		}
+		dimMap.put(biomeName, totalWeight);
+		return totalWeight;
+	}
+	
+	public static ReservoirType addReservoir(String name, String fluid, int minSize, int maxSize, int replenishRate, int weight)
+	{
+		ReservoirType mix = new ReservoirType(name, fluid, minSize, maxSize, replenishRate);
+		reservoirList.put(mix, weight);
+		return mix;
+	}
+	
+	public static void recalculateChances(boolean mutePackets)
+	{
+		totalWeightMap.clear();
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !mutePackets)
+		{
+			HashMap<ReservoirType,Integer> packetMap = new HashMap<ReservoirType,Integer>();
+			for (Map.Entry<ReservoirType, Integer> e : PumpjackHandler.reservoirList.entrySet())
+				if (e.getKey() != null && e.getValue() != null)
+					packetMap.put(e.getKey(), e.getValue());
+			//ImmersiveEngineering.packetHandler.sendToAll(new MessageMineralListSync(packetMap));
+		}
+	}
+	
+	public static String getBiomeName(Biome biome)
+	{
+		return biome.getBiomeName().replace(" ", "").replace("_", "").toLowerCase();
+	}
+	
+	public static class ReservoirType
+	{
+		public String name;
+		public String fluid;
+		
+		public int minSize;
+		public int maxSize;
+		public int replenishRate;
+				
+		public int[] dimensionWhitelist = new int[0];
+		public int[] dimensionBlacklist = new int[0];
+		
+		public String[] biomeWhitelist = new String[0];
+		public String[] biomeBlacklist = new String[0];
+
+		public ReservoirType(String name, String fluid, int minSize, int maxSize, int replenishRate)
+		{
+			this.name = name;
+			this.fluid = fluid;
+			this.minSize = minSize;
+			this.maxSize = maxSize;
+			this.replenishRate = replenishRate;
+			this.dimensionBlacklist = IPConfig.machines.oil_dimBlacklist.clone();
+		}
+		
+		public boolean validDimension(int dim)
+		{
+			if (dimensionWhitelist != null && dimensionWhitelist.length > 0)
+			{
+				for (int white : dimensionWhitelist)
+					if (dim == white)
+						return true;
+				return false;
+			}
+			else if (dimensionBlacklist != null && dimensionBlacklist.length > 0)
+			{
+				for (int black : dimensionBlacklist)
+					if (dim == black)
+						return false;
+				return true;
+			}
+			return true;
+		}
+		
+		public boolean validBiome(Biome biome)
+		{
+			if (biome == null) return false;
+			String biomeName = getBiomeName(biome);
+			if (biomeWhitelist != null && biomeWhitelist.length > 0)
+			{
+				for (String white : biomeWhitelist)
+					if (white.equals(biomeName))
+						return true;
+				return false;
+			}
+			else if (biomeBlacklist != null && biomeBlacklist.length > 0)
+			{
+				for (String black : biomeBlacklist)
+					if (black.equals(biomeName))
+						return false;
+				return true;
+			}
+			return true;
+		}
+
+		public NBTTagCompound writeToNBT()
+		{
+			NBTTagCompound tag = new NBTTagCompound();
+			tag.setString("name", this.name);
+			
+			tag.setString("fluid", fluid);
+			
+			tag.setInteger("minSize", minSize);
+			tag.setInteger("maxSize", maxSize);
+			tag.setInteger("replenishRate", replenishRate);
+
+			tag.setIntArray("dimensionWhitelist", dimensionWhitelist);
+			tag.setIntArray("dimensionBlacklist", dimensionBlacklist);
+			
+			NBTTagList wl = new NBTTagList();
+			for (String s : biomeWhitelist)
+			{
+				wl.appendTag(new NBTTagString(s));
+			}
+			tag.setTag("biomeWhitelist", wl);
+			
+			NBTTagList bl = new NBTTagList();
+			for (String s : biomeBlacklist)
+			{
+				bl.appendTag(new NBTTagString(s));
+			}
+			tag.setTag("biomeBlacklist", wl);
+			
+			return tag;
+		}
+		
+		public static ReservoirType readFromNBT(NBTTagCompound tag)
+		{
+			String name = tag.getString("name");
+			String fluid = tag.getString("fluid");
+			
+			int minSize = tag.getInteger("minSize");
+			int maxSize = tag.getInteger("maxSize");
+			int replenishRate = tag.getInteger("replenishRate");
+
+			ReservoirType res = new ReservoirType(name, fluid, minSize, maxSize, replenishRate);
+			
+			res.dimensionWhitelist = tag.getIntArray("dimensionWhitelist");
+			res.dimensionBlacklist = tag.getIntArray("dimensionBlacklist");
+			
+			NBTTagList wl = (NBTTagList) tag.getTag("biomeWhitelist");
+			res.biomeWhitelist = new String[wl.tagCount()];
+			for (int i = 0; i < wl.tagCount(); i++)
+			{
+				res.biomeWhitelist[i] = wl.getStringTagAt(i);
+			}
+			
+			NBTTagList bl = (NBTTagList) tag.getTag("biomeBlacklist");
+			res.biomeBlacklist = new String[bl.tagCount()];
+			for (int i = 0; i < bl.tagCount(); i++)
+			{
+				res.biomeBlacklist[i] = bl.getStringTagAt(i);
+			}
+			
+			
+			return res;
 		}
 	}
 }

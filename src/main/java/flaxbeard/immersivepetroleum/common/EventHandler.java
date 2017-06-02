@@ -24,6 +24,9 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -47,6 +50,7 @@ import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.ManualInstance.ManualEntry;
 import blusunrize.lib.manual.gui.GuiManual;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.network.CloseBookPacket;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
@@ -253,7 +257,8 @@ public class EventHandler
 						int[] coords = ItemNBTHelper.getIntArray(drill.sample, "coords");
 						World world = DimensionManager.getWorld(coords[0]);
 						
-						int amnt = PumpjackHandler.getOilAmount(world, coords[1], coords[2]);
+						int amnt = PumpjackHandler.getFluidAmount(world, coords[1], coords[2]);
+						ItemNBTHelper.setString(drill.sample, "resType", PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]).type.name);
 						ItemNBTHelper.setInt(drill.sample, "oil", amnt);
 					}
 				}
@@ -271,17 +276,44 @@ public class EventHandler
 		{
 			if(ItemNBTHelper.hasKey(stack, "oil"))
 			{
+				String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
+				if (ItemNBTHelper.hasKey(stack, "oil") && resName == null)
+				{
+					resName = "oil";
+				}
+				
+				ReservoirType res = null;
+				for (ReservoirType type : PumpjackHandler.reservoirList.keySet())
+				{
+					if (resName.equals(type.name))
+					{
+						res = type;
+					}
+				}
+				
 				int amnt = ItemNBTHelper.getInt(stack, "oil");
 				List<String> tooltip = event.getToolTip();
 				if (amnt > 0)
 				{
 					int est = (amnt / 1000) * 1000;
 					String test = new DecimalFormat("#,###.##").format(est);
-					tooltip.add(2, I18n.format("chat.immersivepetroleum.info.coresample.oil", test));
+					Fluid f = FluidRegistry.getFluid(res.fluid);
+					String fluidName = f.getLocalizedName(new FluidStack(f, 1));
+					
+					tooltip.add(2, I18n.format("chat.immersivepetroleum.info.coresample.oil", test, fluidName));
 				}
 				else
 				{
-					tooltip.add(2, I18n.format("chat.immersivepetroleum.info.coresample.noOil"));
+					if (res != null && res.replenishRate > 0)
+					{
+						Fluid f = FluidRegistry.getFluid(res.fluid);
+						String fluidName = f.getLocalizedName(new FluidStack(f, 1));
+						tooltip.add(2, I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName));
+					}
+					else
+					{
+						tooltip.add(2, I18n.format("chat.immersivepetroleum.info.coresample.noOil"));
+					}
 				}
 			}
 		}

@@ -93,6 +93,7 @@ public class ImmersivePetroleum
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		proxy.postInit();
+		PumpjackHandler.recalculateChances(true);
 	}
 	
 	

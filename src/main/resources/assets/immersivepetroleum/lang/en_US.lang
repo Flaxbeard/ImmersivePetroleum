@@ -8,8 +8,9 @@ tile.immersivepetroleum.metal_multiblock.distillation_tower.name=Distillation To
 tile.immersivepetroleum.metal_multiblock.pumpjack_parent.name=Pumpjack
 tile.immersivepetroleum.metal_multiblock.distillation_tower_parent.name=Distillation Tower
 
-chat.immersivepetroleum.info.coresample.oil=%s mB Oil
-chat.immersivepetroleum.info.coresample.noOil=No Oil
+chat.immersivepetroleum.info.coresample.oil=%s mB %s
+chat.immersivepetroleum.info.coresample.noOil=No Fluid Reservoir
+chat.immersivepetroleum.info.coresample.oilRep=Up to %d mB/tick of trace %s
 chat.immersivepetroleum.info.schematic.noMultiblock=Craft with Engineer's Manual
 chat.immersivepetroleum.info.schematic.build0=Displays instructions
 chat.immersivepetroleum.info.schematic.build1=for making a %s

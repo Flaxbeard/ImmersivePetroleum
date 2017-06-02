@@ -22,6 +22,8 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecor
 import blusunrize.immersiveengineering.common.util.IEPotions;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
+import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPMetalMultiblocks;
@@ -109,6 +111,8 @@ public class IPContent
 
 		
 		GameRegistry.addRecipe(new SchematicCraftingHandler());
+		
+		Config.addConfigReservoirs(IPConfig.reservoirs.reservoirs);
 
 	}
 	

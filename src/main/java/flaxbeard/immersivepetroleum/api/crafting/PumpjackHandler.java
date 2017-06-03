@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.Map.Entry;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -17,6 +18,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
+import flaxbeard.immersivepetroleum.common.network.MessageReservoirListSync;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 
 
@@ -28,10 +31,6 @@ public class PumpjackHandler
 	public static HashMap<DimensionChunkCoords, Long> timeCache = new HashMap<DimensionChunkCoords, Long>();
 	public static HashMap<DimensionChunkCoords, OilWorldInfo> oilCache = new HashMap<DimensionChunkCoords, OilWorldInfo>();
 	public static double oilChance = 100;
-	public static int replenishAmount = 10;
-	public static int minDeposit = 1000;
-	public static int maxDeposit = 5000;
-	public static int[] dimensionBlacklist = new int[0];
 	
 	private static int depositSize = 1;
 
@@ -40,7 +39,7 @@ public class PumpjackHandler
 		if(world.isRemote)
 			return 0;
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
-		if (info == null || (info.capacity == 0) || info.type == null || info.type.fluid == null || (info.current == 0 && replenishAmount == 0))
+		if (info == null || (info.capacity == 0) || info.type == null || info.type.fluid == null || (info.current == 0 && info.type.replenishRate == 0))
 			return 0;
 
 		return info.current;
@@ -51,7 +50,7 @@ public class PumpjackHandler
 		if(world.isRemote)
 			return null;
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
-		if (info == null || (info.capacity == 0) || info.type == null || info.type.fluid == null || (info.current == 0 && replenishAmount == 0))
+		if (info == null || (info.capacity == 0) || info.type == null || info.type.fluid == null || (info.current == 0 && info.type.replenishRate == 0))
 			return null;
 
 		return FluidRegistry.getFluid(info.type.fluid);
@@ -61,7 +60,7 @@ public class PumpjackHandler
 	{
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
 		
-		if (info == null || info.type == null || info.type.fluid == null || (info.capacity == 0) || (info.current == 0 && replenishAmount == 0))
+		if (info == null || info.type == null || info.type.fluid == null || (info.capacity == 0) || (info.current == 0 && info.type.replenishRate == 0))
 			return 0;
 		
 		DimensionChunkCoords coords = new DimensionChunkCoords(world.provider.getDimension(), chunkX / depositSize, chunkZ / depositSize);
@@ -87,13 +86,13 @@ public class PumpjackHandler
 		DimensionChunkCoords coords = new DimensionChunkCoords(dim, chunkX / depositSize, chunkZ / depositSize);
 
 		OilWorldInfo worldInfo = oilCache.get(coords);
-		if(worldInfo == null)
+		if (worldInfo == null)
 		{
 			ReservoirType res = null;
 
 			Random r = world.getChunkFromChunkCoords(chunkX / depositSize, chunkZ / depositSize).getRandomWithSeed(90210); // Antidote
 			double dd = r.nextDouble();
-			boolean empty = dd > 1;//oilChance;
+			boolean empty = dd > oilChance;
 			double size = r.nextDouble();
 			int query = r.nextInt();
 
@@ -101,7 +100,6 @@ public class PumpjackHandler
 			{
 				Biome biome = world.getBiomeForCoordsBody(new BlockPos(chunkX << 4, 64, chunkZ << 4));
 				int weight = Math.abs(query % getTotalWeight(dim, biome));
-				System.out.println(weight + " " + getTotalWeight(dim, biome));
 				for (Map.Entry<ReservoirType, Integer> e : reservoirList.entrySet())
 					if (e.getKey().validDimension(dim) && e.getKey().validBiome(biome))
 					{
@@ -120,7 +118,6 @@ public class PumpjackHandler
 			{
 				capacity = (int) (size * (res.maxSize - res.minSize)) + res.minSize;
 			}
-			System.out.println(capacity);
 
 			worldInfo = new OilWorldInfo();
 			worldInfo.capacity = capacity;
@@ -170,6 +167,18 @@ public class PumpjackHandler
 					if (s.equalsIgnoreCase(res.name))
 						info.type = res;
 			}
+			else if (info.current > 0)
+			{
+				for (ReservoirType res : reservoirList.keySet())
+					if (res.name.equalsIgnoreCase("oil"))
+						info.type = res;
+			
+				if (info.type == null)
+				{
+					return null;
+				}
+			}
+							
 			return info;
 		}
 	}
@@ -211,17 +220,40 @@ public class PumpjackHandler
 		totalWeightMap.clear();
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !mutePackets)
 		{
-			HashMap<ReservoirType,Integer> packetMap = new HashMap<ReservoirType,Integer>();
-			for (Map.Entry<ReservoirType, Integer> e : PumpjackHandler.reservoirList.entrySet())
+			HashMap<ReservoirType, Integer> packetMap = new HashMap<ReservoirType,Integer>();
+			for (Entry<ReservoirType,Integer> e: PumpjackHandler.reservoirList.entrySet())
 				if (e.getKey() != null && e.getValue() != null)
 					packetMap.put(e.getKey(), e.getValue());
-			//ImmersiveEngineering.packetHandler.sendToAll(new MessageMineralListSync(packetMap));
+			IPPacketHandler.INSTANCE.sendToAll(new MessageReservoirListSync(packetMap));
 		}
 	}
 	
 	public static String getBiomeName(Biome biome)
 	{
 		return biome.getBiomeName().replace(" ", "").replace("_", "").toLowerCase();
+	}
+	
+	public static String convertConfigName(String str)
+	{
+		return str.replace(" ", "").replace("_", "").toLowerCase();
+	}
+	
+	public static String getBiomeDisplayName(String str)
+	{
+		String ret = "";
+		for (int i = 0; i < str.length(); i++)
+		{
+			char c = str.charAt(i);
+			if (Character.isUpperCase(c) && i != 0 && str.charAt(i - 1) != ' ')
+			{
+				ret = ret + " " + c;
+			}
+			else
+			{
+				ret = ret + c;
+			}
+		}
+		return ret;
 	}
 	
 	public static class ReservoirType
@@ -246,7 +278,6 @@ public class PumpjackHandler
 			this.minSize = minSize;
 			this.maxSize = maxSize;
 			this.replenishRate = replenishRate;
-			this.dimensionBlacklist = IPConfig.machines.oil_dimBlacklist.clone();
 		}
 		
 		public boolean validDimension(int dim)
@@ -275,14 +306,14 @@ public class PumpjackHandler
 			if (biomeWhitelist != null && biomeWhitelist.length > 0)
 			{
 				for (String white : biomeWhitelist)
-					if (white.equals(biomeName))
+					if (convertConfigName(white).equals(biomeName))
 						return true;
 				return false;
 			}
 			else if (biomeBlacklist != null && biomeBlacklist.length > 0)
 			{
 				for (String black : biomeBlacklist)
-					if (black.equals(biomeName))
+					if (convertConfigName(black).equals(biomeName))
 						return false;
 				return true;
 			}

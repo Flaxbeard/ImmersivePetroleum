@@ -3,11 +3,14 @@ package flaxbeard.immersivepetroleum.common.blocks.metal;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -31,7 +34,6 @@ import com.google.common.collect.Lists;
 
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
-import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 
 public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPumpjack, IMultiblockRecipe> implements IAdvancedSelectionBounds,IAdvancedCollisionBounds, IGuiTile
@@ -69,6 +71,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 
 	public boolean wasActive = false;
 	public int activeTicks = 0;
+	public IBlockState state = null;
 	
 	public boolean canExtract()
 	{
@@ -105,13 +108,34 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		{
 			this.activeTicks++;
 		}
+		state = null;
+		if (nbt.hasKey("comp"))
+		{
+			ItemStack stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("comp"));
+			
+			if (stack != null)
+			{
+				Block block = Block.getBlockFromItem(stack.getItem());
+				state = block.getDefaultState();
+			}
+		}
 	}
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket)
 	{
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.setBoolean("wasActive", wasActive);
-
+		
+		if (availableFluid() != null)
+		{
+			if (availableFluid().getBlock() != null)
+			{
+				ItemStack stack = new ItemStack(availableFluid().getBlock());
+				NBTTagCompound comp = new NBTTagCompound();
+				stack.writeToNBT(comp);
+				nbt.setTag("comp", comp);
+			}
+		}
 	}
 
 	@Override
@@ -121,18 +145,26 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		super.update();
 		if(worldObj.isRemote || isDummy())
 		{
+			if (worldObj.isRemote && !isDummy() && state != null && wasActive)
+			{
+				BlockPos particlePos = this.getPos().offset(facing, 4);
+				float r1 = (worldObj.rand.nextFloat() - .5F) * 2F;
+				float r2 = (worldObj.rand.nextFloat() - .5F) * 2F;
+
+				worldObj.spawnParticle(EnumParticleTypes.BLOCK_DUST, particlePos.getX() + 0.5F, particlePos.getY(), particlePos.getZ() + 0.5F, r1 * 0.04F, 0.25F, r2 * 0.025F, new int[] {Block.getStateId(state)});
+			}
 			if (wasActive)
 			{
 				activeTicks++;
 			}
 			return;
 		}
-		
+
 		boolean active = false;
 		
 		int consumed = IPConfig.Machines.pumpjack_consumption;
 		int extracted = energyStorage.extractEnergy(consumed, true);
-		
+				
 		if(extracted >= consumed && canExtract() && !this.isRSDisabled())
 		{
 			int residual = getResidualOil();

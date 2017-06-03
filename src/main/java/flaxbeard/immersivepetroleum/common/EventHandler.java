@@ -1,7 +1,10 @@
 package flaxbeard.immersivepetroleum.common;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -29,6 +32,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -36,24 +40,31 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
 import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
+import blusunrize.immersiveengineering.api.tool.ExcavatorHandler;
+import blusunrize.immersiveengineering.api.tool.ExcavatorHandler.MineralMix;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntitySampleDrill;
 import blusunrize.immersiveengineering.common.items.ItemCoresample;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import blusunrize.immersiveengineering.common.util.network.MessageMineralListSync;
 import blusunrize.lib.manual.IManualPage;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.ManualInstance.ManualEntry;
 import blusunrize.lib.manual.gui.GuiManual;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.network.CloseBookPacket;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
+import flaxbeard.immersivepetroleum.common.network.MessageReservoirListSync;
 
 public class EventHandler
 {
@@ -257,9 +268,16 @@ public class EventHandler
 						int[] coords = ItemNBTHelper.getIntArray(drill.sample, "coords");
 						World world = DimensionManager.getWorld(coords[0]);
 						
-						int amnt = PumpjackHandler.getFluidAmount(world, coords[1], coords[2]);
-						ItemNBTHelper.setString(drill.sample, "resType", PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]).type.name);
-						ItemNBTHelper.setInt(drill.sample, "oil", amnt);
+						OilWorldInfo info = PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]);
+						if (info.type != null)
+						{
+							ItemNBTHelper.setString(drill.sample, "resType", PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]).type.name);
+							ItemNBTHelper.setInt(drill.sample, "oil", info.current);
+						}
+						else
+						{
+							ItemNBTHelper.setInt(drill.sample, "oil", 0);
+						}
 					}
 				}
 			}
@@ -316,6 +334,20 @@ public class EventHandler
 					}
 				}
 			}
+		}
+	}
+	
+	@SubscribeEvent(priority = EventPriority.HIGH)
+	public void onLogin(PlayerLoggedInEvent event)
+	{
+		ExcavatorHandler.allowPackets = true;
+		if (!event.player.worldObj.isRemote)
+		{
+			HashMap<ReservoirType, Integer> packetMap = new HashMap<ReservoirType,Integer>();
+			for (Entry<ReservoirType,Integer> e: PumpjackHandler.reservoirList.entrySet())
+				if (e.getKey() != null && e.getValue() != null)
+					packetMap.put(e.getKey(), e.getValue());
+			IPPacketHandler.INSTANCE.sendToAll(new MessageReservoirListSync(packetMap));
 		}
 	}
 

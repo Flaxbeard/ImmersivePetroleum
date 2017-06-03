@@ -45,7 +45,7 @@ public class CloseBookPacket implements IMessage
 		}
 	}
 	
-	public static class CloseBookPacketHandler implements IMessageHandler<CloseBookPacket, IMessage>
+	public static class Handler implements IMessageHandler<CloseBookPacket, IMessage>
 	{
 
 		@Override

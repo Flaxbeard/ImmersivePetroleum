@@ -26,9 +26,13 @@ public class Config
 		{
 			@Comment({"List of reservoir types. Format: name, fluid_name, min_mb_fluid, max_mb_fluid, mb_per_tick_replenish, weight, [dim_blacklist], [dim_whitelist], [biome_blacklist], [biome_whitelist]"})
 			public static String[] reservoirs = new String[] {
-					"aquifer, water, 1000000, 5000000, 3, 10, [], [0], [], []",
-					"oil, oil, 1000000, 5000000, 3, 10, [1], [], [], []"
+					"aquifer, water, 5000000, 10000000, 3, 30, [], [0], [], []",
+					"oil, oil, 1000000, 5000000, 3, 40, [1], [], [], []",
+					"lava, lava, 250000, 1000000, 0, 30, [1], [], [], []"
 			};
+			
+			@Comment({"The chance that a chunk contains a fluid reservoir, default=0.25"})
+			public static float reservoir_chance = 0.5F;
 		}
 
 		public static Machines machines = new Machines();
@@ -48,18 +52,19 @@ public class Config
 			public static int pumpjack_consumption = 1024;
 			@Comment({"The amount of mB of oil a Pumpjack extracts per tick, default=5"})
 			public static int pumpjack_speed = 5;
-
-			@Comment({"The minimum amount of oil that a deposit can contain in mB, default=1000000"})
-			public static int oil_min = 1000000;
-			@Comment({"The maximum amount of oil that a deposit can contain in mB, default=5000000"})
-			public static int oil_max = 5000000;
-			@Comment({"The chance that a chunk contains oil, default=0.25"})
-			public static float oil_chance = 0.25F;
-			@Comment({"The maximum oil production, in mB/tick, offered by a depleted oil reservoir, default=3"})
-			public static int oil_replenish = 3;
-			@Comment({"List of dimensions that can't contain oil, default=1 (the end)"})
-			public static int[] oil_dimBlacklist = new int[]{1};
-
+			
+			@Comment({"Disable formation and manual page for Distillation Tower"})
+			public static boolean disable_tower = false;
+			@Comment({"Disable formation and manual page for Pumpjack"})
+			public static boolean disable_pumpjack = false;
+		}
+		
+		public static Tools tools = new Tools();
+		
+		public static class Tools
+		{
+			@Comment({"Disable crafting recipe and manual page for Projectors"})
+			public static boolean disable_projector = false;
 		}
 	}
 
@@ -168,7 +173,7 @@ public class Config
 					int bI = current.indexOf("]");
 					
 					String value = current;
-					if (cI == -1 || bI < cI)
+					if (bI >= 0 && (cI == -1 || bI < cI))
 					{
 						value = value.substring(0, bI);
 						inParens = false;
@@ -182,7 +187,7 @@ public class Config
 						}
 						catch (NumberFormatException e)
 						{
-							throw new RuntimeException("Invalid blacklist dimension for reservoir " + (i + 1));
+							throw new RuntimeException(value + "Invalid blacklist dimension for reservoir " + (i + 1));
 						}
 					}
 				}
@@ -198,7 +203,7 @@ public class Config
 					int bI = current.indexOf("]");
 					
 					String value = current;
-					if (cI == -1 || bI < cI)
+					if (bI >= 0 && (cI == -1 || bI < cI))
 					{
 						value = value.substring(0, bI);
 						inParens = false;
@@ -228,14 +233,14 @@ public class Config
 					int bI = current.indexOf("]");
 					
 					String value = current;
-					if (cI == -1 || bI < cI)
+					if (bI >= 0 && (cI == -1 || bI < cI))
 					{
 						value = value.substring(0, bI);
 						inParens = false;
 					}
 					if (value.length() > 0)
 					{
-						biomeBlacklist.add(value);
+						biomeBlacklist.add(PumpjackHandler.convertConfigName(value.trim()));
 					}
 				}
 				
@@ -263,7 +268,7 @@ public class Config
 			}
 			if (value.length() > 0)
 			{
-				biomeWhitelist.add(value);
+				biomeWhitelist.add(PumpjackHandler.convertConfigName(value.trim()));
 			}
 			
 			ReservoirType res = PumpjackHandler.addReservoir(name, fluid, min, max, replenish, weight);

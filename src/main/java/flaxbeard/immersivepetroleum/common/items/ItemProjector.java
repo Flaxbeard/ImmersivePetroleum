@@ -63,6 +63,7 @@ import flaxbeard.immersivepetroleum.api.event.SchematicRenderBlockEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicTestEvent;
 import flaxbeard.immersivepetroleum.client.ShaderUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_Dummy;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.RotateSchematicPacket;
@@ -156,18 +157,21 @@ public class ItemProjector extends ItemIPBase
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item item, CreativeTabs tab, List list)
 	{
-		List<IMultiblock> multiblocks = MultiblockHandler.getMultiblocks();
-		for (IMultiblock multiblock : multiblocks)
+		if (!IPConfig.Tools.disable_projector)
 		{
-			String str = multiblock.getUniqueName();
-			if (str.equals("IE:BucketWheel") || str.equals("IE:Excavator")) continue;
+			List<IMultiblock> multiblocks = MultiblockHandler.getMultiblocks();
+			for (IMultiblock multiblock : multiblocks)
+			{
+				String str = multiblock.getUniqueName();
+				if (str.equals("IE:BucketWheel") || str.equals("IE:Excavator")) continue;
+				ItemStack stack = new ItemStack(item, 1, 0);
+				ItemNBTHelper.setString(stack, "multiblock", multiblock.getUniqueName());
+				list.add(stack);
+			}
 			ItemStack stack = new ItemStack(item, 1, 0);
-			ItemNBTHelper.setString(stack, "multiblock", multiblock.getUniqueName());
+			ItemNBTHelper.setString(stack, "multiblock", MultiblockExcavatorDemo.instance.getUniqueName());
 			list.add(stack);
 		}
-		ItemStack stack = new ItemStack(item, 1, 0);
-		ItemNBTHelper.setString(stack, "multiblock", MultiblockExcavatorDemo.instance.getUniqueName());
-		list.add(stack);
 	}
 	
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
@@ -297,9 +301,9 @@ public class ItemProjector extends ItemIPBase
 	{
 		if (ItemNBTHelper.hasKey(stack, "flip"))
 		{
-			return ItemNBTHelper.getBoolean(stack, "flip");
+			return !ItemNBTHelper.getBoolean(stack, "flip");
 		}
-		return false;
+		return true;
 	}
 	
 	public static void rotateClient(ItemStack stack)
@@ -551,7 +555,7 @@ public class ItemProjector extends ItemIPBase
 				Tessellator tessellator = Tessellator.getInstance();
 				VertexBuffer buffer = tessellator.getBuffer();
 				
-				float flicker = (world.rand.nextInt(10) == 0) ? 0.5F : (world.rand.nextInt(20) == 0 ? 0F : 1F);
+				float flicker = (world.rand.nextInt(10) == 0) ? 0.75F : (world.rand.nextInt(20) == 0 ? 0.5F : 1F);
 				
 				boolean perfect = true;
 				
@@ -910,7 +914,7 @@ public class ItemProjector extends ItemIPBase
 				if (te instanceof TileEntityConveyorBelt)
 				{
 					IConveyorBelt subtype = ((TileEntityConveyorBelt) te).getConveyorSubtype();
-					if (subtype.getConveyorDirection() != ConveyorDirection.HORIZONTAL)
+					if (subtype != null && subtype.getConveyorDirection() != ConveyorDirection.HORIZONTAL)
 					{
 						event.setIsEqual(false);
 						return;

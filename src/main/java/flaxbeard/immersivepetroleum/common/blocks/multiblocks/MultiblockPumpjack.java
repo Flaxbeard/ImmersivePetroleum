@@ -25,6 +25,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecor
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.blocks.wooden.BlockTypes_WoodenDecoration;
 import blusunrize.immersiveengineering.common.util.Utils;
+import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_IPMetalMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
@@ -171,6 +172,8 @@ public class MultiblockPumpjack implements IMultiblock
 	@Override
 	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player)
 	{
+		if (IPConfig.Machines.disable_pumpjack)
+			return false;
 		side = side.getOpposite();
 		if(side==EnumFacing.UP||side==EnumFacing.DOWN)
 			side = EnumFacing.fromAngle(player.rotationYaw);
@@ -182,7 +185,6 @@ public class MultiblockPumpjack implements IMultiblock
 			mirror = true;
 			b = structureCheck(world, pos.offset(side.getOpposite()), side, mirror);
 		}
-		System.out.println(b);
 		if(!b)
 			return false;
 		if (b)

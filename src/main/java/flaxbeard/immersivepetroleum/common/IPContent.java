@@ -19,14 +19,17 @@ import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.IERecipes;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration1;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration2;
 import blusunrize.immersiveengineering.common.util.IEPotions;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPMetalMultiblocks;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPScaffoldSlab;
 import flaxbeard.immersivepetroleum.common.blocks.ItemBlockIPBase;
+import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_Dummy;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_MetalDecorationSlab;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityCoker;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
@@ -37,6 +40,7 @@ import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack
 import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecoration;
 import flaxbeard.immersivepetroleum.common.blocks.wood.BlockTypes_WoodDecorationSlab;
 import flaxbeard.immersivepetroleum.common.items.ItemIPBase;
+import flaxbeard.immersivepetroleum.common.items.ItemProjector;
 
 public class IPContent
 {
@@ -52,9 +56,13 @@ public class IPContent
 	public static BlockIPBase blockMetalDecorationSlabs;
 	public static BlockIPBase blockWoodenDecorationSlabs;
 
+	public static BlockIPBase blockDummy;
+
+	
 	public static ArrayList<Item> registeredIPItems = new ArrayList<Item>();
 
 	public static Item itemMaterial;
+	public static Item itemProjector;
 
 	public static Fluid fluidCrudeOil;
 	public static Fluid fluidDiesel;
@@ -76,11 +84,15 @@ public class IPContent
 		blockMetalMultiblock = new BlockIPMetalMultiblocks();
 
 		blockStoneDecoration = (BlockIPBase)new BlockIPBase("stone_decoration", Material.ROCK, PropertyEnum.create("type", BlockTypes_IPStoneDecoration.class), ItemBlockIPBase.class).setHardness(2.0F).setResistance(10.0F);
+		blockDummy = (BlockIPBase)new BlockIPBase("dummy", Material.ROCK, PropertyEnum.create("type", BlockTypes_Dummy.class), ItemBlockIPBase.class);
 
 		blockWoodenDecorationSlabs = (BlockIPBase) new BlockIPScaffoldSlab("wood_decoration_slabs", Material.WOOD, PropertyEnum.create("type", BlockTypes_WoodDecorationSlab.class)).setHardness(2.0F).setResistance(5.0F);
 		blockMetalDecorationSlabs = (BlockIPBase) new BlockIPScaffoldSlab("metal_decoration_slabs", Material.IRON, PropertyEnum.create("type", BlockTypes_MetalDecorationSlab.class)).setHardness(3.0F).setResistance(15.0F);
 
-		itemMaterial = new ItemIPBase("material", 64, "bitumen");
+		itemMaterial = new ItemIPBase("material", 64,
+				"bitumen");
+		
+		itemProjector = new ItemProjector("schematic");
 
 	}
 	
@@ -107,6 +119,19 @@ public class IPContent
 	
 		IERecipes.addTwoWaySlabRecipe(new ItemStack(blockWoodenDecorationSlabs, 1, 0), new ItemStack(IEContent.blockWoodenDecoration, 1, 1));
 		IERecipes.addTwoWaySlabRecipe(new ItemStack(blockWoodenDecorationSlabs, 1, 0), new ItemStack(IEContent.blockWoodenDecoration, 1, 1));
+
+		if (!IPConfig.Tools.disable_projector)
+		{
+			IERecipes.addIngredientRecipe(new ItemStack(itemProjector, 1, 0), "S  ", "IL ", " IW", 
+					'W', "plankTreatedWood", 
+					'L', new ItemStack(IEContent.blockMetalDecoration2, 1, BlockTypes_MetalDecoration2.LANTERN.getMeta()), 
+					'S', new ItemStack(IEContent.itemToolUpgrades, 1, 8),
+					'I', "ingotIron");
+
+			GameRegistry.addRecipe(new SchematicCraftingHandler());
+		}
+		
+		Config.addConfigReservoirs(IPConfig.reservoirs.reservoirs);
 
 		IERecipes.addTwoWaySlabRecipe(new ItemStack(blockMetalDecorationSlabs, 1, BlockTypes_MetalDecorationSlab.STEEL_SCAFFOLDING_0.getMeta()), new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta()));
 		IERecipes.addTwoWaySlabRecipe(new ItemStack(blockMetalDecorationSlabs, 1, BlockTypes_MetalDecorationSlab.STEEL_SCAFFOLDING_1.getMeta()), new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_1.getMeta()));

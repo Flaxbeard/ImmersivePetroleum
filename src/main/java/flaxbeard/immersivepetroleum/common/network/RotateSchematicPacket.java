@@ -39,7 +39,7 @@ public class RotateSchematicPacket implements IMessage
 		flip = buf.readBoolean();
 	}
 	
-	public static class RotateSchematicPacketHandler implements IMessageHandler<RotateSchematicPacket, IMessage>
+	public static class Handler implements IMessageHandler<RotateSchematicPacket, IMessage>
 	{
 
 		@Override

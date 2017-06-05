@@ -30,6 +30,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import blusunrize.immersiveengineering.common.Config;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.EventHandler;
@@ -70,17 +71,24 @@ public class ImmersivePetroleum
 		DistillationRecipe.energyModifier = IPConfig.Machines.distillationTower_energyModifier;
 		DistillationRecipe.timeModifier = IPConfig.Machines.distillationTower_timeModifier;
 		
-		PumpjackHandler.dimensionBlacklist = IPConfig.Machines.oil_dimBlacklist;
-		PumpjackHandler.minDeposit = IPConfig.Machines.oil_min;
-		PumpjackHandler.maxDeposit = IPConfig.Machines.oil_max;
-		PumpjackHandler.oilChance = IPConfig.Machines.oil_chance;
-		PumpjackHandler.replenishAmount = IPConfig.Machines.oil_replenish;
+		PumpjackHandler.oilChance = IPConfig.Reservoirs.reservoir_chance;
 		
 		Config.manual_int.put("distillationTower_operationCost", (int) (2048 * IPConfig.Machines.distillationTower_energyModifier));
 		Config.manual_int.put("pumpjack_consumption", IPConfig.Machines.pumpjack_consumption);
 		Config.manual_int.put("pumpjack_speed", IPConfig.Machines.pumpjack_speed);
-		Config.manual_int.put("pumpjack_days", (((IPConfig.Machines.oil_max + IPConfig.Machines.oil_min) / 2) + IPConfig.Machines.oil_min) / (IPConfig.Machines.pumpjack_speed * 24000));
-		Config.manual_int.put("oil_replenish", IPConfig.Machines.oil_replenish);
+		
+		int oil_min = 1000000;
+		int oil_max = 5000000;
+		for (ReservoirType type : PumpjackHandler.reservoirList.keySet())
+		{
+			if (type.name.equals("oil"))
+			{
+				oil_min = type.minSize;
+				oil_max = type.maxSize;
+				break;
+			}
+		}
+		Config.manual_int.put("pumpjack_days", (((oil_max + oil_min) / 2) + oil_min) / (IPConfig.Machines.pumpjack_speed * 24000));
 
 		IPContent.init();
 		NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, proxy);
@@ -93,6 +101,7 @@ public class ImmersivePetroleum
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		proxy.postInit();
+		PumpjackHandler.recalculateChances(true);
 	}
 	
 	

@@ -31,7 +31,7 @@ public class Config
 					"lava, lava, 250000, 1000000, 0, 30, [1], [], [], []"
 			};
 			
-			@Comment({"The chance that a chunk contains a fluid reservoir, default=0.25"})
+			@Comment({"The chance that a chunk contains a fluid reservoir, default=0.5"})
 			public static float reservoir_chance = 0.5F;
 		}
 

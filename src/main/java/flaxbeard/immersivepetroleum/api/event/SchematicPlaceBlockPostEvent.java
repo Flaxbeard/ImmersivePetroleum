@@ -1,6 +1,6 @@
 package flaxbeard.immersivepetroleum.api.event;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -9,9 +9,9 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
 
 @Cancelable
-public class SchematicRenderBlockEvent extends Event
+public class SchematicPlaceBlockPostEvent extends Event
 {
-	private ItemStack stack;
+	private IBlockState state;
 	private World world;
 	private int index;
 	private IMultiblock multiblock;
@@ -19,11 +19,12 @@ public class SchematicRenderBlockEvent extends Event
 	private int l;
 	private int h;
 	private int w; 
+	private BlockPos pos;
 	
-	public SchematicRenderBlockEvent(IMultiblock multiblock, int index, ItemStack stack, World world, int rotate, int l, int h, int w)
+	public SchematicPlaceBlockPostEvent(IMultiblock multiblock, int index, IBlockState state, BlockPos pos, World world, int rotate, int l, int h, int w)
 	{
 		super();
-		this.stack = stack;
+		this.state = state;
 		this.world = world;
 		this.multiblock = multiblock;
 		this.index = index;
@@ -31,6 +32,7 @@ public class SchematicRenderBlockEvent extends Event
 		this.l = l;
 		this.h = h;
 		this.w = w;
+		this.pos = pos;
 	}
 	
 	public World getWorld()
@@ -38,9 +40,9 @@ public class SchematicRenderBlockEvent extends Event
 		return world;
 	}
 	
-	public ItemStack getItemStack()
+	public IBlockState getBlockState()
 	{
-		return stack;
+		return state;
 	}
 	
 	public int getIndex()
@@ -53,9 +55,14 @@ public class SchematicRenderBlockEvent extends Event
 		return multiblock;
 	}
 	
-	public void setItemStack(ItemStack itemStack)
+	public void setBlockState(IBlockState state)
 	{
-		this.stack = itemStack;
+		this.state = state;
+	}
+	
+	public BlockPos getPos()
+	{
+		return pos;
 	}
 	
 	public EnumFacing getRotate()

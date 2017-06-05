@@ -75,11 +75,11 @@ public class SchematicTestEvent extends Event
 		switch (rotate)
 		{
 			case 0:
-				return EnumFacing.WEST;
+				return EnumFacing.EAST;
 			case 1:
 				return EnumFacing.NORTH;
 			case 2:
-				return EnumFacing.EAST;
+				return EnumFacing.WEST;
 			default:
 				return EnumFacing.SOUTH;
 		}

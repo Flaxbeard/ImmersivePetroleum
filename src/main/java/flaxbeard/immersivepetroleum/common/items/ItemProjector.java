@@ -26,6 +26,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
@@ -43,9 +44,11 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.api.MultiblockHandler.MultiblockFormEvent;
+import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler.ConveyorDirection;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler.IConveyorBelt;
 import blusunrize.immersiveengineering.client.ClientUtils;
@@ -53,17 +56,20 @@ import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice0;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityConveyorBelt;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPump;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.MultiblockExcavatorDemo;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 
+import flaxbeard.immersivepetroleum.api.event.SchematicPlaceBlockEvent;
+import flaxbeard.immersivepetroleum.api.event.SchematicPlaceBlockPostEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicRenderBlockEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicTestEvent;
 import flaxbeard.immersivepetroleum.client.ShaderUtil;
-import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_Dummy;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.RotateSchematicPacket;
@@ -270,7 +276,15 @@ public class ItemProjector extends ItemIPBase
 							
 								ItemStack toPlace = mb.getStructureManual()[h][l][w];
 								IBlockState stt = mb.getBlockstateFromStack(idx, toPlace);
-								world.setBlockState(actualPos, stt);
+								SchematicPlaceBlockEvent placeEvent = new SchematicPlaceBlockEvent(mb, idx, stt, world, rotate, l, h, w);
+								if (!MinecraftForge.EVENT_BUS.post(placeEvent))
+								{
+									world.setBlockState(actualPos, placeEvent.getBlockState());
+									
+									SchematicPlaceBlockPostEvent postEvent = new SchematicPlaceBlockPostEvent(mb, idx, stt, actualPos, world, rotate, l, h, w);
+									MinecraftForge.EVENT_BUS.post(postEvent);
+								}
+								
 							}
 						}
 					}
@@ -301,9 +315,9 @@ public class ItemProjector extends ItemIPBase
 	{
 		if (ItemNBTHelper.hasKey(stack, "flip"))
 		{
-			return !ItemNBTHelper.getBoolean(stack, "flip");
+			return ItemNBTHelper.getBoolean(stack, "flip");
 		}
-		return true;
+		return false;
 	}
 	
 	public static void rotateClient(ItemStack stack)
@@ -374,6 +388,7 @@ public class ItemProjector extends ItemIPBase
 						code += 100;
 						if (Mouse.isButtonDown(code))
 						{
+							
 							if (!lastDown)
 							{
 								if (mc.thePlayer.isSneaking())
@@ -899,6 +914,70 @@ public class ItemProjector extends ItemIPBase
 	}
 	
 	@SubscribeEvent
+	public void handlePumpPlace(SchematicPlaceBlockPostEvent event)
+	{
+		IMultiblock mb = event.getMultiblock();
+
+		IBlockState state = event.getBlockState();
+		if (event.getH() < mb.getStructureManual().length - 1)
+		{
+			ItemStack stack = mb.getStructureManual()[event.getH() + 1][event.getL()][event.getW()];
+			if (stack != null)
+			{
+				if (state.getBlock() == IEContent.blockMetalDevice0 && state.getBlock().getMetaFromState(state) == BlockTypes_MetalDevice0.FLUID_PUMP.getMeta() &&
+						!(stack.getItemDamage() != BlockTypes_MetalDevice0.FLUID_PUMP.getMeta() || stack.getItem() != Item.getItemFromBlock(IEContent.blockMetalDevice0)))
+				{
+					TileEntityFluidPump pump = (TileEntityFluidPump) event.getWorld().getTileEntity(event.getPos());
+					pump.placeDummies(event.getPos(), state, EnumFacing.UP, 0, 0, 0);
+					event.getWorld().setBlockState(event.getPos(), event.getBlockState());
+				}
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void handleConveyorPlace(SchematicPlaceBlockPostEvent event)
+	{
+		IMultiblock mb = event.getMultiblock();
+
+		IBlockState state = event.getBlockState();
+
+		if (mb.getUniqueName().equals("IE:AutoWorkbench") || mb.getUniqueName().equals("IE:BottlingMachine") || mb.getUniqueName().equals("IE:Assembler")
+				|| mb.getUniqueName().equals("IE:BottlingMachine") || mb.getUniqueName().equals("IE:MetalPress"))
+		{
+			if (state.getBlock() == IEContent.blockConveyor)
+			{
+				TileEntity te = event.getWorld().getTileEntity(event.getPos());
+				if (te instanceof TileEntityConveyorBelt)
+				{
+					TileEntityConveyorBelt conveyor = ((TileEntityConveyorBelt) te);
+					ResourceLocation rl = new ResourceLocation(ImmersiveEngineering.MODID, "conveyor");
+					IConveyorBelt subType = ConveyorHandler.getConveyor(rl, conveyor);
+					conveyor.setConveyorSubtype(subType);		
+					
+					EnumFacing facing = ((TileEntityConveyorBelt) te).facing;
+					
+					if ((mb.getUniqueName().equals("IE:AutoWorkbench") && (event.getW() != 1 || event.getL() != 2))
+							|| mb.getUniqueName().equals("IE:BottlingMachine"))
+					{
+						conveyor.setFacing(event.getRotate().rotateY());
+					}
+					else if (mb.getUniqueName().equals("IE:AutoWorkbench") && (event.getRotate() == EnumFacing.WEST || event.getRotate() == EnumFacing.EAST))
+					{
+						conveyor.setFacing(event.getRotate().getOpposite());
+					}
+					else
+					{
+						conveyor.setFacing(event.getRotate());
+					}
+					
+					event.getWorld().setBlockState(event.getPos(), event.getBlockState());
+				}
+			}
+		}
+	}
+	
+	@SubscribeEvent
 	public void handleConveyorTest(SchematicTestEvent event)
 	{
 		IMultiblock mb = event.getMultiblock();
@@ -1046,6 +1125,10 @@ public class ItemProjector extends ItemIPBase
 					|| mb.getUniqueName().equals("IE:BottlingMachine"))
 			{
 				GlStateManager.rotate(270, 0, 1, 0);
+			}
+			else if (mb.getUniqueName().equals("IE:AutoWorkbench") && (rotate == EnumFacing.WEST || rotate == EnumFacing.EAST))
+			{
+				GlStateManager.rotate(180, 0, 1, 0);
 			}
 			GlStateManager.rotate(90, 0, 1, 0);
 		}

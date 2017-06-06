@@ -108,7 +108,7 @@ public class IPContent
 			IERecipes.addIngredientRecipe(new ItemStack(itemProjector, 1, 0), "S  ", "IL ", " IW", 
 					'W', "plankTreatedWood", 
 					'L', new ItemStack(IEContent.blockMetalDecoration2, 1, BlockTypes_MetalDecoration2.LANTERN.getMeta()), 
-					'S', new ItemStack(IEContent.itemToolUpgrades, 1, 8),
+					'S', "blockGlassColorless",
 					'I', "ingotIron");
 
 			GameRegistry.addRecipe(new SchematicCraftingHandler());

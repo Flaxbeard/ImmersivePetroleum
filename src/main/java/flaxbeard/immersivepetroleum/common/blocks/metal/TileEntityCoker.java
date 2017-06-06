@@ -390,6 +390,42 @@ public class TileEntityCoker extends TileEntityMultiblockMetal<TileEntityCoker, 
 				return Lists.newArrayList(new AxisAlignedBB(0, 0.5, 0, 1, 1, 1).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 			}
 			
+			if (x == 0 && (y == 5 || y == 10))
+			{			
+				float minX = (fl == EnumFacing.NORTH || fl == EnumFacing.SOUTH) ? 0F : ((fl == EnumFacing.EAST) ? 2F/16F : 10F/16F);
+				float maxX = (fl == EnumFacing.NORTH || fl == EnumFacing.SOUTH) ? 1F : ((fl == EnumFacing.EAST) ? 6F/16F : 14F/16F);
+				float minZ = (fl == EnumFacing.EAST || fl == EnumFacing.WEST) ? 0F : ((fl == EnumFacing.SOUTH) ? 2F/16F : 10F/16F);
+				float maxZ = (fl == EnumFacing.EAST || fl == EnumFacing.WEST) ? 1F : ((fl == EnumFacing.SOUTH) ? 6F/16F : 14F/16F);
+				return Lists.newArrayList(new AxisAlignedBB(minX, 2F/16F, minZ, maxX, 6F/16F, maxZ).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			}
+			else if (x == 4 && (y == 5 || y == 10))
+			{
+				float minX = (fl == EnumFacing.NORTH || fl == EnumFacing.SOUTH) ? 0F : ((fl == EnumFacing.WEST) ? 2F/16F : 10F/16F);
+				float maxX = (fl == EnumFacing.NORTH || fl == EnumFacing.SOUTH) ? 1F : ((fl == EnumFacing.WEST) ? 6F/16F : 14F/16F);
+				float minZ = (fl == EnumFacing.EAST || fl == EnumFacing.WEST) ? 0F : ((fl == EnumFacing.NORTH) ? 2F/16F : 10F/16F);
+				float maxZ = (fl == EnumFacing.EAST || fl == EnumFacing.WEST) ? 1F : ((fl == EnumFacing.NORTH) ? 6F/16F : 14F/16F);
+				return Lists.newArrayList(new AxisAlignedBB(minX, 2F/16F, minZ, maxX, 6F/16F, maxZ).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+				
+			}
+			else if (z == 8 && (y == 5 || y == 10))
+			{
+				float minX = (fl == EnumFacing.EAST || fl == EnumFacing.WEST) ? 0F : ((fl == EnumFacing.NORTH) ? 2F/16F : 10F/16F);
+				float maxX = (fl == EnumFacing.EAST || fl == EnumFacing.WEST) ? 1F : ((fl == EnumFacing.NORTH) ? 6F/16F : 14F/16F);
+				float minZ = (fl == EnumFacing.NORTH || fl == EnumFacing.SOUTH) ? 0F : ((fl == EnumFacing.WEST) ? 2F/16F : 10F/16F);
+				float maxZ = (fl == EnumFacing.NORTH || fl == EnumFacing.SOUTH) ? 1F : ((fl == EnumFacing.WEST) ? 6F/16F : 14F/16F);
+				return Lists.newArrayList(new AxisAlignedBB(minX, 2F/16F, minZ, maxX, 6F/16F, maxZ).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+				
+			}
+			else if (z == 0 && (y == 5 || y == 10))
+			{
+				float minX = (fl == EnumFacing.EAST || fl == EnumFacing.WEST) ? 0F : ((fl == EnumFacing.SOUTH) ? 2F/16F : 10F/16F);
+				float maxX = (fl == EnumFacing.EAST || fl == EnumFacing.WEST) ? 1F : ((fl == EnumFacing.SOUTH) ? 6F/16F : 14F/16F);
+				float minZ = (fl == EnumFacing.NORTH || fl == EnumFacing.SOUTH) ? 0F : ((fl == EnumFacing.EAST) ? 2F/16F : 10F/16F);
+				float maxZ = (fl == EnumFacing.NORTH || fl == EnumFacing.SOUTH) ? 1F : ((fl == EnumFacing.EAST) ? 6F/16F : 14F/16F);
+				return Lists.newArrayList(new AxisAlignedBB(minX, 2F/16F, minZ, maxX, 6F/16F, maxZ).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+				
+			}
+			
 			
 		}
 		

@@ -61,6 +61,10 @@ public class MultiblockCoker implements IMultiblock
 						{
 							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
 						}
+						else if (((h == 5 || h == 10) || (w == 0 && l == 2)) && (l != 2 || (w != 2 && w != 6)) && w != 4)
+						{
+							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_FENCE.getMeta());
+						}
 					}
 					else
 					{
@@ -193,9 +197,10 @@ public class MultiblockCoker implements IMultiblock
 						if ((h <= 0 && ((l > 0 && l < 4) || (w > 0 && w < 4) || (w < 0 && w > -4)))
 								|| (h > 11 && h != 16 && (w < -2 || w > 2 || l != 2))
 								|| (h == 16 && (w == -4 || w == 4 || l == 0 || l == 4))
-								|| (h > 1 && h < 11 && h != 6 && 
+								|| (h > 1 && h < 11 && h != 6 && h != 4 && h != 9 &&
 									((l == 2 && (w == -2 || w == 2)) || (w == -4 && (l == 1 || l == 3)) || ((w == 0 || w == 4) && l > 0 && l < 4) || ((l == 0 || l == 4) && w > -4 && w < 4 && w != 0)))
-								|| (h == 6 && l == 2 && (w == -2 || w == 2)))
+								|| (h == 6 && l == 2 && (w == -2 || w == 2))
+								|| ((h == 4 || h == 9) && l != 0 && l != 4 &&  (w == 0 || (l == 2 && (w == -2 || w == 2)))))
 							continue;
 						
 						//	continue;
@@ -265,6 +270,11 @@ public class MultiblockCoker implements IMultiblock
 						else if (w == -4 && l == 2)
 						{
 							if (!Utils.isOreBlockAt(world, pos, "scaffoldingSteel"))
+								return false;
+						}
+						else if ((h == 9 || h == 4) && (l == 0 || l == 4 || w == 4 || w == -4))
+						{
+							if (!Utils.isOreBlockAt(world, pos, "fenceSteel"))
 								return false;
 						}
 						else if ((w == -4 || w == 0 || w == 4) && (l == 0 || l == 4))

@@ -83,8 +83,8 @@ public class SchematicCraftingHandler implements IRecipe
 			for (int i = 0; i < inv.getSizeInventory(); i++)
 			{
 				ItemStack stack = inv.getStackInSlot(i);
-				if (stack.isEmpty())
-				{					
+				if (!stack.isEmpty())
+				{				
 					if (stack.getItem() == IEContent.itemTool && stack.getItemDamage() == 3)
 					{
 						if (manual.isEmpty() && ItemNBTHelper.hasKey(stack, "lastMultiblock"))

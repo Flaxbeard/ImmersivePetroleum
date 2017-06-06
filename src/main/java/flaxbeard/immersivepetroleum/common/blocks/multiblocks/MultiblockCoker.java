@@ -57,7 +57,7 @@ public class MultiblockCoker implements IMultiblock
 						{
 							structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal,1, BlockTypes_MetalsAll.IRON.getMeta());
 						}
-						else if ((h == 7 || h == 12) || (w == 0 && l == 2))
+						else if (((h == 7 || h == 12) || (w == 0 && l == 2)) && (l != 2 || (w != 2 && w != 6)))
 						{
 							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
 						}
@@ -194,7 +194,8 @@ public class MultiblockCoker implements IMultiblock
 								|| (h > 11 && h != 16 && (w < -2 || w > 2 || l != 2))
 								|| (h == 16 && (w == -4 || w == 4 || l == 0 || l == 4))
 								|| (h > 1 && h < 11 && h != 6 && 
-									((l == 2 && (w == -2 || w == 2)) || (w == -4 && (l == 1 || l == 3)) || ((w == 0 || w == 4) && l > 0 && l < 4) || ((l == 0 || l == 4) && w > -4 && w < 4 && w != 0))))
+									((l == 2 && (w == -2 || w == 2)) || (w == -4 && (l == 1 || l == 3)) || ((w == 0 || w == 4) && l > 0 && l < 4) || ((l == 0 || l == 4) && w > -4 && w < 4 && w != 0)))
+								|| (h == 6 && l == 2 && (w == -2 || w == 2)))
 							continue;
 						
 						//	continue;

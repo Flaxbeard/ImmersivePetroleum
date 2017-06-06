@@ -39,6 +39,7 @@ ie.manual.entry.blank_text=
 
 desc.immersiveengineering.info.multiblock.IP:DistillationTower=Distillation Tower
 desc.immersiveengineering.info.multiblock.IP:Pumpjack=Pumpjack
+desc.immersiveengineering.info.multiblock.IP:Coker=Coker
 
 desc.immersiveengineering.info.multiblock.IE:AutoWorkbench=Automated Workbench
 desc.immersiveengineering.info.multiblock.IE:AlloySmelter=Alloy Smelter

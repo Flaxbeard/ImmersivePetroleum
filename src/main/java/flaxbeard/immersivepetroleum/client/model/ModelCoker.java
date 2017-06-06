@@ -175,10 +175,13 @@ public class ModelCoker extends ModelBase
 		crosspost3.addBox(6, 82, 2, 68, 4, 4);
 		this.base.addChild(crosspost3);
 		
-		ModelRenderer crosspost4 = new ModelRenderer(this, 0, 136);
-		crosspost4.addBox(6, 82, 138, 68, 4, 4);
-		this.base.addChild(crosspost4);
+		ModelRenderer crosspost4A = new ModelRenderer(this, 0, 136);
+		crosspost4A.addBox(6, 82, 138, 26, 4, 4);
+		this.base.addChild(crosspost4A);
 		
+		ModelRenderer crosspost4B = new ModelRenderer(this, 0, 136);
+		crosspost4B.addBox(6 + 26 + 16, 82, 138, 26, 4, 4);
+		this.base.addChild(crosspost4B);
 		
 		ModelRenderer crosspost5 = new ModelRenderer(this, 44, 232);
 		crosspost5.addBox(2.001F, 162, 6, 4, 4, 132);
@@ -192,9 +195,14 @@ public class ModelCoker extends ModelBase
 		crosspost7.addBox(6, 162, 2, 68, 4, 4);
 		this.base.addChild(crosspost7);
 		
-		ModelRenderer crosspost8 = new ModelRenderer(this, 0, 136);
-		crosspost8.addBox(6, 162, 138, 68, 4, 4);
-		this.base.addChild(crosspost8);
+		ModelRenderer crosspost8A = new ModelRenderer(this, 0, 136);
+		crosspost8A.addBox(6, 162, 138, 26, 4, 4);
+		this.base.addChild(crosspost8A);
+		
+		
+		ModelRenderer crosspost8B = new ModelRenderer(this, 0, 136);
+		crosspost8B.addBox(6 + 26 + 16, 162, 138, 26, 4, 4);
+		this.base.addChild(crosspost8B);
 		
 		float deg = 4;
 		
@@ -366,7 +374,22 @@ public class ModelCoker extends ModelBase
 		crosspostTopSide53.rotateAngleX = (float) -Math.toRadians(90);
 		crosspostTopSide53.rotateAngleY = (float) -Math.toRadians(90);
 		base.addChild(crosspostTopSide53);
-
+		
+		ModelRenderer ladder = new ModelRenderer(this, 486, 168);
+		ladder.addBox(34, 48 + 16, 126, 12, 16 * 9, 1);
+		this.base.addChild(ladder);
+		
+		ModelRenderer ladderS1 = new ModelRenderer(this, 454, 168 - 16);
+		ladderS1.addBox(32.01F, 48 + 32, 126, 0, 16 * 8, 16);
+		this.base.addChild(ladderS1);
+		
+		ModelRenderer ladderS2 = new ModelRenderer(this, 454, 168 - 16);
+		ladderS2.addBox(47.99F, 48 + 32, 126, 0, 16 * 8, 16);
+		this.base.addChild(ladderS2);
+		
+		ModelRenderer ladderS3 = new ModelRenderer(this, 422, 168 );
+		ladderS3.addBox(32, 48 + 32, 126 + 16, 16, 16 * 8, 0);
+		this.base.addChild(ladderS3);
 	}	
 
 	

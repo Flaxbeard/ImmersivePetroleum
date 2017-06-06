@@ -318,9 +318,13 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 	public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity)
 	{
 		TileEntity te = world.getTileEntity(pos);
-		if(te instanceof TileEntityDistillationTower)
+		if (te instanceof TileEntityDistillationTower)
 		{
 			return ((TileEntityDistillationTower) te).isLadder();
+		}
+		else if (te instanceof TileEntityCoker)
+		{
+			return ((TileEntityCoker) te).isLadder();
 		}
 		return false;
 	}

@@ -151,6 +151,39 @@ public class TileEntityCoker extends TileEntityMultiblockMetal<TileEntityCoker, 
 		int x = (pos / 9)  % 5;
 		int z = pos % 9;
 		
+		if (pos % 45 == 18 && y > 2)
+		{
+			List list = new ArrayList<AxisAlignedBB>();
+			if (y >= 5)
+			{
+				int h = y - 5;
+				if (h % 5 <= 2 || (fl != EnumFacing.EAST && fl != EnumFacing.WEST))
+				{
+					float bottom = (fl != EnumFacing.EAST && fl != EnumFacing.WEST) || h % 5 >= 1 ? 0F : 0.5f;
+					float offsetX = (fl == EnumFacing.NORTH) ? -1F/16F : ((fl == EnumFacing.SOUTH) ? 1F/16F : 0);
+					list.add(new AxisAlignedBB(0, bottom, 0, 0, 1, 1).offset(getPos().getX()+offsetX,getPos().getY(),getPos().getZ()));
+					list.add(new AxisAlignedBB(1, bottom, 0, 1, 1, 1).offset(getPos().getX()+offsetX,getPos().getY(),getPos().getZ()));
+				}
+				if (h % 5 <= 2 || (fl != EnumFacing.NORTH && fl != EnumFacing.SOUTH))
+				{
+					float bottom = (fl != EnumFacing.NORTH && fl != EnumFacing.SOUTH) || h % 5 >= 1 ? 0F : 0.5f;
+					float offsetX = (fl == EnumFacing.NORTH) ? -1F/16F : ((fl == EnumFacing.SOUTH) ? 1F/16F : 0);
+					list.add(new AxisAlignedBB(0, bottom, 0, 1, 1, 0).offset(getPos().getX()+offsetX,getPos().getY(),getPos().getZ()));
+					list.add(new AxisAlignedBB(0, bottom, 1, 1, 1, 1).offset(getPos().getX()+offsetX,getPos().getY(),getPos().getZ()));
+				}
+			}
+			else if (y == 4)
+			{
+				float offsetX = (fl == EnumFacing.NORTH) ? -1F/16F : ((fl == EnumFacing.SOUTH) ? 1F/16F : 0);
+
+				if (fl == EnumFacing.SOUTH)
+				{
+					list.add(new AxisAlignedBB(1, 0, 2F/16F, 17F/16F, 1, 14F/16F).offset(getPos().getX()+offsetX,getPos().getY(),getPos().getZ()));
+				}
+			}
+			return list;
+		}
+		
 		if (y <= 12)
 		{
 			if (x == 0 && z == 4 && y >= 3)
@@ -295,6 +328,11 @@ public class TileEntityCoker extends TileEntityMultiblockMetal<TileEntityCoker, 
 				float maxZ = (fl == EnumFacing.EAST || fl == EnumFacing.WEST) ? ((fl == EnumFacing.EAST) ? 14F/16F : 6F/16F) : ((fl == EnumFacing.SOUTH) ? 6F/16F : 14F/16F);
 				List list = Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 				
+				if (y == 7 || y == 12)
+				{
+					list.add((new AxisAlignedBB(0, 0.5, 0, 1, 1, 1).offset(getPos().getX(),getPos().getY(),getPos().getZ())));
+				}
+				
 				
 				return list;
 			}
@@ -306,6 +344,11 @@ public class TileEntityCoker extends TileEntityMultiblockMetal<TileEntityCoker, 
 				float maxZ = (fl == EnumFacing.EAST || fl == EnumFacing.WEST) ? ((fl == EnumFacing.EAST) ? 14F/16F : 6F/16F) : ((fl == EnumFacing.NORTH) ? 6F/16F : 14F/16F);
 				List list = Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 	
+				if (y == 7 || y == 12)
+				{
+					list.add((new AxisAlignedBB(0, 0.5, 0, 1, 1, 1).offset(getPos().getX(),getPos().getY(),getPos().getZ())));
+				}
+				
 				
 				return list;
 			}
@@ -317,6 +360,12 @@ public class TileEntityCoker extends TileEntityMultiblockMetal<TileEntityCoker, 
 				float maxZ = (fl == EnumFacing.EAST || fl == EnumFacing.WEST) ? ((fl == EnumFacing.WEST) ? 14F/16F : 6F/16F) : ((fl == EnumFacing.SOUTH) ? 6F/16F : 14F/16F);
 				List list = Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 				
+				if (y == 7 || y == 12)
+				{
+					list.add((new AxisAlignedBB(0, 0.5, 0, 1, 1, 1).offset(getPos().getX(),getPos().getY(),getPos().getZ())));
+				}
+				
+				
 				return list;
 			}
 			else if (x == 4 && z == 0 && y >= 3)
@@ -327,15 +376,21 @@ public class TileEntityCoker extends TileEntityMultiblockMetal<TileEntityCoker, 
 				float maxZ = (fl == EnumFacing.EAST || fl == EnumFacing.WEST) ? ((fl == EnumFacing.WEST) ? 14F/16F : 6F/16F) : ((fl == EnumFacing.NORTH) ? 6F/16F : 14F/16F);
 				List list = Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 				
+				if (y == 7 || y == 12)
+				{
+					list.add((new AxisAlignedBB(0, 0.5, 0, 1, 1, 1).offset(getPos().getX(),getPos().getY(),getPos().getZ())));
+				}
 				
 				return list;
 			}
 			
 			
-			else if (y == 7 || y == 12)
+			if (y == 7 || y == 12)
 			{
 				return Lists.newArrayList(new AxisAlignedBB(0, 0.5, 0, 1, 1, 1).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 			}
+			
+			
 		}
 		
 		
@@ -457,6 +512,7 @@ public class TileEntityCoker extends TileEntityMultiblockMetal<TileEntityCoker, 
 	{
 		return 0;
 	}
+	
 	@Override
 	public TileEntity getGuiMaster()
 	{
@@ -534,5 +590,10 @@ public class TileEntityCoker extends TileEntityMultiblockMetal<TileEntityCoker, 
 		BlockPos target = getBlockPosForPos(targetPos);
 		TileEntity tile = worldObj.getTileEntity(target);
 		return tile instanceof TileEntityCoker ? (TileEntityCoker) tile : null;
+	}
+	
+	public boolean isLadder()
+	{
+		return pos % (5 * 9) == 18;
 	}
 }

@@ -166,6 +166,7 @@ public class ItemProjector extends ItemIPBase
 	{
 		if (!IPConfig.Tools.disable_projector)
 		{
+			list.add(new ItemStack(item, 1, 0));
 			List<IMultiblock> multiblocks = MultiblockHandler.getMultiblocks();
 			for (IMultiblock multiblock : multiblocks)
 			{

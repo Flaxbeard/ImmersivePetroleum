@@ -348,6 +348,7 @@ public class EventHandler
 		}
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent()
 	public void renderCoresampleInfo(RenderGameOverlayEvent.Post event)
 	{

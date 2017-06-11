@@ -351,9 +351,9 @@ public class EventHandler
 	@SubscribeEvent()
 	public void renderCoresampleInfo(RenderGameOverlayEvent.Post event)
 	{
-		if (ClientUtils.mc().thePlayer!=null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT)
+		if (ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT)
 		{
-			EntityPlayer player = ClientUtils.mc().thePlayer;
+			EntityPlayer player = ClientUtils.mc().player;
 
 			if (ClientUtils.mc().objectMouseOver!=null)
 			{
@@ -361,12 +361,12 @@ public class EventHandler
 				RayTraceResult mop = ClientUtils.mc().objectMouseOver;
 				if (mop!=null && mop.getBlockPos()!=null)
 				{
-					TileEntity tileEntity = player.worldObj.getTileEntity(mop.getBlockPos());
+					TileEntity tileEntity = player.world.getTileEntity(mop.getBlockPos());
 					if (tileEntity instanceof TileEntityCoresample)
 					{
 						IBlockOverlayText overlayBlock = (IBlockOverlayText) tileEntity;
-						String[] text = overlayBlock.getOverlayText(ClientUtils.mc().thePlayer, mop, hammer);
-						boolean useNixie = overlayBlock.useNixieFont(ClientUtils.mc().thePlayer, mop);
+						String[] text = overlayBlock.getOverlayText(ClientUtils.mc().player, mop, hammer);
+						boolean useNixie = overlayBlock.useNixieFont(ClientUtils.mc().player, mop);
 						ItemStack coresample = ((TileEntityCoresample) tileEntity).coresample;
 						if (ItemNBTHelper.hasKey(coresample, "oil") && text != null && text.length > 0)
 						{

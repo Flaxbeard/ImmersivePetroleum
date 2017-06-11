@@ -17,6 +17,7 @@ import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_IPMetalMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityCoker;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 
@@ -57,6 +58,10 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 				return new TileEntityPumpjack();
 			case PUMPJACK_PARENT:
 				return new TileEntityPumpjack.TileEntityPumpjackParent();
+			case COKER:
+				return new TileEntityCoker();
+			case COKER_PARENT:
+				return new TileEntityCoker.TileEntityCokerParent();
 		}
 		return null;
 	}
@@ -313,9 +318,13 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 	public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity)
 	{
 		TileEntity te = world.getTileEntity(pos);
-		if(te instanceof TileEntityDistillationTower)
+		if (te instanceof TileEntityDistillationTower)
 		{
 			return ((TileEntityDistillationTower) te).isLadder();
+		}
+		else if (te instanceof TileEntityCoker)
+		{
+			return ((TileEntityCoker) te).isLadder();
 		}
 		return false;
 	}

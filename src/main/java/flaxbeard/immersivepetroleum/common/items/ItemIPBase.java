@@ -18,7 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import blusunrize.immersiveengineering.common.items.IEItemInterfaces.IColouredItem;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
 
 public class ItemIPBase extends Item implements IColouredItem
 {

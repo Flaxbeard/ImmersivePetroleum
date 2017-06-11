@@ -10,7 +10,9 @@ public enum BlockTypes_IPMetalMultiblock implements IStringSerializable, BlockIP
 	DISTILLATION_TOWER(false),
 	DISTILLATION_TOWER_PARENT(false),
 	PUMPJACK(false),
-	PUMPJACK_PARENT(false);
+	PUMPJACK_PARENT(false),
+	COKER(false),
+	COKER_PARENT(false);
 	
 	private boolean needsCustomState;
 	BlockTypes_IPMetalMultiblock(boolean needsCustomState)

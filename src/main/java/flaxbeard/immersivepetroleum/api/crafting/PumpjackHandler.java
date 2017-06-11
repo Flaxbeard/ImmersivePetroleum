@@ -49,11 +49,17 @@ public class PumpjackHandler
 	{
 		if(world.isRemote)
 			return null;
+		
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
-		if (info == null || (info.capacity == 0) || info.type == null || info.type.fluid == null || (info.current == 0 && info.type.replenishRate == 0))
+		
+		if (info.type == null)
+		{
 			return null;
-
-		return FluidRegistry.getFluid(info.type.fluid);
+		}
+		else
+		{
+			return info.type.getFluid();
+		}
 	}
 	
 	public static int getResidualFluid(World world, int chunkX, int chunkZ)
@@ -270,6 +276,8 @@ public class PumpjackHandler
 		
 		public String[] biomeWhitelist = new String[0];
 		public String[] biomeBlacklist = new String[0];
+		
+		private Fluid f;
 
 		public ReservoirType(String name, String fluid, int minSize, int maxSize, int replenishRate)
 		{
@@ -280,6 +288,18 @@ public class PumpjackHandler
 			this.replenishRate = replenishRate;
 		}
 		
+		public Fluid getFluid()
+		{
+			if (fluid == null) return null;
+			
+			if (f == null)
+			{		
+				f = FluidRegistry.getFluid(fluid);
+			}
+			
+			return f;
+		}
+
 		public boolean validDimension(int dim)
 		{
 			if (dimensionWhitelist != null && dimensionWhitelist.length > 0)

@@ -278,7 +278,7 @@ public class ModelCoresampleExtended extends ModelCoresample
 											mix2.recalculateChances();
 											mix2.oreOutput.set(mix2.oreOutput.size() - 1, new ItemStack(IPContent.blockDummy, 1, BlockTypes_Dummy.OIL_DEPOSIT.getMeta()));
 											
-											Fluid fluid = FluidRegistry.getFluid(type.fluid);
+											Fluid fluid = type.getFluid();
 											modelCache.put(indexName, new ModelCoresampleExtended(mix2, fluid));
 											break outer;
 										}

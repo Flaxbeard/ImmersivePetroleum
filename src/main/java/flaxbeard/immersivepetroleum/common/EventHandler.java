@@ -3,11 +3,11 @@ package flaxbeard.immersivepetroleum.common;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -19,9 +19,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -40,24 +42,25 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import org.lwjgl.opengl.GL11;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
 import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.api.tool.ExcavatorHandler;
-import blusunrize.immersiveengineering.api.tool.ExcavatorHandler.MineralMix;
+import blusunrize.immersiveengineering.client.ClientProxy;
 import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.common.Config.IEConfig;
 import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntitySampleDrill;
+import blusunrize.immersiveengineering.common.blocks.stone.TileEntityCoresample;
 import blusunrize.immersiveengineering.common.items.ItemCoresample;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import blusunrize.immersiveengineering.common.util.network.MessageMineralListSync;
+import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.lib.manual.IManualPage;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.ManualInstance.ManualEntry;
 import blusunrize.lib.manual.gui.GuiManual;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
@@ -180,13 +183,6 @@ public class EventHandler
 
 					renderChunkBorder(coords[1] << 4, coords[2] << 4);
 				//}
-			}
-			else if (chunkBorders)
-			{
-				EntityPlayer player = mc.thePlayer;
-				int chunkX = (int)player.posX>>4<<4;
-				int chunkZ = (int)player.posZ>>4<<4;
-				renderChunkBorder(chunkX, chunkZ);
 			}
 		}
 		GlStateManager.popMatrix();
@@ -348,6 +344,71 @@ public class EventHandler
 				if (e.getKey() != null && e.getValue() != null)
 					packetMap.put(e.getKey(), e.getValue());
 			IPPacketHandler.INSTANCE.sendToAll(new MessageReservoirListSync(packetMap));
+		}
+	}
+	
+	@SubscribeEvent()
+	public void renderCoresampleInfo(RenderGameOverlayEvent.Post event)
+	{
+		if (ClientUtils.mc().thePlayer!=null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT)
+		{
+			EntityPlayer player = ClientUtils.mc().thePlayer;
+
+			if (ClientUtils.mc().objectMouseOver!=null)
+			{
+				boolean hammer = player.getHeldItem(EnumHand.MAIN_HAND) != null && Utils.isHammer(player.getHeldItem(EnumHand.MAIN_HAND));
+				RayTraceResult mop = ClientUtils.mc().objectMouseOver;
+				if (mop!=null && mop.getBlockPos()!=null)
+				{
+					TileEntity tileEntity = player.worldObj.getTileEntity(mop.getBlockPos());
+					if (tileEntity instanceof TileEntityCoresample)
+					{
+						IBlockOverlayText overlayBlock = (IBlockOverlayText) tileEntity;
+						String[] text = overlayBlock.getOverlayText(ClientUtils.mc().thePlayer, mop, hammer);
+						boolean useNixie = overlayBlock.useNixieFont(ClientUtils.mc().thePlayer, mop);
+						ItemStack coresample = ((TileEntityCoresample) tileEntity).coresample;
+						if (ItemNBTHelper.hasKey(coresample, "oil") && text != null && text.length > 0)
+						{
+							String resName = ItemNBTHelper.hasKey(coresample, "resType") ? ItemNBTHelper.getString(coresample, "resType") : "oil";
+							int amnt = ItemNBTHelper.getInt(coresample, "oil");
+							FontRenderer font = useNixie?ClientProxy.nixieFontOptional:ClientUtils.font();
+							int col = (useNixie&& IEConfig.nixietubeFont)?Lib.colour_nixieTubeText:0xffffff;
+							int i = text.length;
+							
+							ReservoirType res = null;
+							for (ReservoirType type : PumpjackHandler.reservoirList.keySet())
+							{
+								if (resName.equals(type.name))
+								{
+									res = type;
+								}
+							}
+							
+							String s = I18n.format("chat.immersivepetroleum.info.coresample.noOil");
+							if (amnt > 0)
+							{
+								int est = (amnt / 1000) * 1000;
+								String test = new DecimalFormat("#,###.##").format(est);
+								Fluid f = FluidRegistry.getFluid(res.fluid);
+								String fluidName = f.getLocalizedName(new FluidStack(f, 1));
+								
+
+								s = I18n.format("chat.immersivepetroleum.info.coresample.oil", test, fluidName);
+							}
+							else if (res != null && res.replenishRate > 0)
+							{
+								Fluid f = FluidRegistry.getFluid(res.fluid);
+								String fluidName = f.getLocalizedName(new FluidStack(f, 1));
+								s = I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName);
+							}
+							
+							font.drawString(s, event.getResolution().getScaledWidth()/2+8, event.getResolution().getScaledHeight()/2+8+i*font.FONT_HEIGHT, col, true);
+
+	
+						}
+					}
+				}
+			}
 		}
 	}
 

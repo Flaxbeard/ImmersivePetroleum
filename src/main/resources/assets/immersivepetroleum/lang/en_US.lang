@@ -36,7 +36,7 @@ desc.immersiveengineering.info.multiblock.IE:AlloySmelter=Alloy Smelter
 
 desc.immersivepetroleum.info.reservoir.oil=Oil Reservoir
 desc.immersivepetroleum.info.reservoir.aquifer=Aquifer
-desc.immersivepetroleum.info.reservoir.lava=Lava Pocket
+desc.immersivepetroleum.info.reservoir.lava=Magma Chamber
 
 ie.manual.entry.distillationTower.name=Distillation Tower
 ie.manual.entry.distillationTower.subtext=Environmentally unfriendly

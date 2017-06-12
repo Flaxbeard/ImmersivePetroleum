@@ -390,6 +390,37 @@ public class ModelCoker extends ModelBase
 		ModelRenderer ladderS3 = new ModelRenderer(this, 422, 168 );
 		ladderS3.addBox(32, 48 + 32, 126 + 16, 16, 16 * 8, 0);
 		this.base.addChild(ladderS3);
+		
+		
+		ModelRenderer pipeOut1 = new ModelRenderer(this, 480, 0);
+		pipe1.addBox(36, 16 * 14 + 4, 34, 8, 8, 14);
+		this.base.addChild(pipe1);
+		
+		ModelRenderer pipeOut1B = new ModelRenderer(this, 480, 0);
+		pipe1.addBox(34, 16 * 14 + 2, 32, 12, 12, 2);
+		this.base.addChild(pipe1);
+		
+		ModelRenderer pipeBetween = new ModelRenderer(this, 480, 0);
+		pipe1.addBox(37, 16 * 14 + 5, 56, 6, 6, 32);
+		this.base.addChild(pipe1);
+		
+		ModelRenderer ladder2 = new ModelRenderer(this, 486, 168);
+		ladder.addBox(34, 48 + 16 + 16 * 10, 114, 12, 16 * 4, 1);
+		this.base.addChild(ladder);
+		
+		ModelRenderer ladder2S1 = new ModelRenderer(this, 454, 168 - 16);
+		ladderS1.addBox(32.01F, 48 + 32 + 16 * 10, 114, 0, 16 * 3, 14);
+		this.base.addChild(ladderS1);
+		
+		ModelRenderer ladder2S2 = new ModelRenderer(this, 454, 168 - 14);
+		ladderS2.addBox(47.99F, 48 + 32 + 16 * 10, 114, 0, 16 * 3, 14);
+		this.base.addChild(ladderS2);
+		
+		ModelRenderer ladder2S3 = new ModelRenderer(this, 422, 168 );
+		ladderS3.addBox(32, 48 + 32 + 16 * 10, 114 + 14, 16, 16 * 3, 0);
+		this.base.addChild(ladderS3);
+		
+		
 	}	
 
 	

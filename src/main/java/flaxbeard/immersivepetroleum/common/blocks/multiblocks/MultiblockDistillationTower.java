@@ -25,6 +25,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecor
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_IPMetalMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
@@ -149,7 +150,7 @@ public class MultiblockDistillationTower implements IMultiblock
 		return true;
 	}
 	
-	Object te = null;
+	public Object te = null;
 	
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -185,6 +186,8 @@ public class MultiblockDistillationTower implements IMultiblock
 	@Override
 	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player)
 	{
+		if (IPConfig.Machines.disable_tower)
+			return false;
 		if(side==EnumFacing.UP||side==EnumFacing.DOWN)
 			side = EnumFacing.fromAngle(player.rotationYaw);
 
@@ -350,7 +353,7 @@ public class MultiblockDistillationTower implements IMultiblock
 	}
 
 	static final IngredientStack[] materials = new IngredientStack[]{
-			new IngredientStack("scaffoldingSteel", 57),
+			new IngredientStack("scaffoldingSteel", 55),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDevice1, 17, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 4, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())),

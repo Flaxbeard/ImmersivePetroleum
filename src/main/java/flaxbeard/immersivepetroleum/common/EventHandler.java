@@ -1,10 +1,13 @@
 package flaxbeard.immersivepetroleum.common;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -16,15 +19,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
@@ -32,14 +43,31 @@ import net.minecraftforge.oredict.OreDictionary;
 import org.lwjgl.opengl.GL11;
 
 import blusunrize.immersiveengineering.api.Lib;
+import blusunrize.immersiveengineering.api.ManualPageMultiblock;
+import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
+import blusunrize.immersiveengineering.api.tool.ExcavatorHandler;
+import blusunrize.immersiveengineering.client.ClientProxy;
 import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.common.Config.IEConfig;
 import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntitySampleDrill;
+import blusunrize.immersiveengineering.common.blocks.stone.TileEntityCoresample;
 import blusunrize.immersiveengineering.common.items.ItemCoresample;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.lib.manual.IManualPage;
+import blusunrize.lib.manual.ManualInstance;
+import blusunrize.lib.manual.ManualInstance.ManualEntry;
+import blusunrize.lib.manual.gui.GuiManual;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.network.CloseBookPacket;
+import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
+import flaxbeard.immersivepetroleum.common.network.MessageReservoirListSync;
 
 public class EventHandler
 {
@@ -54,6 +82,70 @@ public class EventHandler
 	{
 		IPSaveData.setDirty(0);
 	}
+	
+	private Object lastGui = null;
+	
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void guiOpen(GuiOpenEvent event)
+	{
+		if (event.getGui() == null && lastGui instanceof GuiManual)
+		{
+			GuiManual gui = (GuiManual) lastGui;
+			String name = null;
+
+			ManualInstance inst = gui.getManual();
+			if (inst != null)
+			{
+				ManualEntry entry = inst.getEntry(gui.getSelectedEntry());
+				if (entry != null)
+				{
+					IManualPage[] pages = entry.getPages();
+					for (int i = 0; i < pages.length; i++)
+					{
+						IManualPage page = pages[i];
+						if (page instanceof ManualPageMultiblock)
+						{
+							ManualPageMultiblock mbPage = (ManualPageMultiblock) page;
+							IMultiblock mb = ReflectionHelper.getPrivateValue(ManualPageMultiblock.class, mbPage, 0);
+							if (mb != null)
+							{
+								if (name == null || i == gui.page)
+								{
+									name = mb.getUniqueName();
+								}
+							}
+						}
+					}
+				}
+			}
+			EntityPlayer p = ClientUtils.mc().thePlayer;
+			
+			ItemStack mainItem = p.getHeldItemMainhand();
+			ItemStack offItem = p.getHeldItemOffhand();
+
+			boolean main = mainItem != null && mainItem.getItem() == IEContent.itemTool && mainItem.getItemDamage() == 3;
+			boolean off = offItem != null && offItem.getItem() == IEContent.itemTool && offItem.getItemDamage() == 3;
+			ItemStack target = main ? mainItem : offItem;
+			
+			if (main || off)
+			{
+				IPPacketHandler.INSTANCE.sendToServer(new CloseBookPacket(name));
+
+				if (name == null && ItemNBTHelper.hasKey(target, "lastMultiblock"))
+				{
+					ItemNBTHelper.remove(target, "lastMultiblock");
+				}
+				else if (name != null)
+				{
+					ItemNBTHelper.setString(target, "lastMultiblock", name);
+				}
+			}
+		}
+
+		lastGui = event.getGui();
+	}
+	
 	
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
@@ -92,16 +184,8 @@ public class EventHandler
 					renderChunkBorder(coords[1] << 4, coords[2] << 4);
 				//}
 			}
-			else if (chunkBorders)
-			{
-				EntityPlayer player = mc.thePlayer;
-				int chunkX = (int)player.posX>>4<<4;
-				int chunkZ = (int)player.posZ>>4<<4;
-				renderChunkBorder(chunkX, chunkZ);
-			}
 		}
 		GlStateManager.popMatrix();
-		
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -180,8 +264,16 @@ public class EventHandler
 						int[] coords = ItemNBTHelper.getIntArray(drill.sample, "coords");
 						World world = DimensionManager.getWorld(coords[0]);
 						
-						int amnt = PumpjackHandler.getOilAmount(world, coords[1], coords[2]);
-						ItemNBTHelper.setInt(drill.sample, "oil", amnt);
+						OilWorldInfo info = PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]);
+						if (info.type != null)
+						{
+							ItemNBTHelper.setString(drill.sample, "resType", PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]).type.name);
+							ItemNBTHelper.setInt(drill.sample, "oil", info.current);
+						}
+						else
+						{
+							ItemNBTHelper.setInt(drill.sample, "oil", 0);
+						}
 					}
 				}
 			}
@@ -198,17 +290,124 @@ public class EventHandler
 		{
 			if(ItemNBTHelper.hasKey(stack, "oil"))
 			{
+				String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
+				if (ItemNBTHelper.hasKey(stack, "oil") && resName == null)
+				{
+					resName = "oil";
+				}
+				
+				ReservoirType res = null;
+				for (ReservoirType type : PumpjackHandler.reservoirList.keySet())
+				{
+					if (resName.equals(type.name))
+					{
+						res = type;
+					}
+				}
+				
 				int amnt = ItemNBTHelper.getInt(stack, "oil");
 				List<String> tooltip = event.getToolTip();
 				if (amnt > 0)
 				{
 					int est = (amnt / 1000) * 1000;
 					String test = new DecimalFormat("#,###.##").format(est);
-					tooltip.add(2, I18n.format("chat.immersivepetroleum.info.coresample.oil", test));
+					Fluid f = FluidRegistry.getFluid(res.fluid);
+					String fluidName = f.getLocalizedName(new FluidStack(f, 1));
+					
+					tooltip.add(2, I18n.format("chat.immersivepetroleum.info.coresample.oil", test, fluidName));
 				}
 				else
 				{
-					tooltip.add(2, I18n.format("chat.immersivepetroleum.info.coresample.noOil"));
+					if (res != null && res.replenishRate > 0)
+					{
+						Fluid f = FluidRegistry.getFluid(res.fluid);
+						String fluidName = f.getLocalizedName(new FluidStack(f, 1));
+						tooltip.add(2, I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName));
+					}
+					else
+					{
+						tooltip.add(2, I18n.format("chat.immersivepetroleum.info.coresample.noOil"));
+					}
+				}
+			}
+		}
+	}
+	
+	@SubscribeEvent(priority = EventPriority.HIGH)
+	public void onLogin(PlayerLoggedInEvent event)
+	{
+		ExcavatorHandler.allowPackets = true;
+		if (!event.player.worldObj.isRemote)
+		{
+			HashMap<ReservoirType, Integer> packetMap = new HashMap<ReservoirType,Integer>();
+			for (Entry<ReservoirType,Integer> e: PumpjackHandler.reservoirList.entrySet())
+				if (e.getKey() != null && e.getValue() != null)
+					packetMap.put(e.getKey(), e.getValue());
+			IPPacketHandler.INSTANCE.sendToAll(new MessageReservoirListSync(packetMap));
+		}
+	}
+	
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent()
+	public void renderCoresampleInfo(RenderGameOverlayEvent.Post event)
+	{
+		if (ClientUtils.mc().thePlayer!=null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT)
+		{
+			EntityPlayer player = ClientUtils.mc().thePlayer;
+
+			if (ClientUtils.mc().objectMouseOver!=null)
+			{
+				boolean hammer = player.getHeldItem(EnumHand.MAIN_HAND) != null && Utils.isHammer(player.getHeldItem(EnumHand.MAIN_HAND));
+				RayTraceResult mop = ClientUtils.mc().objectMouseOver;
+				if (mop!=null && mop.getBlockPos()!=null)
+				{
+					TileEntity tileEntity = player.worldObj.getTileEntity(mop.getBlockPos());
+					if (tileEntity instanceof TileEntityCoresample)
+					{
+						IBlockOverlayText overlayBlock = (IBlockOverlayText) tileEntity;
+						String[] text = overlayBlock.getOverlayText(ClientUtils.mc().thePlayer, mop, hammer);
+						boolean useNixie = overlayBlock.useNixieFont(ClientUtils.mc().thePlayer, mop);
+						ItemStack coresample = ((TileEntityCoresample) tileEntity).coresample;
+						if (ItemNBTHelper.hasKey(coresample, "oil") && text != null && text.length > 0)
+						{
+							String resName = ItemNBTHelper.hasKey(coresample, "resType") ? ItemNBTHelper.getString(coresample, "resType") : "oil";
+							int amnt = ItemNBTHelper.getInt(coresample, "oil");
+							FontRenderer font = useNixie?ClientProxy.nixieFontOptional:ClientUtils.font();
+							int col = (useNixie&& IEConfig.nixietubeFont)?Lib.colour_nixieTubeText:0xffffff;
+							int i = text.length;
+							
+							ReservoirType res = null;
+							for (ReservoirType type : PumpjackHandler.reservoirList.keySet())
+							{
+								if (resName.equals(type.name))
+								{
+									res = type;
+								}
+							}
+							
+							String s = I18n.format("chat.immersivepetroleum.info.coresample.noOil");
+							if (amnt > 0)
+							{
+								int est = (amnt / 1000) * 1000;
+								String test = new DecimalFormat("#,###.##").format(est);
+								Fluid f = FluidRegistry.getFluid(res.fluid);
+								String fluidName = f.getLocalizedName(new FluidStack(f, 1));
+								
+
+								s = I18n.format("chat.immersivepetroleum.info.coresample.oil", test, fluidName);
+							}
+							else if (res != null && res.replenishRate > 0)
+							{
+								Fluid f = FluidRegistry.getFluid(res.fluid);
+								String fluidName = f.getLocalizedName(new FluidStack(f, 1));
+								s = I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName);
+							}
+							
+							font.drawString(s, event.getResolution().getScaledWidth()/2+8, event.getResolution().getScaledHeight()/2+8+i*font.FONT_HEIGHT, col, true);
+
+	
+						}
+					}
 				}
 			}
 		}

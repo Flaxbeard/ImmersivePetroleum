@@ -19,6 +19,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import blusunrize.immersiveengineering.common.Config.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
@@ -41,6 +42,13 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 		{
 			BlockPos pos = getPos();
 			return new AxisAlignedBB(pos.add(-4, -16, -4), pos.add(4, 16, 4));
+		}
+		
+		@Override
+		@SideOnly(Side.CLIENT)
+		public double getMaxRenderDistanceSquared()
+		{
+			return super.getMaxRenderDistanceSquared()* IEConfig.increasedTileRenderdistance;
 		}
 	}
 	
@@ -384,7 +392,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 	@Override
 	public void doProcessOutput(ItemStack output)
 	{
-		BlockPos pos = getPos().offset(facing,1).offset(facing.rotateY(), 2).offset(EnumFacing.DOWN, 1);
+		BlockPos pos = getPos().offset(facing,1).offset(this.mirrored ? facing.getOpposite().rotateY() : facing.rotateY(), 2).offset(EnumFacing.DOWN, 1);
 		TileEntity inventoryTile = this.worldObj.getTileEntity(pos);
 		if(inventoryTile!=null)
 			output = Utils.insertStackIntoInventory(inventoryTile, output, facing.getOpposite());
@@ -456,7 +464,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 			{
 				return new MultiFluidTank[] {master.tanks[0]};
 			}
-			else if (pos == 8 && (side == null || side == facing.getOpposite().rotateY()))
+			else if (pos == 8 && (side == null || side == facing.getOpposite().rotateY() || side == facing.rotateY()))
 			{
 				return new MultiFluidTank[] {master.tanks[1]};
 			}

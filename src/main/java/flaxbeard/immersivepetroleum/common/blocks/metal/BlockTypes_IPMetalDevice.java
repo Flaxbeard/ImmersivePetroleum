@@ -1,11 +1,12 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
-import blusunrize.immersiveengineering.common.blocks.BlockIEBase;
-import net.minecraft.util.IStringSerializable;
-
 import java.util.Locale;
 
-public enum BlockTypes_IPMetalDevice implements IStringSerializable, BlockIEBase.IBlockEnum
+import net.minecraft.util.IStringSerializable;
+
+import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
+
+public enum BlockTypes_IPMetalDevice implements IStringSerializable, BlockIPBase.IBlockEnum
 {
 	AUTOMATIC_LUBRICATOR;
 

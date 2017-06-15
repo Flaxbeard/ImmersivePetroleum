@@ -42,10 +42,12 @@ import flaxbeard.immersivepetroleum.client.page.ManualPageBigMultiblock;
 import flaxbeard.immersivepetroleum.client.page.ManualPageSchematicCrafting;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
+import flaxbeard.immersivepetroleum.client.render.TileAutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
-import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
@@ -194,6 +196,7 @@ public class ClientProxy extends CommonProxy
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDistillationTower.TileEntityDistillationTowerParent.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPumpjack.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAutoLubricator.class, new TileAutoLubricatorRenderer());
 
 	}
 

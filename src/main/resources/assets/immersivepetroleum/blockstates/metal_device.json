@@ -1,0 +1,68 @@
+{
+	"forge_marker": 1,
+	"defaults":
+	{
+		"transform": "forge:default-block",
+		"model": "immersiveengineering:ieSixSides",
+		"textures": {
+			"bottom": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_bottom",
+			"top": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_top",
+			"north": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side",
+			"south": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side",
+			"west": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side",
+			"east": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side",
+
+			"sideOff": "immersiveengineering:blocks/metalDevice1_furnaceHeater",
+			"sideOn": "immersiveengineering:blocks/metalDevice1_furnaceHeater_active"
+		}
+	},
+	"variants":
+	{
+		"inventory,type=automatic_lubricator": [{
+			"model": "immersivepetroleum:lubricator_full",
+			"transform": {
+				"scale": [ 0.28125, 0.28125, 0.28125 ],
+				"firstperson_righthand": { "scale": [ 0.75, 0.75, 0.75 ], "rotation": [{ "y": 180 }] },
+				"firstperson_lefthand": { "scale": [ 0.75, 0.75, 0.75 ], "rotation": [{ "y": 180 }] },
+				"thirdperson_righthand": { "translation": [ 0, 0.09375, -0.171875 ], "rotation": [{ "x": 70 }, { "y": 70 }] },
+				"thirdperson_lefthand": { "translation": [ 0, 0.09375, -0.171875 ], "rotation": [{ "x": 70 }, { "y": 70 }] },
+				"fixed": {"scale": [ 2,2,2 ], "translation": [ 0, -0.25, 0 ], "rotation": [{ "y": 0 }]},
+				"gui": { "translation": [ 0, -0.15625, 0 ], "rotation": [{ "x": 30 },{ "y": 135 }], "scale": [ 1.5, 1.5, 1.5 ] }
+			}
+		}],
+		"type":
+		{
+			"automatic_lubricator": {
+				"model": "immersivepetroleum:lubricator_bottom"
+			}
+		},
+		"facing":
+		{
+			"down": { "transform": {
+				"rotation": {"x": -90 }
+			}},
+			"up": { "transform": {
+				"rotation": {"x": 90 }
+			}},
+			"north": { "transform": {
+				"rotation": {"y": 0 }
+			}},
+			"south": { "transform": {
+				"rotation": {"y": 180 }
+			}},
+			"west": { "transform": {
+				"rotation": {"y": 90 }
+			}},
+			"east": { "transform": {
+				"rotation": {"y": -90 }
+			}}
+		},
+		"_0multiblockslave":
+		{
+			"false":{},
+			"true":{
+				"model": "immersivepetroleum:lubricator_top"
+			}
+		}
+	}
+}

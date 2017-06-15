@@ -6,28 +6,28 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.common.blocks.BlockIETileProvider;
-import blusunrize.immersiveengineering.common.blocks.ItemBlockIEBase;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCapacitorCreative;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCapacitorHV;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCapacitorLV;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCapacitorMV;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPump;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMetalBarrel;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice0;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_IPMetalDevice;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
 
-public class BlockIPMetalDevice extends BlockIETileProvider<BlockTypes_IPMetalDevice>
+public class BlockIPMetalDevice extends BlockIPTileProvider<BlockTypes_IPMetalDevice>
 {
 	public BlockIPMetalDevice()
 	{
-		super("metalDevice0",Material.IRON, PropertyEnum.create("type", BlockTypes_IPMetalDevice.class), ItemBlockIEBase.class, IEProperties.MULTIBLOCKSLAVE,IEProperties.SIDECONFIG[0],IEProperties.SIDECONFIG[1],IEProperties.SIDECONFIG[2],IEProperties.SIDECONFIG[3],IEProperties.SIDECONFIG[4],IEProperties.SIDECONFIG[5]);
+		super("metal_device",Material.IRON, PropertyEnum.create("type", BlockTypes_IPMetalDevice.class), ItemBlockIPBase.class, IEProperties.FACING_ALL, IEProperties.MULTIBLOCKSLAVE);
 		setHardness(3.0F);
 		setResistance(15.0F);
+		lightOpacity = 0;
+		
+		this.setNotNormalBlock(BlockTypes_IPMetalDevice.AUTOMATIC_LUBRICATOR.getMeta());
+		this.setMetaBlockLayer(BlockTypes_IPMetalDevice.AUTOMATIC_LUBRICATOR.getMeta(), BlockRenderLayer.CUTOUT);
+
 	}
 
 	@Override
@@ -40,13 +40,6 @@ public class BlockIPMetalDevice extends BlockIETileProvider<BlockTypes_IPMetalDe
 	{
 		return null;
 	}
-
-	@Override
-	public boolean canIEBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack)
-	{
-		return true;
-	}
-
 
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
@@ -68,7 +61,7 @@ public class BlockIPMetalDevice extends BlockIETileProvider<BlockTypes_IPMetalDe
 		switch(BlockTypes_IPMetalDevice.values()[meta])
 		{
 			case AUTOMATIC_LUBRICATOR:
-				return new TileEntityCapacitorLV();
+				return new TileEntityAutoLubricator();
 		}
 		return null;
 	}
@@ -76,6 +69,17 @@ public class BlockIPMetalDevice extends BlockIETileProvider<BlockTypes_IPMetalDe
 	@Override
 	public boolean allowHammerHarvest(IBlockState state)
 	{
+		return true;
+	}
+	
+	@Override
+	public boolean canIEBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack)
+	{
+		if (stack.getItemDamage() == BlockTypes_IPMetalDevice.AUTOMATIC_LUBRICATOR.getMeta())
+		{
+			if (!world.getBlockState(pos.add(0, 1, 0)).getBlock().isReplaceable(world, pos.add(0, 1, 0)))
+				return false;
+		}
 		return true;
 	}
 }

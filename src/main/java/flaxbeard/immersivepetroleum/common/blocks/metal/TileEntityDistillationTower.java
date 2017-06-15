@@ -135,9 +135,10 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 			{
 				FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[1].getFluid(), Math.min(this.tanks[1].getFluidAmount(), 80), false);
 				BlockPos outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY().getOpposite(), 1).offset(EnumFacing.DOWN, 1);
-				//System.out.println(outputPos);
+				if (this.mirrored)
+					outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY(), 1).offset(EnumFacing.DOWN, 1);				//System.out.println(outputPos);
 				IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
-				if(output != null)
+				if(output!=null)
 				{
 					int accepted = output.fill(out, false);
 					if(accepted>0)

@@ -926,7 +926,7 @@ public class ItemProjector extends ItemIPBase
 		if (event.getH() < mb.getStructureManual().length - 1)
 		{
 			ItemStack stack = mb.getStructureManual()[event.getH() + 1][event.getL()][event.getW()];
-			if (!stack.isEmpty())
+			if (stack != null && !stack.isEmpty())
 			{
 				if (state.getBlock() == IEContent.blockMetalDevice0 && state.getBlock().getMetaFromState(state) == BlockTypes_MetalDevice0.FLUID_PUMP.getMeta() &&
 						!(stack.getItemDamage() != BlockTypes_MetalDevice0.FLUID_PUMP.getMeta() || stack.getItem() != Item.getItemFromBlock(IEContent.blockMetalDevice0)))

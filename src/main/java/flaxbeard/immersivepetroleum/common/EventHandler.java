@@ -294,7 +294,7 @@ public class EventHandler
 				String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
 				if (ItemNBTHelper.hasKey(stack, "oil") && resName == null)
 				{
-					resName = "oil";
+					resName = "";
 				}
 				
 				ReservoirType res = null;
@@ -371,7 +371,7 @@ public class EventHandler
 						ItemStack coresample = ((TileEntityCoresample) tileEntity).coresample;
 						if (ItemNBTHelper.hasKey(coresample, "oil") && text != null && text.length > 0)
 						{
-							String resName = ItemNBTHelper.hasKey(coresample, "resType") ? ItemNBTHelper.getString(coresample, "resType") : "oil";
+							String resName = ItemNBTHelper.hasKey(coresample, "resType") ? ItemNBTHelper.getString(coresample, "resType") : "";
 							int amnt = ItemNBTHelper.getInt(coresample, "oil");
 							FontRenderer font = useNixie?ClientProxy.nixieFontOptional:ClientUtils.font();
 							int col = (useNixie&& IEConfig.nixietubeFont)?Lib.colour_nixieTubeText:0xffffff;

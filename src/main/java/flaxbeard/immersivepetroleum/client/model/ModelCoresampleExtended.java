@@ -241,7 +241,7 @@ public class ModelCoresampleExtended extends ModelCoresample
 		public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity)
 		{
 			String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
-			if (ItemNBTHelper.hasKey(stack, "oil") && resName == null)
+			if (ItemNBTHelper.hasKey(stack, "oil") && resName == null && ItemNBTHelper.getInt(stack, "oil") > 0)
 			{
 				resName = "oil";
 			}

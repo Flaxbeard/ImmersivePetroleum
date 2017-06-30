@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
@@ -70,11 +71,16 @@ public class ClientProxy extends CommonProxy
 	public void preInitEnd()
 	{
 		//Going through registered stuff at the end of preInit, because of compat modules possibly adding items
-		for(Block block : IPContent.registeredIPBlocks)
+		for (Block block : IPContent.registeredIPBlocks)
 		{
 			Item blockItem = Item.getItemFromBlock(block);
 			final ResourceLocation loc = GameData.getBlockRegistry().getNameForObject(block);
-			if(block instanceof IIEMetaBlock)
+			if (block == IPContent.blockMetalDevice)
+			{
+				ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "auto_lube"), "inventory"));
+
+			}
+			else if (block instanceof IIEMetaBlock)
 			{
 				IIEMetaBlock ieMetaBlock = (IIEMetaBlock) block;
 				if(ieMetaBlock.useCustomStateMapper())
@@ -197,6 +203,7 @@ public class ClientProxy extends CommonProxy
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDistillationTower.TileEntityDistillationTowerParent.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPumpjack.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAutoLubricator.class, new TileAutoLubricatorRenderer());
+		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice), 0, TileEntityAutoLubricator.class);
 
 	}
 

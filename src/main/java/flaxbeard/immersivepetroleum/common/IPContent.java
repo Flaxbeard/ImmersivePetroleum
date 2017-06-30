@@ -22,6 +22,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecor
 import blusunrize.immersiveengineering.common.util.IEPotions;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
@@ -76,7 +77,7 @@ public class IPContent
 			fluidDiesel = FluidRegistry.getFluid("diesel");
 		FluidRegistry.addBucketForFluid(fluidDiesel);
 		
-		fluidLubricant = new Fluid("lubricant", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/lubricant_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/lubricant_flow")).setDensity(925).setViscosity(2000);
+		fluidLubricant = new Fluid("lubricant", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/lubricant_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/lubricant_flow")).setDensity(925).setViscosity(1000);
 		if(!FluidRegistry.registerFluid(fluidLubricant))
 			fluidLubricant = FluidRegistry.getFluid("lubricant");
 		FluidRegistry.addBucketForFluid(fluidLubricant);
@@ -131,6 +132,9 @@ public class IPContent
 		}
 		
 		Config.addConfigReservoirs(IPConfig.reservoirs.reservoirs);
+		
+		LubricantHandler.registerLubricant(fluidLubricant, 4);
+		LubricantHandler.registerLubricant(IEContent.fluidPlantoil, 6);
 
 	}
 	

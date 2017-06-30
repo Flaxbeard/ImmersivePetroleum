@@ -70,7 +70,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	public FluidTank fakeTank = new FluidTank(0);
 
 	public boolean wasActive = false;
-	public int activeTicks = 0;
+	public float activeTicks = 0;
 	public IBlockState state = null;
 	
 	public boolean canExtract()

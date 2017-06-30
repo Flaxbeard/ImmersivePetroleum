@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -81,5 +82,11 @@ public class BlockIPMetalDevice extends BlockIPTileProvider<BlockTypes_IPMetalDe
 				return false;
 		}
 		return true;
+	}
+	
+	@Deprecated
+	public EnumBlockRenderType getRenderType(IBlockState state)
+	{
+		return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
 	}
 }

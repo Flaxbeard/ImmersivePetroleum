@@ -4,6 +4,8 @@ tile.immersivepetroleum.fluid_lubricant.name=Lubricant
 
 tile.immersivepetroleum.stone_decoration.asphalt.name=Asphalt Concrete
 
+tile.immersivepetroleum.metal_device.automatic_lubricator.name=Automatic Lubricator
+
 tile.immersivepetroleum.metal_multiblock.pumpjack.name=Pumpjack
 tile.immersivepetroleum.metal_multiblock.distillation_tower.name=Distillation Tower
 tile.immersivepetroleum.metal_multiblock.pumpjack_parent.name=Pumpjack

@@ -177,6 +177,7 @@ public class ItemProjector extends ItemIPBase
 			}
 			ItemStack stack = new ItemStack(item, 1, 0);
 			ItemNBTHelper.setString(stack, "multiblock", MultiblockExcavatorDemo.instance.getUniqueName());
+			setFlipped(stack, true);
 			list.add(stack);
 		}
 	}
@@ -234,6 +235,11 @@ public class ItemProjector extends ItemIPBase
 			
 			if (playerIn.isSneaking() && playerIn.isCreative())
 			{
+				if (mb.getUniqueName().equals("IE:ExcavatorDemo"))
+				{
+					hit = hit.add(0, -2, 0);
+				}
+				
 				boolean flip = getFlipped(stack);
 				
 				int idx = 0;

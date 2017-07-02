@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
+import java.util.Iterator;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,6 +17,7 @@ import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -28,31 +31,41 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import blusunrize.immersiveengineering.api.Lib;
+import blusunrize.immersiveengineering.api.crafting.CrusherRecipe;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.Config.IEConfig;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHasDummyBlocks;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityBucketWheel;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCrusher;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityExcavator;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal.MultiblockProcess;
 import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
-import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes.Pumpjack;
 import flaxbeard.immersivepetroleum.common.IPContent;
 
-public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirectionalTile, IHasDummyBlocks, ITickable, IPlayerInteraction, IBlockOverlayText
+public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirectionalTile, IHasDummyBlocks, ITickable, IPlayerInteraction, IBlockOverlayText, IBlockBounds
 {
-	
-	public static class PumpjackLubricationHandler implements ILubricationHandler
+	static
+	{
+		LubricatedHandler.registerLubricatedTile(TileEntityPumpjack.class, new PumpjackLubricationHandler());
+		LubricatedHandler.registerLubricatedTile(TileEntityExcavator.class, new ExcavatorLubricationHandler());
+		LubricatedHandler.registerLubricatedTile(TileEntityCrusher.class, new CrusherLubricationHandler());
+
+	}
+	public static class PumpjackLubricationHandler implements ILubricationHandler<TileEntityPumpjack>
 	{
 
 		@Override
-		public boolean isPlacedCorrectly(World world, TileEntityAutoLubricator tile, EnumFacing facing)
+		public TileEntity isPlacedCorrectly(World world, TileEntityAutoLubricator tile, EnumFacing facing)
 		{
 			BlockPos target = tile.getPos().offset(facing, 2).up();
 			TileEntity te = world.getTileEntity(target);
@@ -65,93 +78,70 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 				EnumFacing f = master.mirrored ? facing : facing.getOpposite() ;
 				if (jack == master && jack.getFacing().rotateY() == f)
 				{
-					return true;
+					return master;
 				}
 			}
 			
-			return false;
+			return null;
 		}
 
 		@Override
-		public boolean isMachineEnabled(World world, TileEntityAutoLubricator tile, EnumFacing facing)
+		public boolean isMachineEnabled(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityPumpjack master)
 		{
-			BlockPos target = tile.getPos().offset(facing, 2).up();
-			TileEntity te = world.getTileEntity(target);
-			
-			if (te instanceof TileEntityPumpjack)
-			{
-				TileEntityPumpjack jack = (TileEntityPumpjack) te;
-				TileEntityPumpjack master = jack.master();
-				
-				return master.wasActive;
-			}
-			
-			return false;
+			return master.wasActive;
 		}
 
 		@Override
-		public void lubricate(World world, TileEntityAutoLubricator tile, EnumFacing facing, int ticks)
+		public void lubricate(World world, TileEntityAutoLubricator tile, EnumFacing facing, int ticks, TileEntityPumpjack master)
 		{
-			if (ticks % 4 == 0)
+			if (!world.isRemote)
 			{
-				BlockPos target = tile.getPos().offset(facing, 2).up();
-				TileEntity te = world.getTileEntity(target);
-				
-				if (te instanceof TileEntityPumpjack)
-				{
+				if (ticks % 4 == 0) {
 					tile.tank.drainInternal(LubricantHandler.getLubeAmount(tile.tank.getFluid().getFluid()), true);
-					((TileEntityPumpjack) te).update();
+					master.update(false);
 					tile.markContainingBlockForUpdate(null);
 				}
-			}			
+			}
+			else
+			{
+				master.activeTicks += 1F/4F;
+			}
 		}
 
 		@Override
-		public void spawnLubricantParticles(World world, TileEntityAutoLubricator tile, EnumFacing facing)
-		{
-			BlockPos target = tile.pos.offset(facing, 2).up();
-			TileEntity te = world.getTileEntity(target);
+		public void spawnLubricantParticles(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityPumpjack master)
+		{				
+			EnumFacing f = master.mirrored ? facing : facing.getOpposite() ;
+			float location = world.rand.nextFloat();
 			
-			if (te instanceof TileEntityPumpjack)
+			boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.POSITIVE ^ !master.mirrored;
+			float xO = 2.5F;
+			float zO = -.15F;
+			float yO = 2.25F;
+			
+			if (location > .5F)
 			{
-				TileEntityPumpjack master = (TileEntityPumpjack) te;
-					
-				EnumFacing f = master.mirrored ? facing : facing.getOpposite() ;
-				float location = world.rand.nextFloat();
-				
-				boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.POSITIVE ^ !master.mirrored;
-				float xO = 2.5F;
-				float zO = -.15F;
-				float yO = 2.25F;
-	
-				
-				if (location > .5F)
-				{
-					xO = 1.7F;
-					yO = 2.9F;
-					zO = -1.5F;
-	
-				}
-				
-				if (facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
-				if (!flip) zO = -zO + 1;
-	
-				
-				
-				float x = tile.pos.getX() + (f.getAxis() == Axis.X ? xO : zO);
-				float y = tile.pos.getY() + yO;
-				float z = tile.pos.getZ() + (f.getAxis() == Axis.X ? zO : xO);
-				
-				for (int i = 0; i < 3; i++)
-				{
-	
-					float r1 = (world.rand.nextFloat() - .5F) * 2F;
-					float r2 = (world.rand.nextFloat() - .5F) * 2F;
-					float r3 = world.rand.nextFloat();
-					int n = Block.getStateId(IPContent.blockFluidLubricant.getDefaultState());
-					world.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F, new int[] {n});
-				}			
+				xO = 1.7F;
+				yO = 2.9F;
+				zO = -1.5F;
+
 			}
+			
+			if (facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
+			if (!flip) zO = -zO + 1;
+			
+			float x = tile.pos.getX() + (f.getAxis() == Axis.X ? xO : zO);
+			float y = tile.pos.getY() + yO;
+			float z = tile.pos.getZ() + (f.getAxis() == Axis.X ? zO : xO);
+			
+			for (int i = 0; i < 3; i++)
+			{
+				float r1 = (world.rand.nextFloat() - .5F) * 2F;
+				float r2 = (world.rand.nextFloat() - .5F) * 2F;
+				float r3 = world.rand.nextFloat();
+				int n = Block.getStateId(IPContent.blockFluidLubricant.getDefaultState());
+				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F, new int[] {n});
+			}				
 		}
 		
 		private static Object pumpjackM;
@@ -159,59 +149,376 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 
 		@Override
 		@SideOnly(Side.CLIENT)
-		public void renderPipes(World world, TileEntityAutoLubricator tile, EnumFacing facing)
+		public void renderPipes(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityPumpjack master)
 		{
 			if (pumpjackM == null)
 			{
 				pumpjackM = new ModelLubricantPipes.Pumpjack(true);
 				pumpjack = new ModelLubricantPipes.Pumpjack(false);
 			}
-			BlockPos pos = tile.getPos().offset(tile.getFacing());
-			TileEntity pj = tile.getWorld().getTileEntity(pos);
-			if (pj instanceof TileEntityPumpjack)
+
+	
+			GlStateManager.translate(0, -1, 0);
+			Vec3i offset = master.getPos().subtract(tile.getPos());
+			GlStateManager.translate(offset.getX(), offset.getY(), offset.getZ());
+
+			EnumFacing rotation = master.facing;
+			if (rotation == EnumFacing.NORTH)
 			{
-				BlockPos masterPos = tile.getPos().offset(tile.getFacing(), 2).up();
-				TileEntityPumpjack base = ((TileEntityPumpjack)pj).master();
-				TileEntity target = tile.getWorld().getTileEntity(masterPos);
+				GlStateManager.rotate(90F, 0, 1, 0);
+				GlStateManager.translate(-1, 0, 0);
+			}
+			else if (rotation == EnumFacing.WEST)
+			{
+				GlStateManager.rotate(180F, 0, 1, 0);
+				GlStateManager.translate(-1, 0, -1);
+			}
+			else if (rotation == EnumFacing.SOUTH)
+			{
+				GlStateManager.rotate(270F, 0, 1, 0);
+				GlStateManager.translate(0, 0, -1);
+			}
+			GlStateManager.translate(-1, 0, -1);
+			ClientUtils.bindTexture("immersivepetroleum:textures/blocks/lube_pipe12.png");
+			if (master.mirrored)
+			{
+				((ModelLubricantPipes.Pumpjack) pumpjackM).render(null, 0, 0, 0, 0, 0, 0.0625F);
+			}
+			else
+			{
+				((ModelLubricantPipes.Pumpjack) pumpjack).render(null, 0, 0, 0, 0, 0, 0.0625F);
+			}	
+		}
+		
+
+		@Override
+		public Tuple<BlockPos, EnumFacing> getGhostBlockPosition(World world, TileEntityPumpjack tile)
+		{
+			if (!tile.isDummy())
+			{
+				BlockPos pos = tile.getPos().offset(tile.mirrored ? tile.facing.rotateYCCW() : tile.facing.rotateY(), 2);
+				EnumFacing f = tile.mirrored ? tile.facing.rotateY() : tile.facing.rotateYCCW();
+				return new Tuple(pos, f);
+			}
+			return null;
+		}
+
+	}
+	
+	public static class ExcavatorLubricationHandler implements ILubricationHandler<TileEntityExcavator>
+	{
+
+		@Override
+		public TileEntity isPlacedCorrectly(World world, TileEntityAutoLubricator tile, EnumFacing facing)
+		{
+			BlockPos initialTarget = tile.getPos().offset(facing);
+			TileEntityExcavator adjacent = (TileEntityExcavator) world.getTileEntity(initialTarget);
+			EnumFacing f = adjacent.mirrored ? facing : facing.getOpposite() ;
+
+			BlockPos target = tile.getPos().offset(facing, 2).offset(f.rotateY(), 4).up();
+			TileEntity te = world.getTileEntity(target);
+			
+			if (te instanceof TileEntityExcavator)
+			{
+				TileEntityExcavator excavator = (TileEntityExcavator) te;
+				TileEntityExcavator master = excavator.master();
 				
-				EnumFacing f = base.mirrored ? tile.getFacing() : tile.getFacing().getOpposite() ;
-				if (base != null && base == target && base.getFacing().rotateY() == f)
+				if (excavator == master && excavator.getFacing().rotateY() == f)
 				{
-	
-					GlStateManager.translate(0, -1, 0);
-					Vec3i offset = base.getPos().subtract(tile.getPos());
-					GlStateManager.translate(offset.getX(), offset.getY(), offset.getZ());
-	
-					EnumFacing rotation = base.facing;
-					if (rotation == EnumFacing.NORTH)
-					{
-						GlStateManager.rotate(90F, 0, 1, 0);
-						GlStateManager.translate(-1, 0, 0);
-					}
-					else if (rotation == EnumFacing.WEST)
-					{
-						GlStateManager.rotate(180F, 0, 1, 0);
-						GlStateManager.translate(-1, 0, -1);
-					}
-					else if (rotation == EnumFacing.SOUTH)
-					{
-						GlStateManager.rotate(270F, 0, 1, 0);
-						GlStateManager.translate(0, 0, -1);
-					}
-					GlStateManager.translate(-1, 0, -1);
-					ClientUtils.bindTexture("immersivepetroleum:textures/blocks/lube_pipe12.png");
-					if (base.mirrored)
-					{
-						((ModelLubricantPipes.Pumpjack) pumpjackM).render(null, 0, 0, 0, 0, 0, 0.0625F);
-					}
-					else
-					{
-						((ModelLubricantPipes.Pumpjack) pumpjack).render(null, 0, 0, 0, 0, 0, 0.0625F);
-					}					
+					return master;
 				}
+			}
+			
+			return null;
+		}
+
+		@Override
+		public boolean isMachineEnabled(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityExcavator master)
+		{
+			BlockPos wheelPos = master.getBlockPosForPos(31);
+			TileEntity center = world.getTileEntity(wheelPos);
+
+			if (center instanceof TileEntityBucketWheel)
+			{
+				TileEntityBucketWheel wheel = (TileEntityBucketWheel) center;
+				
+				return wheel.active;
+			}
+			return false;
+		}
+
+		@Override
+		public void lubricate(World world, TileEntityAutoLubricator tile, EnumFacing facing, int ticks, TileEntityExcavator master)
+		{
+			BlockPos wheelPos = master.getBlockPosForPos(31);
+			TileEntity center = world.getTileEntity(wheelPos);
+
+			if (center instanceof TileEntityBucketWheel)
+			{
+				TileEntityBucketWheel wheel = (TileEntityBucketWheel) center;
+
+				wheel.rotation += IEConfig.Machines.excavator_speed / 4F;
+			
+				if (!world.isRemote)
+				{
+					if (ticks % 4 == 0)
+					{
+						tile.tank.drainInternal(LubricantHandler.getLubeAmount(tile.tank.getFluid().getFluid()), true);
+						tile.markContainingBlockForUpdate(null);
+					}
+				}	
+			}
+		}
+
+		@Override
+		public void spawnLubricantParticles(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityExcavator master)
+		{
+			EnumFacing f = master.mirrored ? facing : facing.getOpposite() ;
+			
+			float location = world.rand.nextFloat();
+			
+			boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.POSITIVE ^ !master.mirrored;
+			float xO = 1.2F;
+			float zO = -.5F;
+			float yO = .5F;
+			
+			if (location > .5F)
+			{
+				xO = 0.9F;
+				yO = 0.8F;
+				zO = 1.75F;
+			}
+			
+			if (facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
+			if (!flip) zO = -zO + 1;
+
+			float x = tile.pos.getX() + (f.getAxis() == Axis.X ? xO : zO);
+			float y = tile.pos.getY() + yO;
+			float z = tile.pos.getZ() + (f.getAxis() == Axis.X ? zO : xO);
+			
+			for (int i = 0; i < 3; i++)
+			{
+				float r1 = (world.rand.nextFloat() - .5F) * 2F;
+				float r2 = (world.rand.nextFloat() - .5F) * 2F;
+				float r3 = world.rand.nextFloat();
+				int n = Block.getStateId(IPContent.blockFluidLubricant.getDefaultState());
+				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F, new int[] {n});
 			}
 		}
 		
+		private static Object excavator;
+		private static Object excavatorM;
+
+		@Override
+		@SideOnly(Side.CLIENT)
+		public void renderPipes(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityExcavator master)
+		{
+			if (excavator == null)
+			{
+				excavatorM = new ModelLubricantPipes.Excavator(true);
+				excavator = new ModelLubricantPipes.Excavator(false);
+			}
+
+	
+			GlStateManager.translate(0, -1, 0);
+			Vec3i offset = master.getPos().subtract(tile.getPos());
+			GlStateManager.translate(offset.getX(), offset.getY(), offset.getZ());
+
+			EnumFacing rotation = master.facing;
+			if (rotation == EnumFacing.NORTH)
+			{
+				GlStateManager.rotate(90F, 0, 1, 0);
+				
+			}
+			else if (rotation == EnumFacing.WEST)
+			{
+				GlStateManager.rotate(180F, 0, 1, 0);
+				GlStateManager.translate(0, 0, -1);
+
+			}
+			else if (rotation == EnumFacing.SOUTH)
+			{
+				GlStateManager.rotate(270F, 0, 1, 0);
+				GlStateManager.translate(1, 0, -1);
+			}
+			else if (rotation == EnumFacing.EAST)
+			{
+				GlStateManager.translate(1, 0, 0);
+
+			}
+			
+			GlStateManager.translate(-1, 0, -1);
+			ClientUtils.bindTexture("immersivepetroleum:textures/blocks/lube_pipe12.png");
+			if (master.mirrored)
+			{
+				((ModelLubricantPipes.Excavator) excavatorM).render(null, 0, 0, 0, 0, 0, 0.0625F);
+			}
+			else
+			{
+				((ModelLubricantPipes.Excavator) excavator).render(null, 0, 0, 0, 0, 0, 0.0625F);
+			}
+		}
+		
+
+		@Override
+		public Tuple<BlockPos, EnumFacing> getGhostBlockPosition(World world, TileEntityExcavator tile)
+		{
+			if (!tile.isDummy())
+			{
+				BlockPos pos = tile.getPos().offset(tile.facing, 4).offset(tile.mirrored ? tile.facing.rotateYCCW() : tile.facing.rotateY(), 2);
+				EnumFacing f = tile.mirrored ? tile.facing.rotateY() : tile.facing.rotateYCCW();
+				return new Tuple(pos, f);
+			}
+			return null;
+		}
+	}
+	
+	public static class CrusherLubricationHandler implements ILubricationHandler<TileEntityCrusher>
+	{
+
+		@Override
+		public TileEntity isPlacedCorrectly(World world, TileEntityAutoLubricator tile, EnumFacing facing)
+		{
+
+			BlockPos target = tile.getPos().offset(facing, 2).up();
+			TileEntity te = world.getTileEntity(target);
+			
+			if (te instanceof TileEntityCrusher)
+			{
+				TileEntityCrusher excavator = (TileEntityCrusher) te;
+				TileEntityCrusher master = excavator.master();
+				
+				EnumFacing f = facing;
+				if (excavator == master && excavator.getFacing().getOpposite() == f)
+				{
+
+					return master;
+				}
+			}
+			
+			return null;
+		}
+
+		@Override
+		public boolean isMachineEnabled(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityCrusher master)
+		{
+			return master.shouldRenderAsActive();
+		}
+
+		@Override
+		public void lubricate(World world, TileEntityAutoLubricator tile, EnumFacing facing, int ticks, TileEntityCrusher master)
+		{
+			Iterator<MultiblockProcess<CrusherRecipe>> processIterator = master.processQueue.iterator();
+			MultiblockProcess<CrusherRecipe> process = processIterator.next();
+			
+			if (!world.isRemote)
+			{
+				if (ticks % 4 == 0)
+				{
+					if (process.processTick < process.maxTicks) process.processTick++;
+					if (process.processTick >= process.maxTicks && master.processQueue.size() > 1)
+					{
+						process = processIterator.next();
+						if (process.processTick < process.maxTicks) process.processTick++;
+					}
+					tile.tank.drainInternal(LubricantHandler.getLubeAmount(tile.tank.getFluid().getFluid()), true);
+					tile.markContainingBlockForUpdate(null);
+				}
+			}
+			else
+			{
+				master.animation_barrelRotation += 18f / 4f;
+				master.animation_barrelRotation %= 360f;
+			}
+		}
+
+		@Override
+		public void spawnLubricantParticles(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityCrusher master)
+		{
+
+			EnumFacing f = master.mirrored ? facing : facing.getOpposite() ;
+			
+			float location = world.rand.nextFloat();
+			
+			boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.POSITIVE ^ !master.mirrored;
+			float xO = 2.5F;
+			float zO = -0.1F;
+			float yO = 1.3F;
+			
+			if (location > .5F)
+			{
+				xO = 1.0F;
+				yO = 3.0F;
+				zO = 1.65F;
+			}
+			
+			if (facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
+			if (!flip) zO = -zO + 1;
+
+			float x = tile.pos.getX() + (f.getAxis() == Axis.X ? xO : zO);
+			float y = tile.pos.getY() + yO;
+			float z = tile.pos.getZ() + (f.getAxis() == Axis.X ? zO : xO);
+			
+			for (int i = 0; i < 3; i++)
+			{
+				float r1 = (world.rand.nextFloat() - .5F) * 2F;
+				float r2 = (world.rand.nextFloat() - .5F) * 2F;
+				float r3 = world.rand.nextFloat();
+				int n = Block.getStateId(IPContent.blockFluidLubricant.getDefaultState());
+				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F, new int[] {n});
+			}
+		}
+		
+		private static Object excavator;
+
+		@Override
+		@SideOnly(Side.CLIENT)
+		public void renderPipes(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityCrusher master)
+		{
+			if (excavator == null)
+			{
+				excavator = new ModelLubricantPipes.Crusher(false);
+			}
+
+	
+			GlStateManager.translate(0, -1, 0);
+			Vec3i offset = master.getPos().subtract(tile.getPos());
+			GlStateManager.translate(offset.getX(), offset.getY(), offset.getZ());
+
+			EnumFacing rotation = master.facing;
+			if (rotation == EnumFacing.NORTH)
+			{
+				GlStateManager.rotate(90F, 0, 1, 0);
+				GlStateManager.translate(-1, 0, 0);
+			}
+			else if (rotation == EnumFacing.WEST)
+			{
+				GlStateManager.rotate(180F, 0, 1, 0);
+				GlStateManager.translate(-1, 0, -1);
+
+			}
+			else if (rotation == EnumFacing.SOUTH)
+			{
+				GlStateManager.rotate(270F, 0, 1, 0);
+				GlStateManager.translate(0, 0, -1);
+
+			}
+			
+			ClientUtils.bindTexture("immersivepetroleum:textures/blocks/lube_pipe12.png");
+			((ModelLubricantPipes.Crusher) excavator).render(null, 0, 0, 0, 0, 0, 0.0625F);
+		}
+
+		@Override
+		public Tuple<BlockPos, EnumFacing> getGhostBlockPosition(World world, TileEntityCrusher tile)
+		{
+			if (!tile.isDummy())
+			{
+				BlockPos pos = tile.getPos().offset(tile.facing, 2);
+				EnumFacing f = tile.getFacing().getOpposite();
+				return new Tuple(pos, f);
+			}
+			return null;
+		}
 	}
 	
 	public boolean active;
@@ -378,9 +685,35 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	{
 		if (dummy == 0)
 		{
-			if (tank.getFluid() != null && tank.getFluid().getFluid() != null && tank.getFluidAmount() > LubricantHandler.getLubeAmount(tank.getFluid().getFluid()) && LubricantHandler.isValidLube(tank.getFluid().getFluid()))
+			if (tank.getFluid() != null && tank.getFluid().getFluid() != null && tank.getFluidAmount() >= LubricantHandler.getLubeAmount(tank.getFluid().getFluid()) && LubricantHandler.isValidLube(tank.getFluid().getFluid()))
 			{
-				BlockPos target = pos.offset(facing, 2).up();
+				BlockPos target = pos.offset(facing);
+				TileEntity te = worldObj.getTileEntity(target);
+
+				ILubricationHandler handler = LubricatedHandler.getHandlerForTile(te);
+				if (handler != null)
+				{
+					TileEntity master = handler.isPlacedCorrectly(worldObj, this, facing);
+					if (master != null)
+					{
+						if (handler.isMachineEnabled(worldObj, this, facing, master))
+						{
+							count++;
+							handler.lubricate(worldObj, this, facing, count, master);
+							
+							if (worldObj.isRemote)
+							{
+								countClient++;
+								if (countClient % 50 == 0)
+								{
+									countClient = worldObj.rand.nextInt(40);
+									handler.spawnLubricantParticles(worldObj, this, facing, master);
+								}
+							}
+						}
+					}
+				}
+				/*BlockPos target = pos.offset(facing, 2).up();
 				TileEntity te = worldObj.getTileEntity(target);
 				
 				if (te instanceof TileEntityPumpjack)
@@ -534,7 +867,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 
 						}
 					}
-				}
+				}*/
 			}
 			
 			if (lastTank != this.tank.getFluidAmount())
@@ -606,5 +939,14 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	public boolean useNixieFont(EntityPlayer player, RayTraceResult mop)
 	{
 		return false;
+	}
+
+	@Override
+	public float[] getBlockBounds()
+	{
+		if (dummy == 1)
+			return new float[] { .1875F, 0, .1875F, .8125f, 1, .8125f };
+		else
+			return new float[] { .0625f, 0, .0625f, .9375f, 1, .9375f };
 	}
 }

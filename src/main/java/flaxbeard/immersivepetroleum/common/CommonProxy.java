@@ -2,8 +2,10 @@ package flaxbeard.immersivepetroleum.common;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -61,5 +63,9 @@ public class CommonProxy implements IGuiHandler
 			return gui;
 		}
 		return null;
+	}
+
+	public void handleEntitySound(SoundEvent soundEvent, Entity e, boolean active, float volume, float pitch)
+	{		
 	}
 }

@@ -21,7 +21,6 @@
 		"type":
 		{
 			"automatic_lubricator": {
-				"model": "immersivepetroleum:lubricator_bottom"
 			}
 		},
 		"facing":
@@ -49,7 +48,6 @@
 		{
 			"false":{},
 			"true":{
-				"model": "immersivepetroleum:lubricator_top"
 			}
 		}
 	}

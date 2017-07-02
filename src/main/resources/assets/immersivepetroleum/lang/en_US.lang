@@ -1,6 +1,7 @@
 tile.immersivepetroleum.fluid_diesel.name=Diesel
 tile.immersivepetroleum.fluid_crude_oil.name=Crude Oil
 tile.immersivepetroleum.fluid_lubricant.name=Lubricant
+tile.immersivepetroleum.fluid_gasoline.name=Gasoline
 
 tile.immersivepetroleum.stone_decoration.asphalt.name=Asphalt Concrete
 
@@ -18,15 +19,19 @@ chat.immersivepetroleum.info.schematic.noMultiblock=Craft with Engineer's Manual
 chat.immersivepetroleum.info.schematic.build0=Displays instructions
 chat.immersivepetroleum.info.schematic.build1=for making a %s
 chat.immersivepetroleum.info.schematic.center=Centered at (%d, %d, %d)
+chat.immersivepetroleum.info.schematic.controls=%s to rotate, %s + %s to mirror
 
 fluid.diesel=Diesel
 fluid.oil=Crude Oil
 fluid.lubricant=Lubricant
+fluid.gasoline=Gasoline
 
 item.immersivepetroleum.material.bitumen.name=Bitumen
 item.immersivepetroleum.material.petcoke.name=Petcoke
 
 item.immersivepetroleum.schematic.name=%s Projector
+
+item.immersivepetroleum.speedboat.name=Motorboat
 
 itemGroup.immersivepetroleum=Immersive Petroleum
 
@@ -76,5 +81,14 @@ ie.manual.entry.schematics.subtext=Invaluable instructions
 ie.manual.entry.schematics0=When it comes to building large multiblock structures, referring to your Engineer's Manual time and time again has grown tedious. By crafting a primitive projector device, you believe you can project schematics of these structures into the world to use as a template.
 ie.manual.entry.schematics1=If you turn your Engineer's Manual to the page of a multiblock structure and then place it in a crafting bench alongside a Projector, you can set the internal slide to match that multiblock. The Projector will then act as a three dimensional building guide.
 ie.manual.entry.schematics2=Holding a Projector will display the structure. Pressing the pick block button will rotate the structure, and sneaking while doing so will mirror it. Right clicking will lock the image in place, where it will show as long as the Projector is in your hotbar.<br><br>Sneaking and right clicking with a projector that has a locked image will unlock the image.<br><br>In Creative mode, sneaking while locking the image will build the multiblock automatically.
+
+ie.manual.entry.speedboat.name=Motorboat
+ie.manual.entry.speedboat.subtext=Wave rider
+ie.manual.entry.speedboat0=You can now travel the seas at high speed with the help of the Motorboat. The Motorboat runs off of <link;distillationTower;§n§oGasoline§r> which may be added with a bucket or <link;jerrycan;§n§oJerrycan§r>. Gasoline is consumed while driving the Motorboat forwards or backwards. Holding the jump key will increase the speed of the boat, albeit at the cost of higher fuel consumption and increased turn radius.
+
+ie.manual.entry.automaticLubricator.name=Automatic Lubricator
+ie.manual.entry.automaticLubricator.subtext=Slip and slide
+ie.manual.entry.automaticLubricator0=Nobody's machines are perfect, not even your own. Inevitable friction between moving parts stops your devices from working to their maximum capacity - that's where the Automatic Lubricator comes in. It will ensure a connected machine will run at full throttle, <config;d;autoLubricant_speedup>x its base speed.
+ie.manual.entry.automaticLubricator1=The Automatic Lubricator can be used with a <link;pumpjack;§n§oPumpjack§r>, <link;excavator;§n§oExcavator§r>, or <link;crusher;§n§oCrusher§r>. The point where it must be attached is highlighted while holding a Lubricator in your hand. When correctly placed, lubricating pipes will form around the machine.<br><br>To function, the Automatic Lubricator must be supplied with a lubricating fluid. Petroleum <link;distillationTower;§n§oLubricant§r> is the most effective, but <link;squeezer;§n§oPlant Oil§r> also works.
 
 ie.manual.category.ip.name=Oil Processing

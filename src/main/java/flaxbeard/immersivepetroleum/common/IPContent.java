@@ -14,11 +14,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.IERecipes;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration0;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration2;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.util.IEPotions;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
@@ -36,8 +39,10 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecoration;
+import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 import flaxbeard.immersivepetroleum.common.items.ItemIPBase;
 import flaxbeard.immersivepetroleum.common.items.ItemProjector;
+import flaxbeard.immersivepetroleum.common.items.ItemSpeedboat;
 
 public class IPContent
 {
@@ -46,6 +51,7 @@ public class IPContent
 	public static BlockIPFluid blockFluidCrudeOil;
 	public static BlockIPFluid blockFluidDiesel;
 	public static BlockIPFluid blockFluidLubricant;
+	public static BlockIPFluid blockFluidGasoline;
 
 	public static BlockIPBase blockMetalMultiblock;
 	
@@ -60,13 +66,17 @@ public class IPContent
 
 	public static Item itemMaterial;
 	public static Item itemProjector;
+	public static Item itemSpeedboat;
 
 	public static Fluid fluidCrudeOil;
 	public static Fluid fluidDiesel;
 	public static Fluid fluidLubricant;
+	public static Fluid fluidGasoline;
 
 	public static void preInit()
 	{
+		EntityRegistry.registerModEntity(EntitySpeedboat.class, "speedboat", 0, ImmersivePetroleum.INSTANCE, 80, 3, true);
+
 		fluidCrudeOil = new Fluid("oil", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/oil_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/oil_flow")).setDensity(1000).setViscosity(2250);
 		if(!FluidRegistry.registerFluid(fluidCrudeOil))
 			fluidCrudeOil = FluidRegistry.getFluid("oil");
@@ -82,9 +92,15 @@ public class IPContent
 			fluidLubricant = FluidRegistry.getFluid("lubricant");
 		FluidRegistry.addBucketForFluid(fluidLubricant);
 		
+		fluidGasoline = new Fluid("gasoline", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/gasoline_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/gasoline_flow")).setDensity(789).setViscosity(1200);
+		if(!FluidRegistry.registerFluid(fluidGasoline))
+			fluidGasoline = FluidRegistry.getFluid("gasoline");
+		FluidRegistry.addBucketForFluid(fluidGasoline);
+		
 		blockFluidCrudeOil = new BlockIPFluid("fluid_crude_oil", fluidCrudeOil, Material.WATER).setFlammability(60, 200);
 		blockFluidDiesel = new BlockIPFluid("fluid_diesel", fluidDiesel, Material.WATER).setFlammability(60, 200);
 		blockFluidLubricant = new BlockIPFluid("fluid_lubricant", fluidLubricant, Material.WATER);
+		blockFluidGasoline = new BlockIPFluid("fluid_gasoline", fluidGasoline, Material.WATER).setFlammability(60, 200);
 
 		blockMetalMultiblock = new BlockIPMetalMultiblocks();
 		
@@ -97,6 +113,7 @@ public class IPContent
 				"bitumen");
 		
 		itemProjector = new ItemProjector("schematic");
+		itemSpeedboat = new ItemSpeedboat("speedboat");
 
 	}
 	
@@ -112,7 +129,13 @@ public class IPContent
 		registerTile(TileEntityPumpjack.TileEntityPumpjackParent.class);
 		registerTile(TileEntityAutoLubricator.class);
 
-		DistillationRecipe.addRecipe(new FluidStack[] { new FluidStack(fluidLubricant, 25), new FluidStack(fluidDiesel, 25) }, new ItemStack(itemMaterial, 1, 0), new FluidStack(fluidCrudeOil, 25), 2048, 1, .07F);
+		DistillationRecipe.addRecipe(
+				new FluidStack[] { 
+					new FluidStack(fluidLubricant, 3),
+					new FluidStack(fluidDiesel, 9),
+					new FluidStack(fluidGasoline, 13)
+				},
+				new ItemStack(itemMaterial, 1, 0), new FluidStack(fluidCrudeOil, 25), 2048, 1, .07F);
 
 		MultiblockHandler.registerMultiblock(MultiblockDistillationTower.instance);
 		MultiblockHandler.registerMultiblock(MultiblockPumpjack.instance);
@@ -131,10 +154,20 @@ public class IPContent
 			GameRegistry.addRecipe(new SchematicCraftingHandler());
 		}
 		
+		IERecipes.addIngredientRecipe(new ItemStack(itemSpeedboat, 1, 0), "PME", "PPP", 
+				'P', "plankTreatedWood", 
+				'E', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta()), 
+				'M', new ItemStack(IEContent.itemMaterial, 1, 8));
+		
+		IERecipes.addIngredientRecipe(new ItemStack(blockMetalDevice, 1, 0), " G ", "G G", "WPW", 
+				'W', "plankTreatedWood", 
+				'P', new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta()),
+				'G', "blockGlass");
+		
 		Config.addConfigReservoirs(IPConfig.reservoirs.reservoirs);
 		
-		LubricantHandler.registerLubricant(fluidLubricant, 4);
-		LubricantHandler.registerLubricant(IEContent.fluidPlantoil, 6);
+		LubricantHandler.registerLubricant(fluidLubricant, 3);
+		LubricantHandler.registerLubricant(IEContent.fluidPlantoil, 12);
 
 	}
 	

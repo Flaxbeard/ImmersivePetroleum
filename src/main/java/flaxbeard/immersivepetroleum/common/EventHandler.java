@@ -65,6 +65,7 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 import flaxbeard.immersivepetroleum.common.network.CloseBookPacket;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageReservoirListSync;
@@ -407,6 +408,19 @@ public class EventHandler
 
 	
 						}
+					}
+				}
+				else if (mop != null && mop.entityHit != null && mop.entityHit instanceof EntitySpeedboat)
+				{
+					String[] text = ((EntitySpeedboat) mop.entityHit).getOverlayText(ClientUtils.mc().thePlayer, mop);
+					if(text!=null && text.length>0)
+					{
+						FontRenderer font = ClientUtils.font();
+						int col = 0xffffff;
+						int i = 0;
+						for(String s : text)
+							if(s!=null)
+								font.drawString(s, event.getResolution().getScaledWidth()/2+8, event.getResolution().getScaledHeight()/2+8+(i++)*font.FONT_HEIGHT, col, true);
 					}
 				}
 			}

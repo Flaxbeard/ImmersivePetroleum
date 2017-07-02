@@ -89,6 +89,7 @@ public class ImmersivePetroleum
 			}
 		}
 		Config.manual_int.put("pumpjack_days", (((oil_max + oil_min) / 2) + oil_min) / (IPConfig.Machines.pumpjack_speed * 24000));
+		Config.manual_double.put("autoLubricant_speedup", 1.25);
 
 		IPContent.init();
 		NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, proxy);
@@ -179,6 +180,13 @@ public class ImmersivePetroleum
 			
 			stack = new ItemStack(bucket);
             fs = new FluidStack(IPContent.fluidLubricant, bucket.getCapacity());
+			if (bucket.fill(stack, fs, true) == fs.amount)
+			{
+				list.add(stack);
+			}
+			
+			stack = new ItemStack(bucket);
+            fs = new FluidStack(IPContent.fluidGasoline, bucket.getCapacity());
 			if (bucket.fill(stack, fs, true) == fs.amount)
 			{
 				list.add(stack);

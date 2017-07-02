@@ -2,20 +2,24 @@ package flaxbeard.immersivepetroleum.client;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.audio.ISound.AttenuationType;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -27,12 +31,15 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
+import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
+import blusunrize.immersiveengineering.common.util.sound.IETileSound;
 import blusunrize.lib.manual.IManualPage;
 import blusunrize.lib.manual.ManualInstance.ManualEntry;
 import blusunrize.lib.manual.ManualPages;
@@ -43,6 +50,7 @@ import flaxbeard.immersivepetroleum.client.page.ManualPageBigMultiblock;
 import flaxbeard.immersivepetroleum.client.page.ManualPageSchematicCrafting;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
+import flaxbeard.immersivepetroleum.client.render.RenderSpeedboat;
 import flaxbeard.immersivepetroleum.client.render.TileAutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
@@ -54,7 +62,9 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecoration;
+import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 import flaxbeard.immersivepetroleum.common.items.ItemIPBase;
+import flaxbeard.immersivepetroleum.common.sound.IPEntitySound;
 
 
 public class ClientProxy extends CommonProxy
@@ -63,8 +73,35 @@ public class ClientProxy extends CommonProxy
 	public static final String CAT_IP = "ip";
 	
 	@Override
-	public void preInit() {
-		
+	public void preInit()
+	{
+		RenderingRegistry.registerEntityRenderingHandler(EntitySpeedboat.class, RenderSpeedboat::new);
+	}
+	
+	HashMap<Integer, IPEntitySound> entitySoundMap = new HashMap<Integer, IPEntitySound>();
+	@Override
+	public void handleEntitySound(SoundEvent soundEvent, Entity e, boolean active, float volume, float pitch)
+	{
+		IPEntitySound sound = entitySoundMap.get(e.getEntityId());
+		if (sound == null && active)
+		{
+			sound = generateEntitySound(soundEvent, volume, pitch, true, 0, e);
+			entitySoundMap.put(e.getEntityId(), sound);
+		}
+		else if(sound!=null && !active)
+		{
+			sound.donePlaying=true;
+			ClientUtils.mc().getSoundHandler().stopSound(sound);
+			entitySoundMap.remove(e.getEntityId());
+		}
+	}
+	
+	public static IPEntitySound generateEntitySound(SoundEvent soundEvent, float volume, float pitch, boolean repeat, int delay, Entity e)
+	{
+		IPEntitySound sound = new IPEntitySound(soundEvent, volume, pitch, repeat, delay, e, AttenuationType.LINEAR, SoundCategory.AMBIENT);
+//		sound.evaluateVolume();
+		ClientUtils.mc().getSoundHandler().playSound(sound);
+		return sound;
 	}
 	
 	@Override
@@ -178,10 +215,12 @@ public class ClientProxy extends CommonProxy
 	{
 		
 		if (!IPConfig.Tools.disable_projector)
+		{
 			ManualHelper.addEntry("schematics", CAT_IP,
 					new ManualPages.Crafting(ManualHelper.getManual(), "schematics0", new ItemStack(IPContent.itemProjector, 1, 0)),
 					new ManualPageSchematicCrafting(ManualHelper.getManual(), "schematics1", new ItemStack(IPContent.itemProjector, 1, 0)),
 					new ManualPages.Text(ManualHelper.getManual(), "schematics2"));
+		}
 
 		handleReservoirManual();
 
@@ -196,9 +235,15 @@ public class ClientProxy extends CommonProxy
 					new ManualPages.Text(ManualHelper.getManual(), "distillationTower0"),
 					new ManualPages.Text(ManualHelper.getManual(), "distillationTower1"));
 		
+		ManualHelper.addEntry("speedboat", CAT_IP,
+				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat0", new ItemStack(IPContent.itemSpeedboat, 1, 0)));
+		
 		ManualHelper.addEntry("asphalt", CAT_IP,
 				new ManualPages.Crafting(ManualHelper.getManual(), "asphalt0", new ItemStack(IPContent.blockStoneDecoration,1,BlockTypes_IPStoneDecoration.ASPHALT.getMeta())));
-
+		
+		ManualHelper.addEntry("automaticLubricator", CAT_IP,
+				new ManualPages.Crafting(ManualHelper.getManual(), "automaticLubricator0", new ItemStack(IPContent.blockMetalDevice, 1, 0)),
+				new ManualPages.Text(ManualHelper.getManual(), "automaticLubricator1"));
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDistillationTower.TileEntityDistillationTowerParent.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPumpjack.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());

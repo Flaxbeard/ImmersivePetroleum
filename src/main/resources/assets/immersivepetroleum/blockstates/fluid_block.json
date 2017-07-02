@@ -13,6 +13,9 @@
 		}],
 		"lubricant": [{
 			"custom": { "fluid": "lubricant" }
+		}],
+		"gasoline": [{
+			"custom": { "fluid": "gasoline" }
 		}]
 	}
 }

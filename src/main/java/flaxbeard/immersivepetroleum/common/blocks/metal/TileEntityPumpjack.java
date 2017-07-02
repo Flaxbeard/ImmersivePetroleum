@@ -137,13 +137,18 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 			}
 		}
 	}
-
+	
 	@Override
 	public void update()
 	{
+		update(true);
+	}
+
+	public void update(boolean consumePower)
+	{
 		//System.out.println("TEST");
 		super.update();
-		if(worldObj.isRemote || isDummy())
+		if (worldObj.isRemote || isDummy())
 		{
 			if (worldObj.isRemote && !isDummy() && state != null && wasActive)
 			{
@@ -153,7 +158,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 
 				worldObj.spawnParticle(EnumParticleTypes.BLOCK_DUST, particlePos.getX() + 0.5F, particlePos.getY(), particlePos.getZ() + 0.5F, r1 * 0.04F, 0.25F, r2 * 0.025F, new int[] {Block.getStateId(state)});
 			}
-			if (wasActive)
+			if (wasActive && consumePower)
 			{
 				activeTicks++;
 			}
@@ -163,9 +168,9 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		boolean active = false;
 		
 		int consumed = IPConfig.Machines.pumpjack_consumption;
-		int extracted = energyStorage.extractEnergy(consumed, true);
+		int extracted = consumePower ? energyStorage.extractEnergy(consumed, true) : consumed;
 				
-		if(extracted >= consumed && canExtract() && !this.isRSDisabled())
+		if (extracted >= consumed && canExtract() && !this.isRSDisabled())
 		{
 			int residual = getResidualOil();
 			if (availableOil() > 0 || residual > 0)

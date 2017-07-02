@@ -26,8 +26,8 @@ public class Config
 		{
 			@Comment({"List of reservoir types. Format: name, fluid_name, min_mb_fluid, max_mb_fluid, mb_per_tick_replenish, weight, [dim_blacklist], [dim_whitelist], [biome_blacklist], [biome_whitelist]"})
 			public static String[] reservoirs = new String[] {
-					"aquifer, water, 5000000, 10000000, 3, 30, [], [0], [], []",
-					"oil, oil, 1000000, 5000000, 3, 40, [1], [], [], []",
+					"aquifer, water, 5000000, 10000000, 6, 30, [], [0], [], []",
+					"oil, oil, 2500000, 15000000, 6, 40, [1], [], [], []",
 					"lava, lava, 250000, 1000000, 0, 30, [1], [], [], []"
 			};
 			
@@ -50,8 +50,8 @@ public class Config
 			//Other Multiblock machines
 			@Comment({"The Flux the Pumpjack requires each tick to pump, default=1024"})
 			public static int pumpjack_consumption = 1024;
-			@Comment({"The amount of mB of oil a Pumpjack extracts per tick, default=5"})
-			public static int pumpjack_speed = 5;
+			@Comment({"The amount of mB of oil a Pumpjack extracts per tick, default=15"})
+			public static int pumpjack_speed = 15;
 			
 			@Comment({"Disable formation and manual page for Distillation Tower"})
 			public static boolean disable_tower = false;

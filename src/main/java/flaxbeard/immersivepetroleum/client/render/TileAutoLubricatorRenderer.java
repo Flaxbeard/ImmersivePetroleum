@@ -5,26 +5,19 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityExcavator;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes.Base;
-import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes.Excavator;
-import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes.Pumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 
 public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEntityAutoLubricator>
 {
-	private static Pumpjack pumpjackM = new ModelLubricantPipes.Pumpjack(true);
-	private static Pumpjack pumpjack = new ModelLubricantPipes.Pumpjack(false);
-
-	private static Excavator excavator = new ModelLubricantPipes.Excavator();
 
 	private static Base base = new ModelLubricantPipes.Base();
 
@@ -51,6 +44,11 @@ public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEn
 			
 			ClientUtils.bindTexture("immersivepetroleum:textures/models/lubricator.png");
 			base.render(null, 0, 0, 0, 0, 0, 0.0625F);
+			
+			GlStateManager.enableBlend();
+			GlStateManager.enableAlpha();
+			base.renderTank(null, 0, 0, 0, 0, 0, 0.0625F);
+			
 			//base.renderPlunger(null, 0, 0, 0, 0, 0, 0.0625F);
 			GlStateManager.popMatrix();
 			return;
@@ -66,7 +64,7 @@ public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEn
 		GlStateManager.translate(x+.5, y+.5, z+.5);
 
 		
-		float height = 17;
+		float height = 16;
 		FluidStack fs = te.tank.getFluid();
 		float level = 0;
 		if (fs != null)
@@ -83,26 +81,26 @@ public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEn
 
 			GlStateManager.pushMatrix();
 			//ShaderUtil.alpha_static(0.25f, 1);
-			GlStateManager.translate(-4.49F/16F, 5/16F, -4.49F/16F);
+			GlStateManager.translate(-4F/16F, 6/16F, -4F/16F);
 			GlStateManager.scale(scale, scale, scale);
 			float h = level * height;
-			ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 9, h);
+			ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 8, h);
 			GlStateManager.rotate(90,0,1,0);
-			GlStateManager.translate(-8.98, 0, 0);
-			ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 9, h);
+			GlStateManager.translate(-7.98, 0, 0);
+			ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 8, h);
 			GlStateManager.rotate(90,0,1,0);
-			GlStateManager.translate(-8.98,0,0);
-			ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 9, h);
+			GlStateManager.translate(-7.98,0,0);
+			ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 8, h);
 			GlStateManager.rotate(90,0,1,0);
-			GlStateManager.translate(-8.98,0,0);
-			ClientUtils.drawRepeatedFluidSprite(fs, 0,0, 9,h);
+			GlStateManager.translate(-7.98,0,0);
+			ClientUtils.drawRepeatedFluidSprite(fs, 0,0, 8,h);
 
 			GlStateManager.rotate(90,1,0,0);
 			GlStateManager.translate(0,0,-h);
-			ClientUtils.drawRepeatedFluidSprite(fs, 0,0, 9,9);
+			ClientUtils.drawRepeatedFluidSprite(fs, 0,0, 8,8);
 			GlStateManager.rotate(180, 1, 0, 0);
 			GlStateManager.translate(0, -9, -h);
-			ClientUtils.drawRepeatedFluidSprite(fs, 0,0, 9,9);
+			ClientUtils.drawRepeatedFluidSprite(fs, 0,0, 8,8);
 
 			GlStateManager.scale(1/scale, 1/scale, 1/scale);
 			GlStateManager.translate(0,-1,-1);
@@ -129,9 +127,24 @@ public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEn
 
 		if (pass == 0)
 		{
-
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(x, y, z);
 			
-			BlockPos pos = te.getPos().offset(te.getFacing());
+			BlockPos target = te.getPos().offset(te.getFacing());
+			TileEntity test = te.getWorld().getTileEntity(target);
+
+			ILubricationHandler handler = LubricatedHandler.getHandlerForTile(test);
+			if (handler != null)
+			{
+				TileEntity master = handler.isPlacedCorrectly(te.getWorld(), te, te.getFacing());
+				if (master != null)
+				{
+					handler.renderPipes(te.getWorld(), te, te.getFacing(), master);
+				}
+			}
+			GlStateManager.popMatrix();
+
+			/*BlockPos pos = te.getPos().offset(te.getFacing());
 			TileEntity pj = te.getWorld().getTileEntity(pos);
 			if (pj instanceof TileEntityPumpjack)
 			{
@@ -215,7 +228,7 @@ public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEn
 					
 	
 				}
-			}
+			}*/
 			
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x + .5F, y + .5F, z + .5F);

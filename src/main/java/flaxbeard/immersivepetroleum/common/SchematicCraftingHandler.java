@@ -10,7 +10,7 @@ import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 
-public class SchematicCraftingHandler implements IRecipe
+public class SchematicCraftingHandler extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
 {
 	static
 	{
@@ -27,12 +27,6 @@ public class SchematicCraftingHandler implements IRecipe
 	public ItemStack getCraftingResult(InventoryCrafting inv)
 	{
 		return new SchematicResult(inv).output;
-	}
-
-	@Override
-	public int getRecipeSize()
-	{
-		return 0;
 	}
 
 	@Override
@@ -117,6 +111,12 @@ public class SchematicCraftingHandler implements IRecipe
 			}
 			return !manual.isEmpty() && hasPaper;
 		}
+	}
+
+	@Override
+	public boolean canFit(int width, int height)
+	{
+		return width >= 2 && height >= 2;
 	}
 
 }

@@ -1,12 +1,8 @@
 package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -24,11 +20,11 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecor
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration1;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.util.Utils;
-import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_IPMetalMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 
 public class MultiblockDistillationTower implements IMultiblock
 {
@@ -166,15 +162,8 @@ public class MultiblockDistillationTower implements IMultiblock
 		{
 			 te = new TileEntityDistillationTower.TileEntityDistillationTowerParent();
 		}
-		GlStateManager.pushMatrix();
-		GlStateManager.rotate(-90, 0, 1, 0);
-		GlStateManager.translate(0, 1, -4);
 		
-		
-		TileEntitySpecialRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getSpecialRenderer((TileEntity) te);
-		
-		tesr.renderTileEntityAt((TileEntity) te, 0, 0, 0, 0, 0);
-		GlStateManager.popMatrix();
+		ImmersivePetroleum.proxy.renderTile((TileEntity) te);
 	}
 
 	@Override

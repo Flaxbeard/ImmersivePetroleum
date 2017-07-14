@@ -430,7 +430,7 @@ public abstract class BlockIPTileProvider<E extends Enum<E> & BlockIPBase.IBlock
 			if(bounds!=null && !bounds.isEmpty())
 			{
 				for(AxisAlignedBB aabb : bounds)
-					if(aabb!=null && mask.intersectsWith(aabb))
+					if(aabb!=null && mask.intersects(aabb))
 						list.add(aabb);
 				return;
 			}

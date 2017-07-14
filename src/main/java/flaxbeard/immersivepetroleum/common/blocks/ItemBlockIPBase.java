@@ -8,10 +8,10 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
@@ -45,9 +45,9 @@ public class ItemBlockIPBase extends ItemBlock
 		return damageValue;
 	}
 	@Override
-	public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> itemList)
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> itemList)
 	{
-		this.block.getSubBlocks(item, tab, itemList);
+		this.block.getSubBlocks(tab, itemList);
 	}
 	@Override
 	public String getUnlocalizedName(ItemStack stack)
@@ -63,7 +63,7 @@ public class ItemBlockIPBase extends ItemBlock
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean advInfo)
+	public void addInformation(ItemStack stack, World worldIn, List<String> list, ITooltipFlag advInfo)
 	{
 		if(((BlockIPBase)block).hasFlavour(stack))
 		{
@@ -71,7 +71,7 @@ public class ItemBlockIPBase extends ItemBlock
 			String flavourKey = "desc." + ImmersivePetroleum.MODID + ".flavor." + ((BlockIPBase)this.block).name+"."+subName;
 			list.add(TextFormatting.GRAY.toString()+ I18n.format(flavourKey));
 		}
-		super.addInformation(stack, player, list, advInfo);
+		super.addInformation(stack, worldIn, list, advInfo);
 		if(ItemNBTHelper.hasKey(stack, "energyStorage"))
 			list.add(I18n.format("desc.immersiveengineering.info.energyStored", ItemNBTHelper.getInt(stack, "energyStorage")));
 		if(ItemNBTHelper.hasKey(stack, "tank"))

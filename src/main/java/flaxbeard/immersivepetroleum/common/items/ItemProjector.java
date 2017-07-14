@@ -5,15 +5,16 @@ import java.util.List;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -84,7 +85,8 @@ public class ItemProjector extends ItemIPBase
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+	@Override
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
 	{
 		if (ItemNBTHelper.hasKey(stack, "multiblock"))
 		{
@@ -162,24 +164,25 @@ public class ItemProjector extends ItemIPBase
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> list)
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list)
 	{
-		if (!IPConfig.Tools.disable_projector)
-		{
-			list.add(new ItemStack(item, 1, 0));
-			List<IMultiblock> multiblocks = MultiblockHandler.getMultiblocks();
-			for (IMultiblock multiblock : multiblocks)
+		if (this.isInCreativeTab(tab))
+			if (!IPConfig.Tools.disable_projector)
 			{
-				String str = multiblock.getUniqueName();
-				if (str.equals("IE:BucketWheel") || str.equals("IE:Excavator")) continue;
-				ItemStack stack = new ItemStack(item, 1, 0);
-				ItemNBTHelper.setString(stack, "multiblock", multiblock.getUniqueName());
+				list.add(new ItemStack(this, 1, 0));
+				List<IMultiblock> multiblocks = MultiblockHandler.getMultiblocks();
+				for (IMultiblock multiblock : multiblocks)
+				{
+					String str = multiblock.getUniqueName();
+					if (str.equals("IE:BucketWheel") || str.equals("IE:Excavator")) continue;
+					ItemStack stack = new ItemStack(this, 1, 0);
+					ItemNBTHelper.setString(stack, "multiblock", multiblock.getUniqueName());
+					list.add(stack);
+				}
+				ItemStack stack = new ItemStack(this, 1, 0);
+				ItemNBTHelper.setString(stack, "multiblock", MultiblockExcavatorDemo.instance.getUniqueName());
 				list.add(stack);
 			}
-			ItemStack stack = new ItemStack(item, 1, 0);
-			ItemNBTHelper.setString(stack, "multiblock", MultiblockExcavatorDemo.instance.getUniqueName());
-			list.add(stack);
-		}
 	}
 	
 	@Override
@@ -216,7 +219,7 @@ public class ItemProjector extends ItemIPBase
 			int zd = (rotate % 2 == 0) ? mw :  ml;
 			
 			Vec3d vec = playerIn.getLookVec();
-			EnumFacing look = (Math.abs(vec.zCoord) > Math.abs(vec.xCoord)) ? (vec.zCoord > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.xCoord > 0 ? EnumFacing.EAST : EnumFacing.WEST);
+			EnumFacing look = (Math.abs(vec.z) > Math.abs(vec.x)) ? (vec.z > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.x > 0 ? EnumFacing.EAST : EnumFacing.WEST);
 			if (look == EnumFacing.NORTH || look == EnumFacing.SOUTH)
 			{
 				hit = hit.add(-xd / 2, 0, 0);
@@ -526,7 +529,7 @@ public class ItemProjector extends ItemIPBase
 				
 				
 				Vec3d vec = mc.player.getLookVec();
-				EnumFacing facing = (Math.abs(vec.zCoord) > Math.abs(vec.xCoord)) ? (vec.zCoord > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.xCoord > 0 ? EnumFacing.EAST : EnumFacing.WEST);
+				EnumFacing facing = (Math.abs(vec.z) > Math.abs(vec.x)) ? (vec.z > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.x > 0 ? EnumFacing.EAST : EnumFacing.WEST);
 				
 				
 				if (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH)
@@ -572,7 +575,7 @@ public class ItemProjector extends ItemIPBase
 				ClientUtils.mc().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 				
 				Tessellator tessellator = Tessellator.getInstance();
-				VertexBuffer buffer = tessellator.getBuffer();
+				BufferBuilder buffer = tessellator.getBuffer();
 				
 				float flicker = (world.rand.nextInt(10) == 0) ? 0.75F : (world.rand.nextInt(20) == 0 ? 0.5F : 1F);
 				

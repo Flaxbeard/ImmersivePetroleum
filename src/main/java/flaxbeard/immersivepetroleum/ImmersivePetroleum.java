@@ -24,9 +24,9 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import blusunrize.immersiveengineering.common.Config;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
@@ -105,7 +105,7 @@ public class ImmersivePetroleum
 	}
 	
 	
-
+	/*
 	public static <T extends IForgeRegistryEntry<?>> T register(T object, String name)
 	{
 		return registerByFullName(object, MODID+":"+name);
@@ -134,7 +134,7 @@ public class ImmersivePetroleum
 			return registerBlockByFullName(block, itemBlock.getConstructor(Block.class).newInstance(block), MODID+":"+name);
 		}catch(Exception e){e.printStackTrace();}
 		return null;
-	}
+	}*/
 	
 	public static CreativeTabs creativeTab = new CreativeTabs(MODID)
 	{

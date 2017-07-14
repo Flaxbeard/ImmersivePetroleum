@@ -5,24 +5,23 @@ import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import blusunrize.immersiveengineering.api.MultiblockHandler;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.IERecipes;
-import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration2;
 import blusunrize.immersiveengineering.common.util.IEPotions;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
@@ -37,6 +36,7 @@ import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecora
 import flaxbeard.immersivepetroleum.common.items.ItemIPBase;
 import flaxbeard.immersivepetroleum.common.items.ItemProjector;
 
+@Mod.EventBusSubscriber(modid=ImmersivePetroleum.MODID)
 public class IPContent
 {
 	public static ArrayList<Block> registeredIPBlocks = new ArrayList<Block>();
@@ -100,18 +100,17 @@ public class IPContent
 		MultiblockHandler.registerMultiblock(MultiblockDistillationTower.instance);
 		MultiblockHandler.registerMultiblock(MultiblockPumpjack.instance);
 		
-		IERecipes.addIngredientRecipe(new ItemStack(blockStoneDecoration, 8, BlockTypes_IPStoneDecoration.ASPHALT.getMeta()), "SCS", "GBG", "SCS", 'C', new ItemStack(itemMaterial, 1, 0), 'S', "sand", 'G', Blocks.GRAVEL, 'B', new FluidStack(FluidRegistry.WATER,1000)).allowQuarterTurn();
-		IERecipes.addIngredientRecipe(new ItemStack(blockStoneDecoration, 12, BlockTypes_IPStoneDecoration.ASPHALT.getMeta()), "SCS", "GBG", "SCS", 'C', new ItemStack(itemMaterial, 1, 0), 'S', "itemSlag", 'G', Blocks.GRAVEL, 'B', new FluidStack(FluidRegistry.WATER,1000)).allowQuarterTurn();
+		//IERecipes.addIngredientRecipe(new ItemStack(blockStoneDecoration, 8, BlockTypes_IPStoneDecoration.ASPHALT.getMeta()), "SCS", "GBG", "SCS", 'C', new ItemStack(itemMaterial, 1, 0), 'S', "sand", 'G', Blocks.GRAVEL, 'B', new FluidStack(FluidRegistry.WATER,1000)).allowQuarterTurn();
+		//IERecipes.addIngredientRecipe(new ItemStack(blockStoneDecoration, 12, BlockTypes_IPStoneDecoration.ASPHALT.getMeta()), "SCS", "GBG", "SCS", 'C', new ItemStack(itemMaterial, 1, 0), 'S', "itemSlag", 'G', Blocks.GRAVEL, 'B', new FluidStack(FluidRegistry.WATER,1000)).allowQuarterTurn();
 	
 		if (!IPConfig.Tools.disable_projector)
 		{
-			IERecipes.addIngredientRecipe(new ItemStack(itemProjector, 1, 0), "S  ", "IL ", " IW", 
+			/*IERecipes.addIngredientRecipe(new ItemStack(itemProjector, 1, 0), "S  ", "IL ", " IW", 
 					'W', "plankTreatedWood", 
 					'L', new ItemStack(IEContent.blockMetalDecoration2, 1, BlockTypes_MetalDecoration2.LANTERN.getMeta()), 
 					'S', "blockGlassColorless",
-					'I', "ingotIron");
-
-			GameRegistry.addRecipe(new SchematicCraftingHandler());
+					'I', "ingotIron");*/
+			ForgeRegistries.RECIPES.register(new SchematicCraftingHandler().setRegistryName(ImmersivePetroleum.MODID, "projector"));
 		}
 		
 		Config.addConfigReservoirs(IPConfig.reservoirs.reservoirs);
@@ -124,4 +123,26 @@ public class IPContent
 		s = s.substring(s.indexOf("TileEntity")+"TileEntity".length());
 		GameRegistry.registerTileEntity(tile, ImmersivePetroleum.MODID+":"+ s);
 	}
+	
+	@SubscribeEvent
+	public static void registerBlocks(RegistryEvent.Register<Block> event)
+	{
+		for(Block block : registeredIPBlocks)
+			event.getRegistry().register(block.setRegistryName(createRegistryName(block.getUnlocalizedName())));
+	}
+
+	@SubscribeEvent
+	public static void registerItems(RegistryEvent.Register<Item> event)
+	{
+		for(Item item : registeredIPItems)
+			event.getRegistry().register(item.setRegistryName(createRegistryName(item.getUnlocalizedName())));
+	}
+
+	private static ResourceLocation createRegistryName(String unlocalized)
+	{
+		unlocalized = unlocalized.substring(unlocalized.indexOf("immersive"));
+		unlocalized = unlocalized.replaceFirst("\\.", ":");
+		return new ResourceLocation(unlocalized);
+	}
+	
 }

@@ -8,16 +8,21 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
@@ -28,8 +33,9 @@ import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.registry.GameData;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
@@ -45,8 +51,8 @@ import flaxbeard.immersivepetroleum.client.page.ManualPageSchematicCrafting;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
-import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
@@ -55,10 +61,10 @@ import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack
 import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecoration;
 import flaxbeard.immersivepetroleum.common.items.ItemIPBase;
 
-
+@SuppressWarnings("deprecation")
+@Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy
 {
-	public static SoundEvent projector;
 	public static final String CAT_IP = "ip";
 	
 	@Override
@@ -69,46 +75,53 @@ public class ClientProxy extends CommonProxy
 	@Override
 	public void preInitEnd()
 	{
+		
+	}
+		
+	@SubscribeEvent
+	public static void registerModels(ModelRegistryEvent evt)
+	{
 		//Going through registered stuff at the end of preInit, because of compat modules possibly adding items
-		for(Block block : IPContent.registeredIPBlocks)
+		for (Block block : IPContent.registeredIPBlocks)
 		{
 			Item blockItem = Item.getItemFromBlock(block);
-			final ResourceLocation loc = GameData.getBlockRegistry().getNameForObject(block);
-			if(block instanceof IIEMetaBlock)
-			{
-				IIEMetaBlock ieMetaBlock = (IIEMetaBlock) block;
-				if(ieMetaBlock.useCustomStateMapper())
-					ModelLoader.setCustomStateMapper(block, IECustomStateMapper.getStateMapper(ieMetaBlock));
-				ModelLoader.setCustomMeshDefinition(blockItem, new ItemMeshDefinition()
+			final ResourceLocation loc = Block.REGISTRY.getNameForObject(block);
+			if (loc != null)
+				if (block instanceof IIEMetaBlock)
 				{
-					@Override
-					public ModelResourceLocation getModelLocation(ItemStack stack)
-					{
-						return new ModelResourceLocation(loc, "inventory");
-					}
-				});
-				for(int meta = 0; meta < ieMetaBlock.getMetaEnums().length; meta++)
-				{
-					String location = loc.toString();
-					String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getName() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)) : null;
+					IIEMetaBlock ieMetaBlock = (IIEMetaBlock) block;
 					if(ieMetaBlock.useCustomStateMapper())
+						ModelLoader.setCustomStateMapper(block, IECustomStateMapper.getStateMapper(ieMetaBlock));
+					ModelLoader.setCustomMeshDefinition(blockItem, new ItemMeshDefinition()
 					{
-						String custom = ieMetaBlock.getCustomStateMapping(meta, true);
-						if(custom != null)
-							location += "_" + custom;
+						@Override
+						public ModelResourceLocation getModelLocation(ItemStack stack)
+						{
+							return new ModelResourceLocation(loc, "inventory");
+						}
+					});
+					for(int meta = 0; meta < ieMetaBlock.getMetaEnums().length; meta++)
+					{
+						String location = loc.toString();
+						String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getName() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)) : null;
+						if(ieMetaBlock.useCustomStateMapper())
+						{
+							String custom = ieMetaBlock.getCustomStateMapping(meta, true);
+							if(custom != null)
+								location += "_" + custom;
+						}
+						try
+						{
+							ModelLoader.setCustomModelResourceLocation(blockItem, meta, new ModelResourceLocation(location, prop));
+						} catch(NullPointerException npe)
+						{
+							throw new RuntimeException("WELP! apparently " + ieMetaBlock + " lacks an item!", npe);
+						}
 					}
-					try
-					{
-						ModelLoader.setCustomModelResourceLocation(blockItem, meta, new ModelResourceLocation(location, prop));
-					} catch(NullPointerException npe)
-					{
-						throw new RuntimeException("WELP! apparently " + ieMetaBlock + " lacks an item!", npe);
-					}
-				}
-			} else if(block instanceof BlockIPFluid)
-				mapFluidState(block, ((BlockIPFluid) block).getFluid());
-			else
-				ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(loc, "inventory"));
+				} else if(block instanceof BlockIPFluid)
+					mapFluidState(block, ((BlockIPFluid) block).getFluid());
+				else
+					ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(loc, "inventory"));
 		}
 
 		for(Item item : IPContent.registeredIPItems)
@@ -142,7 +155,7 @@ public class ClientProxy extends CommonProxy
 			} 
 			else
 			{
-				final ResourceLocation loc = GameData.getItemRegistry().getNameForObject(item);
+				final ResourceLocation loc = Item.REGISTRY.getNameForObject(item);
 				ModelBakery.registerItemVariants(item, loc);
 				ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
 				{
@@ -160,10 +173,7 @@ public class ClientProxy extends CommonProxy
 	public void init()
 	{
 		ShaderUtil.init();
-		ResourceLocation location = new ResourceLocation(ImmersivePetroleum.MODID, "projector");
-		projector = new SoundEvent(location);
-		projector.setRegistryName(location);
-		GameRegistry.register(projector);
+	
 		MinecraftForge.EVENT_BUS.register(IPCoreSampleModelHandler.instance);
 	}
 
@@ -355,6 +365,41 @@ public class ClientProxy extends CommonProxy
 				ManualHelper.addEntry("oil", CAT_IP, pages.toArray(new IManualPage[pages.size()]));
 				resEntry = ManualHelper.getManual().getEntry("oil");
 			}
+		}
+	}
+	
+	public void renderTile(TileEntity te)
+	{
+		if (te instanceof TileEntityPumpjack.TileEntityPumpjackParent)
+		{
+			GlStateManager.pushMatrix();
+			GlStateManager.rotate(-90, 0, 1, 0);
+			GlStateManager.translate(1, 1, -2);
+			
+			float pt = 0;
+			if (Minecraft.getMinecraft().player != null)
+			{
+				((TileEntityPumpjack.TileEntityPumpjackParent) te).activeTicks = Minecraft.getMinecraft().player.ticksExisted;
+				pt = Minecraft.getMinecraft().getRenderPartialTicks();
+			}
+			
+			
+			TileEntitySpecialRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer((TileEntity) te);
+			
+			tesr.render((TileEntity) te, 0, 0, 0, pt, 0, 0);
+			GlStateManager.popMatrix();
+		}
+		else
+		{
+			GlStateManager.pushMatrix();
+			GlStateManager.rotate(-90, 0, 1, 0);
+			GlStateManager.translate(0, 1, -4);
+			
+			
+			TileEntitySpecialRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer((TileEntity) te);
+			
+			tesr.render((TileEntity) te, 0, 0, 0, 0, 0, 0);
+			GlStateManager.popMatrix();
 		}
 	}
 }

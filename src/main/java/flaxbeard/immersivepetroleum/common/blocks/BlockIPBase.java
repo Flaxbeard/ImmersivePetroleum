@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.common.blocks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +18,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -91,8 +89,11 @@ public class BlockIPBase<E extends Enum<E> & BlockIPBase.IBlockEnum> extends Blo
 		this.setUnlocalizedName(registryName.replace(':', '.'));
 		this.setCreativeTab(ImmersivePetroleum.creativeTab);
 		this.adjustSound();
-		ImmersivePetroleum.registerBlockByFullName(this, itemBlock, registryName);
+		//ImmersivePetroleum.registerBlockByFullName(this, itemBlock, registryName);
 		IPContent.registeredIPBlocks.add(this);
+		try{
+			IPContent.registeredIPItems.add(itemBlock.getConstructor(Block.class).newInstance(this));
+		}catch(Exception e){e.printStackTrace();}
 		lightOpacity = 255;
 	}
 
@@ -405,11 +406,12 @@ public class BlockIPBase<E extends Enum<E> & BlockIPBase.IBlockEnum> extends Blo
 	
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list)
+	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list)
 	{
-		for(E type : this.enumValues)
-			if(type.listForCreative() && !this.isMetaHidden[type.getMeta()])
-				list.add(new ItemStack(this, 1, type.getMeta()));
+		if (tab == getCreativeTabToDisplayOn())
+			for(E type : this.enumValues)
+				if(type.listForCreative() && !this.isMetaHidden[type.getMeta()])
+					list.add(new ItemStack(this, 1, type.getMeta()));
 	}
 
 	void adjustSound()

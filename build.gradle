@@ -9,7 +9,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
@@ -21,7 +21,7 @@ plugins {
 }
 */
 
-version = "1.0.7"
+version = "1.0.9"
 group= "flaxbeard.immersivepetroleum" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "immersivepetroleum"
 
@@ -34,7 +34,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
-    version = "1.11.2-13.20.0.2282"
+    version = "14.21.1.2406"
     runDir = "run"
 
     replace "@VERSION@", project.version
@@ -44,13 +44,13 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not allways work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20170323"
+    mappings = "snapshot_20170628"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
 
 jar {
-    archiveName = "${baseName}-1.11.2-${version}.jar"
+    archiveName = "${baseName}-1.12-${version}.jar"
 }
 
 
@@ -82,7 +82,7 @@ repositories {
 }
 dependencies {
    compile files(
-        'ImmersiveEngineering-0.11-59-deobf.jar'
+        'ImmersiveEngineering-0.12-67-deobf.jar'
     )
 }
 

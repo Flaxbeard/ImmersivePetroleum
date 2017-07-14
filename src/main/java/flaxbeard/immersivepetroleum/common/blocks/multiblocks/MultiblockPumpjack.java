@@ -1,10 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -25,6 +21,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecor
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.blocks.wooden.BlockTypes_WoodenDecoration;
 import blusunrize.immersiveengineering.common.util.Utils;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_IPMetalMultiblock;
@@ -144,21 +141,7 @@ public class MultiblockPumpjack implements IMultiblock
 			te = new TileEntityPumpjack.TileEntityPumpjackParent();
 		}
 		
-		GlStateManager.pushMatrix();
-		GlStateManager.rotate(-90, 0, 1, 0);
-		GlStateManager.translate(1, 1, -2);
-		
-		float pt = 0;
-		if (Minecraft.getMinecraft().player != null)
-		{
-			((TileEntityPumpjack.TileEntityPumpjackParent) te).activeTicks = Minecraft.getMinecraft().player.ticksExisted;
-			pt = Minecraft.getMinecraft().getRenderPartialTicks();
-		}
-		
-		TileEntitySpecialRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getSpecialRenderer((TileEntity) te);
-		
-		tesr.renderTileEntityAt((TileEntity) te, 0, 0, 0, pt, 0);
-		GlStateManager.popMatrix();
+		ImmersivePetroleum.proxy.renderTile((TileEntity) te);
 	}
 
 	@Override

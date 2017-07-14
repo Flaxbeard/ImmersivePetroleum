@@ -1,0 +1,30 @@
+{
+  "type": "immersivepetroleum:ingredient_shaped",
+  "quarter_turn": true,
+  "group": "immersivepetroleum:asphalt",
+  "result": {
+    "item": "immersivepetroleum:stone_decoration",
+    "data": 0,
+    "count": 8
+  },
+  "pattern": [
+    "SCS",
+    "GBG",
+    "SCS"
+  ],
+  "key": {
+    "C": {
+      "item": "#bitumen"
+    },
+    "S": {
+      "item": "#sand"
+    },
+    "G": {
+      "item": "minecraft:gravel"
+    },
+    "B": {
+      "type": "immersiveengineering:fluid",
+      "fluid": "water"
+    }
+  }
+}

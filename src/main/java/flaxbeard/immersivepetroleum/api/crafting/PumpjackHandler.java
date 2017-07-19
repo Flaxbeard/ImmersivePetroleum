@@ -3,8 +3,8 @@ package flaxbeard.immersivepetroleum.api.crafting;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -15,12 +15,12 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
-import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageReservoirListSync;
-import flaxbeard.immersivepetroleum.common.IPSaveData;
 
 
 public class PumpjackHandler
@@ -234,9 +234,15 @@ public class PumpjackHandler
 		}
 	}
 	
+	private static HashMap<Biome, String> biomeNames = new HashMap<Biome, String>();
 	public static String getBiomeName(Biome biome)
 	{
-		return biome.getBiomeName().replace(" ", "").replace("_", "").toLowerCase();
+		if (!biomeNames.containsKey(biome))
+		{
+			String biomeName = ReflectionHelper.getPrivateValue(Biome.class, biome, 17);
+			biomeNames.put(biome, biomeName.replace(" ", "").replace("_", "").toLowerCase());
+		}
+		return biomeNames.get(biome);
 	}
 	
 	public static String convertConfigName(String str)

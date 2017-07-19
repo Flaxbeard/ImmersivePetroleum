@@ -32,6 +32,8 @@ import blusunrize.immersiveengineering.common.util.Utils;
 
 import com.google.common.collect.Lists;
 
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
@@ -505,7 +507,9 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	@Override
 	public boolean canOpenGui()
 	{
-		return false;
+		TileEntityPumpjack master = this.master();
+		LubricatedHandler.lubricateTile(master, 20 * 5);
+		return true;
 	}
 	@Override
 	public int getGuiID()

@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
@@ -17,6 +18,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import blusunrize.immersiveengineering.api.MultiblockHandler;
+import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
+import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect_Potion;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.IERecipes;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration0;
@@ -25,7 +28,9 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevic
 import blusunrize.immersiveengineering.common.util.IEPotions;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.ItemOilCan;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
@@ -35,12 +40,14 @@ import flaxbeard.immersivepetroleum.common.blocks.ItemBlockIPBase;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_Dummy;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityGasGenerator;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecoration;
 import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 import flaxbeard.immersivepetroleum.common.items.ItemIPBase;
+import flaxbeard.immersivepetroleum.common.items.ItemIPUpgrade;
 import flaxbeard.immersivepetroleum.common.items.ItemProjector;
 import flaxbeard.immersivepetroleum.common.items.ItemSpeedboat;
 
@@ -67,6 +74,8 @@ public class IPContent
 	public static Item itemMaterial;
 	public static Item itemProjector;
 	public static Item itemSpeedboat;
+	public static Item itemUpgrades;
+	public static Item itemOilCan;
 
 	public static Fluid fluidCrudeOil;
 	public static Fluid fluidDiesel;
@@ -76,6 +85,7 @@ public class IPContent
 	public static void preInit()
 	{
 		EntityRegistry.registerModEntity(EntitySpeedboat.class, "speedboat", 0, ImmersivePetroleum.INSTANCE, 80, 3, true);
+		//EntityRegistry.registerModEntity(EntityBoatDrill.class, "boat_drill", 1, ImmersivePetroleum.INSTANCE, 80, 3, true);
 
 		fluidCrudeOil = new Fluid("oil", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/oil_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/oil_flow")).setDensity(1000).setViscosity(2250);
 		if(!FluidRegistry.registerFluid(fluidCrudeOil))
@@ -114,6 +124,10 @@ public class IPContent
 		
 		itemProjector = new ItemProjector("schematic");
 		itemSpeedboat = new ItemSpeedboat("speedboat");
+		
+		itemUpgrades = new ItemIPUpgrade("upgrades");
+		
+		itemOilCan = new ItemOilCan("oil_can");
 
 	}
 	
@@ -122,12 +136,18 @@ public class IPContent
 		blockFluidCrudeOil.setPotionEffects(new PotionEffect(IEPotions.flammable,100,1));
 		blockFluidDiesel.setPotionEffects(new PotionEffect(IEPotions.flammable,100,1));
 		blockFluidLubricant.setPotionEffects(new PotionEffect(IEPotions.slippery,100,1));
-
+		ChemthrowerHandler.registerEffect("lubricant", new LubricantEffect());
+		ChemthrowerHandler.registerEffect("plantoil", new LubricantEffect());
+		ChemthrowerHandler.registerEffect("gasoline", new ChemthrowerEffect_Potion(null,0, IEPotions.flammable,60,1));
+		ChemthrowerHandler.registerFlammable("gasoline");
+		ChemthrowerHandler.registerEffect("lubricant", new ChemthrowerEffect_Potion(null,0, IEPotions.slippery,60,1));
+		
 		registerTile(TileEntityDistillationTower.class);
 		registerTile(TileEntityDistillationTower.TileEntityDistillationTowerParent.class);
 		registerTile(TileEntityPumpjack.class);
 		registerTile(TileEntityPumpjack.TileEntityPumpjackParent.class);
 		registerTile(TileEntityAutoLubricator.class);
+		registerTile(TileEntityGasGenerator.class);
 
 		DistillationRecipe.addRecipe(
 				new FluidStack[] { 
@@ -163,6 +183,11 @@ public class IPContent
 				'W', "plankTreatedWood", 
 				'P', new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta()),
 				'G', "blockGlass");
+		
+		IERecipes.addIngredientRecipe(new ItemStack(itemOilCan), " R ", "PBP", 
+				'R', "dyeRed", 
+				'P', "plateIron",
+				'B', new ItemStack(Items.BUCKET));
 		
 		Config.addConfigReservoirs(IPConfig.reservoirs.reservoirs);
 		

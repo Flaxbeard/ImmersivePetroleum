@@ -7,7 +7,6 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityBoat;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
@@ -22,6 +21,13 @@ public class ModelSpeedboat extends ModelBase implements IMultipassModel
     public ModelRenderer motor;
     public ModelRenderer propeller;
     public ModelRenderer propellerAssembly;
+    public ModelRenderer icebreak;
+    public ModelRenderer coreSampleBoat;
+    public ModelRenderer coreSampleBoatDrill;
+    public ModelRenderer tank;
+    public ModelRenderer rudder1;
+    public ModelRenderer rudder2;
+    public ModelRenderer ruddersBase;
 
     public ModelSpeedboat()
     {
@@ -106,6 +112,82 @@ public class ModelSpeedboat extends ModelBase implements IMultipassModel
        // this.boatSides[4] = (new ModelRenderer(this, 0, 43)).setTextureSize(128, 64);
         //this.boatSides[4].addBox(-14.0F, -7.0F, -1.0F, 28, 6, 2, 0.0F);
         //this.boatSides[4].setRotationPoint(0.0F, 4.0F, 9.0F);
+     	
+     	icebreak = (new ModelRenderer(this, 34, 56)).setTextureSize(128, 64);
+     	icebreak.addBox(16, -2, -2, 7, 4, 4, 0.0F);
+     	
+     	tank = (new ModelRenderer(this, 86, 24)).setTextureSize(128, 64);
+     	tank.addBox(-14, -2, -8, 5, 5, 16, 0.0F);
+     	
+     	ruddersBase = (new ModelRenderer(this, 92, 29)).setTextureSize(128, 64);
+     	ruddersBase.addBox(-18, -3, -8, 2, 6, 3, 0.0F);
+     	
+     	ModelRenderer ruddersBase2 = (new ModelRenderer(this, 92, 29)).setTextureSize(128, 64);
+     	ruddersBase2.addBox(-18, -3, 6, 2, 6, 3, 0.0F);
+     	ruddersBase.addChild(ruddersBase2);
+     	
+     	rudder1 = (new ModelRenderer(this, 112, 23)).setTextureSize(128, 64);
+     	rudder1.setRotationPoint(-15, 3, -6.5f);
+     	rudder1.addBox(-4, 0, -.5f, 4, 6, 1, 0.0F);
+     	
+    	rudder2 = (new ModelRenderer(this, 112, 23)).setTextureSize(128, 64);
+     	rudder2.setRotationPoint(-15, 3, 7.5f);
+     	rudder2.addBox(-4, 0, -.5f, 4, 6, 1, 0.0F);
+     	
+     	
+     	ModelRenderer pipe1 = (new ModelRenderer(this, 112, 38)).setTextureSize(128, 64);
+     	pipe1.addBox(-13, -3, 4, 1, 1, 1, 0.0F);
+     	tank.addChild(pipe1);
+     	
+     	ModelRenderer pipe2 = (new ModelRenderer(this, 116, 38)).setTextureSize(128, 64);
+     	pipe2.addBox(-15, -4, 4, 3, 1, 1, 0.0F);
+     	tank.addChild(pipe2);
+      	
+    	ModelRenderer pip3 = (new ModelRenderer(this, 112, 38)).setTextureSize(128, 64);
+     	pip3.addBox(-15, -4, 3, 1, 1, 1, 0.0F);
+     	tank.addChild(pip3);
+     	
+     	coreSampleBoat = (new ModelRenderer(this, 10, 0)).setTextureSize(128, 64);
+     	coreSampleBoat.addBox(-10, -1, -13, 4, 2, 2, 0.0F);
+     	
+     	ModelRenderer core2 = (new ModelRenderer(this, 10, 0)).setTextureSize(128, 64);
+     	core2.addBox(-11, -2, -14, 1, 4, 4, 0.0F);
+      	coreSampleBoat.addChild(core2);
+     	
+      	ModelRenderer core3 = (new ModelRenderer(this, 10, 0)).setTextureSize(128, 64);
+     	core3.addBox(-6, -2, -14, 1, 4, 4, 0.0F);
+      	coreSampleBoat.addChild(core3);
+      	
+     	coreSampleBoatDrill = (new ModelRenderer(this, 10, 0)).setTextureSize(128, 64);
+     	coreSampleBoatDrill.addBox(-3, -8, -16, 6, 18, 6, 0.0F);
+     	
+     	
+      	
+     	ModelRenderer iS1 = (new ModelRenderer(this, 56, 52)).setTextureSize(128, 64);
+     	iS1.addBox(0.01f, -7.01F, -0.01F, 16, 10, 2, 0.0F);
+     	iS1.setRotationPoint(26.0F, 3.0F, 0.0F);
+     	iS1.rotateAngleY = (float) Math.toRadians(180 + 45);
+     	icebreak.addChild(iS1);
+     	
+     	ModelRenderer iS1T = (new ModelRenderer(this, 100, 45)).setTextureSize(128, 64);
+     	iS1T.addBox(4, 0, -2F, 12, 5, 2, 0.0F);
+     	iS1T.setRotationPoint(0F, -7F, 0F);
+     	iS1T.rotateAngleX = (float) Math.toRadians(180 - 23);
+     	iS1.addChild(iS1T);
+     	
+
+     	
+     	ModelRenderer iS2 = (new ModelRenderer(this, 56, 52)).setTextureSize(128, 64);
+     	iS2.addBox(0, -7.0F, -2F, 16, 10, 2, 0.0F);
+     	iS2.setRotationPoint(26.0F, 3.0F, 0.0F);
+     	iS2.rotateAngleY = (float) Math.toRadians(180 - 45);
+     	icebreak.addChild(iS2);
+     	
+     	ModelRenderer iS2T = (new ModelRenderer(this, 100, 45)).setTextureSize(128, 64);
+     	iS2T.addBox(4, 0, 0F, 12, 5, 2, 0.0F);
+     	iS2T.setRotationPoint(0F, -7F, 0F);
+     	iS2T.rotateAngleX = (float) Math.toRadians(180 + 23);
+     	iS2.addChild(iS2T);
     }
 
     /**
@@ -115,6 +197,7 @@ public class ModelSpeedboat extends ModelBase implements IMultipassModel
 
     public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
     {
+
         GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
         EntitySpeedboat entityboat = (EntitySpeedboat) entityIn;
         this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
@@ -138,7 +221,6 @@ public class ModelSpeedboat extends ModelBase implements IMultipassModel
   			}
   		}
         
-    
         float f1 = ((EntitySpeedboat) entityIn).getRowingTime(0, limbSwing) * 100.0F;
         this.propeller.rotateAngleX = f1;
         float pr = entityboat.propellerRotation;
@@ -147,13 +229,49 @@ public class ModelSpeedboat extends ModelBase implements IMultipassModel
         if (!entityboat.leftInputDown && !entityboat.rightInputDown) pr = (float) (pr * Math.pow(0.7, Minecraft.getMinecraft().getRenderPartialTicks()));
         this.propellerAssembly.rotateAngleY = (float) Math.toRadians(pr * 15);
         this.propellerAssembly.render(scale);
-
+        
+        //this.coreSampleBoat.render(scale);
+        
+        GlStateManager.pushMatrix();
         if (entityboat.isBeingRidden())
         	GlStateManager.translate((entityIn.worldObj.rand.nextFloat() - 0.5F) * 0.01F, (entityIn.worldObj.rand.nextFloat() - 0.5F) * 0.01F, (entityIn.worldObj.rand.nextFloat() - 0.5F) * 0.01F);
         this.motor.render(scale);
+        GlStateManager.popMatrix();
+        
 
     }
-
+    
+    public void renderIcebreaker(Entity p_187054_1_, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale)
+    {
+        this.icebreak.render(scale);
+    }
+    
+    public void renderTank(Entity p_187054_1_, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale)
+    {
+        this.tank.render(scale);
+    }
+    
+    public void renderRudders(Entity entityIn, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale)
+    {
+        this.ruddersBase.render(scale);
+        
+        EntitySpeedboat entityboat = (EntitySpeedboat) entityIn;
+        float pr = entityboat.propellerRotation;
+        if (entityboat.leftInputDown && pr > -1) pr = pr - 0.1F * Minecraft.getMinecraft().getRenderPartialTicks();
+        if (entityboat.rightInputDown && pr < 1) pr = pr + 0.1F * Minecraft.getMinecraft().getRenderPartialTicks();
+        if (!entityboat.leftInputDown && !entityboat.rightInputDown) pr = (float) (pr * Math.pow(0.7, Minecraft.getMinecraft().getRenderPartialTicks()));
+        this.rudder2.rotateAngleY = (float) Math.toRadians(pr * 20f);
+        this.rudder1.rotateAngleY = (float) Math.toRadians(pr * 20f);
+      
+        this.rudder1.render(scale);
+        this.rudder2.render(scale);
+    }
+    
+    public void renderBoatDrill(Entity p_187054_1_, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale)
+    {
+        this.coreSampleBoatDrill.render(scale);
+    }
+    
     public void renderMultipass(Entity p_187054_1_, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale)
     {
         GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);

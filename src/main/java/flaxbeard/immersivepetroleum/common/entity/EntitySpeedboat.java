@@ -3,6 +3,7 @@ package flaxbeard.immersivepetroleum.common.entity;
 import java.util.List;
 
 import javax.annotation.Nullable;
+import javax.vecmath.Vector2f;
 
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
@@ -15,6 +16,7 @@ import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -46,10 +48,12 @@ import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.util.IESounds;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.items.ItemSpeedboat;
 import flaxbeard.immersivepetroleum.common.network.ConsumeBoatFuelPacket;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 
@@ -58,6 +62,11 @@ public class EntitySpeedboat extends EntityBoat
 	private static final DataParameter<Boolean>[] DATA_ID_PADDLE = new DataParameter[] {EntityDataManager.createKey(EntityBoat.class, DataSerializers.BOOLEAN), EntityDataManager.createKey(EntityBoat.class, DataSerializers.BOOLEAN)};
 	private static final DataParameter<String> TANK_FLUID = EntityDataManager.<String>createKey(EntitySpeedboat.class, DataSerializers.STRING);
 	private static final DataParameter<Integer> TANK_AMOUNT = EntityDataManager.<Integer>createKey(EntitySpeedboat.class, DataSerializers.VARINT);
+	
+	private static final DataParameter<Optional<ItemStack>> UPGRADE_0 = EntityDataManager.createKey(EntitySpeedboat.class, DataSerializers.OPTIONAL_ITEM_STACK);
+	private static final DataParameter<Optional<ItemStack>> UPGRADE_1 = EntityDataManager.createKey(EntitySpeedboat.class, DataSerializers.OPTIONAL_ITEM_STACK);
+	private static final DataParameter<Optional<ItemStack>> UPGRADE_2 = EntityDataManager.createKey(EntitySpeedboat.class, DataSerializers.OPTIONAL_ITEM_STACK);
+	private static final DataParameter<Optional<ItemStack>> UPGRADE_3 = EntityDataManager.createKey(EntitySpeedboat.class, DataSerializers.OPTIONAL_ITEM_STACK);
 
 	private final float[] paddlePositions;
 	/** How much of current speed to retain. Value zero to one. */
@@ -87,15 +96,14 @@ public class EntitySpeedboat extends EntityBoat
 	private float lastMoving;
 	public float propellerRotation = 0F;
 	
-	public ItemStack[] upgrades;
-	
+	public boolean inLava = false;
+		
 	public EntitySpeedboat(World worldIn)
 	{
 		super(worldIn);
 		this.paddlePositions = new float[2];
 		this.preventEntitySpawning = true;
 		this.setSize(1.375F, 0.5625F);
-		upgrades = new ItemStack[2];
 	}
 
 	public EntitySpeedboat(World worldIn, double x, double y, double z)
@@ -119,6 +127,10 @@ public class EntitySpeedboat extends EntityBoat
 		}
 		this.dataManager.register(TANK_FLUID, "");
 		this.dataManager.register(TANK_AMOUNT, Integer.valueOf(0));
+		this.dataManager.register(UPGRADE_0, Optional.absent());
+		this.dataManager.register(UPGRADE_1, Optional.absent());
+		this.dataManager.register(UPGRADE_2, Optional.absent());
+		this.dataManager.register(UPGRADE_3, Optional.absent());
 
 		super.entityInit();
 	}
@@ -159,7 +171,7 @@ public class EntitySpeedboat extends EntityBoat
 	@Override
 	public double getMountedYOffset()
 	{
-		return -0.1D;
+		return inLava ? -0.1D + 3.9F/16F : -0.1D;
 	}
 
 	/**
@@ -185,12 +197,21 @@ public class EntitySpeedboat extends EntityBoat
 				this.setDamageTaken(this.getDamageTaken() + amount * 10.0F);
 				this.setBeenAttacked();
 				boolean flag = source.getEntity() instanceof EntityPlayer && ((EntityPlayer)source.getEntity()).capabilities.isCreativeMode;
-
-				if (flag || this.getDamageTaken() > 40.0F)
+				boolean flag2 = source.getEntity() instanceof EntityPlayer;
+				if (flag || (this.getDamageTaken() > 40.0F && (!this.isFireproof || flag2)) || (this.getDamageTaken() > 240.0F))
 				{
 					if (!flag && this.worldObj.getGameRules().getBoolean("doEntityDrops"))
 					{
-						this.dropItemWithOffset(this.getItemBoat(), 1, 0.0F);
+						ItemSpeedboat item = (ItemSpeedboat) getItemBoat();
+						ItemStack stack = new ItemStack(item, 1, 0);
+						ItemStack[] contained = item.getContainedItems(stack);
+						ItemStack[] upgrades = this.getUpgrades();
+						for (int i = 0; i < contained.length && i < upgrades.length; i++)
+						{
+							contained[i] = upgrades[i];
+						}
+						item.setContainedItems(stack, contained);
+						this.entityDropItem(stack, 0F);
 					}
 
 					this.setDead();
@@ -257,6 +278,11 @@ public class EntitySpeedboat extends EntityBoat
 	{
 		return this.getHorizontalFacing().rotateY();
 	}
+	
+	public static DataParameter<Byte> getFlags()
+	{
+		return FLAGS;
+	}
 
 	/**
 	 * Called to update the entity's position/logic.
@@ -264,7 +290,7 @@ public class EntitySpeedboat extends EntityBoat
 	@Override
 	public void onUpdate()
 	{
-
+	
 		this.previousStatus = this.status;
 		this.status = this.getBoatStatus();
 
@@ -339,10 +365,23 @@ public class EntitySpeedboat extends EntityBoat
 			
 			if (this.forwardInputDown && this.worldObj.rand.nextInt(2) == 0)
 			{
-				float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F)) + (worldObj.rand.nextFloat() - .5F) * .3F;
-				float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F)) + (worldObj.rand.nextFloat() - .5F) * .3F;
-				float yO = .1F + (worldObj.rand.nextFloat() - .5F) * .3F;
-				worldObj.spawnParticle(EnumParticleTypes.WATER_BUBBLE, posX - xO * 1.5F, posY + yO, posZ - zO * 1.5F, 0, 0, 0, 5);
+				if (inLava)
+				{
+					if (this.worldObj.rand.nextInt(3) == 0)
+					{
+						float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F)) + (worldObj.rand.nextFloat() - .5F) * .3F;
+						float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F)) + (worldObj.rand.nextFloat() - .5F) * .3F;
+						float yO = .4F + (worldObj.rand.nextFloat() - .5F) * .3F;
+						worldObj.spawnParticle(EnumParticleTypes.LAVA, posX - xO * 1.5F, posY + yO, posZ - zO * 1.5F, -2 * motionX, 0, -2 * motionZ, 5);
+					}
+				}
+				else
+				{
+					float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F)) + (worldObj.rand.nextFloat() - .5F) * .3F;
+					float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F)) + (worldObj.rand.nextFloat() - .5F) * .3F;
+					float yO = .1F + (worldObj.rand.nextFloat() - .5F) * .3F;
+					worldObj.spawnParticle(EnumParticleTypes.WATER_BUBBLE, posX - xO * 1.5F, posY + yO, posZ - zO * 1.5F, 0, 0, 0, 5);
+				}
 			}
 			if (isBoosting && this.worldObj.rand.nextInt(2) == 0)
 			{
@@ -361,6 +400,56 @@ public class EntitySpeedboat extends EntityBoat
 		{
 			this.paddlePositions[0] = (float)((double)this.paddlePositions[0] - 0.01D);
 		}
+		
+		//
+		
+		
+		
+		float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F));
+		float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F));
+		Vector2f vec = new Vector2f(xO, zO);
+		vec.normalize();
+		
+		if (hasIcebreaker)
+		{
+			AxisAlignedBB axisalignedbb = this.getEntityBoundingBox().expandXyz(0.1f);
+			BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain(axisalignedbb.minX + 0.001D, axisalignedbb.minY + 0.001D, axisalignedbb.minZ + 0.001D);
+			BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos1 = BlockPos.PooledMutableBlockPos.retain(axisalignedbb.maxX - 0.001D, axisalignedbb.maxY - 0.001D, axisalignedbb.maxZ - 0.001D);
+			BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos2 = BlockPos.PooledMutableBlockPos.retain();
+
+			if (this.worldObj.isAreaLoaded(blockpos$pooledmutableblockpos, blockpos$pooledmutableblockpos1))
+			{
+				for (int i = blockpos$pooledmutableblockpos.getX(); i <= blockpos$pooledmutableblockpos1.getX(); ++i)
+				{
+					for (int j = blockpos$pooledmutableblockpos.getY(); j <= blockpos$pooledmutableblockpos1.getY(); ++j)
+					{
+						for (int k = blockpos$pooledmutableblockpos.getZ(); k <= blockpos$pooledmutableblockpos1.getZ(); ++k)
+						{
+							blockpos$pooledmutableblockpos2.setPos(i, j, k);
+							IBlockState iblockstate = this.worldObj.getBlockState(blockpos$pooledmutableblockpos2);
+						 
+							Vector2f vec2 = new Vector2f((float) (i + 0.5f - posX), (float) (k + 0.5f - posZ));
+							vec2.normalize();
+							
+							float sim = vec2.dot(vec);
+							
+							if (iblockstate.getBlock() == Blocks.ICE && sim > .3f)
+							{
+								this.worldObj.destroyBlock(blockpos$pooledmutableblockpos2, false);
+								this.worldObj.setBlockState(blockpos$pooledmutableblockpos2, Blocks.FLOWING_WATER.getDefaultState());
+							}
+						}
+					}
+				}
+			}
+
+			blockpos$pooledmutableblockpos.release();
+			blockpos$pooledmutableblockpos1.release();
+			blockpos$pooledmutableblockpos2.release();
+		}
+
+		
+		//
 
 		this.doBlockCollisions();
 		List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox().expand(0.20000000298023224D, -0.009999999776482582D, 0.20000000298023224D), EntitySelectors.<Entity>getTeamCollisionPredicate(this));
@@ -373,7 +462,7 @@ public class EntitySpeedboat extends EntityBoat
 			{
 				Entity entity = (Entity)list.get(j);
 
-				if (!entity.isPassenger(this))
+				if (!this.isPassenger(entity))
 				{
 					if (flag && this.getPassengers().size() < 2 && !entity.isRiding() && entity.width < this.width && entity instanceof EntityLivingBase && !(entity instanceof EntityWaterMob) && !(entity instanceof EntityPlayer))
 					{
@@ -382,6 +471,25 @@ public class EntitySpeedboat extends EntityBoat
 					else
 					{
 						this.applyEntityCollision(entity);
+						
+						if (hasIcebreaker)
+						{
+							if (entity instanceof EntityLivingBase && !(entity instanceof EntityPlayer) && this.getControllingPassenger() instanceof EntityPlayer)
+							{
+	
+								Vector2f vec2 = new Vector2f((float) (entity.posX - posX), (float) (entity.posZ - posZ));
+								vec2.normalize();
+								
+								float sim = vec2.dot(vec);
+								
+								if (sim > .5f)
+								{
+									entity.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) this.getControllingPassenger()), 4);
+									entity.motionX += vec2.x * .75F;
+									entity.motionZ += vec2.y * .75F;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -496,7 +604,7 @@ public class EntitySpeedboat extends EntityBoat
 						blockpos$pooledmutableblockpos.setPos(l1, k1, i2);
 						IBlockState iblockstate = this.worldObj.getBlockState(blockpos$pooledmutableblockpos);
 
-						if (iblockstate.getMaterial() == Material.WATER)
+						if (iblockstate.getMaterial() == Material.WATER || (isFireproof && iblockstate.getMaterial() == Material.LAVA))
 						{
 							f = Math.max(f, getBlockLiquidHeight(iblockstate, this.worldObj, blockpos$pooledmutableblockpos));
 						}
@@ -589,7 +697,7 @@ public class EntitySpeedboat extends EntityBoat
 		boolean flag = false;
 		this.waterLevel = Double.MIN_VALUE;
 		BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain();
-
+		inLava = false;
 		try
 		{
 			for (int k1 = i; k1 < j; ++k1)
@@ -601,8 +709,12 @@ public class EntitySpeedboat extends EntityBoat
 						blockpos$pooledmutableblockpos.setPos(k1, l1, i2);
 						IBlockState iblockstate = this.worldObj.getBlockState(blockpos$pooledmutableblockpos);
 
-						if (iblockstate.getMaterial() == Material.WATER)
+						if (iblockstate.getMaterial() == Material.WATER || (isFireproof && iblockstate.getMaterial() == Material.LAVA))
 						{
+							if (iblockstate.getMaterial() == Material.LAVA)
+							{
+								inLava = true;
+							}
 							float f = getLiquidHeight(iblockstate, this.worldObj, blockpos$pooledmutableblockpos);
 							this.waterLevel = Math.max((double)f, this.waterLevel);
 							flag |= axisalignedbb.minY < (double)f;
@@ -647,7 +759,7 @@ public class EntitySpeedboat extends EntityBoat
 						blockpos$pooledmutableblockpos.setPos(k1, l1, i2);
 						IBlockState iblockstate = this.worldObj.getBlockState(blockpos$pooledmutableblockpos);
 
-						if (iblockstate.getMaterial() == Material.WATER && d0 < (double)getLiquidHeight(iblockstate, this.worldObj, blockpos$pooledmutableblockpos))
+						if ((iblockstate.getMaterial() == Material.WATER || (isFireproof && iblockstate.getMaterial() == Material.LAVA)) && d0 < (double)getLiquidHeight(iblockstate, this.worldObj, blockpos$pooledmutableblockpos))
 						{
 							if (((Integer)iblockstate.getValue(BlockLiquid.LEVEL)).intValue() != 0)
 							{
@@ -717,6 +829,7 @@ public class EntitySpeedboat extends EntityBoat
 					this.boatGlide /= 2.0F;
 				}
 			}
+	
 
 			this.motionX *= (double)this.momentum;
 			this.motionZ *= (double)this.momentum;
@@ -765,7 +878,7 @@ public class EntitySpeedboat extends EntityBoat
 				{
 					f -= 0.005F * 2F;
 				}
-        		fluid.amount = Math.max(0, fluid.amount - toConsume);
+				fluid.amount = Math.max(0, fluid.amount - toConsume);
 				this.setContainedFluid(fluid);
 				IPPacketHandler.INSTANCE.sendToServer(new ConsumeBoatFuelPacket(toConsume));
 				
@@ -776,7 +889,7 @@ public class EntitySpeedboat extends EntityBoat
 			{
 				this.setPaddleState(false, false);
 			}
-			
+						
 			this.motionX += (double)(MathHelper.sin(-this.rotationYaw * 0.017453292F) * f);
 			this.motionZ += (double)(MathHelper.cos(this.rotationYaw * 0.017453292F) * f);
 			
@@ -784,7 +897,7 @@ public class EntitySpeedboat extends EntityBoat
 			
 			if (this.leftInputDown)
 			{
-				this.deltaRotation += -1.0F * speed * (isBoosting ? 0.5F : 1) * (backInputDown && !forwardInputDown ? 2F : 1F);
+				this.deltaRotation += -1.0F * speed * (hasRudders ? 1.5F : 1F) * (isBoosting ? 0.5F : 1) * (backInputDown && !forwardInputDown ? 2F : 1F);
 				if (propellerRotation > -1F)
 				{
 					propellerRotation -= 0.2F;
@@ -793,7 +906,7 @@ public class EntitySpeedboat extends EntityBoat
 
 			if (this.rightInputDown)
 			{
-				this.deltaRotation += 1.0F  * speed * (isBoosting ? 0.5F : 1) * (backInputDown && !forwardInputDown ? 2F : 1F);
+				this.deltaRotation += 1.0F  * speed * (hasRudders ? 1.5F : 1F) *(isBoosting ? 0.5F : 1) * (backInputDown && !forwardInputDown ? 2F : 1F);
 				if (propellerRotation < 1F)
 				{
 					propellerRotation += 0.2F;
@@ -814,6 +927,7 @@ public class EntitySpeedboat extends EntityBoat
 	{
 		if (this.isPassenger(passenger))
 		{
+			
 			float f = 0.0F;
 			float f1 = (float)((this.isDead ? 0.009999999776482582D : this.getMountedYOffset()) + passenger.getYOffset());
 
@@ -886,11 +1000,13 @@ public class EntitySpeedboat extends EntityBoat
 		compound.setString("tank_fluid", fs == null ? "" : fs.getFluid().getName());
 		compound.setInteger("tank_amount", fs == null ? 0 : fs.amount);
 		NBTTagList list = new NBTTagList();
+		
+		ItemStack[] upgrades = getUpgrades();
 		for (int i = 0; i < upgrades.length; i++)
 		{
 			NBTTagCompound nbt = new NBTTagCompound();
-			if (upgrades[0] != null)
-				upgrades[0].writeToNBT(nbt);
+			if (upgrades[i] != null)
+				upgrades[i].writeToNBT(nbt);
 			list.appendTag(nbt);
 		}
 		compound.setTag("upgrades", list);
@@ -913,11 +1029,13 @@ public class EntitySpeedboat extends EntityBoat
 		setContainedFluid(f == null ? null : new FluidStack(f, amount));
 		
 		NBTTagList list = (NBTTagList) compound.getTag("upgrades");
-		upgrades = new ItemStack[list.tagCount()];
+		
+		ItemStack[] upgrades = new ItemStack[4];
 		for (int i = 0; i < list.tagCount(); i++)
 		{
 			upgrades[i] = ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i));
 		}
+		setUpgrades(upgrades);
 		
 	}
 
@@ -926,7 +1044,7 @@ public class EntitySpeedboat extends EntityBoat
 	{
 		if (Utils.isFluidRelatedItemStack(stack))
 		{
-			FluidTank tank = new FluidTank(8000)
+			FluidTank tank = new FluidTank(hasTank ? 16000 : 8000)
 			{
 				@Override
 				public int fill(FluidStack resource, boolean doFill)
@@ -1078,5 +1196,76 @@ public class EntitySpeedboat extends EntityBoat
 	{
 		return true;
 	}
+		
+	public ItemStack[] getUpgrades()
+	{
+		Optional<ItemStack> o0 = this.dataManager.get(UPGRADE_0);
+		ItemStack i0 = !o0.isPresent() ? null : o0.get();
+		Optional<ItemStack> o1 = this.dataManager.get(UPGRADE_1);
+		ItemStack i1 = !o1.isPresent() ? null : o1.get();
+		Optional<ItemStack> o2 = this.dataManager.get(UPGRADE_2);
+		ItemStack i2 = !o2.isPresent() ? null : o2.get();
+		Optional<ItemStack> o3 = this.dataManager.get(UPGRADE_3);
+		ItemStack i3 = !o3.isPresent() ? null : o3.get();
+		return new ItemStack[] { i0, i1, i2, i3 };
+	}
+	
+	public void setUpgrades(ItemStack[] upgrades)
+	{
+		if (upgrades != null && upgrades.length >= 4)
+		{
+			Optional<ItemStack> o0 = upgrades[0] == null ? Optional.absent() : Optional.of(upgrades[0]);
+			Optional<ItemStack> o1 = upgrades[1] == null ? Optional.absent() : Optional.of(upgrades[1]);
+			Optional<ItemStack> o2 = upgrades[2] == null ? Optional.absent() : Optional.of(upgrades[2]);
+			Optional<ItemStack> o3 = upgrades[3] == null ? Optional.absent() : Optional.of(upgrades[3]);
+			this.dataManager.set(UPGRADE_0, o0);
+			this.dataManager.set(UPGRADE_1, o1);
+			this.dataManager.set(UPGRADE_2, o2);
+			this.dataManager.set(UPGRADE_3, o3);
+
+		}
+	}
+	
+	
+	@Override
+	public void notifyDataManagerChange(DataParameter<?> key)
+	{
+		if (key == UPGRADE_0 || key == UPGRADE_1 || key == UPGRADE_2 || key == UPGRADE_3)
+		{
+			ItemStack[] upgrades = getUpgrades();
+			isFireproof = false;
+			hasIcebreaker = false;
+			isImmuneToFire = false;
+			for (ItemStack upgrade : upgrades)
+			{
+				if (upgrade != null)
+				{
+					if (upgrade.getItem() == IPContent.itemUpgrades && upgrade.getItemDamage() == 0)
+					{
+						isFireproof = true;
+						isImmuneToFire = true;
+					}
+					else if (upgrade.getItem() == IPContent.itemUpgrades && upgrade.getItemDamage() == 1)
+					{
+						hasIcebreaker = true;
+					}
+					else if (upgrade.getItem() == IPContent.itemUpgrades && upgrade.getItemDamage() == 2)
+					{
+						hasTank = true;
+					}
+					else if (upgrade.getItem() == IPContent.itemUpgrades && upgrade.getItemDamage() == 3)
+					{
+						hasRudders = true;
+					}
+				}
+			}
+		}
+		super.notifyDataManagerChange(key);
+	}
+	
+	public boolean isFireproof = false;
+	public boolean hasIcebreaker = false;
+	public boolean hasTank = false;
+	public boolean hasRudders = false;
 
 }

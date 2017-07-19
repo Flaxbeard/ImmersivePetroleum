@@ -8,7 +8,8 @@ import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
 
 public enum BlockTypes_IPMetalDevice implements IStringSerializable, BlockIPBase.IBlockEnum
 {
-	AUTOMATIC_LUBRICATOR;
+	AUTOMATIC_LUBRICATOR,
+	GAS_GENERATOR;
 
 	@Override
 	public String getName()

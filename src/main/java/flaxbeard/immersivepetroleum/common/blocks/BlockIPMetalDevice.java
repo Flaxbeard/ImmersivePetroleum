@@ -13,9 +13,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice0;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_IPMetalDevice;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityGasGenerator;
 
 public class BlockIPMetalDevice extends BlockIPTileProvider<BlockTypes_IPMetalDevice>
 {
@@ -25,7 +25,7 @@ public class BlockIPMetalDevice extends BlockIPTileProvider<BlockTypes_IPMetalDe
 		setHardness(3.0F);
 		setResistance(15.0F);
 		lightOpacity = 0;
-		
+		this.setNotNormalBlock(BlockTypes_IPMetalDevice.GAS_GENERATOR.getMeta());
 		this.setNotNormalBlock(BlockTypes_IPMetalDevice.AUTOMATIC_LUBRICATOR.getMeta());
 		this.setMetaBlockLayer(BlockTypes_IPMetalDevice.AUTOMATIC_LUBRICATOR.getMeta(), BlockRenderLayer.CUTOUT);
 
@@ -51,18 +51,14 @@ public class BlockIPMetalDevice extends BlockIPTileProvider<BlockTypes_IPMetalDe
 
 
 	@Override
-	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
-	{
-		return true;
-	}
-
-	@Override
 	public TileEntity createNewTileEntity(World world, int meta)
 	{
 		switch(BlockTypes_IPMetalDevice.values()[meta])
 		{
 			case AUTOMATIC_LUBRICATOR:
 				return new TileEntityAutoLubricator();
+			case GAS_GENERATOR:
+				return new TileEntityGasGenerator();
 		}
 		return null;
 	}
@@ -87,6 +83,28 @@ public class BlockIPMetalDevice extends BlockIPTileProvider<BlockTypes_IPMetalDe
 	@Deprecated
 	public EnumBlockRenderType getRenderType(IBlockState state)
 	{
+		if (getMetaFromState(state) == BlockTypes_IPMetalDevice.GAS_GENERATOR.getMeta())
+		{
+			return EnumBlockRenderType.MODEL;
+		}
 		return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+	}
+	
+	@Override
+	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
+	{
+		if (getMetaFromState(state) == BlockTypes_IPMetalDevice.GAS_GENERATOR.getMeta())
+		{
+			TileEntity te = world.getTileEntity(pos);
+			if (te instanceof TileEntityGasGenerator)
+			{
+				return side == EnumFacing.UP || side == ((TileEntityGasGenerator) te).facing.getOpposite();
+			}
+			return side == EnumFacing.UP;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

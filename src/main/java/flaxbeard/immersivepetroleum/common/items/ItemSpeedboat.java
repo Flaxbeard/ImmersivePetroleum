@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.items;
 
+
+
 import java.util.List;
 
 import blusunrize.immersiveengineering.common.gui.IESlot;
@@ -88,7 +90,7 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 				boolean flag1 = block == Blocks.WATER || block == Blocks.FLOWING_WATER;
 				EntitySpeedboat entityboat = new EntitySpeedboat(worldIn, raytraceresult.hitVec.xCoord, flag1 ? raytraceresult.hitVec.yCoord - 0.12D : raytraceresult.hitVec.yCoord, raytraceresult.hitVec.zCoord);
 				entityboat.rotationYaw = playerIn.rotationYaw;
-				entityboat.upgrades = this.getContainedItems(itemStackIn);
+				entityboat.setUpgrades(this.getContainedItems(itemStackIn));
 				
 				if (!worldIn.getCollisionBoxes(entityboat, entityboat.getEntityBoundingBox().expandXyz(-0.1D)).isEmpty())
 				{
@@ -120,13 +122,13 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 	}
 
 	@Override
-	public Slot[] getWorkbenchSlots(Container container, ItemStack stack,
-			IInventory invItem)
+	public Slot[] getWorkbenchSlots(Container container, ItemStack stack, IInventory invItem)
 	{
 		return new Slot[]
 				{
-						new IESlot.Upgrades(container, invItem, 0,  80, 32, "BOAT", stack, true),
-						new IESlot.Upgrades(container, invItem, 1, 100, 32, "BOAT", stack, true)
+					new IESlot.Upgrades(container, invItem, 0,  78, 35 - 5, "BOAT", stack, true),
+					new IESlot.Upgrades(container, invItem, 1,  98, 35 + 5, "BOAT", stack, true),
+					new IESlot.Upgrades(container, invItem, 2, 118, 35 - 5, "BOAT", stack, true)
 				};
 	}
 

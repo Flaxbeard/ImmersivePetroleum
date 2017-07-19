@@ -6,6 +6,7 @@ tile.immersivepetroleum.fluid_gasoline.name=Gasoline
 tile.immersivepetroleum.stone_decoration.asphalt.name=Asphalt Concrete
 
 tile.immersivepetroleum.metal_device.automatic_lubricator.name=Automatic Lubricator
+tile.immersivepetroleum.metal_device.gas_generator.name=Gasoline Generator
 
 tile.immersivepetroleum.metal_multiblock.pumpjack.name=Pumpjack
 tile.immersivepetroleum.metal_multiblock.distillation_tower.name=Distillation Tower
@@ -28,10 +29,16 @@ fluid.gasoline=Gasoline
 
 item.immersivepetroleum.material.bitumen.name=Bitumen
 item.immersivepetroleum.material.petcoke.name=Petcoke
+item.immersivepetroleum.upgrades.reinforced_hull.name=Reinforced Hull
+item.immersivepetroleum.upgrades.icebreaker.name=Icebreaker Bow
+item.immersivepetroleum.upgrades.tank.name=Expanded Fuel Tank
+item.immersivepetroleum.upgrades.rudders.name=Manuevering Rudders
 
 item.immersivepetroleum.schematic.name=%s Projector
 
 item.immersivepetroleum.speedboat.name=Motorboat
+
+item.immersivepetroleum.oil_can.name=Lubricant Can
 
 itemGroup.immersivepetroleum=Immersive Petroleum
 
@@ -46,6 +53,11 @@ desc.immersiveengineering.info.multiblock.IE:AlloySmelter=Alloy Smelter
 desc.immersivepetroleum.info.reservoir.oil=Oil Reservoir
 desc.immersivepetroleum.info.reservoir.aquifer=Aquifer
 desc.immersivepetroleum.info.reservoir.lava=Magma Chamber
+
+desc.immersivepetroleum.flavour.upgrades.reinforced_hull=Makes Motorboat fire resistant and increases its health
+desc.immersivepetroleum.flavour.upgrades.icebreaker=Allows Motorboat to destroy ice and harm mobs
+desc.immersivepetroleum.flavour.upgrades.tank=Increases fuel tank capacity for Motorboat
+desc.immersivepetroleum.flavour.upgrades.rudders=Allows for tighter turns in the Motorboat
 
 ie.manual.entry.distillationTower.name=Distillation Tower
 ie.manual.entry.distillationTower.subtext=Environmentally unfriendly
@@ -86,9 +98,15 @@ ie.manual.entry.speedboat.name=Motorboat
 ie.manual.entry.speedboat.subtext=Wave rider
 ie.manual.entry.speedboat0=You can now travel the seas at high speed with the help of the Motorboat. The Motorboat runs off of <link;distillationTower;§n§oGasoline§r> which may be added with a bucket or <link;jerrycan;§n§oJerrycan§r>. Gasoline is consumed while driving the Motorboat forwards or backwards. Holding the jump key will increase the speed of the boat, albeit at the cost of higher fuel consumption and increased turn radius.
 
+ie.manual.entry.lubricant.name=Lubricant
+ie.manual.entry.lubricant.subtext=Slip and slide
+ie.manual.entry.lubricant0=Nobody's machines are perfect, not even your own. Inevitable friction between moving parts stops your devices from working to their maximum capacity - that's where Lubricant comes in. It will ensure a connected machine will run at full throttle, <config;d;autoLubricant_speedup>x its base speed. <link;pumpjack;§n§oPumpjacks§r>, <link;excavator;§n§oExcavators§r>, and <link;crusher;§n§oCrushers§r> can all be lubricated.
+ie.manual.entry.lubricant1=The Lubricant Can can be used to manually apply a lubricating fluid to a machine. Petroleum Lubricant is the most effective, but <link;squeezer;§n§oPlant Oil§r> also works. One the can is full, simply right click on a valid block to lubricate it. While sped up, the machine will visibly drip.
+ie.manual.entry.lubricant2=Iron Golems may also be lubricated, healing them and temporarily increasing their speed and strength.<br><br>A <link;chemthrower;§o§nChemical §o§nThrower§r> can also be used to apply a lubricant to blocks. Simply spray a valid lubricant fluid onto a machine and it will begin to operate at full speed.
+
 ie.manual.entry.automaticLubricator.name=Automatic Lubricator
-ie.manual.entry.automaticLubricator.subtext=Slip and slide
-ie.manual.entry.automaticLubricator0=Nobody's machines are perfect, not even your own. Inevitable friction between moving parts stops your devices from working to their maximum capacity - that's where the Automatic Lubricator comes in. It will ensure a connected machine will run at full throttle, <config;d;autoLubricant_speedup>x its base speed.
-ie.manual.entry.automaticLubricator1=The Automatic Lubricator can be used with a <link;pumpjack;§n§oPumpjack§r>, <link;excavator;§n§oExcavator§r>, or <link;crusher;§n§oCrusher§r>. The point where it must be attached is highlighted while holding a Lubricator in your hand. When correctly placed, lubricating pipes will form around the machine.<br><br>To function, the Automatic Lubricator must be supplied with a lubricating fluid. Petroleum <link;distillationTower;§n§oLubricant§r> is the most effective, but <link;squeezer;§n§oPlant Oil§r> also works.
+ie.manual.entry.automaticLubricator.subtext=Hands free
+ie.manual.entry.automaticLubricator0=Manually applying <link;distillationTower;§n§oLubricant§r> to machines can be tiring and often frustrating. The Automatic Lubricator will do this task for you once attached to a machine. The point where it must be attached is highlighted while holding a lubricator in your hand.
+ie.manual.entry.automaticLubricator1=When correctly placed, lubricating pipes will form around the machine. At this point, simply supply Petroleum Lubricant or <link;squeezer;§n§oPlant Oil§r>.
 
 ie.manual.category.ip.name=Oil Processing

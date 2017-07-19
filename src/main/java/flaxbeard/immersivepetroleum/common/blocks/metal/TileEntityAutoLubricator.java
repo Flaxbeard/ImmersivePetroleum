@@ -51,6 +51,7 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 
 public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirectionalTile, IHasDummyBlocks, ITickable, IPlayerInteraction, IBlockOverlayText, IBlockBounds
 {
@@ -86,20 +87,19 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		}
 
 		@Override
-		public boolean isMachineEnabled(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityPumpjack master)
+		public boolean isMachineEnabled(World world, TileEntityPumpjack master)
 		{
 			return master.wasActive;
 		}
 
 		@Override
-		public void lubricate(World world, TileEntityAutoLubricator tile, EnumFacing facing, int ticks, TileEntityPumpjack master)
+		public void lubricate(World world, int ticks, TileEntityPumpjack master)
 		{
 			if (!world.isRemote)
 			{
-				if (ticks % 4 == 0) {
-					tile.tank.drainInternal(LubricantHandler.getLubeAmount(tile.tank.getFluid().getFluid()), true);
+				if (ticks % 4 == 0)
+				{
 					master.update(false);
-					tile.markContainingBlockForUpdate(null);
 				}
 			}
 			else
@@ -203,6 +203,12 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			return null;
 		}
 
+		@Override
+		public int[] getStructureDimensions()
+		{
+			return new int[]{4, 6, 3};
+		}
+
 	}
 	
 	public static class ExcavatorLubricationHandler implements ILubricationHandler<TileEntityExcavator>
@@ -233,7 +239,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		}
 
 		@Override
-		public boolean isMachineEnabled(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityExcavator master)
+		public boolean isMachineEnabled(World world, TileEntityExcavator master)
 		{
 			BlockPos wheelPos = master.getBlockPosForPos(31);
 			TileEntity center = world.getTileEntity(wheelPos);
@@ -248,7 +254,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		}
 
 		@Override
-		public void lubricate(World world, TileEntityAutoLubricator tile, EnumFacing facing, int ticks, TileEntityExcavator master)
+		public void lubricate(World world, int ticks, TileEntityExcavator master)
 		{
 			BlockPos wheelPos = master.getBlockPosForPos(31);
 			TileEntity center = world.getTileEntity(wheelPos);
@@ -258,15 +264,6 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 				TileEntityBucketWheel wheel = (TileEntityBucketWheel) center;
 
 				wheel.rotation += IEConfig.Machines.excavator_speed / 4F;
-			
-				if (!world.isRemote)
-				{
-					if (ticks % 4 == 0)
-					{
-						tile.tank.drainInternal(LubricantHandler.getLubeAmount(tile.tank.getFluid().getFluid()), true);
-						tile.markContainingBlockForUpdate(null);
-					}
-				}	
 			}
 		}
 
@@ -371,6 +368,12 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			}
 			return null;
 		}
+		
+		@Override
+		public int[] getStructureDimensions()
+		{
+			return new int[]{3,6,3};
+		}
 	}
 	
 	public static class CrusherLubricationHandler implements ILubricationHandler<TileEntityCrusher>
@@ -400,13 +403,13 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		}
 
 		@Override
-		public boolean isMachineEnabled(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityCrusher master)
+		public boolean isMachineEnabled(World world, TileEntityCrusher master)
 		{
 			return master.shouldRenderAsActive();
 		}
 
 		@Override
-		public void lubricate(World world, TileEntityAutoLubricator tile, EnumFacing facing, int ticks, TileEntityCrusher master)
+		public void lubricate(World world, int ticks, TileEntityCrusher master)
 		{
 			Iterator<MultiblockProcess<CrusherRecipe>> processIterator = master.processQueue.iterator();
 			MultiblockProcess<CrusherRecipe> process = processIterator.next();
@@ -421,8 +424,6 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 						process = processIterator.next();
 						if (process.processTick < process.maxTicks) process.processTick++;
 					}
-					tile.tank.drainInternal(LubricantHandler.getLubeAmount(tile.tank.getFluid().getFluid()), true);
-					tile.markContainingBlockForUpdate(null);
 				}
 			}
 			else
@@ -519,13 +520,26 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			}
 			return null;
 		}
+
+		@Override
+		public int[] getStructureDimensions()
+		{
+			return new int[]{3,3,5};
+		}
 	}
 	
 	public boolean active;
 	public int dummy = 0;
 	public FluxStorage energyStorage = new FluxStorage(8000);
 	public EnumFacing facing = EnumFacing.NORTH;
-	public FluidTank tank = new FluidTank(8000);
+	public FluidTank tank = new FluidTank(8000)
+	{
+		@Override
+		public boolean canFillFluidType(FluidStack fluid)
+	    {
+	        return fluid != null && LubricantHandler.isValidLube(fluid.getFluid());
+	    }
+	};
 
 	public int doSpeedup()
 	{
@@ -696,10 +710,16 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 					TileEntity master = handler.isPlacedCorrectly(worldObj, this, facing);
 					if (master != null)
 					{
-						if (handler.isMachineEnabled(worldObj, this, facing, master))
+						if (handler.isMachineEnabled(worldObj, master))
 						{
 							count++;
-							handler.lubricate(worldObj, this, facing, count, master);
+							handler.lubricate(worldObj, count, master);
+							
+							if (!worldObj.isRemote && count % 4 == 0) 
+							{
+								tank.drainInternal(LubricantHandler.getLubeAmount(tank.getFluid().getFluid()), true);
+								markContainingBlockForUpdate(null);
+							}
 							
 							if (worldObj.isRemote)
 							{

@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.client;
 
+import static blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Connection.vertices;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,9 +13,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.audio.ISound.AttenuationType;
 import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
@@ -21,6 +26,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.ModelLoader;
@@ -34,12 +41,15 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
+import blusunrize.immersiveengineering.api.energy.wires.IImmersiveConnectable;
+import blusunrize.immersiveengineering.api.energy.wires.WireType;
+import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Connection;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
-import blusunrize.immersiveengineering.common.util.sound.IETileSound;
 import blusunrize.lib.manual.IManualPage;
 import blusunrize.lib.manual.ManualInstance.ManualEntry;
 import blusunrize.lib.manual.ManualPages;
@@ -241,6 +251,11 @@ public class ClientProxy extends CommonProxy
 		ManualHelper.addEntry("asphalt", CAT_IP,
 				new ManualPages.Crafting(ManualHelper.getManual(), "asphalt0", new ItemStack(IPContent.blockStoneDecoration,1,BlockTypes_IPStoneDecoration.ASPHALT.getMeta())));
 		
+		ManualHelper.addEntry("lubricant", CAT_IP,
+				new ManualPages.Text(ManualHelper.getManual(), "lubricant0"),
+				new ManualPages.Crafting(ManualHelper.getManual(), "lubricant1", new ItemStack(IPContent.itemOilCan)),
+				new ManualPages.Text(ManualHelper.getManual(), "lubricant2"));
+		
 		ManualHelper.addEntry("automaticLubricator", CAT_IP,
 				new ManualPages.Crafting(ManualHelper.getManual(), "automaticLubricator0", new ItemStack(IPContent.blockMetalDevice, 1, 0)),
 				new ManualPages.Text(ManualHelper.getManual(), "automaticLubricator1"));
@@ -408,4 +423,209 @@ public class ClientProxy extends CommonProxy
 			}
 		}
 	}
+	
+	public static Vec3d[] getConnectionCatenary(Vec3d start, Vec3d end, float slack)
+	{
+		boolean vertical = false;
+
+		if (vertical)
+			return new Vec3d[]{new Vec3d(start.xCoord, start.yCoord, start.zCoord), new Vec3d(end.xCoord, end.yCoord, end.zCoord)};
+
+		double dx = (end.xCoord)-(start.xCoord);
+		double dy = (end.yCoord)-(start.yCoord);
+		double dz = (end.zCoord)-(start.zCoord);
+		double dw = Math.sqrt(dx*dx + dz*dz);
+		double k = Math.sqrt(dx*dx + dy*dy + dz*dz) * slack;
+		double l = 0;
+		int limiter = 0;
+		while(!vertical && limiter<300)
+		{
+			limiter++;
+			l += 0.01;
+			if (Math.sinh(l)/l >= Math.sqrt(k*k - dy*dy)/dw)
+				break;
+		}
+		double a = dw/2/l;
+		double p = (0+dw-a*Math.log((k+dy)/(k-dy)))*0.5;
+		double q = (dy+0-k*Math.cosh(l)/Math.sinh(l))*0.5;
+
+		Vec3d[] vex = new Vec3d[vertices+1];
+
+		vex[0] = new Vec3d(start.xCoord, start.yCoord, start.zCoord);
+		for(int i=1; i<vertices; i++)
+		{
+			float n1 = i/(float)vertices;
+			double x1 = 0 + dx * n1;
+			double z1 = 0 + dz * n1;
+			double y1 = a * Math.cosh((( Math.sqrt(x1*x1+z1*z1) )-p)/a)+q;
+			vex[i] = new Vec3d(start.xCoord+x1, start.yCoord+y1, start.zCoord+z1);
+		}
+		vex[vertices] = new Vec3d(end.xCoord, end.yCoord, end.zCoord);
+
+		return vex;
+	}
+	
+	public static void tessellateConnection(World world, WireType type, float xs, float ys, float zs, float xe, float ye, float ze)
+	{
+		int col = type.getColour(null);
+		double r = type.getRenderDiameter() / 2;
+		int[] rgba = new int[]{col >> 16 & 255, col >> 8 & 255, col & 255, 255};
+		tessellateConnection(world, type, xs, ys, zs, xe, ye, ze, rgba, r, type.getIcon(null));
+	}
+	
+	public static void tessellateConnection(World world, WireType type, float xs, float ys, float zs, float xe, float ye, float ze, int[] rgba, double radius, TextureAtlasSprite sprite)
+	{
+		double dx = xe - xs;
+		double dy = ye - ys;
+		double dz = ze - zs;
+		double dw = Math.sqrt(dx * dx + dz * dz);
+		double d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+		Tessellator tes = ClientUtils.tes();
+
+		double rmodx = dz / dw;
+		double rmodz = dx / dw;
+
+		Vec3d[] vertex = getConnectionCatenary(new Vec3d(xs, ys, zs), new Vec3d(xe, ye, ze), 1.5f);
+		//		Vec3 iniPos = new Vec3(connection.start.getX()+startOffset.xCoord, connection.start.getY()+startOffset.yCoord, connection.start.getZ()+startOffset.zCoord);
+		Vec3d initPos = new Vec3d(xs, ys, zs);
+
+		double uMin = sprite.getMinU();
+		double uMax = sprite.getMaxU();
+		double vMin = sprite.getMinV();
+		double vMax = sprite.getMaxV();
+		double uD = uMax - uMin;
+		boolean vertical = false;
+		boolean b = (dx < 0 && dz <= 0) || (dz < 0 && dx <= 0) || (dz < 0 && dx > 0);
+
+
+		VertexBuffer worldrenderer = tes.getBuffer();
+		//		worldrenderer.pos(x, y+h, 0).tex(uv[0], uv[3]).endVertex();
+		//		worldrenderer.pos(x+w, y+h, 0).tex(uv[1], uv[3]).endVertex();
+		//		worldrenderer.pos(x+w, y, 0).tex(uv[1], uv[2]).endVertex();
+		//		worldrenderer.pos(x, y, 0).tex(uv[0], uv[2]).endVertex();
+		if(vertical)
+		{
+			//			double uShift = Math.abs(dy)/ * uD;
+			//			worldrenderer.pos(x, y, z)
+			worldrenderer.setTranslation(initPos.xCoord, initPos.yCoord, initPos.zCoord);
+
+			//			tes.addVertexWithUV(0-radius, 0, 0, b?uMax-uShift:uMin,vMin);
+			worldrenderer.pos(0 - radius, 0, 0).tex(uMin, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+			//			tes.addVertexWithUV(dx-radius, dy, dz, b?uMin:uMin+uShift,vMin);
+			worldrenderer.pos(dx - radius, dy, dz).tex(uMax, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+			//			tes.addVertexWithUV(dx+radius, dy, dz, b?uMin:uMin+uShift,vMax);
+			worldrenderer.pos(dx + radius, dy, dz).tex(uMax, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+			//			tes.addVertexWithUV(0+radius, 0, 0, b?uMax-uShift:uMin,vMax);
+			worldrenderer.pos(0 + radius, 0, 0).tex(uMin, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+
+			//			tes.addVertexWithUV(dx-radius, dy, dz, b?uMin:uMin+uShift,vMin);
+			worldrenderer.pos(dx - radius, dy, dz).tex(uMax, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+			//			tes.addVertexWithUV(0-radius, 0, 0, b?uMax-uShift:uMin,vMin);
+			worldrenderer.pos(0 - radius, 0, 0).tex(uMin, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+			//			tes.addVertexWithUV(0+radius, 0, 0, b?uMax-uShift:uMin,vMax);
+			worldrenderer.pos(0 + radius, 0, 0).tex(uMin, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+			//			tes.addVertexWithUV(dx+radius, dy, dz, b?uMin:uMin+uShift,vMax);
+			worldrenderer.pos(dx + radius, dy, dz).tex(uMax, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+
+
+			//			tes.addVertexWithUV(0, 0, 0-radius, b?uMax-uShift:uMin,vMin);
+			worldrenderer.pos(0, 0, 0 - radius).tex(uMin, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+			//			tes.addVertexWithUV(dx, dy, dz-radius, b?uMin:uMin+uShift,vMin);
+			worldrenderer.pos(dx, dy, dz - radius).tex(uMax, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+			//			tes.addVertexWithUV(dx, dy, dz+radius, b?uMin:uMin+uShift,vMax);
+			worldrenderer.pos(dx, dy, dz + radius).tex(uMax, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+			//			tes.addVertexWithUV(0, 0, 0+radius, b?uMax-uShift:uMin,vMax);
+			worldrenderer.pos(0, 0, 0 + radius).tex(uMin, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+
+			//			tes.addVertexWithUV(dx, dy, dz-radius, b?uMin:uMin+uShift,vMin);
+			worldrenderer.pos(dx, dy, dz - radius).tex(uMax, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+			//			tes.addVertexWithUV(0, 0, 0-radius, b?uMax-uShift:uMin,vMin);
+			worldrenderer.pos(0, 0, 0 - radius).tex(uMin, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+			//			tes.addVertexWithUV(0, 0, 0+radius, b?uMax-uShift:uMin,vMax);
+			worldrenderer.pos(0, 0, 0 + radius).tex(uMin, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+			//			tes.addVertexWithUV(dx, dy, dz+radius, b?uMin:uMin+uShift,vMax);
+			worldrenderer.pos(dx, dy, dz + radius).tex(uMax, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+			worldrenderer.setTranslation(0, 0, 0);
+		} else
+		{
+			double u0 = uMin;
+			double u1 = uMin;
+			for(int i = b ? (vertex.length - 1) : 0; (b ? (i >= 0) : (i < vertex.length)); i += (b ? -1 : 1))
+			{
+				Vec3d v0 = i > 0 ? vertex[i - 1].subtract(xs, ys, zs) : initPos;
+				Vec3d v1 = vertex[i].subtract(xs, ys, zs);
+
+				//				double u0 = uMin;
+				//				double u1 = uMax;
+				u0 = u1;
+				u1 = u0 + (v0.distanceTo(v1) / d) * uD;
+				if((dx < 0 && dz <= 0) || (dz < 0 && dx <= 0) || (dz < 0 && dx > 0))
+				{
+					u1 = uMin;
+					u0 = uMax;
+				}
+				worldrenderer.pos(v0.xCoord, v0.yCoord + radius, v0.zCoord).tex(u0, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+				worldrenderer.pos(v1.xCoord, v1.yCoord + radius, v1.zCoord).tex(u1, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+				worldrenderer.pos(v1.xCoord, v1.yCoord - radius, v1.zCoord).tex(u1, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+				worldrenderer.pos(v0.xCoord, v0.yCoord - radius, v0.zCoord).tex(u0, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+
+				worldrenderer.pos(v1.xCoord, v1.yCoord + radius, v1.zCoord).tex(u1, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+				worldrenderer.pos(v0.xCoord, v0.yCoord + radius, v0.zCoord).tex(u0, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+				worldrenderer.pos(v0.xCoord, v0.yCoord - radius, v0.zCoord).tex(u0, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+				worldrenderer.pos(v1.xCoord, v1.yCoord - radius, v1.zCoord).tex(u1, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+
+				worldrenderer.pos(v0.xCoord - radius * rmodx, v0.yCoord, v0.zCoord + radius * rmodz).tex(u0, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+				worldrenderer.pos(v1.xCoord - radius * rmodx, v1.yCoord, v1.zCoord + radius * rmodz).tex(u1, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+				worldrenderer.pos(v1.xCoord + radius * rmodx, v1.yCoord, v1.zCoord - radius * rmodz).tex(u1, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+				worldrenderer.pos(v0.xCoord + radius * rmodx, v0.yCoord, v0.zCoord - radius * rmodz).tex(u0, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+
+				worldrenderer.pos(v1.xCoord - radius * rmodx, v1.yCoord, v1.zCoord + radius * rmodz).tex(u1, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+				worldrenderer.pos(v0.xCoord - radius * rmodx, v0.yCoord, v0.zCoord + radius * rmodz).tex(u0, vMax).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+				worldrenderer.pos(v0.xCoord + radius * rmodx, v0.yCoord, v0.zCoord - radius * rmodz).tex(u0, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+				worldrenderer.pos(v1.xCoord + radius * rmodx, v1.yCoord, v1.zCoord - radius * rmodz).tex(u1, vMin).color(rgba[0], rgba[1], rgba[2], rgba[3]).endVertex();
+
+			}
+		}
+		//		tes.setColorRGBA_I(0xffffff, 0xff);
+	}
+	//
+	//	public static int calcBrightness(IBlockAccess world, double x, double y, double z)
+	//	{
+	//		return world.getLightBrightnessForSkyBlocks((int)Math.floor(x), (int)Math.floor(y), (int)Math.floor(z), 0);
+	//	}
+	//
+	//
+	//	public static void tessellateBox(double xMin, double yMin, double zMin, double xMax, double yMax, double zMax, IIcon icon)
+	//	{
+	//		tes().addVertexWithUV(xMin,yMin,zMax, icon.getInterpolatedU(xMin*16),icon.getInterpolatedV(zMax*16));
+	//		tes().addVertexWithUV(xMin,yMin,zMin, icon.getInterpolatedU(xMin*16),icon.getInterpolatedV(zMin*16));
+	//		tes().addVertexWithUV(xMax,yMin,zMin, icon.getInterpolatedU(xMax*16),icon.getInterpolatedV(zMin*16));
+	//		tes().addVertexWithUV(xMax,yMin,zMax, icon.getInterpolatedU(xMax*16),icon.getInterpolatedV(zMax*16));
+	//
+	//		tes().addVertexWithUV(xMin,yMax,zMin, icon.getInterpolatedU(xMin*16),icon.getInterpolatedV(zMin*16));
+	//		tes().addVertexWithUV(xMin,yMax,zMax, icon.getInterpolatedU(xMin*16),icon.getInterpolatedV(zMax*16));
+	//		tes().addVertexWithUV(xMax,yMax,zMax, icon.getInterpolatedU(xMax*16),icon.getInterpolatedV(zMax*16));
+	//		tes().addVertexWithUV(xMax,yMax,zMin, icon.getInterpolatedU(xMax*16),icon.getInterpolatedV(zMin*16));
+	//
+	//		tes().addVertexWithUV(xMax,yMin,zMin, icon.getInterpolatedU(xMin*16),icon.getInterpolatedV(yMax*16));
+	//		tes().addVertexWithUV(xMin,yMin,zMin, icon.getInterpolatedU(xMax*16),icon.getInterpolatedV(yMax*16));
+	//		tes().addVertexWithUV(xMin,yMax,zMin, icon.getInterpolatedU(xMax*16),icon.getInterpolatedV(yMin*16));
+	//		tes().addVertexWithUV(xMax,yMax,zMin, icon.getInterpolatedU(xMin*16),icon.getInterpolatedV(yMin*16));
+	//
+	//		tes().addVertexWithUV(xMin,yMin,zMax, icon.getInterpolatedU(xMax*16),icon.getInterpolatedV(yMax*16));
+	//		tes().addVertexWithUV(xMax,yMin,zMax, icon.getInterpolatedU(xMin*16),icon.getInterpolatedV(yMax*16));
+	//		tes().addVertexWithUV(xMax,yMax,zMax, icon.getInterpolatedU(xMin*16),icon.getInterpolatedV(yMin*16));
+	//		tes().addVertexWithUV(xMin,yMax,zMax, icon.getInterpolatedU(xMax*16),icon.getInterpolatedV(yMin*16));
+	//
+	//		tes().addVertexWithUV(xMin,yMin,zMin, icon.getInterpolatedU(zMin*16),icon.getInterpolatedV(yMax*16));
+	//		tes().addVertexWithUV(xMin,yMin,zMax, icon.getInterpolatedU(zMax*16),icon.getInterpolatedV(yMax*16));
+	//		tes().addVertexWithUV(xMin,yMax,zMax, icon.getInterpolatedU(zMax*16),icon.getInterpolatedV(yMin*16));
+	//		tes().addVertexWithUV(xMin,yMax,zMin, icon.getInterpolatedU(zMin*16),icon.getInterpolatedV(yMin*16));
+	//
+	//		tes().addVertexWithUV(xMax,yMin,zMax, icon.getInterpolatedU(zMax*16),icon.getInterpolatedV(yMax*16));
+	//		tes().addVertexWithUV(xMax,yMin,zMin, icon.getInterpolatedU(zMin*16),icon.getInterpolatedV(yMax*16));
+	//		tes().addVertexWithUV(xMax,yMax,zMin, icon.getInterpolatedU(zMin*16),icon.getInterpolatedV(yMin*16));
+	//		tes().addVertexWithUV(xMax,yMax,zMax, icon.getInterpolatedU(zMax*16),icon.getInterpolatedV(yMin*16));
+	//	}
+	//
 }

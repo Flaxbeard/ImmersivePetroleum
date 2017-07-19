@@ -1,15 +1,21 @@
 package flaxbeard.immersivepetroleum.client.render;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.model.IMultipassModel;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import blusunrize.immersiveengineering.api.energy.wires.WireType;
 import blusunrize.immersiveengineering.client.ClientUtils;
+import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.client.model.ModelSpeedboat;
 import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 
@@ -17,8 +23,10 @@ import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 public class RenderSpeedboat extends Render<EntitySpeedboat>
 {
 	private static String texture = "immersivepetroleum:textures/models/boat_motor.png";
+	private static String textureArmor = "immersivepetroleum:textures/models/boat_motor_armor.png";
+
 	/** instance of ModelBoat for rendering */
-	protected ModelBase modelBoat = new ModelSpeedboat();
+	protected ModelSpeedboat modelBoat = new ModelSpeedboat();
 
 	public RenderSpeedboat(RenderManager renderManagerIn)
 	{
@@ -31,10 +39,17 @@ public class RenderSpeedboat extends Render<EntitySpeedboat>
 	 */
 	public void doRender(EntitySpeedboat entity, double x, double y, double z, float entityYaw, float partialTicks)
 	{
+		
 		GlStateManager.pushMatrix();
 		this.setupTranslation(x, y, z);
+		
+
 		this.setupRotation(entity, entityYaw, partialTicks);
-		ClientUtils.bindTexture(texture);
+		ClientUtils.bindTexture(entity.isFireproof ? textureArmor : texture);
+		if (entity.inLava)
+		{
+			GlStateManager.translate(0, -3.9F/16F, 0);
+		}
 
 		if (this.renderOutlines)
 		{
@@ -42,15 +57,39 @@ public class RenderSpeedboat extends Render<EntitySpeedboat>
 			GlStateManager.enableOutlineMode(this.getTeamColor(entity));
 		}
 
-		this.modelBoat.render(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+	
 
+		this.modelBoat.render(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+	
+
+		if (entity.hasIcebreaker)
+		{
+			ClientUtils.bindTexture(textureArmor);
+			this.modelBoat.renderIcebreaker(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+		}
+		
+		if (entity.hasRudders)
+		{
+			ClientUtils.bindTexture(textureArmor);
+			this.modelBoat.renderRudders(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+		}
+		
+		if (entity.hasTank)
+		{
+			ClientUtils.bindTexture(textureArmor);
+			this.modelBoat.renderTank(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+		}
+		
+		
 		if (this.renderOutlines)
 		{
 			GlStateManager.disableOutlineMode();
 			GlStateManager.disableColorMaterial();
 		}
-
+			
+		
 		GlStateManager.popMatrix();
+		
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}
 
@@ -100,7 +139,7 @@ public class RenderSpeedboat extends Render<EntitySpeedboat>
 
 		ClientUtils.bindTexture(texture);
 
-		((IMultipassModel)this.modelBoat).renderMultipass(p_188300_1_, p_188300_9_, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+		modelBoat.renderMultipass(p_188300_1_, p_188300_9_, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
 		GlStateManager.popMatrix();
 	}
 

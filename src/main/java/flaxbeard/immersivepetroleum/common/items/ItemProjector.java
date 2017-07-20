@@ -57,7 +57,6 @@ import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice0;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityConveyorBelt;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCrusher;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPump;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.MultiblockExcavatorDemo;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
@@ -86,6 +85,7 @@ public class ItemProjector extends ItemIPBase
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
+	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
 	{
@@ -99,8 +99,8 @@ public class ItemProjector extends ItemIPBase
 				{
 					multiblock = "IE:Excavator";
 				}
-				tooltip.add(ChatFormatting.DARK_GRAY + I18n.format("chat.immersivepetroleum.info.schematic.build0"));
-				tooltip.add(ChatFormatting.DARK_GRAY + I18n.format("chat.immersivepetroleum.info.schematic.build1", I18n.format("desc.immersiveengineering.info.multiblock." + multiblock)));
+				tooltip.add(I18n.format("chat.immersivepetroleum.info.schematic.build0"));
+				tooltip.add(I18n.format("chat.immersivepetroleum.info.schematic.build1", I18n.format("desc.immersiveengineering.info.multiblock." + multiblock)));
 				
 				int h = mb.getStructureManual().length;
 				int l = mb.getStructureManual()[0].length;

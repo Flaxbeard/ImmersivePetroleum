@@ -24,6 +24,7 @@ import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.IERecipes;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration0;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration2;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice0;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.util.IEPotions;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
@@ -148,14 +149,14 @@ public class IPContent
 		registerTile(TileEntityPumpjack.TileEntityPumpjackParent.class);
 		registerTile(TileEntityAutoLubricator.class);
 		registerTile(TileEntityGasGenerator.class);
-
-		DistillationRecipe.addRecipe(
-				new FluidStack[] { 
-					new FluidStack(fluidLubricant, 3),
-					new FluidStack(fluidDiesel, 9),
-					new FluidStack(fluidGasoline, 13)
-				},
-				new ItemStack(itemMaterial, 1, 0), new FluidStack(fluidCrudeOil, 25), 2048, 1, .07F);
+//
+//		DistillationRecipe.addRecipe(
+//				new FluidStack[] { 
+//					new FluidStack(fluidLubricant, 3),
+//					new FluidStack(fluidDiesel, 9),
+//					new FluidStack(fluidGasoline, 13)
+//				},
+//				new ItemStack(itemMaterial, 1, 0), new FluidStack(fluidCrudeOil, 25), 2048, 1, .07F);
 
 		MultiblockHandler.registerMultiblock(MultiblockDistillationTower.instance);
 		MultiblockHandler.registerMultiblock(MultiblockPumpjack.instance);
@@ -179,6 +180,23 @@ public class IPContent
 				'E', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta()), 
 				'M', new ItemStack(IEContent.itemMaterial, 1, 8));
 		
+		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 0), "P P", "PBP", 
+				'P', "plateSteel",
+				'B', "blockSteel");
+		
+		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 1), "I P", " IP", "PPB", 
+				'P', "plateSteel",
+				'B', "blockSteel",
+				'I', "ingotSteel");
+		
+		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 2), " P ", "PTP", " P ",
+				'P', "plateIron",
+				'T', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta()));
+		
+		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 3), " RR", "PPP", "PPP",
+				'P', "plateIron",
+				'R', "stickIron");
+		
 		IERecipes.addIngredientRecipe(new ItemStack(blockMetalDevice, 1, 0), " G ", "G G", "WPW", 
 				'W', "plankTreatedWood", 
 				'P', new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta()),
@@ -189,8 +207,16 @@ public class IPContent
 				'P', "plateIron",
 				'B', new ItemStack(Items.BUCKET));
 		
-		Config.addConfigReservoirs(IPConfig.reservoirs.reservoirs);
+		IERecipes.addIngredientRecipe(new ItemStack(blockMetalDevice, 1, 1), "ITI", "IGR", "III",  
+				'G', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.GENERATOR.getMeta()),
+				'I', "plateIron",
+				'R', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.CAPACITOR_LV.getMeta()),
+				'T', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta()));
 		
+		Config.addConfigReservoirs(IPConfig.extraction.reservoirs);
+		Config.addFuel(IPConfig.Generation.fuels);
+		Config.addDistillationRecipe(IPConfig.Refining.towerRecipes, IPConfig.Refining.towerByproduct);
+
 		LubricantHandler.registerLubricant(fluidLubricant, 3);
 		LubricantHandler.registerLubricant(IEContent.fluidPlantoil, 12);
 

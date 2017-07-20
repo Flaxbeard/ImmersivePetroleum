@@ -5,22 +5,21 @@
 		"transform": "forge:default-block",
 		"model": "immersiveengineering:ieSixSides",
 		"textures": {
-			"bottom": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_bottom",
-			"top": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_top",
-			"north": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side",
-			"south": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side",
-			"west": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side",
-			"east": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side",
+			"all": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side",
+			"particle": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side",
+			"particles": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side"
 
-			"sideOff": "immersiveengineering:blocks/metalDevice1_furnaceHeater",
-			"sideOn": "immersiveengineering:blocks/metalDevice1_furnaceHeater_active"
 		}
 	},
 	"variants":
 	{
+		"inventory,type=gas_generator": [{"model": "immersivepetroleum:generator"}],
 		"type":
 		{
 			"automatic_lubricator": {
+			},
+			"gas_generator": {
+				"model": "immersivepetroleum:generator"
 			}
 		},
 		"facing":
@@ -31,16 +30,16 @@
 			"up": { "transform": {
 				"rotation": {"x": 90 }
 			}},
-			"north": { "transform": {
+			"east": { "transform": {
 				"rotation": {"y": 0 }
 			}},
-			"south": { "transform": {
+			"west": { "transform": {
 				"rotation": {"y": 180 }
 			}},
-			"west": { "transform": {
+			"north": { "transform": {
 				"rotation": {"y": 90 }
 			}},
-			"east": { "transform": {
+			"south": { "transform": {
 				"rotation": {"y": -90 }
 			}}
 		},

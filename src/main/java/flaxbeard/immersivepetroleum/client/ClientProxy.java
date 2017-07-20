@@ -5,6 +5,7 @@ import static blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandl
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -41,12 +42,9 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
-import blusunrize.immersiveengineering.api.energy.wires.IImmersiveConnectable;
 import blusunrize.immersiveengineering.api.energy.wires.WireType;
-import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Connection;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
@@ -54,6 +52,7 @@ import blusunrize.lib.manual.IManualPage;
 import blusunrize.lib.manual.ManualInstance.ManualEntry;
 import blusunrize.lib.manual.ManualPages;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.client.page.ManualPageBigMultiblock;
@@ -125,7 +124,35 @@ public class ClientProxy extends CommonProxy
 			if (block == IPContent.blockMetalDevice)
 			{
 				ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "auto_lube"), "inventory"));
-
+				IIEMetaBlock ieMetaBlock = (IIEMetaBlock) block;
+				if(ieMetaBlock.useCustomStateMapper())
+					ModelLoader.setCustomStateMapper(block, IECustomStateMapper.getStateMapper(ieMetaBlock));
+				ModelLoader.setCustomMeshDefinition(blockItem, new ItemMeshDefinition()
+				{
+					@Override
+					public ModelResourceLocation getModelLocation(ItemStack stack)
+					{
+						return new ModelResourceLocation(loc, "inventory");
+					}
+				});
+				for(int meta = 1; meta < ieMetaBlock.getMetaEnums().length; meta++)
+				{
+					String location = loc.toString();
+					String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getName() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)) : null;
+					if(ieMetaBlock.useCustomStateMapper())
+					{
+						String custom = ieMetaBlock.getCustomStateMapping(meta, true);
+						if(custom != null)
+							location += "_" + custom;
+					}
+					try
+					{
+						ModelLoader.setCustomModelResourceLocation(blockItem, meta, new ModelResourceLocation(location, prop));
+					} catch(NullPointerException npe)
+					{
+						throw new RuntimeException("WELP! apparently " + ieMetaBlock + " lacks an item!", npe);
+					}
+				}
 			}
 			else if (block instanceof IIEMetaBlock)
 			{
@@ -234,19 +261,49 @@ public class ClientProxy extends CommonProxy
 
 		handleReservoirManual();
 
-		if (!IPConfig.Machines.disable_pumpjack)
+		if (!IPConfig.Extraction.disable_pumpjack)
 			ManualHelper.addEntry("pumpjack", CAT_IP,
 					new ManualPageMultiblock(ManualHelper.getManual(), "pumpjack0", MultiblockPumpjack.instance),
 					new ManualPages.Text(ManualHelper.getManual(), "pumpjack1"));
 		
-		if (!IPConfig.Machines.disable_tower)
+		if (!IPConfig.Refining.disable_tower)
+		{
+			ArrayList<DistillationRecipe> recipeList = DistillationRecipe.recipeList;
+			List<String[]> l = new ArrayList<String[]>();
+			for (DistillationRecipe recipe : recipeList)
+			{
+				boolean first = true;
+				for (FluidStack output : recipe.fluidOutput)
+				{
+					String inputName = recipe.input.getFluid().getLocalizedName(recipe.input);
+					String outputName = output.getFluid().getLocalizedName(output);
+					String[] test = new String[] {
+							first ? recipe.input.amount + " mB " + inputName : "",
+									output.amount + " mB " + outputName
+					};
+					l.add(test);
+					first = false;
+				}
+			}
+			String[][] table = l.toArray(new String[0][]);
 			ManualHelper.addEntry("distillationTower", CAT_IP,
 					new ManualPageBigMultiblock(ManualHelper.getManual(), MultiblockDistillationTower.instance),
 					new ManualPages.Text(ManualHelper.getManual(), "distillationTower0"),
-					new ManualPages.Text(ManualHelper.getManual(), "distillationTower1"));
+					new ManualPages.Text(ManualHelper.getManual(), "distillationTower1"),
+					new ManualPages.Table(ManualHelper.getManual(), "distillationTower2", table, false));
+		}
+		
+		ManualHelper.addEntry("portableGenerator", CAT_IP,
+				new ManualPages.Crafting(ManualHelper.getManual(), "portableGenerator0", new ItemStack(IPContent.blockMetalDevice, 1, 1)),
+				new ManualPages.Text(ManualHelper.getManual(), "portableGenerator1"));
 		
 		ManualHelper.addEntry("speedboat", CAT_IP,
-				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat0", new ItemStack(IPContent.itemSpeedboat, 1, 0)));
+				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat0", new ItemStack(IPContent.itemSpeedboat, 1, 0)),
+				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat1", new ItemStack(IPContent.itemUpgrades, 1, 2)),
+				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat2", new ItemStack(IPContent.itemUpgrades, 1, 3)),
+				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat3", new ItemStack(IPContent.itemUpgrades, 1, 1)),
+				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat4", new ItemStack(IPContent.itemUpgrades, 1, 0))
+		);
 		
 		ManualHelper.addEntry("asphalt", CAT_IP,
 				new ManualPages.Crafting(ManualHelper.getManual(), "asphalt0", new ItemStack(IPContent.blockStoneDecoration,1,BlockTypes_IPStoneDecoration.ASPHALT.getMeta())));

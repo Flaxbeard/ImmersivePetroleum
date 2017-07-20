@@ -3,13 +3,23 @@ package flaxbeard.immersivepetroleum.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.ArrayUtils;
-
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.NumberInvalidException;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Config.Comment;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 
 public class Config
 {
@@ -20,9 +30,9 @@ public class Config
 		@Comment({"Display chunk border while holding Core Samples, default=true"})
 		public static boolean sample_displayBorder = true;
 		
-		public static Reservoirs reservoirs = new Reservoirs();
+		public static Extraction extraction = new Extraction();
 
-		public static class Reservoirs
+		public static class Extraction
 		{
 			@Comment({"List of reservoir types. Format: name, fluid_name, min_mb_fluid, max_mb_fluid, mb_per_tick_replenish, weight, [dim_blacklist], [dim_whitelist], [biome_blacklist], [biome_whitelist]"})
 			public static String[] reservoirs = new String[] {
@@ -33,30 +43,51 @@ public class Config
 			
 			@Comment({"The chance that a chunk contains a fluid reservoir, default=0.5"})
 			public static float reservoir_chance = 0.5F;
+			
+			
+			@Comment({"Disable formation and manual page for Pumpjack"})
+			public static boolean disable_pumpjack = false;
+			
+			@Comment({"The Flux the Pumpjack requires each tick to pump, default=1024"})
+			public static int pumpjack_consumption = 1024;
+			
+			@Comment({"The amount of mB of oil a Pumpjack extracts per tick, default=15"})
+			public static int pumpjack_speed = 15;
+
 		}
 
-		public static Machines machines = new Machines();
+		public static Refining refining = new Refining();
 
-		public static class Machines
+		public static class Refining
 		{
-			//Multiblock Recipes
+			@Comment({"Disable formation and manual page for Distillation Tower"})
+			public static boolean disable_tower = false;
+			
 			@Comment({"A modifier to apply to the energy costs of every Distillation Tower recipe, default=1"})
 			public static float distillationTower_energyModifier = 1;
 
 			@Comment({"A modifier to apply to the time of every Distillation recipe. Can't be lower than 1, default=1"})
 			public static float distillationTower_timeModifier = 1;
 			
-
-			//Other Multiblock machines
-			@Comment({"The Flux the Pumpjack requires each tick to pump, default=1024"})
-			public static int pumpjack_consumption = 1024;
-			@Comment({"The amount of mB of oil a Pumpjack extracts per tick, default=15"})
-			public static int pumpjack_speed = 15;
+			@Comment({"Distillation Tower recipes. Format: power_cost, input_name, input_mb -> output1_name, output1_mb, output2_name, output2_mb"})
+			public static String[] towerRecipes = new String[] {
+				"2048, oil, 25 -> lubricant, 3, diesel, 9, gasoline, 13"
+			};
+			@Comment({"Distillation Tower byproducts. Format: item_name, stack_size, metadata, percent_chance"})
+			public static String[] towerByproduct = new String[] {
+				"immersivepetroleum:material, 1, 0, 7"
+			};
+		}
+		
+		public static Generation generation = new Generation();
+		
+		public static class Generation
+		{
+			@Comment({"List of Portable Generator fuels. Format: fluid_name, mb_used_per_tick, flux_produced_per_tick"})
+			public static String[] fuels = new String[] {
+				"gasoline, 5, 512"
+			};
 			
-			@Comment({"Disable formation and manual page for Distillation Tower"})
-			public static boolean disable_tower = false;
-			@Comment({"Disable formation and manual page for Pumpjack"})
-			public static boolean disable_pumpjack = false;
 		}
 		
 		public static Tools tools = new Tools();
@@ -69,6 +100,276 @@ public class Config
 	}
 
 	static Configuration config;
+	
+	public static void addDistillationRecipe(String[] recipes, String[] byproducts)
+	{
+		if (recipes.length != byproducts.length)
+			throw new RuntimeException("Mismatch in number of distillation tower config recipes and byproducts");
+
+		for (int i = 0; i < recipes.length; i++)
+	    {
+			String byprod = byproducts[i];
+			String str = recipes[i];
+
+			String input = null;
+			int inputAmount = 0;
+			int powerCost = 0;
+			List<String> output = new ArrayList<String>();
+			List<Integer> outputAmount = new ArrayList<Integer>();
+
+			String remain = str;
+			
+			int index = 0;
+			
+			while (remain.indexOf(",") != -1)
+			{
+				int arrowIndex = remain.indexOf("->");
+				int commaIndex = remain.indexOf(",");
+				boolean arrow = (arrowIndex > 0 && arrowIndex < commaIndex);
+				int endPos = arrow ? arrowIndex : commaIndex;
+				
+				String current = remain.substring(0, endPos).trim();
+				
+				if (index == 0)
+				{
+					try
+					{
+						powerCost = Integer.parseInt(current);
+						if (powerCost < 0)
+						{
+							throw new RuntimeException("Negative value for distillation tower power cost for recipe " + (i + 1));
+						}
+					}
+					catch (NumberFormatException e)
+					{
+						throw new RuntimeException("Invalid value for distillation towerpower cost for recipe " + (i + 1));
+					}
+				}
+				else if (index == 1) input = current;
+				else if (index == 2)
+				{
+					try
+					{
+						inputAmount = Integer.parseInt(current);
+						if (inputAmount <= 0)
+						{
+							throw new RuntimeException("Negative value for distillation tower input for recipe " + (i + 1));
+						}
+					}
+					catch (NumberFormatException e)
+					{
+						throw new RuntimeException("Invalid value for distillation tower input for recipe " + (i + 1));
+					}
+				}
+				else if (index % 2 == 1)
+				{
+					output.add(current);
+				}
+				else
+				{
+					try
+					{
+						int num = Integer.parseInt(current);
+						if (num <= 0)
+						{
+							throw new RuntimeException("Negative value for distillation tower output for recipe " + (i + 1));
+						}
+						outputAmount.add(num);
+					}
+					catch (NumberFormatException e)
+					{
+						throw new RuntimeException("Invalid value for distillation tower output for recipe " + (i + 1));
+					}
+				}
+
+				remain = remain.substring(endPos + (arrow ? 2 : 1));
+				index++;
+			}
+			String current = remain.trim();
+
+			if (index % 2 == 1)
+			{
+				output.add(current);
+			}
+			else
+			{
+				try
+				{
+					int num = Integer.parseInt(current);
+					if (inputAmount <= 0)
+					{
+						throw new RuntimeException("Negative value for distillation tower output for recipe " + (i + 1));
+					}
+					outputAmount.add(num);
+				}
+				catch (NumberFormatException e)
+				{
+					throw new RuntimeException("Invalid value for distillation tower output for recipe " + (i + 1));
+				}
+			}
+			
+			if (output.size() != outputAmount.size())
+			{
+				throw new RuntimeException("Mismatched outputs for distillation recipe " + (i + 1));
+			}
+			
+			FluidStack[] outputFluid = new FluidStack[output.size()];
+			for (int n = 0; n < output.size(); n++)
+			{
+				Fluid f = FluidRegistry.getFluid(output.get(n));
+				outputFluid[n] = new FluidStack(f, outputAmount.get(n));
+			}
+			Fluid f = FluidRegistry.getFluid(input);
+			FluidStack inputFluid = new FluidStack(f, inputAmount);
+			
+			
+			
+			
+			String itemName = null;
+			int amount = 0;
+			int meta = 0;
+			float chance = 0;
+
+			remain = byprod;
+			
+			index = 0;
+			
+			while (remain.indexOf(",") != -1)
+			{
+				int endPos = remain.indexOf(",");
+				
+				current = remain.substring(0, endPos).trim();
+				
+				if (index == 0) itemName = current;
+				else if (index == 1)
+				{
+					try
+					{
+						amount = Integer.parseInt(current);
+						if (amount <= 0)
+						{
+							throw new RuntimeException("Negative stack size for distillation byproduct " + (i + 1));
+						}
+					}
+					catch (NumberFormatException e)
+					{
+						throw new RuntimeException("Invalid stack size for distillation byproduct " + (i + 1));
+					}
+				}
+				else if (index == 2)
+				{
+					try
+					{
+						meta = Integer.parseInt(current);
+						if (meta < 0)
+						{
+							throw new RuntimeException("Negative metadata for distillation byproduct " + (i + 1));
+						}
+					}
+					catch (NumberFormatException e)
+					{
+						throw new RuntimeException("Invalid metadata for distillation byproduct " + (i + 1));
+					}
+				}
+
+				remain = remain.substring(endPos + 1);
+				index++;
+			}
+			
+			current = remain.trim();
+
+			try
+			{
+				chance = Float.parseFloat(current);
+				if (chance < 0)
+				{
+					throw new RuntimeException("Negative chance for distillation byproduct " + (i + 1));
+				}
+			}
+			catch (NumberFormatException e)
+			{
+				throw new RuntimeException("Invalid chance for distillation byproduct " + (i + 1));
+			}
+			
+			
+			Item item;
+			try
+			{
+				item = CommandBase.getItemByText(null, itemName);
+			}
+			catch (NumberInvalidException e)
+			{
+				throw new RuntimeException("Item " + itemName + " does not exist for distillation byproduct " + (i + 1));
+			}
+			
+			ItemStack stack = new ItemStack(item, amount, meta);
+			
+			
+			
+			DistillationRecipe.addRecipe(outputFluid, stack, inputFluid, powerCost, 1, chance / 100F);
+	    }
+		
+	}
+	
+	public static void addFuel(String[] fuels)
+	{
+		for (int i = 0; i < fuels.length; i++)
+	    {
+			String str = fuels[i];
+
+			String fluid = null;
+			int amount = 0;
+			int production = 0;
+
+			String remain = str;
+			
+			int index = 0;
+			
+			while (remain.indexOf(",") != -1)
+			{
+				int endPos = remain.indexOf(",");
+				
+				String current = remain.substring(0, endPos).trim();
+				
+				if (index == 0) fluid = current;
+				else if (index == 1)
+				{
+					try
+					{
+						amount = Integer.parseInt(current);
+						if (amount <= 0)
+						{
+							throw new RuntimeException("Negative value for fuel mB/tick for fuel " + (i + 1));
+						}
+					}
+					catch (NumberFormatException e)
+					{
+						throw new RuntimeException("Invalid value for fuel mB/tick for fuel " + (i + 1));
+					}
+				}
+
+				remain = remain.substring(endPos + 1);
+				index++;
+			}
+			String current = remain.trim();
+
+			try
+			{
+				production = Integer.parseInt(current);
+				if (production < 0)
+				{
+					throw new RuntimeException("Negative value for fuel RF/tick for fuel " + (i + 1));
+				}
+			}
+			catch (NumberFormatException e)
+			{
+				throw new RuntimeException("Invalid value for fuel RF/tick for fuel " + (i + 1));
+			}
+			
+			FuelHandler.registerPortableGeneratorFuel(FluidRegistry.getFluid(fluid), production, amount);
+	    }
+		
+	}
 	
 	public static void addConfigReservoirs(String[] reservoirs)
 	{

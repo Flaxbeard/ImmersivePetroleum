@@ -169,7 +169,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 
 		boolean active = false;
 		
-		int consumed = IPConfig.Machines.pumpjack_consumption;
+		int consumed = IPConfig.Extraction.pumpjack_consumption;
 		int extracted = consumePower ? energyStorage.extractEnergy(consumed, true) : consumed;
 				
 		if (extracted >= consumed && canExtract() && !this.isRSDisabled())
@@ -181,7 +181,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 				
 				energyStorage.extractEnergy(consumed, false);
 				active = true;
-				FluidStack out = new FluidStack(availableFluid(), Math.min(IPConfig.Machines.pumpjack_speed, oilAmnt));
+				FluidStack out = new FluidStack(availableFluid(), Math.min(IPConfig.Extraction.pumpjack_speed, oilAmnt));
 				BlockPos outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY().getOpposite(), 2).offset(EnumFacing.DOWN, 1);
 				IFluidHandler output = FluidUtil.getFluidHandler(worldObj, outputPos, facing);
 				if(output != null)

@@ -66,20 +66,36 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 		super.readCustomNBT(nbt, descPacket);
 		tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
 		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
+		operated = nbt.getBoolean("operated");
 		if(!descPacket)
 			inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
 	}
+
+	
+	private boolean operated = false;
+	
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket)
 	{
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
 		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
+		nbt.setBoolean("operated", operated);
 		if(!descPacket)
 			nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
 	
 	private boolean wasActive = false;
+	
+	@Override
+	public boolean hammerUseSide(EnumFacing side, EntityPlayer player, float hitX, float hitY, float hitZ)
+	{
+		if (operated)
+		{
+			return super.hammerUseSide(side, player, hitX, hitY, hitZ);
+		}
+		return true;
+	}
 
 	@Override
 	public void update()
@@ -89,7 +105,11 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 			return;
 		boolean update = false;
 	
-		if(energyStorage.getEnergyStored()>0 && processQueue.size()<this.getProcessQueueMaxLength())
+		if (!operated)
+		{
+			operated = true;
+		}
+		if (energyStorage.getEnergyStored()>0 && processQueue.size()<this.getProcessQueueMaxLength())
 		{
 			if(tanks[0].getFluidAmount() > 0)
 			{

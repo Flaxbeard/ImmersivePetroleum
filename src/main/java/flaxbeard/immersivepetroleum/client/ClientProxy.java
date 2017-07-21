@@ -293,30 +293,34 @@ public class ClientProxy extends CommonProxy
 					new ManualPages.Table(ManualHelper.getManual(), "distillationTower2", table, false));
 		}
 		
-		ManualHelper.addEntry("portableGenerator", CAT_IP,
-				new ManualPages.Crafting(ManualHelper.getManual(), "portableGenerator0", new ItemStack(IPContent.blockMetalDevice, 1, 1)),
-				new ManualPages.Text(ManualHelper.getManual(), "portableGenerator1"));
 		
-		ManualHelper.addEntry("speedboat", CAT_IP,
-				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat0", new ItemStack(IPContent.itemSpeedboat, 1, 0)),
-				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat1", new ItemStack(IPContent.itemUpgrades, 1, 2)),
-				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat2", new ItemStack(IPContent.itemUpgrades, 1, 3)),
-				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat3", new ItemStack(IPContent.itemUpgrades, 1, 1)),
-				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat4", new ItemStack(IPContent.itemUpgrades, 1, 0))
-		);
+		if (!IPConfig.Generation.disable_portable_gen)
+			ManualHelper.addEntry("portableGenerator", CAT_IP,
+					new ManualPages.Crafting(ManualHelper.getManual(), "portableGenerator0", new ItemStack(IPContent.blockMetalDevice, 1, 1)),
+					new ManualPages.Text(ManualHelper.getManual(), "portableGenerator1"));
+		if (!IPConfig.Miscellaneous.disable_motorboat)
+			ManualHelper.addEntry("speedboat", CAT_IP,
+					new ManualPages.Crafting(ManualHelper.getManual(), "speedboat0", new ItemStack(IPContent.itemSpeedboat, 1, 0)),
+					new ManualPages.Crafting(ManualHelper.getManual(), "speedboat1", new ItemStack(IPContent.itemUpgrades, 1, 2)),
+					new ManualPages.Crafting(ManualHelper.getManual(), "speedboat2", new ItemStack(IPContent.itemUpgrades, 1, 3)),
+					new ManualPages.Crafting(ManualHelper.getManual(), "speedboat3", new ItemStack(IPContent.itemUpgrades, 1, 1)),
+					new ManualPages.Crafting(ManualHelper.getManual(), "speedboat4", new ItemStack(IPContent.itemUpgrades, 1, 0))
+			);
 		
 		ManualHelper.addEntry("asphalt", CAT_IP,
 				new ManualPages.Crafting(ManualHelper.getManual(), "asphalt0", new ItemStack(IPContent.blockStoneDecoration,1,BlockTypes_IPStoneDecoration.ASPHALT.getMeta())));
 		
-		ManualHelper.addEntry("lubricant", CAT_IP,
-				new ManualPages.Text(ManualHelper.getManual(), "lubricant0"),
-				new ManualPages.Crafting(ManualHelper.getManual(), "lubricant1", new ItemStack(IPContent.itemOilCan)),
-				new ManualPages.Text(ManualHelper.getManual(), "lubricant2"));
-		
-		ManualHelper.addEntry("automaticLubricator", CAT_IP,
-				new ManualPages.Crafting(ManualHelper.getManual(), "automaticLubricator0", new ItemStack(IPContent.blockMetalDevice, 1, 0)),
-				new ManualPages.Text(ManualHelper.getManual(), "automaticLubricator1"));
-
+		if (!IPConfig.Miscellaneous.disable_lubricant)
+		{
+			ManualHelper.addEntry("lubricant", CAT_IP,
+					new ManualPages.Text(ManualHelper.getManual(), "lubricant0"),
+					new ManualPages.Crafting(ManualHelper.getManual(), "lubricant1", new ItemStack(IPContent.itemOilCan)),
+					new ManualPages.Text(ManualHelper.getManual(), "lubricant2"));
+			
+			ManualHelper.addEntry("automaticLubricator", CAT_IP,
+					new ManualPages.Crafting(ManualHelper.getManual(), "automaticLubricator0", new ItemStack(IPContent.blockMetalDevice, 1, 0)),
+					new ManualPages.Text(ManualHelper.getManual(), "automaticLubricator1"));
+		}
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDistillationTower.TileEntityDistillationTowerParent.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPumpjack.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAutoLubricator.class, new TileAutoLubricatorRenderer());

@@ -175,44 +175,51 @@ public class IPContent
 			GameRegistry.addRecipe(new SchematicCraftingHandler());
 		}
 		
-		IERecipes.addIngredientRecipe(new ItemStack(itemSpeedboat, 1, 0), "PME", "PPP", 
-				'P', "plankTreatedWood", 
-				'E', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta()), 
-				'M', new ItemStack(IEContent.itemMaterial, 1, 8));
+		if (!IPConfig.Miscellaneous.disable_motorboat)
+		{
+			IERecipes.addIngredientRecipe(new ItemStack(itemSpeedboat, 1, 0), "PME", "PPP", 
+					'P', "plankTreatedWood", 
+					'E', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta()), 
+					'M', new ItemStack(IEContent.itemMaterial, 1, 8));
+			
+			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 0), "P P", "PBP", 
+					'P', "plateSteel",
+					'B', "blockSteel");
+			
+			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 1), "I P", " IP", "PPB", 
+					'P', "plateSteel",
+					'B', "blockSteel",
+					'I', "ingotSteel");
+			
+			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 2), " P ", "PTP", " P ",
+					'P', "plateIron",
+					'T', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta()));
+			
+			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 3), " RR", "PPP", "PPP",
+					'P', "plateIron",
+					'R', "stickIron");
+		}
 		
-		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 0), "P P", "PBP", 
-				'P', "plateSteel",
-				'B', "blockSteel");
+		if (!IPConfig.Miscellaneous.disable_lubricant)
+		{
+			IERecipes.addIngredientRecipe(new ItemStack(blockMetalDevice, 1, 0), " G ", "G G", "WPW", 
+					'W', "plankTreatedWood", 
+					'P', new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta()),
+					'G', "blockGlass");
+			
+			IERecipes.addIngredientRecipe(new ItemStack(itemOilCan), " R ", "PBP", 
+					'R', "dyeRed", 
+					'P', "plateIron",
+					'B', new ItemStack(Items.BUCKET));
+		}
 		
-		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 1), "I P", " IP", "PPB", 
-				'P', "plateSteel",
-				'B', "blockSteel",
-				'I', "ingotSteel");
-		
-		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 2), " P ", "PTP", " P ",
-				'P', "plateIron",
-				'T', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta()));
-		
-		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 3), " RR", "PPP", "PPP",
-				'P', "plateIron",
-				'R', "stickIron");
-		
-		IERecipes.addIngredientRecipe(new ItemStack(blockMetalDevice, 1, 0), " G ", "G G", "WPW", 
-				'W', "plankTreatedWood", 
-				'P', new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta()),
-				'G', "blockGlass");
-		
-		IERecipes.addIngredientRecipe(new ItemStack(itemOilCan), " R ", "PBP", 
-				'R', "dyeRed", 
-				'P', "plateIron",
-				'B', new ItemStack(Items.BUCKET));
-		
-		IERecipes.addIngredientRecipe(new ItemStack(blockMetalDevice, 1, 1), "ITI", "IGR", "III",  
-				'G', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.GENERATOR.getMeta()),
-				'I', "plateIron",
-				'R', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.CAPACITOR_LV.getMeta()),
-				'T', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta()));
-		
+		if (!IPConfig.Generation.disable_portable_gen)
+			IERecipes.addIngredientRecipe(new ItemStack(blockMetalDevice, 1, 1), "ITI", "IGR", "III",  
+					'G', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.GENERATOR.getMeta()),
+					'I', "plateIron",
+					'R', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.CAPACITOR_LV.getMeta()),
+					'T', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta()));
+			
 		Config.addConfigReservoirs(IPConfig.extraction.reservoirs);
 		Config.addFuel(IPConfig.Generation.fuels);
 		Config.addDistillationRecipe(IPConfig.Refining.towerRecipes, IPConfig.Refining.towerByproduct);

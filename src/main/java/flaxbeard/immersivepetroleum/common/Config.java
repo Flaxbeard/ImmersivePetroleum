@@ -83,11 +83,25 @@ public class Config
 		
 		public static class Generation
 		{
+			@Comment({"Disable crafting and manual page for Portable Generator"})
+			public static boolean disable_portable_gen = false;
+			
 			@Comment({"List of Portable Generator fuels. Format: fluid_name, mb_used_per_tick, flux_produced_per_tick"})
 			public static String[] fuels = new String[] {
 				"gasoline, 5, 512"
 			};
 			
+		}
+				
+		public static Miscellaneous misc = new Miscellaneous();
+				
+		public static class Miscellaneous
+		{
+			@Comment({"Disable crafting and manual page for Motorboat"})
+			public static boolean disable_motorboat = false;
+			
+			@Comment({"Disable lubricant can and automatic lubricator crafting and manual page"})
+			public static boolean disable_lubricant = false;
 		}
 		
 		public static Tools tools = new Tools();

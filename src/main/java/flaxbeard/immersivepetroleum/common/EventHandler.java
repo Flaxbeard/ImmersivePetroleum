@@ -287,9 +287,9 @@ public class EventHandler
 						World world = DimensionManager.getWorld(coords[0]);
 						
 						OilWorldInfo info = PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]);
-						if (info.type != null)
+						if (info.getType() != null)
 						{
-							ItemNBTHelper.setString(drill.sample, "resType", PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]).type.name);
+							ItemNBTHelper.setString(drill.sample, "resType", PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]).getType().name);
 							ItemNBTHelper.setInt(drill.sample, "oil", info.current);
 						}
 						else

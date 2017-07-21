@@ -122,3 +122,19 @@ ie.manual.entry.portableGenerator0=The Portable Generator is a mobile all-in-one
 ie.manual.entry.portableGenerator1=The Portable Generator can accept fuel by simply right clicking with a bucket. Gasoline or other fuel can also be piped in from above. Power is output directly through LV or MV wires, Connectors are not needed. Applying a redstone signal will halt generation.<br><br>Sneaking and right clicking on the generator will pick it up, preserving all stored power and fuel.
 
 ie.manual.category.ip.name=Oil Processing
+
+chat.immersivepetroleum.command.help.help=§6Usage: /ip help <command> [sub-commands ...]§r<br> To get more info on the specified command or, optionally, its sub commands
+chat.immersivepetroleum.command.reservoir.help=§6Usage: /ip reservoir <list|get|set|setAmount|setCapacity>§r
+chat.immersivepetroleum.command.reservoir.list.help=§6Usage: /ip reservoir list§r<br> Lists all registered reservoirs
+chat.immersivepetroleum.command.reservoir.get.help=§6Usage: /ip reservoir get§r<br> Displays the reservoir for the chunk
+chat.immersivepetroleum.command.reservoir.set.help=§6Usage: /ip reservoir set [reservoir]§r<br> Sets a reservoir override for the chunk. Specify no reservoir to clear the override.
+chat.immersivepetroleum.command.reservoir.setAmount.help=§6Usage: /ip reservoir setAmount <number>§r<br> Set the amount of mB of fluid left inside the chunk.
+chat.immersivepetroleum.command.reservoir.setCapacity.help=§6Usage: /ip reservoir setCapacity <number>§r<br> Set the maximum amount of mB of fluid in the chunk.
+chat.immersivepetroleum.command.reservoir.get=Chunk contains: %1$s <br>Override: %2$s <br>Amount: %3$s
+chat.immersivepetroleum.command.reservoir.set.invalidReservoir=§cInvalid reservoir, '%1$s' is not a valid identifier. Use '/ip reservoir list' for a list of all identifiers.§r
+chat.immersivepetroleum.command.reservoir.set.sucess=Reservoir override set to '%1$s'
+chat.immersivepetroleum.command.reservoir.set.clear=Reservoir override (%1$s) cleared.
+chat.immersivepetroleum.command.reservoir.setAmount.NFE=Error, '%1$s' is not a valid number
+chat.immersivepetroleum.command.reservoir.setAmount.sucess=Reservoir amount set to '%1$s'
+chat.immersivepetroleum.command.reservoir.setCapacity.NFE=Error, '%1$s' is not a valid number
+chat.immersivepetroleum.command.reservoir.setCapacity.sucess=Reservoir capacity set to '%1$s'

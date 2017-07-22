@@ -140,7 +140,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 		{
 
 			ItemStack filledContainer = Utils.fillFluidContainer(tanks[1], inventory[2], inventory[3], null);
-			if(filledContainer!=null)
+			if (filledContainer!=null)
 			{
 				if(inventory[3]!=null && OreDictionary.itemMatches(inventory[3], filledContainer, true))
 					inventory[3].stackSize+=filledContainer.stackSize;
@@ -150,21 +150,31 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 					inventory[2]=null;
 				update = true;
 			}
-			if(this.tanks[1].getFluidAmount()>0)
+			
+			
+			int amountLeft = 80;
+			
+			BlockPos outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY().getOpposite(), 1).offset(EnumFacing.DOWN, 1);
+			if (this.mirrored)
+				outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY(), 1).offset(EnumFacing.DOWN, 1);				//System.out.println(outputPos);
+			IFluidHandler output = FluidUtil.getFluidHandler(worldObj, outputPos, facing);
+			
+			if (output!=null)
 			{
-				FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[1].getFluid(), Math.min(this.tanks[1].getFluidAmount(), 80), false);
-				BlockPos outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY().getOpposite(), 1).offset(EnumFacing.DOWN, 1);
-				if (this.mirrored)
-					outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY(), 1).offset(EnumFacing.DOWN, 1);				//System.out.println(outputPos);
-				IFluidHandler output = FluidUtil.getFluidHandler(worldObj, outputPos, facing);
-				if(output!=null)
+				for (FluidStack stack : this.tanks[1].fluids)
 				{
-					int accepted = output.fill(out, false);
-					if(accepted>0)
+					if (stack.amount > 0)
 					{
-						int drained = output.fill(Utils.copyFluidStackWithAmount(out,Math.min(out.amount, accepted),false), true);
-						this.tanks[1].drain(drained, true);
-						update=true;
+						FluidStack out = Utils.copyFluidStackWithAmount(stack, Math.min(stack.amount, amountLeft), false);
+						
+						int accepted = output.fill(out, false);
+						if (accepted > 0)
+						{
+							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+							this.tanks[1].drain(drained, true);
+							amountLeft -= drained;
+							update = true;
+						}
 					}
 				}
 			}

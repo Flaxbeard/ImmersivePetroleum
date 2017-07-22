@@ -483,6 +483,7 @@ public class EventHandler
 		}
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void handleBoatImmunity(RenderBlockOverlayEvent event)
 	{
@@ -497,6 +498,7 @@ public class EventHandler
 		}
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void handleFireRender(RenderPlayerEvent.Pre event)
 	{
@@ -512,6 +514,7 @@ public class EventHandler
 		}
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void handleLubricatingMachinesClient(ClientTickEvent event)
 	{

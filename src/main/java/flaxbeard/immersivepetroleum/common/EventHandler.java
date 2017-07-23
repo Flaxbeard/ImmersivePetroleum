@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -33,6 +32,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -70,25 +70,26 @@ import flaxbeard.immersivepetroleum.common.network.CloseBookPacket;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageReservoirListSync;
 
+@Mod.EventBusSubscriber
 public class EventHandler
 {
 	@SubscribeEvent
-	public void onSave(WorldEvent.Save event)
+	public static void onSave(WorldEvent.Save event)
 	{
 		IPSaveData.setDirty(0);
 	}
-	
+
 	@SubscribeEvent
-	public void onUnload(WorldEvent.Unload event)
+	public static void onUnload(WorldEvent.Unload event)
 	{
 		IPSaveData.setDirty(0);
 	}
-	
-	private Object lastGui = null;
-	
+
+	private static Object lastGui = null;
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void guiOpen(GuiOpenEvent event)
+	public static void guiOpen(GuiOpenEvent event)
 	{
 		if (event.getGui() == null && lastGui instanceof GuiManual)
 		{
@@ -121,14 +122,14 @@ public class EventHandler
 				}
 			}
 			EntityPlayer p = ClientUtils.mc().player;
-			
+
 			ItemStack mainItem = p.getHeldItemMainhand();
 			ItemStack offItem = p.getHeldItemOffhand();
 
 			boolean main = !mainItem.isEmpty() && mainItem.getItem() == IEContent.itemTool && mainItem.getItemDamage() == 3;
 			boolean off = !offItem.isEmpty() && offItem.getItem() == IEContent.itemTool && offItem.getItemDamage() == 3;
 			ItemStack target = main ? mainItem : offItem;
-			
+
 			if (main || off)
 			{
 				IPPacketHandler.INSTANCE.sendToServer(new CloseBookPacket(name));
@@ -146,10 +147,10 @@ public class EventHandler
 
 		lastGui = event.getGui();
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void renderLast(RenderWorldLastEvent event)
+	public static void renderLast(RenderWorldLastEvent event)
 	{
 		GlStateManager.pushMatrix();
 		Minecraft mc = Minecraft.getMinecraft();
@@ -157,10 +158,10 @@ public class EventHandler
 		{
 			ItemStack mainItem = mc.player.getHeldItemMainhand();
 			ItemStack secondItem = mc.player.getHeldItemOffhand();
-			
+
 			boolean main = !mainItem.isEmpty() && mainItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(mainItem, "coords");
 			boolean off = !secondItem.isEmpty() && secondItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(secondItem, "coords");
-			
+
 			boolean chunkBorders = false;
 			for(EnumHand hand : EnumHand.values())
 				if(OreDictionary.itemMatches(new ItemStack(IEContent.blockMetalDevice1,1, BlockTypes_MetalDevice1.SAMPLE_DRILL.getMeta()), ClientUtils.mc().player.getHeldItem(hand),true))
@@ -172,10 +173,10 @@ public class EventHandler
 				chunkBorders = true;
 
 			ItemStack target = main ? mainItem : secondItem;
-			
+
 			if (!chunkBorders && (main || off))
 			{
-			
+
 				int[] coords = ItemNBTHelper.getIntArray(target, "coords");
 
 				//World world = DimensionManager.getWorld(coords[0]);
@@ -189,9 +190,9 @@ public class EventHandler
 		GlStateManager.popMatrix();
 
 	}
-	
+
 	@SideOnly(Side.CLIENT)
-	public void renderChunkBorder(int chunkX, int chunkZ)
+	public static void renderChunkBorder(int chunkX, int chunkZ)
 	{
 		EntityPlayer player = ClientUtils.mc().player;
 
@@ -238,9 +239,9 @@ public class EventHandler
 		GlStateManager.disableBlend();
 		GlStateManager.enableTexture2D();
 	}
-	
+
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void handlePickupItem(RightClickBlock event)
+	public static void handlePickupItem(RightClickBlock event)
 	{
 		BlockPos pos = event.getPos();
 		IBlockState state = event.getWorld().getBlockState(pos);
@@ -250,7 +251,7 @@ public class EventHandler
 			if (te instanceof TileEntitySampleDrill)
 			{
 				TileEntitySampleDrill drill = (TileEntitySampleDrill) te;
-				
+
 				if (drill.dummy != 0)
 				{
 					te = event.getWorld().getTileEntity(pos.add(0, - drill.dummy, 0));
@@ -265,7 +266,7 @@ public class EventHandler
 					{
 						int[] coords = ItemNBTHelper.getIntArray(drill.sample, "coords");
 						World world = DimensionManager.getWorld(coords[0]);
-						
+
 						OilWorldInfo info = PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]);
 						if (info.type != null)
 						{
@@ -282,10 +283,10 @@ public class EventHandler
 		}
 
 	}
-	
+
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	@SideOnly(Side.CLIENT)
-	public void handleItemTooltip(ItemTooltipEvent event)
+	public static void handleItemTooltip(ItemTooltipEvent event)
 	{
 		ItemStack stack = event.getItemStack();
 		if (stack.getItem() instanceof ItemCoresample)
@@ -297,7 +298,7 @@ public class EventHandler
 				{
 					resName = "";
 				}
-				
+
 				ReservoirType res = null;
 				for (ReservoirType type : PumpjackHandler.reservoirList.keySet())
 				{
@@ -306,7 +307,7 @@ public class EventHandler
 						res = type;
 					}
 				}
-				
+
 				int amnt = ItemNBTHelper.getInt(stack, "oil");
 				List<String> tooltip = event.getToolTip();
 				if (amnt > 0)
@@ -315,7 +316,7 @@ public class EventHandler
 					String test = new DecimalFormat("#,###.##").format(est);
 					Fluid f = FluidRegistry.getFluid(res.fluid);
 					String fluidName = f.getLocalizedName(new FluidStack(f, 1));
-					
+
 					tooltip.add(2, I18n.format("chat.immersivepetroleum.info.coresample.oil", test, fluidName));
 				}
 				else
@@ -334,9 +335,9 @@ public class EventHandler
 			}
 		}
 	}
-	
+
 	@SubscribeEvent(priority = EventPriority.HIGH)
-	public void onLogin(PlayerLoggedInEvent event)
+	public static void onLogin(PlayerLoggedInEvent event)
 	{
 		ExcavatorHandler.allowPackets = true;
 		if (!event.player.world.isRemote)
@@ -348,10 +349,10 @@ public class EventHandler
 			IPPacketHandler.INSTANCE.sendToAll(new MessageReservoirListSync(packetMap));
 		}
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent()
-	public void renderCoresampleInfo(RenderGameOverlayEvent.Post event)
+	public static void renderCoresampleInfo(RenderGameOverlayEvent.Post event)
 	{
 		if (ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT)
 		{
@@ -377,7 +378,7 @@ public class EventHandler
 							FontRenderer font = useNixie?ClientProxy.nixieFontOptional:ClientUtils.font();
 							int col = (useNixie&& IEConfig.nixietubeFont)?Lib.colour_nixieTubeText:0xffffff;
 							int i = text.length;
-							
+
 							ReservoirType res = null;
 							for (ReservoirType type : PumpjackHandler.reservoirList.keySet())
 							{
@@ -386,7 +387,7 @@ public class EventHandler
 									res = type;
 								}
 							}
-							
+
 							String s = I18n.format("chat.immersivepetroleum.info.coresample.noOil");
 							if (amnt > 0)
 							{
@@ -394,7 +395,7 @@ public class EventHandler
 								String test = new DecimalFormat("#,###.##").format(est);
 								Fluid f = FluidRegistry.getFluid(res.fluid);
 								String fluidName = f.getLocalizedName(new FluidStack(f, 1));
-								
+
 
 								s = I18n.format("chat.immersivepetroleum.info.coresample.oil", test, fluidName);
 							}
@@ -404,10 +405,10 @@ public class EventHandler
 								String fluidName = f.getLocalizedName(new FluidStack(f, 1));
 								s = I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName);
 							}
-							
+
 							font.drawString(s, event.getResolution().getScaledWidth()/2+8, event.getResolution().getScaledHeight()/2+8+i*font.FONT_HEIGHT, col, true);
 
-	
+
 						}
 					}
 				}

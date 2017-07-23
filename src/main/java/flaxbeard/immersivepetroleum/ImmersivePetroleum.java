@@ -8,7 +8,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeModContainer;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.UniversalBucket;
@@ -93,8 +92,6 @@ public class ImmersivePetroleum
 		IPContent.init();
 		NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, proxy);
 		proxy.init();
-		
-		MinecraftForge.EVENT_BUS.register(new EventHandler());
 	}
 	
 	@Mod.EventHandler

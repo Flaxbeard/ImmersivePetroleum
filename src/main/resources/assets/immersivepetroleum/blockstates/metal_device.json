@@ -5,9 +5,9 @@
 		"transform": "forge:default-block",
 		"model": "immersiveengineering:ieSixSides",
 		"textures": {
-			"all": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side",
-			"particle": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side",
-			"particles": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side"
+			"all": "immersiveengineering:blocks/metal_device1_thermoelectricGen_side",
+			"particle": "immersiveengineering:blocks/metal_device1_thermoelectricGen_side",
+			"particles": "immersiveengineering:blocks/metal_device1_thermoelectricGen_side"
 
 		}
 	},
@@ -19,7 +19,7 @@
 			"automatic_lubricator": {
 			},
 			"gas_generator": {
-				"model": "immersiveengineering:smartmodel/conn_generator"
+				"model": "immersivepetroleum:generator"
 			}
 		},
 		"facing":

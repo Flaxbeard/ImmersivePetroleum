@@ -84,7 +84,7 @@ public class ClientProxy extends CommonProxy
 	
 	static
 	{
-		ConnLoader.baseModels.put("generator", new ResourceLocation("immersiveengineering:block/connector/transformer_hv_left.obj"));
+		//ConnLoader.baseModels.put("generator", new ResourceLocation("immersiveengineering:block/connector/transformer_hv_left.obj"));
 	}
 	public static SoundEvent projector;
 	public static final String CAT_IP = "ip";

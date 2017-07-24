@@ -33,6 +33,8 @@ import blusunrize.immersiveengineering.common.util.Utils;
 
 import com.google.common.collect.Lists;
 
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
@@ -72,7 +74,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	public FluidTank fakeTank = new FluidTank(0);
 
 	public boolean wasActive = false;
-	public int activeTicks = 0;
+	public float activeTicks = 0;
 	public IBlockState state = null;
 	
 	public boolean canExtract()
@@ -139,9 +141,14 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 			}
 		}
 	}
-
+	
 	@Override
 	public void update()
+	{
+		update(true);
+	}
+
+	public void update(boolean consumePower)
 	{
 		//System.out.println("TEST");
 		super.update();
@@ -155,7 +162,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 
 				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, particlePos.getX() + 0.5F, particlePos.getY(), particlePos.getZ() + 0.5F, r1 * 0.04F, 0.25F, r2 * 0.025F, new int[] {Block.getStateId(state)});
 			}
-			if (wasActive)
+			if (wasActive && consumePower)
 			{
 				activeTicks++;
 			}
@@ -164,10 +171,10 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 
 		boolean active = false;
 		
-		int consumed = IPConfig.Machines.pumpjack_consumption;
-		int extracted = energyStorage.extractEnergy(consumed, true);
+		int consumed = IPConfig.Extraction.pumpjack_consumption;
+		int extracted = consumePower ? energyStorage.extractEnergy(consumed, true) : consumed;
 				
-		if(extracted >= consumed && canExtract() && !this.isRSDisabled())
+		if (extracted >= consumed && canExtract() && !this.isRSDisabled())
 		{
 			int residual = getResidualOil();
 			if (availableOil() > 0 || residual > 0)
@@ -176,7 +183,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 				
 				energyStorage.extractEnergy(consumed, false);
 				active = true;
-				FluidStack out = new FluidStack(availableFluid(), Math.min(IPConfig.Machines.pumpjack_speed, oilAmnt));
+				FluidStack out = new FluidStack(availableFluid(), Math.min(IPConfig.Extraction.pumpjack_speed, oilAmnt));
 				BlockPos outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY().getOpposite(), 2).offset(EnumFacing.DOWN, 1);
 				IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
 				if(output != null)
@@ -502,7 +509,9 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	@Override
 	public boolean canOpenGui()
 	{
-		return false;
+		TileEntityPumpjack master = this.master();
+		LubricatedHandler.lubricateTile(master, 20 * 5);
+		return true;
 	}
 	@Override
 	public int getGuiID()

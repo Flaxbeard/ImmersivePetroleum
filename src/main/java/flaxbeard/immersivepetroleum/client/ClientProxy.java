@@ -180,25 +180,22 @@ public class ClientProxy extends CommonProxy
 	@Override
 	public void postInit()
 	{
-		
-		if (!IPConfig.Tools.disable_projector)
-			ManualHelper.addEntry("schematics", CAT_IP,
-					new ManualPages.Crafting(ManualHelper.getManual(), "schematics0", new ItemStack(IPContent.itemProjector, 1, 0)),
-					new ManualPageSchematicCrafting(ManualHelper.getManual(), "schematics1", new ItemStack(IPContent.itemProjector, 1, 0)),
-					new ManualPages.Text(ManualHelper.getManual(), "schematics2"));
+	
+		ManualHelper.addEntry("schematics", CAT_IP,
+				new ManualPages.Crafting(ManualHelper.getManual(), "schematics0", new ItemStack(IPContent.itemProjector, 1, 0)),
+				new ManualPageSchematicCrafting(ManualHelper.getManual(), "schematics1", new ItemStack(IPContent.itemProjector, 1, 0)),
+				new ManualPages.Text(ManualHelper.getManual(), "schematics2"));
 
 		handleReservoirManual();
 
-		if (!IPConfig.Machines.disable_pumpjack)
-			ManualHelper.addEntry("pumpjack", CAT_IP,
-					new ManualPageMultiblock(ManualHelper.getManual(), "pumpjack0", MultiblockPumpjack.instance),
-					new ManualPages.Text(ManualHelper.getManual(), "pumpjack1"));
-		
-		if (!IPConfig.Machines.disable_tower)
-			ManualHelper.addEntry("distillationTower", CAT_IP,
-					new ManualPageBigMultiblock(ManualHelper.getManual(), MultiblockDistillationTower.instance),
-					new ManualPages.Text(ManualHelper.getManual(), "distillationTower0"),
-					new ManualPages.Text(ManualHelper.getManual(), "distillationTower1"));
+		ManualHelper.addEntry("pumpjack", CAT_IP,
+				new ManualPageMultiblock(ManualHelper.getManual(), "pumpjack0", MultiblockPumpjack.instance),
+				new ManualPages.Text(ManualHelper.getManual(), "pumpjack1"));
+	
+		ManualHelper.addEntry("distillationTower", CAT_IP,
+				new ManualPageBigMultiblock(ManualHelper.getManual(), MultiblockDistillationTower.instance),
+				new ManualPages.Text(ManualHelper.getManual(), "distillationTower0"),
+				new ManualPages.Text(ManualHelper.getManual(), "distillationTower1"));
 		
 		ManualHelper.addEntry("asphalt", CAT_IP,
 				new ManualPages.Crafting(ManualHelper.getManual(), "asphalt0", new ItemStack(IPContent.blockStoneDecoration,1,BlockTypes_IPStoneDecoration.ASPHALT.getMeta())));

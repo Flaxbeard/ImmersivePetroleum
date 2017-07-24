@@ -2,9 +2,12 @@ package flaxbeard.immersivepetroleum.common;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -15,18 +18,28 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.client.event.RenderBlockOverlayEvent;
+import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.world.WorldEvent;
@@ -36,6 +49,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -52,6 +69,7 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.Config.IEConfig;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
+import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntitySampleDrill;
 import blusunrize.immersiveengineering.common.blocks.stone.TileEntityCoresample;
@@ -62,10 +80,14 @@ import blusunrize.lib.manual.IManualPage;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.ManualInstance.ManualEntry;
 import blusunrize.lib.manual.gui.GuiManual;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 import flaxbeard.immersivepetroleum.common.network.CloseBookPacket;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageReservoirListSync;
@@ -267,9 +289,9 @@ public class EventHandler
 						World world = DimensionManager.getWorld(coords[0]);
 						
 						OilWorldInfo info = PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]);
-						if (info.type != null)
+						if (info.getType() != null)
 						{
-							ItemNBTHelper.setString(drill.sample, "resType", PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]).type.name);
+							ItemNBTHelper.setString(drill.sample, "resType", PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]).getType().name);
 							ItemNBTHelper.setInt(drill.sample, "oil", info.current);
 						}
 						else
@@ -411,7 +433,167 @@ public class EventHandler
 						}
 					}
 				}
+				else if (mop != null && mop.entityHit != null && mop.entityHit instanceof EntitySpeedboat)
+				{
+					String[] text = ((EntitySpeedboat) mop.entityHit).getOverlayText(ClientUtils.mc().player, mop);
+					if(text!=null && text.length>0)
+					{
+						FontRenderer font = ClientUtils.font();
+						int col = 0xffffff;
+						int i = 0;
+						for(String s : text)
+							if(s!=null)
+								font.drawString(s, event.getResolution().getScaledWidth()/2+8, event.getResolution().getScaledHeight()/2+8+(i++)*font.FONT_HEIGHT, col, true);
+					}
+				}
 			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void handleBoatImmunity(LivingAttackEvent event)
+	{
+		if (event.getSource() == DamageSource.LAVA || event.getSource() == DamageSource.ON_FIRE || event.getSource() == DamageSource.IN_FIRE)
+		{
+			EntityLivingBase entity = event.getEntityLiving();
+			if (entity.getRidingEntity() instanceof EntitySpeedboat)
+			{
+				EntitySpeedboat boat = (EntitySpeedboat) entity.getRidingEntity();
+				if (boat.isFireproof)
+				{
+					event.setCanceled(true);
+				}
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void handleBoatImmunity(PlayerTickEvent event)
+	{
+		EntityPlayer entity = event.player;
+		if (entity.isBurning() && entity.getRidingEntity() instanceof EntitySpeedboat)
+		{
+			EntitySpeedboat boat = (EntitySpeedboat) entity.getRidingEntity();
+			if (boat.isFireproof)
+			{
+				entity.extinguish();
+				DataParameter<Byte> FLAGS = EntitySpeedboat.getFlags();
+				byte b0 = ((Byte) entity.getDataManager().get(FLAGS)).byteValue();
+					
+				entity.getDataManager().set(FLAGS, Byte.valueOf((byte)(b0 & ~(1 << 0))));		
+			}
+		}
+	}
+	
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void handleBoatImmunity(RenderBlockOverlayEvent event)
+	{
+		EntityPlayer entity = event.getPlayer();
+		if (event.getOverlayType() == OverlayType.FIRE && entity.isBurning() && entity.getRidingEntity() instanceof EntitySpeedboat)
+		{
+			EntitySpeedboat boat = (EntitySpeedboat) entity.getRidingEntity();
+			if (boat.isFireproof)
+			{
+				event.setCanceled(true);
+			}
+		}
+	}
+	
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void handleFireRender(RenderPlayerEvent.Pre event)
+	{
+		EntityPlayer entity = event.getEntityPlayer();
+		if (entity.isBurning() && entity.getRidingEntity() instanceof EntitySpeedboat)
+		{
+			EntitySpeedboat boat = (EntitySpeedboat) entity.getRidingEntity();
+			if (boat.isFireproof)
+			{
+				entity.extinguish();
+
+			}
+		}
+	}
+	
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void handleLubricatingMachinesClient(ClientTickEvent event)
+	{
+		if (event.phase == Phase.END && Minecraft.getMinecraft().world != null)
+		{
+			handleLubricatingMachines(Minecraft.getMinecraft().world);
+		}
+	}
+	
+	@SubscribeEvent
+	public void handleLubricatingMachinesServer(WorldTickEvent event)
+	{
+
+		if (event.phase == Phase.END)
+		{
+			handleLubricatingMachines(event.world);
+		}
+	}
+		
+	public void handleLubricatingMachines(World world)
+	{
+		Set<LubricatedTileInfo> toRemove = new HashSet<LubricatedTileInfo>();
+		for (LubricatedTileInfo info : LubricatedHandler.lubricatedTiles)
+		{
+			if (info.world == world.provider.getDimension() && world.isAreaLoaded(info.pos, 0))
+			{
+				TileEntity te = world.getTileEntity(info.pos);
+				ILubricationHandler h = LubricatedHandler.getHandlerForTile(te);
+				if (h != null)
+				{
+					if (h.isMachineEnabled(world, te))
+					{
+						h.lubricate(world, info.ticks, te);
+					}
+					if (world.isRemote)
+					{
+						int n = Block.getStateId(IPContent.blockFluidLubricant.getDefaultState());
+						if (te instanceof TileEntityMultiblockPart)
+						{
+							TileEntityMultiblockPart part = (TileEntityMultiblockPart) te;
+							int numBlocks = h.getStructureDimensions()[0] * h.getStructureDimensions()[1] * h.getStructureDimensions()[2];
+							for (int i = 0; i < numBlocks; i++)
+							{
+								BlockPos pos = part.getBlockPosForPos(i);
+								TileEntity te2 = world.getTileEntity(info.pos);
+								if (te2 != null && te2 instanceof TileEntityMultiblockPart)
+								{
+									if (((TileEntityMultiblockPart) te2).master() == part.master())
+									{
+										for (EnumFacing facing : EnumFacing.HORIZONTALS)
+										{
+											if (world.rand.nextInt(30) == 0 && world.getBlockState(pos.offset(facing)).getBlock().isReplaceable(world, pos.offset(facing)))
+											{
+												Vec3i direction = facing.getDirectionVec();
+												world.spawnParticle(EnumParticleTypes.BLOCK_DUST, 
+														pos.getX() + .5f + direction.getX() * .65f, 
+														pos.getY() + 1, 
+														pos.getZ() + .5f + direction.getZ() * .65f, 
+														0, 0, 0, new int[] {n});
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					info.ticks--;
+					if (info.ticks == 0)
+					{
+						toRemove.add(info);
+					}
+				}
+			}
+		}
+		for (LubricatedTileInfo info : toRemove)
+		{
+			LubricatedHandler.lubricatedTiles.remove(info);
 		}
 	}
 

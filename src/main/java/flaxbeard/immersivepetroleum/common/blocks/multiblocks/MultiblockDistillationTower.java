@@ -181,8 +181,7 @@ public class MultiblockDistillationTower implements IMultiblock
 	@Override
 	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player)
 	{
-		if (IPConfig.Machines.disable_tower)
-			return false;
+
 		if(side==EnumFacing.UP||side==EnumFacing.DOWN)
 			side = EnumFacing.fromAngle(player.rotationYaw);
 

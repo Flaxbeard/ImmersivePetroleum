@@ -9,6 +9,7 @@ import net.minecraftforge.oredict.RecipeSorter;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.items.ItemProjector;
 
 public class SchematicCraftingHandler extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
 {
@@ -62,6 +63,7 @@ public class SchematicCraftingHandler extends net.minecraftforge.registries.IFor
 				last = ItemNBTHelper.getString(manual, "lastMultiblock");
 				ItemStack op = new ItemStack(IPContent.itemProjector, 1, 0);
 				ItemNBTHelper.setString(op, "multiblock", last);
+				ItemProjector.setFlipped(op, true);
 				output = op;
 			}
 			else

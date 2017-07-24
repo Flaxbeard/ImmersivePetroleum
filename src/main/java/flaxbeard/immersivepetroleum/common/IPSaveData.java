@@ -8,6 +8,8 @@ import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
 
@@ -37,20 +39,38 @@ public class IPSaveData extends WorldSavedData
 				PumpjackHandler.oilCache.put(coords, info);
 			}
 		}
+		
+		NBTTagList lubricatedList = nbt.getTagList("lubricated", 10);
+		LubricatedHandler.lubricatedTiles.clear();
+		for(int i = 0; i < lubricatedList.tagCount(); i++)
+		{
+			NBTTagCompound tag = lubricatedList.getCompoundTagAt(i);
+			LubricatedTileInfo info = LubricatedTileInfo.readFromNBT(tag);
+			LubricatedHandler.lubricatedTiles.add(info);
+		}
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt)
 	{
 		NBTTagList oilList = new NBTTagList();
-		for(Map.Entry<DimensionChunkCoords, OilWorldInfo> e: PumpjackHandler.oilCache.entrySet())
-			if(e.getKey() != null && e.getValue() != null)
+		for (Map.Entry<DimensionChunkCoords, OilWorldInfo> e : PumpjackHandler.oilCache.entrySet())
+			if (e.getKey() != null && e.getValue() != null)
 			{
 				NBTTagCompound tag = e.getKey().writeToNBT();
 				tag.setTag("info", e.getValue().writeToNBT());
 				oilList.appendTag(tag);
 			}
 		nbt.setTag("oilInfo", oilList);
+		
+		NBTTagList lubricatedList = new NBTTagList();
+		for (LubricatedTileInfo info : LubricatedHandler.lubricatedTiles)
+			if (info != null)
+			{
+				NBTTagCompound tag = info.writeToNBT();
+				lubricatedList.appendTag(tag);
+			}
+		nbt.setTag("lubricated", lubricatedList);
 		
 		return nbt;
 	}

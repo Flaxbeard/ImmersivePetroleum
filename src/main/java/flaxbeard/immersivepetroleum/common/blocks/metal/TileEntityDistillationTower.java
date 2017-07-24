@@ -26,6 +26,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvanced
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 
 import com.google.common.collect.Lists;
 
@@ -57,8 +58,8 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 		super(MultiblockDistillationTower.instance, new int[]{16, 4, 4}, 16000, true);
 	}
 	
-	public FluidTank[] tanks = new FluidTank[]{new FluidTank(24000),new FluidTank(24000)};
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+	public MultiFluidTank[] tanks = new MultiFluidTank[]{new MultiFluidTank(24000),new MultiFluidTank(24000)};
 	
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket)
@@ -66,20 +67,36 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 		super.readCustomNBT(nbt, descPacket);
 		tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
 		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
+		operated = nbt.getBoolean("operated");
 		if(!descPacket)
 			inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
 	}
+
+	
+	private boolean operated = false;
+	
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket)
 	{
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
 		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
+		nbt.setBoolean("operated", operated);
 		if(!descPacket)
 			nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
 	
 	private boolean wasActive = false;
+	
+	@Override
+	public boolean hammerUseSide(EnumFacing side, EntityPlayer player, float hitX, float hitY, float hitZ)
+	{
+		if (operated)
+		{
+			return super.hammerUseSide(side, player, hitX, hitY, hitZ);
+		}
+		return true;
+	}
 
 	@Override
 	public void update()
@@ -89,7 +106,11 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 			return;
 		boolean update = false;
 	
-		if(energyStorage.getEnergyStored()>0 && processQueue.size()<this.getProcessQueueMaxLength())
+		if (!operated)
+		{
+			operated = true;
+		}
+		if (energyStorage.getEnergyStored()>0 && processQueue.size()<this.getProcessQueueMaxLength())
 		{
 			if(tanks[0].getFluidAmount() > 0)
 			{
@@ -131,21 +152,30 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 					inventory.set(2, ItemStack.EMPTY);
 				update = true;
 			}
-			if (this.tanks[1].getFluidAmount()>0)
+			
+			int amountLeft = 80;
+			
+			BlockPos outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY().getOpposite(), 1).offset(EnumFacing.DOWN, 1);
+			if (this.mirrored)
+				outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY(), 1).offset(EnumFacing.DOWN, 1);				//System.out.println(outputPos);
+			IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
+			
+			if (output!=null)
 			{
-				FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[1].getFluid(), Math.min(this.tanks[1].getFluidAmount(), 80), false);
-				BlockPos outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY().getOpposite(), 1).offset(EnumFacing.DOWN, 1);
-				if (this.mirrored)
-					outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY(), 1).offset(EnumFacing.DOWN, 1);				//System.out.println(outputPos);
-				IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
-				if(output!=null)
+				for (FluidStack stack : this.tanks[1].fluids)
 				{
-					int accepted = output.fill(out, false);
-					if(accepted>0)
+					if (stack.amount > 0)
 					{
-						int drained = output.fill(Utils.copyFluidStackWithAmount(out,Math.min(out.amount, accepted),false), true);
-						this.tanks[1].drain(drained, true);
-						update=true;
+						FluidStack out = Utils.copyFluidStackWithAmount(stack, Math.min(stack.amount, amountLeft), false);
+						
+						int accepted = output.fill(out, false);
+						if (accepted > 0)
+						{
+							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+							this.tanks[1].drain(drained, true);
+							amountLeft -= drained;
+							update = true;
+						}
 					}
 				}
 			}
@@ -466,11 +496,11 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 		{
 			if(pos == 0 && (side == null || side == facing.getOpposite()))
 			{
-				return new FluidTank[] {master.tanks[0]};
+				return new MultiFluidTank[] {master.tanks[0]};
 			}
 			else if (pos == 8 && (side == null || side == facing.getOpposite().rotateY() || side == facing.rotateY()))
 			{
-				return new FluidTank[] {master.tanks[1]};
+				return new MultiFluidTank[] {master.tanks[1]};
 			}
 		}
 		return new FluidTank[0];

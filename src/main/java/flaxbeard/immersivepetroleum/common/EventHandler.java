@@ -484,6 +484,7 @@ public class EventHandler
 		}
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void handleBoatImmunity(RenderBlockOverlayEvent event)
 	{

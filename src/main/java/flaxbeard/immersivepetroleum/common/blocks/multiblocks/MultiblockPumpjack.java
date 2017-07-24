@@ -176,7 +176,7 @@ public class MultiblockPumpjack implements IMultiblock
 	@Override
 	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player)
 	{
-		if (IPConfig.Machines.disable_pumpjack)
+		if (IPConfig.Extraction.disable_pumpjack)
 			return false;
 		side = side.getOpposite();
 		if(side==EnumFacing.UP||side==EnumFacing.DOWN)

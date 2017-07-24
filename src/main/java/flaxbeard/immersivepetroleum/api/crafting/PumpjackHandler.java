@@ -39,7 +39,7 @@ public class PumpjackHandler
 		if(world.isRemote)
 			return 0;
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
-		if (info == null || (info.capacity == 0) || info.type == null || info.type.fluid == null || (info.current == 0 && info.type.replenishRate == 0))
+		if (info == null || (info.capacity == 0) || info.getType() == null || info.getType().fluid == null || (info.current == 0 && info.getType().replenishRate == 0))
 			return 0;
 
 		return info.current;
@@ -52,13 +52,13 @@ public class PumpjackHandler
 		
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
 		
-		if (info.type == null)
+		if (info.getType() == null)
 		{
 			return null;
 		}
 		else
 		{
-			return info.type.getFluid();
+			return info.getType().getFluid();
 		}
 	}
 	
@@ -66,7 +66,7 @@ public class PumpjackHandler
 	{
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
 		
-		if (info == null || info.type == null || info.type.fluid == null || (info.capacity == 0) || (info.current == 0 && info.type.replenishRate == 0))
+		if (info == null || info.getType() == null || info.getType().fluid == null || (info.capacity == 0) || (info.current == 0 && info.getType().replenishRate == 0))
 			return 0;
 		
 		DimensionChunkCoords coords = new DimensionChunkCoords(world.provider.getDimension(), chunkX / depositSize, chunkZ / depositSize);
@@ -75,12 +75,12 @@ public class PumpjackHandler
 		if (l == null)
 		{
 			timeCache.put(coords, world.getTotalWorldTime());
-			return info.type.replenishRate;
+			return info.getType().replenishRate;
 		}
 		
 		long lastTime = world.getTotalWorldTime();
 		timeCache.put(coords, world.getTotalWorldTime());
-		return lastTime != l ? info.type.replenishRate : 0;
+		return lastTime != l ? info.getType().replenishRate : 0;
 	}
 	
 	public static OilWorldInfo getOilWorldInfo(World world, int chunkX, int chunkZ)
@@ -145,9 +145,15 @@ public class PumpjackHandler
 	public static class OilWorldInfo
 	{
 		public ReservoirType type;
+		public ReservoirType overrideType;
 		public int capacity;
 		public int current;
-
+		
+		public ReservoirType getType()
+		{
+			return (overrideType == null) ? type : overrideType;
+		}
+		
 		public NBTTagCompound writeToNBT()
 		{
 			NBTTagCompound tag = new NBTTagCompound();
@@ -156,6 +162,10 @@ public class PumpjackHandler
 			if (type != null)
 			{
 				tag.setString("type", type.name);
+			}
+			if (overrideType != null)
+			{
+				tag.setString("overrideType", overrideType.name);
 			}
 			return tag;
 		}
@@ -183,6 +193,14 @@ public class PumpjackHandler
 				{
 					return null;
 				}
+			}
+			
+			if (tag.hasKey("overrideType"))
+			{
+				String s = tag.getString("overrideType");
+				for (ReservoirType res : reservoirList.keySet())
+					if (s.equalsIgnoreCase(res.name))
+						info.overrideType = res;
 			}
 							
 			return info;

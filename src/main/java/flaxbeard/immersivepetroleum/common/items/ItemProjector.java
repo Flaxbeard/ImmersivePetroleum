@@ -28,6 +28,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
@@ -64,6 +65,8 @@ import blusunrize.immersiveengineering.common.util.Utils;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.api.event.SchematicPlaceBlockEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicPlaceBlockPostEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicRenderBlockEvent;
@@ -83,6 +86,7 @@ public class ItemProjector extends ItemIPBase
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
+	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
 	{
@@ -96,8 +100,8 @@ public class ItemProjector extends ItemIPBase
 				{
 					multiblock = "IE:Excavator";
 				}
-				tooltip.add(ChatFormatting.DARK_GRAY + I18n.format("chat.immersivepetroleum.info.schematic.build0"));
-				tooltip.add(ChatFormatting.DARK_GRAY + I18n.format("chat.immersivepetroleum.info.schematic.build1", I18n.format("desc.immersiveengineering.info.multiblock." + multiblock)));
+				tooltip.add(I18n.format("chat.immersivepetroleum.info.schematic.build0"));
+				tooltip.add(I18n.format("chat.immersivepetroleum.info.schematic.build1", I18n.format("desc.immersiveengineering.info.multiblock." + multiblock)));
 				
 				int h = mb.getStructureManual().length;
 				int l = mb.getStructureManual()[0].length;
@@ -113,6 +117,14 @@ public class ItemProjector extends ItemIPBase
 					int z = pos.getInteger("z");
 					tooltip.add(ChatFormatting.DARK_GRAY + I18n.format("chat.immersivepetroleum.info.schematic.center", x, y, z));
 				}
+				else
+				{
+					tooltip.add(ChatFormatting.DARK_GRAY + I18n.format("chat.immersivepetroleum.info.schematic.controls", 
+							Minecraft.getMinecraft().gameSettings.keyBindPickBlock.getDisplayName(),
+							Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName(),
+							Minecraft.getMinecraft().gameSettings.keyBindPickBlock.getDisplayName()));
+				}
+				return;
 
 			}
 		}
@@ -178,6 +190,7 @@ public class ItemProjector extends ItemIPBase
 			}
 			ItemStack stack = new ItemStack(item, 1, 0);
 			ItemNBTHelper.setString(stack, "multiblock", MultiblockExcavatorDemo.instance.getUniqueName());
+			setFlipped(stack, true);
 			list.add(stack);
 		}
 	}
@@ -216,7 +229,7 @@ public class ItemProjector extends ItemIPBase
 			int zd = (rotate % 2 == 0) ? mw :  ml;
 			
 			Vec3d vec = playerIn.getLookVec();
-			EnumFacing look = (Math.abs(vec.zCoord) > Math.abs(vec.xCoord)) ? (vec.zCoord > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.xCoord > 0 ? EnumFacing.EAST : EnumFacing.WEST);
+			EnumFacing look = (Math.abs(vec.z) > Math.abs(vec.x)) ? (vec.z > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.x > 0 ? EnumFacing.EAST : EnumFacing.WEST);
 			if (look == EnumFacing.NORTH || look == EnumFacing.SOUTH)
 			{
 				hit = hit.add(-xd / 2, 0, 0);
@@ -237,6 +250,11 @@ public class ItemProjector extends ItemIPBase
 			
 			if (playerIn.isSneaking() && playerIn.isCreative())
 			{
+				if (mb.getUniqueName().equals("IE:ExcavatorDemo"))
+				{
+					hit = hit.add(0, -2, 0);
+				}
+				
 				boolean flip = getFlipped(stack);
 				
 				int idx = 0;
@@ -471,6 +489,87 @@ public class ItemProjector extends ItemIPBase
 			}
 		}
 		
+		if (mc.player != null)
+		{
+			ItemStack mainItem = mc.player.getHeldItemMainhand();
+			ItemStack secondItem = mc.player.getHeldItemOffhand();
+			
+			boolean main = mainItem != null && mainItem.getItem() == Item.getItemFromBlock(IPContent.blockMetalDevice);
+			boolean off = secondItem != null && secondItem.getItem() == Item.getItemFromBlock(IPContent.blockMetalDevice);
+			
+			if (main || off)
+			{
+				BlockPos base = mc.player.getPosition();
+				for (int x = -16; x <= 16; x++)
+				{
+					for (int z = -16; z <= 16; z++)
+					{
+						for (int y = -16; y <= 16; y++)
+						{
+							BlockPos pos = base.add(x, y, z);
+							TileEntity te = mc.player.world.getTileEntity(pos);
+							
+							if (te != null)
+							{
+								ILubricationHandler handler = LubricatedHandler.getHandlerForTile(te);
+								if (handler != null)
+								{
+									Tuple<BlockPos, EnumFacing> target = handler.getGhostBlockPosition(mc.player.world, te);
+									if (target != null)
+									{
+										BlockPos targetPos = target.getFirst();
+										EnumFacing targetFacing = target.getSecond();
+										if (mc.player.world.getBlockState(targetPos).getBlock().isReplaceable(mc.player.world, targetPos)
+												&& mc.player.world.getBlockState(targetPos.up()).getBlock().isReplaceable(mc.player.world, targetPos.up()))
+										{
+											GlStateManager.pushMatrix();
+											float alpha = .5f;
+											ShaderUtil.alpha_static(alpha, mc.player.ticksExisted);
+											double px = TileEntityRendererDispatcher.staticPlayerX;
+											double py = TileEntityRendererDispatcher.staticPlayerY;
+											double pz = TileEntityRendererDispatcher.staticPlayerZ;
+											
+											
+											GlStateManager.translate(targetPos.getX() - px, targetPos.getY() - py, targetPos.getZ() -pz);
+											GlStateManager.translate(0.5, -.13, .5);	
+		
+											switch (targetFacing)
+											{
+												case SOUTH:
+													GlStateManager.rotate(270, 0, 1, 0);
+													break;
+												case NORTH:
+													GlStateManager.rotate(90, 0, 1, 0);
+													break;
+												case WEST:
+													GlStateManager.rotate(180, 0, 1, 0);
+													break;
+												case EAST:
+													break;
+												default:
+											}
+											GlStateManager.translate(0.02, 0, .019);	
+		
+											GlStateManager.scale(1/0.65F, 1/0.65F, 1/0.65F);
+											GlStateManager.scale(2, 2, 2);
+								
+		
+											ItemStack toRender = new ItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice));
+					
+											ClientUtils.mc().getRenderItem().renderItem(toRender, ItemCameraTransforms.TransformType.FIXED);			
+										
+											ShaderUtil.releaseShader();
+											GlStateManager.popMatrix();
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		GlStateManager.popMatrix();
 
 	}
@@ -526,7 +625,7 @@ public class ItemProjector extends ItemIPBase
 				
 				
 				Vec3d vec = mc.player.getLookVec();
-				EnumFacing facing = (Math.abs(vec.zCoord) > Math.abs(vec.xCoord)) ? (vec.zCoord > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.xCoord > 0 ? EnumFacing.EAST : EnumFacing.WEST);
+				EnumFacing facing = (Math.abs(vec.z) > Math.abs(vec.x)) ? (vec.z > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.x > 0 ? EnumFacing.EAST : EnumFacing.WEST);
 				
 				
 				if (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH)

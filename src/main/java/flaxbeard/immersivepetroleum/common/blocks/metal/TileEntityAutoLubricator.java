@@ -905,7 +905,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		if (master != null && master instanceof TileEntityAutoLubricator)
 		{
 			FluidStack f = FluidUtil.getFluidContained(heldItem);
-			if (FluidUtil.interactWithFluidHandler(player, hand, tank))
+			if (FluidUtil.interactWithFluidHandler(player, hand, ((TileEntityAutoLubricator) master).tank))
 			{
 				((TileEntityAutoLubricator) master).markContainingBlockForUpdate(null);
 				return true;

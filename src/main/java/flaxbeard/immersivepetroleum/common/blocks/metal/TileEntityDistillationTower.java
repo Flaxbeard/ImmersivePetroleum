@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -161,21 +162,24 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 			
 			if (output!=null)
 			{
-				ArrayList<FluidStack> stacks = (ArrayList<FluidStack>) this.tanks[1].fluids.clone();
-				for (FluidStack stack : stacks)
+				int totalOut = 0;
+				Iterator<FluidStack> it = this.tanks[1].fluids.iterator();
+				while (it.hasNext())
 				{
-					if (stack.amount > 0)
+					FluidStack fs = it.next();
+					if(fs!=null)
 					{
-						FluidStack out = Utils.copyFluidStackWithAmount(stack, Math.min(stack.amount, amountLeft), false);
-						
+						FluidStack out = Utils.copyFluidStackWithAmount(fs, Math.min(fs.amount, 80-totalOut), false);
 						int accepted = output.fill(out, false);
-						if (accepted > 0)
+						if(accepted > 0)
 						{
 							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-							this.tanks[1].drain(drained, true);
-							amountLeft -= drained;
+							MultiFluidTank.drain(drained, fs, it, true);
+							totalOut += drained;
 							update = true;
 						}
+						if(totalOut>=80)
+							break;
 					}
 				}
 			}

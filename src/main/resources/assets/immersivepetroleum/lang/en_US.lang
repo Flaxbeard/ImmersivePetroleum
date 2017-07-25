@@ -118,7 +118,7 @@ ie.manual.entry.automaticLubricator1=When correctly placed, lubricating pipes wi
 
 ie.manual.entry.portableGenerator.name=Portable Generator
 ie.manual.entry.portableGenerator.subtext=Gassed up
-ie.manual.entry.portableGenerator0=The Portable Generator is a mobile all-in-one power solution. This <link;distillationTower;§n§oGasoline§r>-fueled engine-generator produces up to <config;i;portableGenerator_flux> Flux/t while running, and has an internal power buffer of 10,000 RF.
+ie.manual.entry.portableGenerator0=The Portable Generator is a mobile all-in-one power solution. This <link;distillationTower;§n§oGasoline§r>-fueled engine-generator produces up to <config;i;portableGenerator_flux> Flux/t while running, and has an internal power buffer of 100,000 RF.
 ie.manual.entry.portableGenerator1=The Portable Generator can accept fuel by simply right clicking with a bucket. Gasoline or other fuel can also be piped in from above. Power is output directly through LV or MV wires, Connectors are not needed. Applying a redstone signal will halt generation.<br><br>Sneaking and right clicking on the generator will pick it up, preserving all stored power and fuel.
 
 ie.manual.category.ip.name=Oil Processing

@@ -509,8 +509,6 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	@Override
 	public boolean canOpenGui()
 	{
-		TileEntityPumpjack master = this.master();
-		LubricatedHandler.lubricateTile(master, 20 * 5);
 		return true;
 	}
 	@Override

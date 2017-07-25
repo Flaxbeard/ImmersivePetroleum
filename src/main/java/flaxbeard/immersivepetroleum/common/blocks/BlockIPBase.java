@@ -408,10 +408,9 @@ public class BlockIPBase<E extends Enum<E> & BlockIPBase.IBlockEnum> extends Blo
 	@Override
 	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list)
 	{
-		if (tab == getCreativeTabToDisplayOn())
-			for(E type : this.enumValues)
-				if(type.listForCreative() && !this.isMetaHidden[type.getMeta()])
-					list.add(new ItemStack(this, 1, type.getMeta()));
+		for(E type : this.enumValues)
+			if(type.listForCreative() && !this.isMetaHidden[type.getMeta()])
+				list.add(new ItemStack(this, 1, type.getMeta()));
 	}
 
 	void adjustSound()

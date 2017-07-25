@@ -38,6 +38,8 @@ public class ItemBlockIPBase extends ItemBlock
 		if(((BlockIPBase)b).enumValues.length>1)
 			setHasSubtypes(true);
 	}
+	
+	
 
 	@Override
 	public int getMetadata (int damageValue)
@@ -47,7 +49,8 @@ public class ItemBlockIPBase extends ItemBlock
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> itemList)
 	{
-		this.block.getSubBlocks(tab, itemList);
+		if (this.isInCreativeTab(tab))
+			this.block.getSubBlocks(tab, itemList);
 	}
 	@Override
 	public String getUnlocalizedName(ItemStack stack)

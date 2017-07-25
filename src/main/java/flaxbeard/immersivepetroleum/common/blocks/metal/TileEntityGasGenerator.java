@@ -62,7 +62,7 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 		@Override
 		public boolean canFillFluidType(FluidStack fluid)
 	    {
-	        return fluid != null && fluid.getFluid() == IPContent.fluidGasoline;
+	        return fluid != null && FuelHandler.isValidFuel(fluid.getFluid());
 	    }
 	};
 

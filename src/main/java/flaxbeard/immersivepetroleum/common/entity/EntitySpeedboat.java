@@ -54,6 +54,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.Lists;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.items.ItemSpeedboat;
 import flaxbeard.immersivepetroleum.common.network.ConsumeBoatFuelPacket;
@@ -863,16 +864,17 @@ public class EntitySpeedboat extends EntityBoat
 			this.rotationYaw += this.deltaRotation;
 
 			FluidStack fluid = this.getContainedFluid();
-			if (fluid != null && fluid.amount > 0 && (forwardInputDown || backInputDown))
+			int consumeAmount = FuelHandler.getBoatFuelUsedPerTick(fluid.getFluid());
+			if (fluid != null && fluid.amount >= consumeAmount && (forwardInputDown || backInputDown))
 			{
-				int toConsume = 1;
+				int toConsume = consumeAmount;
 				if (this.forwardInputDown)
 				{
 					f += 0.04F * 1F;
-					if (this.isBoosting && fluid.amount > 2)
+					if (this.isBoosting && fluid.amount >= 3 * consumeAmount)
 					{
 						f *= 2;
-						toConsume += 2;
+						toConsume *= 3;
 					}
 				}
 	
@@ -1166,7 +1168,7 @@ public class EntitySpeedboat extends EntityBoat
 	
 	protected boolean isFluidValid(FluidStack resource)
 	{
-		return resource != null && resource.getFluid() != null && resource.getFluid() == IPContent.fluidGasoline;
+		return resource != null && resource.getFluid() != null && FuelHandler.isValidBoatFuel(resource.getFluid());
 	}
 	
 	public FluidStack getContainedFluid()

@@ -203,6 +203,7 @@ public class IPContent
 			
 		Config.addConfigReservoirs(IPConfig.extraction.reservoirs);
 		Config.addFuel(IPConfig.Generation.fuels);
+		Config.addBoatFuel(IPConfig.Miscellaneous.boat_fuels);
 		Config.addDistillationRecipe(IPConfig.Refining.towerRecipes, IPConfig.Refining.towerByproduct);
 
 		LubricantHandler.registerLubricant(fluidLubricant, 3);

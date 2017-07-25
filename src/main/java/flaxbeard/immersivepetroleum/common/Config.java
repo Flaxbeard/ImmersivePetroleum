@@ -65,7 +65,7 @@ public class Config
 			
 			@Comment({"Distillation Tower recipes. Format: power_cost, input_name, input_mb -> output1_name, output1_mb, output2_name, output2_mb"})
 			public static String[] towerRecipes = new String[] {
-				"2048, oil, 25 -> lubricant, 3, diesel, 9, gasoline, 13"
+				"2048, oil, 50 -> lubricant, 6, diesel, 18, gasoline, 26"
 			};
 			@Comment({"Distillation Tower byproducts. Format: item_name, stack_size, metadata, percent_chance"})
 			public static String[] towerByproduct = new String[] {
@@ -88,8 +88,10 @@ public class Config
 				
 		public static class Miscellaneous
 		{
-			@Comment({"Disable lubricant can and automatic lubricator crafting and manual page"})
-			public static boolean disable_lubricant = false;
+			@Comment({"List of Motorboat fuels. Format: fluid_name, mb_used_per_tick"})
+			public static String[] boat_fuels = new String[] {
+				"gasoline, 1"
+			};
 		}
 		
 		public static Tools tools;
@@ -368,6 +370,50 @@ public class Config
 			}
 			
 			FuelHandler.registerPortableGeneratorFuel(FluidRegistry.getFluid(fluid), production, amount);
+	    }
+		
+	}
+	
+	public static void addBoatFuel(String[] fuels)
+	{
+		for (int i = 0; i < fuels.length; i++)
+	    {
+			String str = fuels[i];
+
+			String fluid = null;
+			int amount = 0;
+
+			String remain = str;
+			
+			int index = 0;
+			
+			while (remain.indexOf(",") != -1)
+			{
+				int endPos = remain.indexOf(",");
+				
+				String current = remain.substring(0, endPos).trim();
+				
+				if (index == 0) fluid = current;
+
+				remain = remain.substring(endPos + 1);
+				index++;
+			}
+			String current = remain.trim();
+
+			try
+			{
+				amount = Integer.parseInt(current);
+				if (amount <= 0)
+				{
+					throw new RuntimeException("Negative value for fuel mB/tick for boat fuel " + (i + 1));
+				}
+			}
+			catch (NumberFormatException e)
+			{
+				throw new RuntimeException("Invalid value for fuel mB/tick for boat fuel " + (i + 1));
+			}
+			
+			FuelHandler.registerMotorboatFuel(FluidRegistry.getFluid(fluid), amount);
 	    }
 		
 	}

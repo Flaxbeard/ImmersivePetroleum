@@ -71,7 +71,7 @@ public class Config
 			
 			@Comment({"Distillation Tower recipes. Format: power_cost, input_name, input_mb -> output1_name, output1_mb, output2_name, output2_mb"})
 			public static String[] towerRecipes = new String[] {
-				"2048, oil, 50 -> lubricant, 6, diesel, 18, gasoline, 26"
+				"2048, oil, 75 -> lubricant, 9, diesel, 27, gasoline, 39"
 			};
 			@Comment({"Distillation Tower byproducts. Format: item_name, stack_size, metadata, percent_chance"})
 			public static String[] towerByproduct = new String[] {

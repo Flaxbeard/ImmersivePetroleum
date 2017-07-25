@@ -347,7 +347,7 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 	boolean inICNet=false;
 	private long lastTransfer = -1;
 	public int currentTickAccepted=0;
-	private FluxStorage energyStorage = new FluxStorage(10000,getMaxInput(),0);
+	private FluxStorage energyStorage = new FluxStorage(getMaxStorage(),getMaxInput(),0);
 
 	boolean firstTick = true;
 	
@@ -409,10 +409,16 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 	{
 		return energyStorage.getEnergyStored();
 	}
+	
+	private int getMaxStorage()
+	{
+		return IEConfig.Machines.capacitorLV_storage;
+	}
+	
 	@Override
 	public int getMaxEnergyStored(EnumFacing from)
 	{
-		return getMaxInput();
+		return getMaxStorage();
 	}
 	@Override
 	public int extractEnergy(EnumFacing from, int energy, boolean simulate)

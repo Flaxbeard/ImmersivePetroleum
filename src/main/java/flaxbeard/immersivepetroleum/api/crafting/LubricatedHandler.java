@@ -108,7 +108,6 @@ public class LubricatedHandler
 	
 	public static boolean lubricateTile(TileEntity tile, int ticks, boolean additive, int cap)
 	{
-		System.out.println(lubricationHandlers.size());
 		if (tile instanceof TileEntityMultiblockPart)
 		{
 			tile = ((TileEntityMultiblockPart) tile).master();

@@ -88,7 +88,7 @@ public class Config
 			
 			@Comment({"List of Portable Generator fuels. Format: fluid_name, mb_used_per_tick, flux_produced_per_tick"})
 			public static String[] fuels = new String[] {
-				"gasoline, 5, 512"
+				"gasoline, 5, 256"
 			};
 			
 		}

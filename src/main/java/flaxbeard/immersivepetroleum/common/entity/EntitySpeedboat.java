@@ -862,7 +862,11 @@ public class EntitySpeedboat extends EntityBoat
 			this.rotationYaw += this.deltaRotation;
 
 			FluidStack fluid = this.getContainedFluid();
-			int consumeAmount = FuelHandler.getBoatFuelUsedPerTick(fluid.getFluid());
+			int consumeAmount = 0;
+			if (fluid != null)
+			{
+				consumeAmount = FuelHandler.getBoatFuelUsedPerTick(fluid.getFluid());
+			}
 			if (fluid != null && fluid.amount >= consumeAmount && (forwardInputDown || backInputDown))
 			{
 				int toConsume = consumeAmount;

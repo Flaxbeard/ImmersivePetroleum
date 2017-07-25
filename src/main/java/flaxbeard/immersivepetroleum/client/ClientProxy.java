@@ -24,6 +24,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeModContainer;
@@ -37,11 +38,13 @@ import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
+import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
 import blusunrize.lib.manual.IManualPage;
 import blusunrize.lib.manual.ManualInstance.ManualEntry;
@@ -50,6 +53,7 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.client.model.ModelCoresampleExtended;
 import flaxbeard.immersivepetroleum.client.page.ManualPageBigMultiblock;
 import flaxbeard.immersivepetroleum.client.page.ManualPageSchematicCrafting;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
@@ -187,7 +191,15 @@ public class ClientProxy extends CommonProxy
 	{
 		ShaderUtil.init();
 	
-		MinecraftForge.EVENT_BUS.register(IPCoreSampleModelHandler.instance);
+	}
+	
+	@SubscribeEvent(priority=EventPriority.LOWEST)
+	public static void onModelBakeEvent(ModelBakeEvent event)
+	{
+		
+		ModelResourceLocation mLoc = new ModelResourceLocation(new ResourceLocation("immersiveengineering", IEContent.itemCoresample.itemName), "inventory");
+		event.getModelRegistry().putObject(mLoc, new ModelCoresampleExtended());
+		
 	}
 
 	@Override

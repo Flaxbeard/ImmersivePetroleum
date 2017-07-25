@@ -908,6 +908,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			FluidActionResult output = FluidUtil.interactWithFluidHandler(heldItem, ((TileEntityAutoLubricator) master).tank, player);
 			if (output.isSuccess())
 			{
+				player.setHeldItem(hand, output.getResult());
 				((TileEntityAutoLubricator) master).markContainingBlockForUpdate(null);
 				return true;
 			}

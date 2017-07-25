@@ -40,6 +40,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -50,7 +51,6 @@ import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.util.IESounds;
 import blusunrize.immersiveengineering.common.util.Utils;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
@@ -1059,7 +1059,9 @@ public class EntitySpeedboat extends EntityBoat
 			};
 			FluidStack fs = getContainedFluid();
 			tank.setFluid(fs);
-			FluidUtil.interactWithFluidHandler(stack, tank, player);
+			FluidActionResult output = FluidUtil.interactWithFluidHandler(stack, tank, player);
+			if (output.isSuccess())
+				player.setHeldItem(hand, output.getResult());
 			setContainedFluid(tank.getFluid());
 			return true;
 		}

@@ -161,7 +161,8 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 			
 			if (output!=null)
 			{
-				for (FluidStack stack : this.tanks[1].fluids)
+				ArrayList<FluidStack> stacks = (ArrayList<FluidStack>) this.tanks[1].fluids.clone();
+				for (FluidStack stack : stacks)
 				{
 					if (stack.amount > 0)
 					{

@@ -1,5 +1,5 @@
 {
-  "type": "immersivepetroleum:ingredient_shaped",
+  "type": "forge:ore_shaped",
   "quarter_turn": false,
   "result": {
     "item": "immersivepetroleum:speedboat",

@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +21,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
@@ -38,6 +41,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
@@ -596,6 +600,24 @@ public class EventHandler
 		for (LubricatedTileInfo info : toRemove)
 		{
 			LubricatedHandler.lubricatedTiles.remove(info);
+		}
+	}
+	
+	@SubscribeEvent
+	public static void onEntityJoiningWorld(EntityJoinWorldEvent event)
+	{
+		if (event.getEntity() instanceof EntityPlayer)
+		{
+			List<IRecipe> l = new ArrayList<IRecipe>();
+			for (IRecipe recipe : CraftingManager.REGISTRY)
+			{
+				String name = recipe.getRegistryName().toString();
+				if (name.length() > 18 && name.substring(0, ImmersivePetroleum.MODID.length()).equals(ImmersivePetroleum.MODID))
+				{
+					l.add(recipe);
+				}
+			}
+			((EntityPlayer) event.getEntity()).unlockRecipes(l);
 		}
 	}
 

@@ -173,7 +173,9 @@ public class IPContent
 					'I', "ingotIron");*/
 		ForgeRegistries.RECIPES.register(new SchematicCraftingHandler().setRegistryName(ImmersivePetroleum.MODID, "projector"));
 
-		/*IERecipes.addIngredientRecipe(new ItemStack(itemSpeedboat, 1, 0), "PME", "PPP", 
+		/*
+		
+		IERecipes.addIngredientRecipe(new ItemStack(itemSpeedboat, 1, 0), "PME", "PPP", 
 				'P', "plankTreatedWood", 
 				'E', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta()), 
 				'M', new ItemStack(IEContent.itemMaterial, 1, 8));
@@ -194,23 +196,10 @@ public class IPContent
 		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 3), " RR", "PPP", "PPP",
 				'P', "plateIron",
 				'R', "stickIron");
+				
+				*/
 
-	
-		IERecipes.addIngredientRecipe(new ItemStack(blockMetalDevice, 1, 0), " G ", "G G", "WPW", 
-				'W', "plankTreatedWood", 
-				'P', new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta()),
-				'G', "blockGlass");
-		
-		IERecipes.addIngredientRecipe(new ItemStack(itemOilCan), " R ", "PBP", 
-				'R', "dyeRed", 
-				'P', "plateIron",
-				'B', new ItemStack(Items.BUCKET));
 
-		IERecipes.addIngredientRecipe(new ItemStack(blockMetalDevice, 1, 1), "ITI", "IGR", "III",  
-				'G', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.GENERATOR.getMeta()),
-				'I', "plateIron",
-				'R', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.CAPACITOR_LV.getMeta()),
-				'T', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta()));*/
 			
 		Config.addConfigReservoirs(IPConfig.extraction.reservoirs);
 		Config.addFuel(IPConfig.Generation.fuels);

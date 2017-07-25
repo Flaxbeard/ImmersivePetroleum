@@ -452,7 +452,7 @@ public class EventHandler
 	}
 	
 	@SubscribeEvent
-	public void handleBoatImmunity(LivingAttackEvent event)
+	public static void handleBoatImmunity(LivingAttackEvent event)
 	{
 		if (event.getSource() == DamageSource.LAVA || event.getSource() == DamageSource.ON_FIRE || event.getSource() == DamageSource.IN_FIRE)
 		{
@@ -469,7 +469,7 @@ public class EventHandler
 	}
 	
 	@SubscribeEvent
-	public void handleBoatImmunity(PlayerTickEvent event)
+	public static void handleBoatImmunity(PlayerTickEvent event)
 	{
 		EntityPlayer entity = event.player;
 		if (entity.isBurning() && entity.getRidingEntity() instanceof EntitySpeedboat)
@@ -488,7 +488,7 @@ public class EventHandler
 	
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void handleBoatImmunity(RenderBlockOverlayEvent event)
+	public static void handleBoatImmunity(RenderBlockOverlayEvent event)
 	{
 		EntityPlayer entity = event.getPlayer();
 		if (event.getOverlayType() == OverlayType.FIRE && entity.isBurning() && entity.getRidingEntity() instanceof EntitySpeedboat)
@@ -503,7 +503,7 @@ public class EventHandler
 	
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void handleFireRender(RenderPlayerEvent.Pre event)
+	public static void handleFireRender(RenderPlayerEvent.Pre event)
 	{
 		EntityPlayer entity = event.getEntityPlayer();
 		if (entity.isBurning() && entity.getRidingEntity() instanceof EntitySpeedboat)
@@ -519,7 +519,7 @@ public class EventHandler
 	
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void handleLubricatingMachinesClient(ClientTickEvent event)
+	public static void handleLubricatingMachinesClient(ClientTickEvent event)
 	{
 		if (event.phase == Phase.END && Minecraft.getMinecraft().world != null)
 		{
@@ -528,7 +528,7 @@ public class EventHandler
 	}
 	
 	@SubscribeEvent
-	public void handleLubricatingMachinesServer(WorldTickEvent event)
+	public static void handleLubricatingMachinesServer(WorldTickEvent event)
 	{
 
 		if (event.phase == Phase.END)
@@ -537,7 +537,7 @@ public class EventHandler
 		}
 	}
 		
-	public void handleLubricatingMachines(World world)
+	public static void handleLubricatingMachines(World world)
 	{
 		Set<LubricatedTileInfo> toRemove = new HashSet<LubricatedTileInfo>();
 		for (LubricatedTileInfo info : LubricatedHandler.lubricatedTiles)

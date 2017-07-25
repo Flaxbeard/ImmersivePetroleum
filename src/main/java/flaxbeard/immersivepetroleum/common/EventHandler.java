@@ -80,6 +80,7 @@ import blusunrize.lib.manual.IManualPage;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.ManualInstance.ManualEntry;
 import blusunrize.lib.manual.gui.GuiManual;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
@@ -92,7 +93,7 @@ import flaxbeard.immersivepetroleum.common.network.CloseBookPacket;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageReservoirListSync;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid=ImmersivePetroleum.MODID)
 public class EventHandler
 {
 	@SubscribeEvent

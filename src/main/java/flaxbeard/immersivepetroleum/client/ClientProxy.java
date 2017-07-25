@@ -23,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeModContainer;
@@ -34,6 +35,7 @@ import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -52,25 +54,30 @@ import flaxbeard.immersivepetroleum.client.page.ManualPageBigMultiblock;
 import flaxbeard.immersivepetroleum.client.page.ManualPageSchematicCrafting;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
+import flaxbeard.immersivepetroleum.client.render.RenderSpeedboat;
+import flaxbeard.immersivepetroleum.client.render.TileAutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecoration;
+import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 import flaxbeard.immersivepetroleum.common.items.ItemIPBase;
 
 @SuppressWarnings("deprecation")
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(value = Side.CLIENT, modid = ImmersivePetroleum.MODID)
 public class ClientProxy extends CommonProxy
 {
 	public static final String CAT_IP = "ip";
 	
 	@Override
-	public void preInit() {
-		
+	public void preInit()
+	{
+		RenderingRegistry.registerEntityRenderingHandler(EntitySpeedboat.class, RenderSpeedboat::new);
 	}
 	
 	@Override
@@ -101,7 +108,8 @@ public class ClientProxy extends CommonProxy
 							return new ModelResourceLocation(loc, "inventory");
 						}
 					});
-					for(int meta = 0; meta < ieMetaBlock.getMetaEnums().length; meta++)
+					boolean isMD = block == IPContent.blockMetalDevice;
+					for (int meta = isMD ? 1 : 0; meta < ieMetaBlock.getMetaEnums().length; meta++)
 					{
 						String location = loc.toString();
 						String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getName() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)) : null;
@@ -118,6 +126,10 @@ public class ClientProxy extends CommonProxy
 						{
 							throw new RuntimeException("WELP! apparently " + ieMetaBlock + " lacks an item!", npe);
 						}
+					}
+					if (isMD)
+					{
+						ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "auto_lube"), "inventory"));
 					}
 				} else if(block instanceof BlockIPFluid)
 					mapFluidState(block, ((BlockIPFluid) block).getFluid());
@@ -249,6 +261,8 @@ public class ClientProxy extends CommonProxy
 	
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDistillationTower.TileEntityDistillationTowerParent.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPumpjack.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAutoLubricator.class, new TileAutoLubricatorRenderer());
+		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice), 0, TileEntityAutoLubricator.class);
 
 	}
 

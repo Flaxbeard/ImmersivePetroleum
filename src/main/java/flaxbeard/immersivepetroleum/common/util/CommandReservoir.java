@@ -99,7 +99,7 @@ public class CommandReservoir extends IPSubCommand
 					amount = Math.min(info.capacity, amount);
 					amount = Math.max(0, amount);
 					info.current = amount;
-					sender.sendMessage(new TextComponentTranslation("chat.immersivepetroleum.command." + ".setAmount.sucess", Integer.toString(amount)));
+					sender.sendMessage(new TextComponentTranslation("chat.immersivepetroleum.command." + getIdent() + ".setAmount.sucess", Integer.toString(amount)));
 					IPSaveData.setDirty(sender.getEntityWorld().provider.getDimension());
 					break;
 				case "setCapacity":
@@ -123,10 +123,9 @@ public class CommandReservoir extends IPSubCommand
 						sender.sendMessage(new TextComponentTranslation("chat.immersivepetroleum.command." + getIdent() + ".setCapacity.NFE", args[2].trim()));
 						return;
 					}
-					amount = Math.min(info.capacity, amount);
 					amount = Math.max(0, amount);
 					info.capacity = amount;
-					sender.sendMessage(new TextComponentTranslation("chat.immersivepetroleum.command." + ".setCapacity.sucess", Integer.toString(amount)));
+					sender.sendMessage(new TextComponentTranslation("chat.immersivepetroleum.command." + getIdent() + ".setCapacity.sucess", Integer.toString(amount)));
 					IPSaveData.setDirty(sender.getEntityWorld().provider.getDimension());
 					break;
 				default:

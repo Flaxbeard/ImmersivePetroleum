@@ -1,0 +1,53 @@
+{
+	"forge_marker": 1,
+	"defaults":
+	{
+		"transform": "forge:default-block",
+		"model": "immersiveengineering:ieSixSides",
+		"textures": {
+			"all": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side",
+			"particle": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side",
+			"particles": "immersiveengineering:blocks/metalDevice1_thermoelectricGen_side"
+
+		}
+	},
+	"variants":
+	{
+		"inventory,type=gas_generator": [{"model": "immersivepetroleum:generator"}],
+		"type":
+		{
+			"automatic_lubricator": {
+			},
+			"gas_generator": {
+				"model": "immersivepetroleum:generator"
+			}
+		},
+		"facing":
+		{
+			"down": { "transform": {
+				"rotation": {"x": -90 }
+			}},
+			"up": { "transform": {
+				"rotation": {"x": 90 }
+			}},
+			"east": { "transform": {
+				"rotation": {"y": 0 }
+			}},
+			"west": { "transform": {
+				"rotation": {"y": 180 }
+			}},
+			"north": { "transform": {
+				"rotation": {"y": 90 }
+			}},
+			"south": { "transform": {
+				"rotation": {"y": -90 }
+			}}
+		},
+		"_0multiblockslave":
+		{
+			"false":{},
+			"true":{
+			}
+		}
+	}
+}

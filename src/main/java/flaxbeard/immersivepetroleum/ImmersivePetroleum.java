@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum;
 
+import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
@@ -31,12 +33,14 @@ import blusunrize.immersiveengineering.common.Config;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.EventHandler;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
+import flaxbeard.immersivepetroleum.common.util.CommandHandler;
 
 @Mod(modid = ImmersivePetroleum.MODID, version = ImmersivePetroleum.VERSION, dependencies = "required-after:immersiveengineering;")
 public class ImmersivePetroleum
@@ -68,15 +72,15 @@ public class ImmersivePetroleum
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event)
 	{
-		DistillationRecipe.energyModifier = IPConfig.Machines.distillationTower_energyModifier;
-		DistillationRecipe.timeModifier = IPConfig.Machines.distillationTower_timeModifier;
+		DistillationRecipe.energyModifier = IPConfig.Refining.distillationTower_energyModifier;
+		DistillationRecipe.timeModifier = IPConfig.Refining.distillationTower_timeModifier;
 		
-		PumpjackHandler.oilChance = IPConfig.Reservoirs.reservoir_chance;
+		PumpjackHandler.oilChance = IPConfig.Extraction.reservoir_chance;
 		
-		Config.manual_int.put("distillationTower_operationCost", (int) (2048 * IPConfig.Machines.distillationTower_energyModifier));
-		Config.manual_int.put("pumpjack_consumption", IPConfig.Machines.pumpjack_consumption);
-		Config.manual_int.put("pumpjack_speed", IPConfig.Machines.pumpjack_speed);
-		
+		Config.manual_int.put("distillationTower_operationCost", (int) (2048 * IPConfig.Refining.distillationTower_energyModifier));
+		Config.manual_int.put("pumpjack_consumption", IPConfig.Extraction.pumpjack_consumption);
+		Config.manual_int.put("pumpjack_speed", IPConfig.Extraction.pumpjack_speed);
+
 		int oil_min = 1000000;
 		int oil_max = 5000000;
 		for (ReservoirType type : PumpjackHandler.reservoirList.keySet())
@@ -88,9 +92,23 @@ public class ImmersivePetroleum
 				break;
 			}
 		}
-		Config.manual_int.put("pumpjack_days", (((oil_max + oil_min) / 2) + oil_min) / (IPConfig.Machines.pumpjack_speed * 24000));
+		Config.manual_int.put("pumpjack_days", (((oil_max + oil_min) / 2) + oil_min) / (IPConfig.Extraction.pumpjack_speed * 24000));
+		Config.manual_double.put("autoLubricant_speedup", 1.25);
 
 		IPContent.init();
+		
+		
+		HashMap<String, Integer> map = FuelHandler.getFuelFluxesPerTick();
+		if (map.size() > 0 && map.containsKey("gasoline"))
+		{
+			Config.manual_int.put("portableGenerator_flux", map.get("gasoline"));
+
+		}
+		else
+		{
+			Config.manual_int.put("portableGenerator_flux", -1);
+		}
+		
 		NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, proxy);
 		proxy.init();
 		
@@ -177,6 +195,20 @@ public class ImmersivePetroleum
 				list.add(stack);
 			}
 			
+			stack = new ItemStack(bucket);
+            fs = new FluidStack(IPContent.fluidLubricant, bucket.getCapacity());
+			if (bucket.fill(stack, fs, true) == fs.amount)
+			{
+				list.add(stack);
+			}
+			
+			stack = new ItemStack(bucket);
+            fs = new FluidStack(IPContent.fluidGasoline, bucket.getCapacity());
+			if (bucket.fill(stack, fs, true) == fs.amount)
+			{
+				list.add(stack);
+			}
+			
 			super.displayAllRelevantItems(list);
 		}
 	};
@@ -198,6 +230,12 @@ public class ImmersivePetroleum
 				IPSaveData.setInstance(world.provider.getDimension(), worldData);
 			}
 		}
+	}
+	
+	@Mod.EventHandler
+	public void serverStarting(FMLServerStartingEvent event)
+	{
+		event.registerServerCommand(new CommandHandler());
 	}
 
 }

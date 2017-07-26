@@ -14,5 +14,6 @@ public class IPPacketHandler
 		INSTANCE.registerMessage(CloseBookPacket.Handler.class, CloseBookPacket.class, 0, Side.SERVER);
 		INSTANCE.registerMessage(RotateSchematicPacket.Handler.class, RotateSchematicPacket.class, 1, Side.SERVER);
 		INSTANCE.registerMessage(MessageReservoirListSync.Handler.class, MessageReservoirListSync.class, 2, Side.CLIENT);
+		INSTANCE.registerMessage(ConsumeBoatFuelPacket.Handler.class, ConsumeBoatFuelPacket.class, 3, Side.SERVER);
 	}
 }

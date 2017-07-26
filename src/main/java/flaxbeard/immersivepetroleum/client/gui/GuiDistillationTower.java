@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
 
@@ -26,8 +28,30 @@ public class GuiDistillationTower extends GuiContainer
 	{
 		super.drawScreen(mx, my, partial);
 		ArrayList<String> tooltip = new ArrayList();
-		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft+62,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivepetroleum:textures/gui/distillation.png", tooltip);
-		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+112,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivepetroleum:textures/gui/distillation.png", tooltip);
+		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 62, guiTop + 21, 16, 47, 177, 31, 20, 51, mx,my, "immersivepetroleum:textures/gui/distillation.png", tooltip);
+		
+		
+		//ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+112,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivepetroleum:textures/gui/distillation.png", tooltip);
+		if(mx >= guiLeft+112 && mx <= guiLeft+112+16 && my >= guiTop+21 && my <= guiTop+21+47)
+		{
+			float capacity = tile.tanks[1].getCapacity();
+			int yy = guiTop + 21 + 47;
+			if (tile.tanks[1].getFluidTypes() == 0)
+				tooltip.add(I18n.format("gui.immersiveengineering.empty"));
+			else
+				for (int i = tile.tanks[1].getFluidTypes()-1; i >= 0; i--)
+				{
+					FluidStack fs = tile.tanks[1].fluids.get(i);
+					if (fs!=null&&fs.getFluid()!=null)
+					{
+						int fluidHeight = (int)(47*(fs.amount/capacity));
+						yy -= fluidHeight;
+						if (my >= yy&&my < yy+fluidHeight)
+							ClientUtils.addFluidTooltip(fs, tooltip, (int)capacity);
+					}
+				}
+		}
+		
 		if(mx>guiLeft+157&&mx<guiLeft+164 && my>guiTop+21&&my<guiTop+67)
 			tooltip.add(tile.getEnergyStored(null)+"/"+tile.getMaxEnergyStored(null)+" RF");
 
@@ -56,8 +80,20 @@ public class GuiDistillationTower extends GuiContainer
 		ClientUtils.drawGradientRect(guiLeft+158,guiTop+22+(46-stored), guiLeft+165,guiTop+68, 0xffb51500, 0xff600b00);
 
 		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft+62,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivepetroleum:textures/gui/distillation.png", null);
-		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+112,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivepetroleum:textures/gui/distillation.png", null);
+		//ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+112,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivepetroleum:textures/gui/distillation.png", null);
 		
+		float capacity = tile.tanks[1].getCapacity();
+		int yy = guiTop + 21 + 47;
+		for(int i=tile.tanks[1].getFluidTypes()-1; i>=0; i--)
+		{
+			FluidStack fs = tile.tanks[1].fluids.get(i);
+			if(fs!=null && fs.getFluid()!=null)
+			{
+				int fluidHeight = (int)(47*(fs.amount/capacity));
+				yy -= fluidHeight;
+				ClientUtils.drawRepeatedFluidSprite(fs, guiLeft+112,yy, 16,fluidHeight);
+			}
+		}
 		
 		//		if(tile.tank.getFluid()!=null && tile.tank.getFluid().getFluid()!=null)
 		//		{

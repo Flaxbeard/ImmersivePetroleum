@@ -535,6 +535,8 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	        return fluid != null && LubricantHandler.isValidLube(fluid.getFluid());
 	    }
 	};
+	
+	public boolean predictablyDraining = false;
 
 	public int doSpeedup()
 	{
@@ -593,8 +595,9 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		active = nbt.getBoolean("active");
 		tank.readFromNBT(nbt.getCompoundTag("tank"));
 		count = nbt.getInteger("count");
+		predictablyDraining = nbt.getBoolean("predictablyDraining");
 
-		if(descPacket)
+		if (descPacket)
 			this.markContainingBlockForUpdate(null);
 	}
 
@@ -605,6 +608,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		nbt.setInteger("facing", facing.ordinal());
 		nbt.setBoolean("active", active);
 		nbt.setInteger("count", count);
+		nbt.setBoolean("predictablyDraining", predictablyDraining);
 		
 		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
 		nbt.setTag("tank", tankTag);
@@ -687,6 +691,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	
 	int count = 0;
 	int lastTank = 0;
+	int lastTankUpdate = 0;
 	int countClient = 0;
 	
 	@Override
@@ -713,7 +718,6 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 							if (!world.isRemote && count % 4 == 0) 
 							{
 								tank.drainInternal(LubricantHandler.getLubeAmount(tank.getFluid().getFluid()), true);
-								markContainingBlockForUpdate(null);
 							}
 							
 							if (world.isRemote)
@@ -728,169 +732,23 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 						}
 					}
 				}
-				/*BlockPos target = pos.offset(facing, 2).up();
-				TileEntity te = world.getTileEntity(target);
-				
-				if (te instanceof TileEntityPumpjack)
-				{
-					TileEntityPumpjack jack = (TileEntityPumpjack) te;
-					TileEntityPumpjack master = jack.master();
-					
-					EnumFacing f = master.mirrored ? facing : facing.getOpposite() ;
-					if (jack == master && master.wasActive && jack.getFacing().rotateY() == f)
-					{
-						if (world.isRemote)
-						{
-							master.activeTicks += 1F/4F;
-							countClient++;
-							if (countClient % 50 == 0)
-							{
-								countClient = world.rand.nextInt(40);
-								
-								float location = world.rand.nextFloat();
-								
-								boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.POSITIVE ^ !master.mirrored;
-								float xO = 2.5F;
-								float zO = -.15F;
-								float yO = 2.25F;
-				
-								
-								if (location > .5F)
-								{
-									xO = 1.7F;
-									yO = 2.9F;
-									zO = -1.5F;
 
-								}
-								
-								if (facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
-								if (!flip) zO = -zO + 1;
-
-								
-								
-								float x = pos.getX() + (f.getAxis() == Axis.X ? xO : zO);
-								float y = pos.getY() + yO;
-								float z = pos.getZ() + (f.getAxis() == Axis.X ? zO : xO);
-								
-								for (int i = 0; i < 3; i++)
-								{
-					
-									float r1 = (world.rand.nextFloat() - .5F) * 2F;
-									float r2 = (world.rand.nextFloat() - .5F) * 2F;
-									float r3 = world.rand.nextFloat();
-									int n = Block.getStateId(IPContent.blockFluidLubricant.getDefaultState());
-									world.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F, new int[] {n});
-								}
-							}
-						}
-						else
-						{
-							count++;
-							if (count % 4 == 0)
-							{
-								tank.drainInternal(LubricantHandler.getLubeAmount(tank.getFluid().getFluid()), true);
-								master.update();
-								markContainingBlockForUpdate(null);
-	
-								count = 0;
-							}
-						}
-					}
-				}
-				
-				target = pos.offset(facing, 1).up();
-				te = world.getTileEntity(target);
-				if (te instanceof TileEntityExcavator)
-				{
-					TileEntityExcavator ex = (TileEntityExcavator) te;
-					
-					EnumFacing f = ex.mirrored ? facing : facing.getOpposite() ;
-
-					target = pos.offset(facing, 2).offset(f.rotateY(), 4).up();
-					te = world.getTileEntity(target);
-					ex = (TileEntityExcavator) te;
-					
-					TileEntityExcavator master = ex.master();
-					if (ex == master && ex.getFacing().rotateY() == f)
-					{
-						BlockPos wheelPos = master.getBlockPosForPos(31);
-						TileEntity center = world.getTileEntity(wheelPos);
-
-						if (center instanceof TileEntityBucketWheel)
-						{
-							TileEntityBucketWheel wheel = (TileEntityBucketWheel) center;
-							
-							if (wheel.active)
-							{
-								wheel.rotation += IEConfig.Machines.excavator_speed / 4F;
-								
-								if (!world.isRemote)
-								{
-									count++;
-									if (count % 4 == 0)
-									{
-										tank.drainInternal(LubricantHandler.getLubeAmount(tank.getFluid().getFluid()), true);
-										master.update();
-										markContainingBlockForUpdate(null);
-			
-										count = 0;
-									}
-								}
-								else
-								{
-									countClient++;
-									if (countClient % 50 == 0)
-									{
-										countClient = world.rand.nextInt(40);
-										
-										float location = world.rand.nextFloat();
-										
-										boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.POSITIVE ^ !master.mirrored;
-										float xO = 1.2F;
-										float zO = -.5F;
-										float yO = .5F;
-						
-										
-										if (location > .5F)
-										{
-											xO = 0.9F;
-											yO = 0.8F;
-											zO = 1.75F;
-
-										}
-										
-										if (facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
-										if (!flip) zO = -zO + 1;
-
-										
-										float x = pos.getX() + (f.getAxis() == Axis.X ? xO : zO);
-										float y = pos.getY() + yO;
-										float z = pos.getZ() + (f.getAxis() == Axis.X ? zO : xO);
-										
-										for (int i = 0; i < 3; i++)
-										{
-							
-											float r1 = (world.rand.nextFloat() - .5F) * 2F;
-											float r2 = (world.rand.nextFloat() - .5F) * 2F;
-											float r3 = world.rand.nextFloat();
-											int n = Block.getStateId(IPContent.blockFluidLubricant.getDefaultState());
-											world.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F, new int[] {n});
-										}
-									}
-								}
-							}
-
-						}
-					}
-				}*/
 			}
 			
-			if (lastTank != this.tank.getFluidAmount())
+			if (!world.isRemote && lastTank != this.tank.getFluidAmount())
 			{
-				markContainingBlockForUpdate(null);
+				if (predictablyDraining && tank.getFluid() != null && lastTank - this.tank.getFluidAmount() == LubricantHandler.getLubeAmount(tank.getFluid().getFluid()))
+				{
+					lastTank = this.tank.getFluidAmount();
+					return;
+				}
+				if (Math.abs(lastTankUpdate - this.tank.getFluidAmount()) > 25)
+				{
+					markContainingBlockForUpdate(null);
+					predictablyDraining = tank.getFluid() != null && lastTank - this.tank.getFluidAmount() == LubricantHandler.getLubeAmount(tank.getFluid().getFluid());
+					lastTankUpdate = this.tank.getFluidAmount();
+				}
 				lastTank = this.tank.getFluidAmount();
-				
-				
 			}
 		}
 		

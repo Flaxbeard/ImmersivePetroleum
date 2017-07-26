@@ -78,6 +78,7 @@ public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEn
 		GlStateManager.enableAlpha();
 		if (pass == 1 && level > 0)
 		{
+			
 			RenderHelper.disableStandardItemLighting();
 
 			GlStateManager.pushMatrix();
@@ -121,13 +122,18 @@ public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEn
 			GlStateManager.translate(x, y, z);
 			GlStateManager.enableBlend();
 			GlStateManager.enableAlpha();
+			
 			ClientUtils.bindTexture("immersivepetroleum:textures/models/lubricator.png");
 			base.renderTank(null, 0, 0, 0, 0, 0, 0.0625F);
 			GlStateManager.popMatrix();
 		}
+		
+		
 
 		if (pass == 0)
 		{
+			GlStateManager.disableBlend();
+			GlStateManager.disableAlpha();
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y, z);
 			
@@ -145,96 +151,12 @@ public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEn
 			}
 			GlStateManager.popMatrix();
 
-			/*BlockPos pos = te.getPos().offset(te.getFacing());
-			TileEntity pj = te.getWorld().getTileEntity(pos);
-			if (pj instanceof TileEntityPumpjack)
-			{
-				BlockPos masterPos = te.getPos().offset(te.getFacing(), 2).up();
-				TileEntityPumpjack base = ((TileEntityPumpjack)pj).master();
-				TileEntity target = te.getWorld().getTileEntity(masterPos);
-				
-				EnumFacing facing = base.mirrored ? te.getFacing() : te.getFacing().getOpposite() ;
-				if (base != null && base == target && base.getFacing().rotateY() == facing)
-				{
-	
-					GlStateManager.pushMatrix();
-					GlStateManager.translate(x, y - 1, z);
-					Vec3i offset = base.getPos().subtract(te.getPos());
-					GlStateManager.translate(offset.getX(), offset.getY(), offset.getZ());
-	
-					EnumFacing rotation = base.facing;
-					if (rotation == EnumFacing.NORTH)
-					{
-						GlStateManager.rotate(90F, 0, 1, 0);
-						GlStateManager.translate(-1, 0, 0);
-					}
-					else if (rotation == EnumFacing.WEST)
-					{
-						GlStateManager.rotate(180F, 0, 1, 0);
-						GlStateManager.translate(-1, 0, -1);
-					}
-					else if (rotation == EnumFacing.SOUTH)
-					{
-						GlStateManager.rotate(270F, 0, 1, 0);
-						GlStateManager.translate(0, 0, -1);
-					}
-					GlStateManager.translate(-1, 0, -1);
-					ClientUtils.bindTexture("immersivepetroleum:textures/blocks/lube_pipe12.png");
-					if (base.mirrored)
-					{
-						pumpjackM.render(null, 0, 0, 0, 0, 0, 0.0625F);
-					}
-					else
-					{
-						pumpjack.render(null, 0, 0, 0, 0, 0, 0.0625F);
-					}
-					GlStateManager.popMatrix();
-					
-	
-				}
-			}
-			else if (pj instanceof TileEntityExcavator)
-			{
-				TileEntityExcavator base = ((TileEntityExcavator)pj).master();
-				EnumFacing facing = base.mirrored ? te.getFacing().rotateY() : te.getFacing().rotateY().getOpposite();
-				BlockPos masterPos = pos.offset(te.getFacing(), 1).offset(facing, 4).up();
-				TileEntity target = te.getWorld().getTileEntity(masterPos);
-
-				if (target == base && base != null && base.getFacing().getOpposite() == facing)
-				{
-					GlStateManager.pushMatrix();
-					GlStateManager.translate(x, y - 1, z);
-					Vec3i offset = base.getPos().subtract(te.getPos());
-					GlStateManager.translate(offset.getX(), offset.getY(), offset.getZ());
-	
-					EnumFacing rotation = base.facing;
-					if (rotation == EnumFacing.NORTH)
-					{
-						GlStateManager.rotate(90F, 0, 1, 0);
-					}
-					else if (rotation == EnumFacing.WEST)
-					{
-						GlStateManager.rotate(180F, 0, 1, 0);
-						GlStateManager.translate(0, 0, -1);
-
-					}
-					else if (rotation == EnumFacing.SOUTH)
-					{
-						GlStateManager.rotate(270F, 0, 1, 0);
-					}
-					GlStateManager.translate(-1, 0, -1);
-					ClientUtils.bindTexture("immersivepetroleum:textures/blocks/lube_pipe12.png");
-					excavator.render(null, 0, 0, 0, 0, 0, 0.0625F);
-					GlStateManager.popMatrix();
-					
-	
-				}
-			}*/
+			
 			
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x + .5F, y + .5F, z + .5F);
-			GlStateManager.enableBlend();
 			GlStateManager.enableAlpha();
+			
 			int rotate = 0;
 			if (te.getFacing() == EnumFacing.NORTH) rotate = 1;
 			if (te.getFacing() == EnumFacing.SOUTH) rotate = 3;
@@ -247,6 +169,9 @@ public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEn
 			//base.renderPlunger(null, 0, 0, 0, 0, 0, 0.0625F);
 			GlStateManager.popMatrix();
 		}
+		GlStateManager.disableBlend();
+		GlStateManager.disableAlpha();
+
 
 	}
 }

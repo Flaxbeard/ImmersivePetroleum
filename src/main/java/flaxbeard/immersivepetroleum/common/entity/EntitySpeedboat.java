@@ -1050,7 +1050,7 @@ public class EntitySpeedboat extends EntityBoat
 	{
 		if (Utils.isFluidRelatedItemStack(stack))
 		{
-			FluidTank tank = new FluidTank(hasTank ? 16000 : 8000)
+			FluidTank tank = new FluidTank(getMaxFuel())
 			{
 				@Override
 				public int fill(FluidStack resource, boolean doFill)
@@ -1169,6 +1169,11 @@ public class EntitySpeedboat extends EntityBoat
 	protected boolean isFluidValid(FluidStack resource)
 	{
 		return resource != null && resource.getFluid() != null && FuelHandler.isValidBoatFuel(resource.getFluid());
+	}
+	
+	public int getMaxFuel()
+	{
+		return hasTank ? 16000 : 8000;
 	}
 	
 	public FluidStack getContainedFluid()

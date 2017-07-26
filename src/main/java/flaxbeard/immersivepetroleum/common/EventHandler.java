@@ -607,20 +607,20 @@ public class EventHandler
 	@SubscribeEvent()
 	public void onRenderOverlayPost(RenderGameOverlayEvent.Post event)
 	{
-		if (ClientUtils.mc().thePlayer != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT)
+		if (ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT)
 		{
-			EntityPlayer player = ClientUtils.mc().thePlayer;
+			EntityPlayer player = ClientUtils.mc().player;
 			
 			if (player.getRidingEntity() instanceof EntitySpeedboat)
 			{
 				int offset = 0;
-				for(EnumHand hand : EnumHand.values())
+				for (EnumHand hand : EnumHand.values())
 				{
-					if(player.getHeldItem(hand) != null)
+					if (!player.getHeldItem(hand).isEmpty())
 					{
 						ItemStack equipped = player.getHeldItem(hand);
-						if ((equipped.getItem() instanceof ItemDrill && equipped.getItemDamage()==0)
-								||equipped.getItem() instanceof ItemChemthrower)
+						if ((equipped.getItem() instanceof ItemDrill && equipped.getItemDamage() == 0)
+								|| equipped.getItem() instanceof ItemChemthrower)
 						{
 							offset -= 85;
 						}

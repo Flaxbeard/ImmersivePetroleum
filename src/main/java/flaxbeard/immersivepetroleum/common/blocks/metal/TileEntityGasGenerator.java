@@ -147,7 +147,7 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 	public void update()
 	{
 		
-		if (lastTank != this.tank.getFluidAmount())
+		if (!worldObj.isRemote && lastTank != this.tank.getFluidAmount())
 		{
 			markContainingBlockForUpdate(null);
 			lastTank = this.tank.getFluidAmount();

@@ -77,7 +77,9 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntitySampleDrill;
 import blusunrize.immersiveengineering.common.blocks.stone.TileEntityCoresample;
+import blusunrize.immersiveengineering.common.items.ItemChemthrower;
 import blusunrize.immersiveengineering.common.items.ItemCoresample;
+import blusunrize.immersiveengineering.common.items.ItemDrill;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.lib.manual.IManualPage;
@@ -618,6 +620,71 @@ public class EventHandler
 				}
 			}
 			((EntityPlayer) event.getEntity()).unlockRecipes(l);
+			
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent()
+	public static void onRenderOverlayPost(RenderGameOverlayEvent.Post event)
+	{
+		if (ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT)
+		{
+			EntityPlayer player = ClientUtils.mc().player;
+			
+			if (player.getRidingEntity() instanceof EntitySpeedboat)
+			{
+				int offset = 0;
+				for (EnumHand hand : EnumHand.values())
+				{
+					if (!player.getHeldItem(hand).isEmpty())
+					{
+						ItemStack equipped = player.getHeldItem(hand);
+						if ((equipped.getItem() instanceof ItemDrill && equipped.getItemDamage() == 0)
+								|| equipped.getItem() instanceof ItemChemthrower)
+						{
+							offset -= 85;
+						}
+					}
+				}
+				
+				ClientUtils.bindTexture("immersivepetroleum:textures/gui/hud_elements.png");
+				GL11.glColor4f(1, 1, 1, 1);
+				float dx = event.getResolution().getScaledWidth()-16;
+				float dy = event.getResolution().getScaledHeight();
+				GL11.glPushMatrix();
+				GL11.glTranslated(dx, dy + offset, 0);
+				int w = 31;
+				int h = 62;
+				double uMin = 179/256f;
+				double uMax = 210/256f;
+				double vMin = 9/256f;
+				double vMax = 71/256f;
+				ClientUtils.drawTexturedRect(-24,-68, w,h, uMin,uMax,vMin,vMax);
+
+				GL11.glTranslated(-23,-37,0);
+				EntitySpeedboat boat = (EntitySpeedboat) player.getRidingEntity();
+				int capacity = boat.getMaxFuel();
+	
+				FluidStack fs =  boat.getContainedFluid();
+				int amount = fs == null || fs.getFluid() == null ? 0 : fs.amount;
+				
+				float cap = (float) capacity;
+				float angle = 83 - (166 * amount / cap);
+				GL11.glRotatef(angle, 0, 0, 1);
+				ClientUtils.drawTexturedRect(6, -2, 24, 4, 91 / 256f, 123 / 256f, 80 / 256f, 87 / 256f);
+				GL11.glRotatef(-angle, 0, 0, 1);
+
+				GL11.glTranslated(23, 37, 0);
+				ClientUtils.drawTexturedRect(-41, -73, 53, 72, 8 / 256f, 61 / 256f, 4 / 256f, 76 / 256f);
+
+			//	ClientUtils.drawTexturedRect(-32, -43, 12, 12, 66 / 256f, 78 / 256f, 9 / 256f, 21 / 256f);
+
+				
+				
+				GL11.glPopMatrix();
+			}
+	
 		}
 	}
 

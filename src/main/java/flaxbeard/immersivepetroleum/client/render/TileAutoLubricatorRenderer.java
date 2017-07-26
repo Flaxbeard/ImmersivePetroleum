@@ -170,7 +170,6 @@ public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEn
 			GlStateManager.popMatrix();
 		}
 		GlStateManager.disableBlend();
-		GlStateManager.disableAlpha();
 
 
 	}

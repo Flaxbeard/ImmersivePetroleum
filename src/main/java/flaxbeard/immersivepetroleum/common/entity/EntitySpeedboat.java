@@ -205,6 +205,7 @@ public class EntitySpeedboat extends EntityBoat
 					{
 						ItemSpeedboat item = (ItemSpeedboat) getItemBoat();
 						ItemStack stack = new ItemStack(item, 1, 0);
+						stack.setTagCompound(new NBTTagCompound());
 						ItemStack[] contained = item.getContainedItems(stack);
 						ItemStack[] upgrades = this.getUpgrades();
 						for (int i = 0; i < contained.length && i < upgrades.length; i++)
@@ -212,6 +213,7 @@ public class EntitySpeedboat extends EntityBoat
 							contained[i] = upgrades[i];
 						}
 						item.setContainedItems(stack, contained);
+						writeTank(stack.getTagCompound(), true);
 						this.entityDropItem(stack, 0F);
 					}
 
@@ -225,6 +227,24 @@ public class EntitySpeedboat extends EntityBoat
 		{
 			return true;
 		}
+	}
+	
+	public void readTank(NBTTagCompound nbt)
+	{
+		FluidTank tank = new FluidTank(getMaxFuel());
+		tank.readFromNBT(nbt.getCompoundTag("tank"));
+		setContainedFluid(tank.getFluid());
+	}
+	
+	public void writeTank(NBTTagCompound nbt, boolean toItem)
+	{
+		FluidTank tank = new FluidTank(getMaxFuel());
+		FluidStack fs = getContainedFluid();
+		tank.setFluid(fs);
+		boolean write = tank.getFluidAmount()>0;
+		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
+		if(!toItem || write)
+			nbt.setTag("tank", tankTag);
 	}
 
 

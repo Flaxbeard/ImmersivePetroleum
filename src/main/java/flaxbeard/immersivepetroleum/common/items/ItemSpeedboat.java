@@ -3,9 +3,12 @@ package flaxbeard.immersivepetroleum.common.items;
 
 
 import java.util.List;
+import java.util.Locale;
 
 import blusunrize.immersiveengineering.common.gui.IESlot;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import net.minecraft.block.Block;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -21,7 +24,11 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
 import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 
 public class ItemSpeedboat extends ItemIPUpgradableTool
@@ -91,7 +98,7 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 				EntitySpeedboat entityboat = new EntitySpeedboat(worldIn, raytraceresult.hitVec.xCoord, flag1 ? raytraceresult.hitVec.yCoord - 0.12D : raytraceresult.hitVec.yCoord, raytraceresult.hitVec.zCoord);
 				entityboat.rotationYaw = playerIn.rotationYaw;
 				entityboat.setUpgrades(this.getContainedItems(itemStackIn));
-				
+				entityboat.readTank(itemStackIn.getTagCompound());
 				if (!worldIn.getCollisionBoxes(entityboat, entityboat.getEntityBoundingBox().expandXyz(-0.1D)).isEmpty())
 				{
 					return new ActionResult(EnumActionResult.FAIL, itemStackIn);
@@ -136,6 +143,18 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 	public int getInternalSlots(ItemStack stack)
 	{
 		return 4;
+	}
+	
+
+	@Override
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean advInfo)
+	{
+		if (ItemNBTHelper.hasKey(stack, "tank"))
+		{
+			FluidStack fs = FluidStack.loadFluidStackFromNBT(ItemNBTHelper.getTagCompound(stack, "tank"));
+			if (fs!=null)
+				list.add(fs.getLocalizedName()+": "+fs.amount+"mB");
+		}
 	}
 
 }

@@ -34,7 +34,7 @@ public class Config
 
 		public static class Extraction
 		{
-			@Comment({"List of reservoir types. Format: name, fluid_name, min_mb_fluid, max_mb_fluid, mb_per_tick_replenish, weight, [dim_blacklist], [dim_whitelist], [biome_blacklist], [biome_whitelist]"})
+			@Comment({"List of reservoir types. Format: name, fluid_name, min_mb_fluid, max_mb_fluid, mb_per_tick_replenish, weight, [dim_blacklist], [dim_whitelist], [biome_dict_blacklist], [biome_dict_whitelist]"})
 			public static String[] reservoirs = new String[] {
 					"aquifer, water, 5000000, 10000000, 6, 30, [], [0], [], []",
 					"oil, oil, 2500000, 15000000, 6, 40, [1], [], [], []",

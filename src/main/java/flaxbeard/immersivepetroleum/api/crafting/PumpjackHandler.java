@@ -3,8 +3,8 @@ package flaxbeard.immersivepetroleum.api.crafting;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -12,15 +12,15 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
-import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageReservoirListSync;
-import flaxbeard.immersivepetroleum.common.IPSaveData;
 
 
 public class PumpjackHandler
@@ -259,7 +259,7 @@ public class PumpjackHandler
 	
 	public static String convertConfigName(String str)
 	{
-		return str.replace(" ", "").replace("_", "").toLowerCase();
+		return str.replace(" ", "").toUpperCase();
 	}
 	
 	public static String getBiomeDisplayName(String str)
@@ -340,19 +340,24 @@ public class PumpjackHandler
 		public boolean validBiome(Biome biome)
 		{
 			if (biome == null) return false;
-			String biomeName = getBiomeName(biome);
 			if (biomeWhitelist != null && biomeWhitelist.length > 0)
 			{
 				for (String white : biomeWhitelist)
-					if (convertConfigName(white).equals(biomeName))
-						return true;
+				{
+					for (BiomeDictionary.Type biomeType : BiomeDictionary.getTypesForBiome(biome))
+						if (convertConfigName(white).equals(biomeType.name()))
+							return true;
+				}
 				return false;
 			}
 			else if (biomeBlacklist != null && biomeBlacklist.length > 0)
 			{
 				for (String black : biomeBlacklist)
-					if (convertConfigName(black).equals(biomeName))
-						return false;
+				{
+					for (BiomeDictionary.Type biomeType : BiomeDictionary.getTypesForBiome(biome))
+						if (convertConfigName(black).equals(biomeType.name()))
+							return false;
+				}
 				return true;
 			}
 			return true;

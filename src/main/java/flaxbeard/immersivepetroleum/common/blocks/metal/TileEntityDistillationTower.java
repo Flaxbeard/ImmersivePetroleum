@@ -68,11 +68,12 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 		tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
 		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
 		operated = nbt.getBoolean("operated");
+		cooldownTicks = nbt.getInteger("cooldownTicks");
 		if(!descPacket)
 			inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
 	}
 
-	
+	private int cooldownTicks = 0;
 	private boolean operated = false;
 	
 	@Override
@@ -82,11 +83,17 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 		nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
 		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
 		nbt.setBoolean("operated", operated);
-		if(!descPacket)
+		nbt.setInteger("cooldownTicks", cooldownTicks);
+		if (!descPacket)
 			nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
 	
 	private boolean wasActive = false;
+	
+	public boolean shouldRenderAsActive()
+	{
+		return cooldownTicks > 0 || super.shouldRenderAsActive();
+	}
 	
 	@Override
 	public boolean hammerUseSide(EnumFacing side, EntityPlayer player, float hitX, float hitY, float hitZ)
@@ -102,6 +109,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 	public void update()
 	{
 		super.update();
+		if (cooldownTicks > 0) cooldownTicks--;
 		if(worldObj.isRemote || isDummy())
 			return;
 		boolean update = false;
@@ -126,16 +134,18 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 				}
 			}
 		}
-		
+				
 		if (processQueue.size() > 0)
 		{
 			wasActive = true;
+			cooldownTicks = 6;
 		}
 		else if (wasActive)
 		{
 			wasActive = false;
 			update = true;
 		}
+		
 
 		if (this.tanks[1].getFluidAmount()>0)
 		{

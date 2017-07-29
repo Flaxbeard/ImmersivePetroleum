@@ -232,7 +232,8 @@ public class EntitySpeedboat extends EntityBoat
 	public void readTank(NBTTagCompound nbt)
 	{
 		FluidTank tank = new FluidTank(getMaxFuel());
-		tank.readFromNBT(nbt.getCompoundTag("tank"));
+		if (nbt != null) 
+			tank.readFromNBT(nbt.getCompoundTag("tank"));
 		setContainedFluid(tank.getFluid());
 	}
 	

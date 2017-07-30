@@ -18,7 +18,7 @@ public class ItemIPUpgrade extends ItemIPBase implements IUpgrade
 
 	public ItemIPUpgrade(String name)
 	{
-		super(name, 1, "reinforced_hull", "icebreaker", "tank", "rudders");
+		super(name, 1, "reinforced_hull", "icebreaker", "tank", "rudders", "paddles");
 	}
 	
 	@Override

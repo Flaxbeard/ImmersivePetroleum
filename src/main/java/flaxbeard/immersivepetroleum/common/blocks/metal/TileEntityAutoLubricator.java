@@ -100,7 +100,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			{
 				if (ticks % 4 == 0)
 				{
-					master.update(false);
+					master.update(true);
 				}
 			}
 			else
@@ -263,8 +263,22 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			if (center instanceof TileEntityBucketWheel)
 			{
 				TileEntityBucketWheel wheel = (TileEntityBucketWheel) center;
-
-				wheel.rotation += IEConfig.Machines.excavator_speed / 4F;
+				
+				if (!world.isRemote && ticks % 4 == 0)
+				{
+					int consumed = IEConfig.Machines.excavator_consumption;
+					int extracted = master.energyStorage.extractEnergy(consumed, true);
+					if (extracted >= consumed)
+					{
+						master.energyStorage.extractEnergy(extracted, false);
+						wheel.rotation += IEConfig.Machines.excavator_speed / 4F;
+					}
+				}
+				else
+				{
+					wheel.rotation += IEConfig.Machines.excavator_speed / 4F;
+				}
+				
 			}
 		}
 
@@ -419,11 +433,16 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			{
 				if (ticks % 4 == 0)
 				{
-					if (process.processTick < process.maxTicks) process.processTick++;
-					if (process.processTick >= process.maxTicks && master.processQueue.size() > 1)
+					int consume = master.energyStorage.extractEnergy(process.energyPerTick, true);
+					if (consume >= process.energyPerTick)
 					{
-						process = processIterator.next();
+						master.energyStorage.extractEnergy(process.energyPerTick, false);
 						if (process.processTick < process.maxTicks) process.processTick++;
+						if (process.processTick >= process.maxTicks && master.processQueue.size() > 1)
+						{
+							process = processIterator.next();
+							if (process.processTick < process.maxTicks) process.processTick++;
+						}
 					}
 				}
 			}

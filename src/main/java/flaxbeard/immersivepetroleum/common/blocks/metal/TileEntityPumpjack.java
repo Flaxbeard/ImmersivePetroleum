@@ -3,9 +3,24 @@ package flaxbeard.immersivepetroleum.common.blocks.metal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
+import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
+import blusunrize.immersiveengineering.common.Config.IEConfig;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDevice1;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
+import blusunrize.immersiveengineering.common.util.Utils;
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
+import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -14,6 +29,7 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -22,21 +38,6 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
-import blusunrize.immersiveengineering.common.Config.IEConfig;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
-import blusunrize.immersiveengineering.common.util.Utils;
-
-import com.google.common.collect.Lists;
-
-import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
-import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
-import flaxbeard.immersivepetroleum.common.Config.IPConfig;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 
 public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPumpjack, IMultiblockRecipe> implements IAdvancedSelectionBounds,IAdvancedCollisionBounds, IGuiTile
 {
@@ -146,6 +147,31 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		update(true);
 	}
 
+	// Checks whether or not this pump has a pipe to bedrock.
+	private boolean hasPipe() {
+		if (!IPConfig.Extraction.require_pipes) {
+			return true;
+		}
+		
+		World world = this.getWorld();
+		BlockPos pos = this.getOrigin();
+		int depthCount = 0;
+		int depthBounds = 256;
+		while (depthCount < depthBounds) {
+			pos = pos.add(0, -1, 0);
+			IBlockState state = world.getBlockState(pos);
+			Block block = state.getBlock();
+			if (state == Blocks.BEDROCK.getDefaultState()) {
+				return true;
+			} else if (!(block instanceof BlockMetalDevice1
+					&& state.getValue(((BlockMetalDevice1) block).property) == BlockTypes_MetalDevice1.FLUID_PIPE)) {
+				return false;
+			}
+			depthCount++;
+		}
+		return true;
+	}
+	
 	public void update(boolean consumePower)
 	{
 		//System.out.println("TEST");
@@ -172,7 +198,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		int consumed = IPConfig.Extraction.pumpjack_consumption;
 		int extracted = consumePower ? energyStorage.extractEnergy(consumed, true) : consumed;
 				
-		if (extracted >= consumed && canExtract() && !this.isRSDisabled())
+		if (extracted >= consumed && canExtract() && !this.isRSDisabled() && hasPipe())
 		{
 			int residual = getResidualOil();
 			if (availableOil() > 0 || residual > 0)

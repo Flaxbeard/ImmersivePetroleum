@@ -49,6 +49,9 @@ public class Config
 			@Comment({"Disable formation and manual page for Pumpjack"})
 			public static boolean disable_pumpjack = false;
 			
+			@Comment({"Do pumpjacks require a pipe to bedrock"})
+			public static boolean require_pipes = false;
+			
 			@Comment({"The Flux the Pumpjack requires each tick to pump, default=1024"})
 			public static int pumpjack_consumption = 1024;
 			

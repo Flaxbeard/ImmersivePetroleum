@@ -157,14 +157,14 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		BlockPos pos = this.getOrigin();
 		int depthCount = 0;
 		int depthBounds = 256;
-		int pipeMeta = BlockTypes_MetalDevice1.FLUID_PIPE.getMeta();
 		while (depthCount < depthBounds) {
 			pos = pos.add(0, -1, 0);
 			IBlockState state = world.getBlockState(pos);
 			Block block = state.getBlock();
 			if (state == Blocks.BEDROCK.getDefaultState()) {
 				return true;
-			} else if (!(block instanceof BlockMetalDevice1 && block.getMetaFromState(state) == pipeMeta)) {
+			} else if (!(block instanceof BlockMetalDevice1
+					&& state.getValue(((BlockMetalDevice1) block).property) == BlockTypes_MetalDevice1.FLUID_PIPE)) {
 				return false;
 			}
 			depthCount++;

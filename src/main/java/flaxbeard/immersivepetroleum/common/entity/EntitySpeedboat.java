@@ -213,7 +213,9 @@ public class EntitySpeedboat extends EntityBoat
 						{
 							contained.set(i, upgrades.get(i));
 						}
+						stack.setTagCompound(new NBTTagCompound());
 						item.setContainedItems(stack, contained);
+						writeTank(stack.getTagCompound(), true);
 						this.entityDropItem(stack, 0F);
 					}
 
@@ -227,6 +229,25 @@ public class EntitySpeedboat extends EntityBoat
 		{
 			return true;
 		}
+	}
+	
+	public void readTank(NBTTagCompound nbt)
+	{
+		FluidTank tank = new FluidTank(getMaxFuel());
+		if (nbt != null) 
+			tank.readFromNBT(nbt.getCompoundTag("tank"));
+		setContainedFluid(tank.getFluid());
+	}
+	
+	public void writeTank(NBTTagCompound nbt, boolean toItem)
+	{
+		FluidTank tank = new FluidTank(getMaxFuel());
+		FluidStack fs = getContainedFluid();
+		tank.setFluid(fs);
+		boolean write = tank.getFluidAmount()>0;
+		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
+		if(!toItem || write)
+			nbt.setTag("tank", tankTag);
 	}
 
 
@@ -293,7 +314,6 @@ public class EntitySpeedboat extends EntityBoat
 	@Override
 	public void onUpdate()
 	{
-	
 		this.previousStatus = this.status;
 		this.status = this.getBoatStatus();
 
@@ -358,50 +378,74 @@ public class EntitySpeedboat extends EntityBoat
 		
 		if (this.world.isRemote)
 		{
-			float moving = (this.forwardInputDown || this.backInputDown) ? (isBoosting ? .9F : .7F) : 0.5F;
-			if (lastMoving != moving)
+			if (!isEmergency())
 			{
-				ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, false, .5f, 0.5F);
-			}
-			ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, this.isBeingRidden() && this.getContainedFluid() != null && this.getContainedFluid().amount > 0, this.forwardInputDown || this.backInputDown ? .5f : .3f, moving);
-			lastMoving = moving;
-			
-			if (this.forwardInputDown && this.world.rand.nextInt(2) == 0)
-			{
-				if (inLava)
+				float moving = (this.forwardInputDown || this.backInputDown) ? (isBoosting ? .9F : .7F) : 0.5F;
+				if (lastMoving != moving)
 				{
-					if (this.world.rand.nextInt(3) == 0)
+					ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, false, .5f, 0.5F);
+				}
+				ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, this.isBeingRidden() && this.getContainedFluid() != null && this.getContainedFluid().amount > 0, this.forwardInputDown || this.backInputDown ? .5f : .3f, moving);
+				lastMoving = moving;
+				
+				if (this.forwardInputDown && this.world.rand.nextInt(2) == 0)
+				{
+					if (inLava)
+					{
+						if (this.world.rand.nextInt(3) == 0)
+						{
+							float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
+							float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
+							float yO = .4F + (world.rand.nextFloat() - .5F) * .3F;
+							world.spawnParticle(EnumParticleTypes.LAVA, posX - xO * 1.5F, posY + yO, posZ - zO * 1.5F, -2 * motionX, 0, -2 * motionZ, 5);
+						}
+					}
+					else
 					{
 						float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
 						float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
-						float yO = .4F + (world.rand.nextFloat() - .5F) * .3F;
-						world.spawnParticle(EnumParticleTypes.LAVA, posX - xO * 1.5F, posY + yO, posZ - zO * 1.5F, -2 * motionX, 0, -2 * motionZ, 5);
+						float yO = .1F + (world.rand.nextFloat() - .5F) * .3F;
+						world.spawnParticle(EnumParticleTypes.WATER_BUBBLE, posX - xO * 1.5F, posY + yO, posZ - zO * 1.5F, 0, 0, 0, 5);
 					}
 				}
-				else
+				if (isBoosting && this.world.rand.nextInt(2) == 0)
 				{
 					float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
 					float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
-					float yO = .1F + (world.rand.nextFloat() - .5F) * .3F;
-					world.spawnParticle(EnumParticleTypes.WATER_BUBBLE, posX - xO * 1.5F, posY + yO, posZ - zO * 1.5F, 0, 0, 0, 5);
+					float yO = .8F + (world.rand.nextFloat() - .5F) * .3F;
+					world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, posX - xO * 1.3F, posY + yO, posZ - zO * 1.3F, 0, 0, 0, 5);
 				}
 			}
-			if (isBoosting && this.world.rand.nextInt(2) == 0)
+			else
 			{
-				float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
-				float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
-				float yO = .8F + (world.rand.nextFloat() - .5F) * .3F;
-				world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, posX - xO * 1.3F, posY + yO, posZ - zO * 1.3F, 0, 0, 0, 5);
+				ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, false, .5f, 0.5F);
 			}
 		}
 
-		if (this.getPaddleState(0))
+		if (!this.isEmergency())
 		{
-			this.paddlePositions[0] = (float)((double)this.paddlePositions[0] + (isBoosting ? 0.02D : 0.01D));
+			if (this.getPaddleState(0))
+			{
+				this.paddlePositions[0] = (float)((double)this.paddlePositions[0] + (isBoosting ? 0.02D : 0.01D));
+			}
+			else if (this.getPaddleState(1))
+			{
+				this.paddlePositions[0] = (float)((double)this.paddlePositions[0] - 0.01D);
+			}
 		}
-		else if (this.getPaddleState(1))
+		else
 		{
-			this.paddlePositions[0] = (float)((double)this.paddlePositions[0] - 0.01D);
+			for (int i = 0; i <= 1; ++i)
+			{
+				if (this.getPaddleState(i))
+				{
+					this.paddlePositions[i] = (float)((double)this.paddlePositions[i] + 0.01D);
+				}
+				else
+				{
+					this.paddlePositions[i] = 0.0F;
+				}
+			}
 		}
 		
 		//
@@ -413,7 +457,7 @@ public class EntitySpeedboat extends EntityBoat
 		Vector2f vec = new Vector2f(xO, zO);
 		vec.normalize();
 		
-		if (hasIcebreaker)
+		if (hasIcebreaker && !isEmergency())
 		{
 			AxisAlignedBB axisalignedbb = this.getEntityBoundingBox().grow(0.1f);
 			BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain(axisalignedbb.minX + 0.001D, axisalignedbb.minY + 0.001D, axisalignedbb.minZ + 0.001D);
@@ -526,6 +570,11 @@ public class EntitySpeedboat extends EntityBoat
 	@Override
 	public float getRowingTime(int p_184448_1_, float limbSwing)
 	{
+		if (isEmergency())
+		{
+			return this.getPaddleState(p_184448_1_) ? (float)MathHelper.clampedLerp((double)this.paddlePositions[p_184448_1_] - 0.01D, (double)this.paddlePositions[p_184448_1_], (double)limbSwing) : 0.0F;
+		}
+		
 		if (this.getPaddleState(0))
 		{
 			return (float)MathHelper.clampedLerp((double)this.paddlePositions[p_184448_1_] -  (isBoosting ? 0.02D : 0.01D), (double)this.paddlePositions[p_184448_1_], (double)limbSwing);
@@ -848,85 +897,132 @@ public class EntitySpeedboat extends EntityBoat
 			}
 		}
 	}
-
+	
+	public boolean isEmergency()
+	{
+		FluidStack fluid = this.getContainedFluid();
+		int consumeAmount = 0;
+		if (fluid != null)
+		{
+			consumeAmount = FuelHandler.getBoatFuelUsedPerTick(fluid.getFluid());
+			return fluid.amount <= consumeAmount && hasPaddles;
+		}
+		else
+		{
+			return hasPaddles;
+		}
+	}
+	
 	private void controlBoat()
 	{
 		if (this.isBeingRidden())
 		{
 			float f = 0.0F;
 
-		
-			if (this.rightInputDown != this.leftInputDown && !this.forwardInputDown && !this.backInputDown)
+			if (isEmergency())
 			{
-				//f += 0.005F;
-			}
+				if (this.leftInputDown)
+				{
+					this.deltaRotation += -1.0F;
+				}
 
-			this.rotationYaw += this.deltaRotation;
+				if (this.rightInputDown)
+				{
+					++this.deltaRotation;
+				}
 
-			FluidStack fluid = this.getContainedFluid();
-			int consumeAmount = 0;
-			if (fluid != null)
-			{
-				consumeAmount = FuelHandler.getBoatFuelUsedPerTick(fluid.getFluid());
-			}
-			if (fluid != null && fluid.amount >= consumeAmount && (forwardInputDown || backInputDown))
-			{
-				int toConsume = consumeAmount;
+				if (this.rightInputDown != this.leftInputDown && !this.forwardInputDown && !this.backInputDown)
+				{
+					f += 0.005F;
+				}
+
+				this.rotationYaw += this.deltaRotation;
+
 				if (this.forwardInputDown)
 				{
-					f += 0.04F * 1F;
-					if (this.isBoosting && fluid.amount >= 3 * consumeAmount)
-					{
-						f *= 2;
-						toConsume *= 3;
-					}
+					f += 0.04F;
 				}
-	
+
 				if (this.backInputDown)
 				{
-					f -= 0.005F * 2F;
+					f -= 0.005F;
 				}
-				fluid.amount = Math.max(0, fluid.amount - toConsume);
-				this.setContainedFluid(fluid);
-				IPPacketHandler.INSTANCE.sendToServer(new ConsumeBoatFuelPacket(toConsume));
-				
-				this.setPaddleState(this.forwardInputDown, this.backInputDown);
 
+				this.motionX += (double)(MathHelper.sin(-this.rotationYaw * 0.017453292F) * f);
+				this.motionZ += (double)(MathHelper.cos(this.rotationYaw * 0.017453292F) * f);
+				this.setPaddleState(this.rightInputDown || this.forwardInputDown, this.leftInputDown || this.forwardInputDown);
 			}
 			else
 			{
-				this.setPaddleState(false, false);
-			}
-						
-			this.motionX += (double)(MathHelper.sin(-this.rotationYaw * 0.017453292F) * f);
-			this.motionZ += (double)(MathHelper.cos(this.rotationYaw * 0.017453292F) * f);
-			
-			float speed = (float) Math.sqrt(motionX * motionX + motionZ * motionZ);
-			
-			if (this.leftInputDown)
-			{
-				this.deltaRotation += -1.0F * speed * (hasRudders ? 1.5F : 1F) * (isBoosting ? 0.5F : 1) * (backInputDown && !forwardInputDown ? 2F : 1F);
-				if (propellerRotation > -1F)
-				{
-					propellerRotation -= 0.2F;
-				}
-			}
 
-			if (this.rightInputDown)
-			{
-				this.deltaRotation += 1.0F  * speed * (hasRudders ? 1.5F : 1F) *(isBoosting ? 0.5F : 1) * (backInputDown && !forwardInputDown ? 2F : 1F);
-				if (propellerRotation < 1F)
+	
+				this.rotationYaw += this.deltaRotation;
+	
+				FluidStack fluid = this.getContainedFluid();
+				int consumeAmount = 0;
+				if (fluid != null)
 				{
-					propellerRotation += 0.2F;
+					consumeAmount = FuelHandler.getBoatFuelUsedPerTick(fluid.getFluid());
 				}
+				if (fluid != null && fluid.amount >= consumeAmount && (forwardInputDown || backInputDown))
+				{
+					int toConsume = consumeAmount;
+					if (this.forwardInputDown)
+					{
+						f += 0.04F * 1.25F;
+						if (this.isBoosting && fluid.amount >= 3 * consumeAmount)
+						{
+							f *= 1.6;
+							toConsume *= 3;
+						}
+					}
+		
+					if (this.backInputDown)
+					{
+						f -= 0.005F * 2F;
+					}
+					fluid.amount = Math.max(0, fluid.amount - toConsume);
+					this.setContainedFluid(fluid);
+					IPPacketHandler.INSTANCE.sendToServer(new ConsumeBoatFuelPacket(toConsume));
+					
+					this.setPaddleState(this.forwardInputDown, this.backInputDown);
+	
+				}
+				else
+				{
+					this.setPaddleState(false, false);
+				}
+							
+				this.motionX += (double)(MathHelper.sin(-this.rotationYaw * 0.017453292F) * f);
+				this.motionZ += (double)(MathHelper.cos(this.rotationYaw * 0.017453292F) * f);
+				
+				float speed = (float) Math.sqrt(motionX * motionX + motionZ * motionZ);
+				
+				if (this.leftInputDown)
+				{
+					this.deltaRotation += -1.1F * speed * (hasRudders ? 1.5F : 1F) * (isBoosting ? 0.5F : 1) * (backInputDown && !forwardInputDown ? 2F : 1F);
+					if (propellerRotation > -1F)
+					{
+						propellerRotation -= 0.2F;
+					}
+				}
+	
+				if (this.rightInputDown)
+				{
+					this.deltaRotation += 1.1F  * speed * (hasRudders ? 1.5F : 1F) *(isBoosting ? 0.5F : 1) * (backInputDown && !forwardInputDown ? 2F : 1F);
+					if (propellerRotation < 1F)
+					{
+						propellerRotation += 0.2F;
+					}
+				}
+				
+				if (!this.rightInputDown && !this.leftInputDown)
+				{
+					propellerRotation *= 0.7F;
+				}
+	
+				
 			}
-			
-			if (!this.rightInputDown && !this.leftInputDown)
-			{
-				propellerRotation *= 0.7F;
-			}
-
-			
 		}
 	}
 
@@ -1151,7 +1247,7 @@ public class EntitySpeedboat extends EntityBoat
 		this.rightInputDown = p_184442_2_;
 		this.forwardInputDown = p_184442_3_;
 		this.backInputDown = p_184442_4_;
-		this.isBoosting = forwardInputDown && Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown();
+		this.isBoosting = isEmergency() ? false : (forwardInputDown && Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown());
 	}
 
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop)
@@ -1273,6 +1369,10 @@ public class EntitySpeedboat extends EntityBoat
 					{
 						hasRudders = true;
 					}
+					else if (upgrade.getItem() == IPContent.itemUpgrades && upgrade.getItemDamage() == 4)
+					{
+						hasPaddles = true;
+					}
 				}
 			}
 		}
@@ -1283,5 +1383,6 @@ public class EntitySpeedboat extends EntityBoat
 	public boolean hasIcebreaker = false;
 	public boolean hasTank = false;
 	public boolean hasRudders = false;
+	public boolean hasPaddles = false;
 
 }

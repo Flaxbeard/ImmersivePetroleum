@@ -204,6 +204,10 @@ public class IPContent
 			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 3), " RR", "PPP", "PPP",
 					'P', "plateIron",
 					'R', "stickIron");
+			
+			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 4), "S S", "S S", "P P",
+					'P', "plankTreatedWood",
+					'S', "stickTreatedWood");
 		}
 		
 		if (!IPConfig.Miscellaneous.disable_lubricant)

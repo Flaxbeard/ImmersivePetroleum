@@ -54,7 +54,12 @@ public class Config
 			
 			@Comment({"The amount of mB of oil a Pumpjack extracts per tick, default=15"})
 			public static int pumpjack_speed = 15;
-
+			
+			@Comment({"Require a pumpjack to have pipes built down to Bedrock, default=false"})
+			public static boolean req_pipes = false;
+			
+			@Comment({"Number of ticks between checking for pipes below pumpjack if required, default=100 (5 secs)"})
+			public static int pipe_check_ticks = 100;
 		}
 
 		public static Refining refining = new Refining();

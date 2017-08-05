@@ -1,0 +1,22 @@
+{
+  "type": "forge:ore_shaped",
+  "quarter_turn": false,
+  "result": {
+    "item": "immersivepetroleum:upgrades",
+    "data": 4,
+    "count": 1
+  },
+  "pattern": [
+    "S S",
+    "S S",
+    "P P"
+  ],
+  "key": {
+    "P": {
+      "item": "#plankTreatedWood"
+    },
+    "S": {
+      "item": "#stickTreatedWood"
+    }
+  }
+}

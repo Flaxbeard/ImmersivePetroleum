@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -265,7 +266,7 @@ public class PumpjackHandler
 	
 	public static String convertConfigName(String str)
 	{
-		return str.replace(" ", "").replace("_", "").toLowerCase();
+		return str.replace(" ", "").toUpperCase();
 	}
 	
 	public static String getBiomeDisplayName(String str)
@@ -346,19 +347,24 @@ public class PumpjackHandler
 		public boolean validBiome(Biome biome)
 		{
 			if (biome == null) return false;
-			String biomeName = getBiomeName(biome);
 			if (biomeWhitelist != null && biomeWhitelist.length > 0)
 			{
 				for (String white : biomeWhitelist)
-					if (convertConfigName(white).equals(biomeName))
-						return true;
+				{
+					for (BiomeDictionary.Type biomeType : BiomeDictionary.getTypes(biome))
+						if (convertConfigName(white).equals(biomeType.getName()))
+							return true;
+				}
 				return false;
 			}
 			else if (biomeBlacklist != null && biomeBlacklist.length > 0)
 			{
 				for (String black : biomeBlacklist)
-					if (convertConfigName(black).equals(biomeName))
-						return false;
+				{
+					for (BiomeDictionary.Type biomeType : BiomeDictionary.getTypes(biome))
+						if (convertConfigName(black).equals(biomeType.getName()))
+							return false;
+				}
 				return true;
 			}
 			return true;

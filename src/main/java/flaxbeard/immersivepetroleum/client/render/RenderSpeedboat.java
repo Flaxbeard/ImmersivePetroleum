@@ -16,7 +16,6 @@ public class RenderSpeedboat extends Render<EntitySpeedboat>
 {
 	private static String texture = "immersivepetroleum:textures/models/boat_motor.png";
 	private static String textureArmor = "immersivepetroleum:textures/models/boat_motor_armor.png";
-
 	/** instance of ModelBoat for rendering */
 	protected ModelSpeedboat modelBoat = new ModelSpeedboat();
 
@@ -70,6 +69,12 @@ public class RenderSpeedboat extends Render<EntitySpeedboat>
 		{
 			ClientUtils.bindTexture(textureArmor);
 			this.modelBoat.renderTank(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+		}
+		
+		if (entity.hasPaddles)
+		{
+			ClientUtils.bindTexture(texture);
+			this.modelBoat.renderPaddles(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
 		}
 		
 		

@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum.common;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.NumberInvalidException;
@@ -34,7 +35,7 @@ public class Config
 
 		public static class Extraction
 		{
-			@Comment({"List of reservoir types. Format: name, fluid_name, min_mb_fluid, max_mb_fluid, mb_per_tick_replenish, weight, [dim_blacklist], [dim_whitelist], [biome_blacklist], [biome_whitelist]"})
+			@Comment({"List of reservoir types. Format: name, fluid_name, min_mb_fluid, max_mb_fluid, mb_per_tick_replenish, weight, [dim_blacklist], [dim_whitelist], [biome_dict_blacklist], [biome_dict_whitelist]"})
 			public static String[] reservoirs = new String[] {
 					"aquifer, water, 5000000, 10000000, 6, 30, [], [0], [], []",
 					"oil, oil, 2500000, 15000000, 6, 40, [1], [], [], []",
@@ -50,7 +51,12 @@ public class Config
 			
 			@Comment({"The amount of mB of oil a Pumpjack extracts per tick, default=15"})
 			public static int pumpjack_speed = 15;
-
+			
+			@Comment({"Require a pumpjack to have pipes built down to Bedrock, default=false"})
+			public static boolean req_pipes = false;
+			
+			@Comment({"Number of ticks between checking for pipes below pumpjack if required, default=100 (5 secs)"})
+			public static int pipe_check_ticks = 100;
 		}
 
 		public static Refining refining;
@@ -113,6 +119,8 @@ public class Config
 	    {
 			String byprod = byproducts[i];
 			String str = recipes[i];
+			if (str.isEmpty()) continue;
+
 
 			String input = null;
 			int inputAmount = 0;
@@ -219,8 +227,19 @@ public class Config
 			FluidStack[] outputFluid = new FluidStack[output.size()];
 			for (int n = 0; n < output.size(); n++)
 			{
+				output.set(n, output.get(n).toLowerCase(Locale.ENGLISH));
+				if (FluidRegistry.getFluid(output.get(n)) == null)
+				{
+					throw new RuntimeException("Invalid output fluid name #" + (n + 1) + " for distillation recipe " + (i + 1));
+				}
 				Fluid f = FluidRegistry.getFluid(output.get(n));
 				outputFluid[n] = new FluidStack(f, outputAmount.get(n));
+			}
+			
+			input = input.toLowerCase(Locale.ENGLISH);
+			if (FluidRegistry.getFluid(input) == null)
+			{
+				throw new RuntimeException("Invalid input fluid name for distillation recipe " + (i + 1));
 			}
 			Fluid f = FluidRegistry.getFluid(input);
 			FluidStack inputFluid = new FluidStack(f, inputAmount);
@@ -308,7 +327,6 @@ public class Config
 			ItemStack stack = new ItemStack(item, amount, meta);
 			
 			
-			
 			DistillationRecipe.addRecipe(outputFluid, stack, inputFluid, powerCost, 1, chance / 100F);
 	    }
 		
@@ -319,6 +337,8 @@ public class Config
 		for (int i = 0; i < fuels.length; i++)
 	    {
 			String str = fuels[i];
+
+			if (str.isEmpty()) continue;
 
 			String fluid = null;
 			int amount = 0;
@@ -342,12 +362,12 @@ public class Config
 						amount = Integer.parseInt(current);
 						if (amount <= 0)
 						{
-							throw new RuntimeException("Negative value for fuel mB/tick for fuel " + (i + 1));
+							throw new RuntimeException("Negative value for fuel mB/tick for generator fuel " + (i + 1));
 						}
 					}
 					catch (NumberFormatException e)
 					{
-						throw new RuntimeException("Invalid value for fuel mB/tick for fuel " + (i + 1));
+						throw new RuntimeException("Invalid value for fuel mB/tick for generator fuel " + (i + 1));
 					}
 				}
 
@@ -361,12 +381,18 @@ public class Config
 				production = Integer.parseInt(current);
 				if (production < 0)
 				{
-					throw new RuntimeException("Negative value for fuel RF/tick for fuel " + (i + 1));
+					throw new RuntimeException("Negative value for fuel RF/tick for generator fuel " + (i + 1));
 				}
 			}
 			catch (NumberFormatException e)
 			{
-				throw new RuntimeException("Invalid value for fuel RF/tick for fuel " + (i + 1));
+				throw new RuntimeException("Invalid value for fuel RF/tick for generator fuel " + (i + 1));
+			}
+			
+			fluid = fluid.toLowerCase(Locale.ENGLISH);
+			if (FluidRegistry.getFluid(fluid) == null)
+			{
+				throw new RuntimeException("Invalid fluid name for generator fuel " + (i + 1));
 			}
 			
 			FuelHandler.registerPortableGeneratorFuel(FluidRegistry.getFluid(fluid), production, amount);
@@ -379,6 +405,8 @@ public class Config
 		for (int i = 0; i < fuels.length; i++)
 	    {
 			String str = fuels[i];
+
+			if (str.isEmpty()) continue;
 
 			String fluid = null;
 			int amount = 0;
@@ -413,6 +441,12 @@ public class Config
 				throw new RuntimeException("Invalid value for fuel mB/tick for boat fuel " + (i + 1));
 			}
 			
+			fluid = fluid.toLowerCase(Locale.ENGLISH);
+			if (FluidRegistry.getFluid(fluid) == null)
+			{
+				throw new RuntimeException("Invalid fluid name for boat fuel " + (i + 1));
+			}
+			
 			FuelHandler.registerMotorboatFuel(FluidRegistry.getFluid(fluid), amount);
 	    }
 		
@@ -423,6 +457,9 @@ public class Config
 		for (int i = 0; i < reservoirs.length; i++)
 	    {
 			String str = reservoirs[i];
+			
+			if (str.isEmpty()) continue;
+			
 			String[] data = str.split(",");
 
 			String name = null;
@@ -601,6 +638,7 @@ public class Config
 			
 			if (!inParens)
 			{
+				System.out.println(reservoirs[i]);
 				current = current.substring(1);
 				inParens = true;
 			}
@@ -617,6 +655,12 @@ public class Config
 			if (value.length() > 0)
 			{
 				biomeWhitelist.add(PumpjackHandler.convertConfigName(value.trim()));
+			}
+			
+			fluid = fluid.toLowerCase(Locale.ENGLISH);
+			if (FluidRegistry.getFluid(fluid) == null)
+			{
+				throw new RuntimeException("Invalid fluid name for reservoir " + (i + 1));
 			}
 			
 			ReservoirType res = PumpjackHandler.addReservoir(name, fluid, min, max, replenish, weight);

@@ -175,10 +175,41 @@ public class IPContent
 
 		/*
 		
+<<<<<<< HEAD
 		IERecipes.addIngredientRecipe(new ItemStack(itemSpeedboat, 1, 0), "PME", "PPP", 
 				'P', "plankTreatedWood", 
 				'E', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta()), 
 				'M', new ItemStack(IEContent.itemMaterial, 1, 8));
+=======
+		if (!IPConfig.Miscellaneous.disable_motorboat)
+		{
+			IERecipes.addIngredientRecipe(new ItemStack(itemSpeedboat, 1, 0), "PME", "PPP", 
+					'P', "plankTreatedWood", 
+					'E', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta()), 
+					'M', new ItemStack(IEContent.itemMaterial, 1, 8));
+			
+			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 0), "P P", "PBP", 
+					'P', "plateSteel",
+					'B', "blockSteel");
+			
+			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 1), "I P", " IP", "PPB", 
+					'P', "plateSteel",
+					'B', "blockSteel",
+					'I', "ingotSteel");
+			
+			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 2), " P ", "PTP", " P ",
+					'P', "plateIron",
+					'T', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta()));
+			
+			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 3), " RR", "PPP", "PPP",
+					'P', "plateIron",
+					'R', "stickIron");
+			
+			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 4), "S S", "S S", "P P",
+					'P', "plankTreatedWood",
+					'S', "stickTreatedWood");
+		}
+>>>>>>> 1.11
 		
 		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 0), "P P", "PBP", 
 				'P', "plateSteel",

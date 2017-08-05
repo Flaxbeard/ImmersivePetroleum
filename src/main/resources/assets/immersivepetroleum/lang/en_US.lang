@@ -32,7 +32,8 @@ item.immersivepetroleum.material.petcoke.name=Petcoke
 item.immersivepetroleum.upgrades.reinforced_hull.name=Reinforced Hull
 item.immersivepetroleum.upgrades.icebreaker.name=Icebreaker Bow
 item.immersivepetroleum.upgrades.tank.name=Expanded Fuel Tank
-item.immersivepetroleum.upgrades.rudders.name=Manuevering Rudders
+item.immersivepetroleum.upgrades.rudders.name=Maneuvering Rudders
+item.immersivepetroleum.upgrades.paddles.name=Emergency Paddles
 
 item.immersivepetroleum.schematic.name=%s Projector
 
@@ -58,6 +59,7 @@ desc.immersivepetroleum.flavour.upgrades.reinforced_hull=Makes Motorboat fire re
 desc.immersivepetroleum.flavour.upgrades.icebreaker=Allows Motorboat to destroy ice and harm mobs
 desc.immersivepetroleum.flavour.upgrades.tank=Increases fuel tank capacity for Motorboat
 desc.immersivepetroleum.flavour.upgrades.rudders=Allows for tighter turns in the Motorboat
+desc.immersivepetroleum.flavour.upgrades.paddles=Can paddle Motorboat when out of fuel
 
 
 
@@ -101,9 +103,10 @@ ie.manual.entry.speedboat.name=Motorboat
 ie.manual.entry.speedboat.subtext=Wave rider
 ie.manual.entry.speedboat0=You can now travel the seas at high speed with the help of the Motorboat. The Motorboat runs off of <link;distillationTower;§n§oGasoline§r> which may be added with a bucket or <link;jerrycan;§n§oJerrycan§r>. Gasoline is consumed while driving the Motorboat forwards or backwards. Holding the jump key will increase the speed of the boat, albeit at the cost of higher fuel consumption and increased turn radius.
 ie.manual.entry.speedboat1=Like other devices, the Motorboat can be modified in the <link;workbench;§o§nEngineer's §o§nWorkbench§r>.<br><br>The §6Expanded Fuel Tank§r allows the Motorboat to hold twice the amount of fuel.
-ie.manual.entry.speedboat2=A set of §6Manuevering Rudders§r gives the Motorboat the ability to change direction much more quickly, drastically improving handling. With this upgrade, the boat's turning radius is impressively lowered.
+ie.manual.entry.speedboat2=A set of §6Maneuvering Rudders§r gives the Motorboat the ability to change direction much more quickly, drastically improving handling. With this upgrade, the boat's turning radius is impressively lowered.
 ie.manual.entry.speedboat3=Navigation through colder climates becomes a trivial task with the §6Icebreaker Bow§r, which allows the Motorboat to ram through ice. In addition to its mobility benefits, the Bow allows the Motorboat to damage monsters that it runs into.
 ie.manual.entry.speedboat4=If you seek to explore beyond this realm, or simply wish to make your Motorboat more resistant to the elements, consider installing a §6Reinforced Hull§r. The steel hull grants both increased health and fire resistance to the boat, allowing for navigation of the Nether's vast lava lakes.
+ie.manual.entry.speedboat5=Equipping your Motorboat with a pair of §6Emergency Paddles§r means that running out of fuel is no longer the disaster it once was. If the fuel tank on the boat is empty, you can paddle it like a traditional rowboat.
 
 ie.manual.entry.lubricant.name=Lubricant
 ie.manual.entry.lubricant.subtext=Slip and slide

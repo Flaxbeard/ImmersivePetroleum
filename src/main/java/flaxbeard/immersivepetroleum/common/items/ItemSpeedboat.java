@@ -5,8 +5,8 @@ package flaxbeard.immersivepetroleum.common.items;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
@@ -22,7 +22,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import blusunrize.immersiveengineering.common.gui.IESlot;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 
 public class ItemSpeedboat extends ItemIPUpgradableTool
@@ -93,6 +97,7 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 				EntitySpeedboat entityboat = new EntitySpeedboat(worldIn, raytraceresult.hitVec.x, flag1 ? raytraceresult.hitVec.y - 0.12D : raytraceresult.hitVec.y, raytraceresult.hitVec.z);
 				entityboat.rotationYaw = playerIn.rotationYaw;
 				entityboat.setUpgrades(this.getContainedItems(itemstack));
+				entityboat.readTank(itemstack.getTagCompound());
 
 				if (!worldIn.getCollisionBoxes(entityboat, entityboat.getEntityBoundingBox().grow(-0.1D)).isEmpty())
 				{
@@ -138,6 +143,18 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 	public int getInternalSlots(ItemStack stack)
 	{
 		return 4;
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
+	{
+		if (ItemNBTHelper.hasKey(stack, "tank"))
+		{
+			FluidStack fs = FluidStack.loadFluidStackFromNBT(ItemNBTHelper.getTagCompound(stack, "tank"));
+			if (fs!=null)
+				tooltip.add(fs.getLocalizedName()+": "+fs.amount+"mB");
+		}
 	}
 
 }

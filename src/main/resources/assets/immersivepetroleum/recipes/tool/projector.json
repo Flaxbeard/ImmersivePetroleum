@@ -1,0 +1,26 @@
+{
+  "type": "immersiveengineering:ingredient_shaped",
+  "quarter_turn": false,
+  "result": {
+    "item": "immersivepetroleum:schematic"
+  },
+  "pattern": [
+    "S  ",
+    "IL ",
+    " IW"
+  ],
+  "key": {
+    "I": {
+      "item": "#ingotIron"
+    },
+    "W": {
+      "item": "#plankTreatedWood"
+    },
+    "L": {
+      "item": "#lantern"
+    },
+    "S": {
+      "item": "#blockGlassColorless"
+    }
+  }
+}

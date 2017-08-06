@@ -3,12 +3,9 @@ package flaxbeard.immersivepetroleum.common.items;
 
 
 import java.util.List;
-import java.util.Locale;
 
-import blusunrize.immersiveengineering.common.gui.IESlot;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import net.minecraft.block.Block;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -24,11 +21,12 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import blusunrize.immersiveengineering.common.gui.IESlot;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 
 public class ItemSpeedboat extends ItemIPUpgradableTool
@@ -39,8 +37,9 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 	}
 	
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
+		ItemStack itemstack = playerIn.getHeldItem(handIn);
 		float f = 1.0F;
 		float f1 = playerIn.prevRotationPitch + (playerIn.rotationPitch - playerIn.prevRotationPitch) * 1.0F;
 		float f2 = playerIn.prevRotationYaw + (playerIn.rotationYaw - playerIn.prevRotationYaw) * 1.0F;
@@ -60,13 +59,13 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 
 		if (raytraceresult == null)
 		{
-			return new ActionResult(EnumActionResult.PASS, itemStackIn);
+			return new ActionResult(EnumActionResult.PASS, itemstack);
 		}
 		else
 		{
 			Vec3d vec3d2 = playerIn.getLook(1.0F);
 			boolean flag = false;
-			List<Entity> list = worldIn.getEntitiesWithinAABBExcludingEntity(playerIn, playerIn.getEntityBoundingBox().addCoord(vec3d2.xCoord * 5.0D, vec3d2.yCoord * 5.0D, vec3d2.zCoord * 5.0D).expandXyz(1.0D));
+			List<Entity> list = worldIn.getEntitiesWithinAABBExcludingEntity(playerIn, playerIn.getEntityBoundingBox().expand(vec3d2.x * 5.0D, vec3d2.y * 5.0D, vec3d2.z * 5.0D).grow(1.0D));
 
 			for (int i = 0; i < list.size(); ++i)
 			{
@@ -74,9 +73,9 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 
 				if (entity.canBeCollidedWith())
 				{
-					AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expandXyz((double)entity.getCollisionBorderSize());
+					AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().grow((double)entity.getCollisionBorderSize());
 
-					if (axisalignedbb.isVecInside(vec3d))
+					if (axisalignedbb.contains(vec3d))
 					{
 						flag = true;
 					}
@@ -85,38 +84,39 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 
 			if (flag)
 			{
-				return new ActionResult(EnumActionResult.PASS, itemStackIn);
+				return new ActionResult(EnumActionResult.PASS, itemstack);
 			}
 			else if (raytraceresult.typeOfHit != RayTraceResult.Type.BLOCK)
 			{
-				return new ActionResult(EnumActionResult.PASS, itemStackIn);
+				return new ActionResult(EnumActionResult.PASS, itemstack);
 			}
 			else
 			{
 				Block block = worldIn.getBlockState(raytraceresult.getBlockPos()).getBlock();
 				boolean flag1 = block == Blocks.WATER || block == Blocks.FLOWING_WATER;
-				EntitySpeedboat entityboat = new EntitySpeedboat(worldIn, raytraceresult.hitVec.xCoord, flag1 ? raytraceresult.hitVec.yCoord - 0.12D : raytraceresult.hitVec.yCoord, raytraceresult.hitVec.zCoord);
+				EntitySpeedboat entityboat = new EntitySpeedboat(worldIn, raytraceresult.hitVec.x, flag1 ? raytraceresult.hitVec.y - 0.12D : raytraceresult.hitVec.y, raytraceresult.hitVec.z);
 				entityboat.rotationYaw = playerIn.rotationYaw;
-				entityboat.setUpgrades(this.getContainedItems(itemStackIn));
-				entityboat.readTank(itemStackIn.getTagCompound());
-				if (!worldIn.getCollisionBoxes(entityboat, entityboat.getEntityBoundingBox().expandXyz(-0.1D)).isEmpty())
+				entityboat.setUpgrades(this.getContainedItems(itemstack));
+				entityboat.readTank(itemstack.getTagCompound());
+
+				if (!worldIn.getCollisionBoxes(entityboat, entityboat.getEntityBoundingBox().grow(-0.1D)).isEmpty())
 				{
-					return new ActionResult(EnumActionResult.FAIL, itemStackIn);
+					return new ActionResult(EnumActionResult.FAIL, itemstack);
 				}
 				else
 				{
 					if (!worldIn.isRemote)
 					{
-						worldIn.spawnEntityInWorld(entityboat);
+						worldIn.spawnEntity(entityboat);
 					}
 
 					if (!playerIn.capabilities.isCreativeMode)
 					{
-						--itemStackIn.stackSize;
+						itemstack.shrink(1);
 					}
 
 					playerIn.addStat(StatList.getObjectUseStats(this));
-					return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
+					return new ActionResult(EnumActionResult.SUCCESS, itemstack);
 				}
 			}
 		}
@@ -145,15 +145,15 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 		return 4;
 	}
 	
-
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean advInfo)
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
 	{
 		if (ItemNBTHelper.hasKey(stack, "tank"))
 		{
 			FluidStack fs = FluidStack.loadFluidStackFromNBT(ItemNBTHelper.getTagCompound(stack, "tank"));
 			if (fs!=null)
-				list.add(fs.getLocalizedName()+": "+fs.amount+"mB");
+				tooltip.add(fs.getLocalizedName()+": "+fs.amount+"mB");
 		}
 	}
 

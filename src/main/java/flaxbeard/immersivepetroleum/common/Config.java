@@ -31,7 +31,7 @@ public class Config
 		@Comment({"Display chunk border while holding Core Samples, default=true"})
 		public static boolean sample_displayBorder = true;
 		
-		public static Extraction extraction = new Extraction();
+		public static Extraction extraction;
 
 		public static class Extraction
 		{
@@ -46,9 +46,6 @@ public class Config
 			public static float reservoir_chance = 0.5F;
 			
 			
-			@Comment({"Disable formation and manual page for Pumpjack"})
-			public static boolean disable_pumpjack = false;
-			
 			@Comment({"The Flux the Pumpjack requires each tick to pump, default=1024"})
 			public static int pumpjack_consumption = 1024;
 			
@@ -62,13 +59,10 @@ public class Config
 			public static int pipe_check_ticks = 100;
 		}
 
-		public static Refining refining = new Refining();
+		public static Refining refining;
 
 		public static class Refining
 		{
-			@Comment({"Disable formation and manual page for Distillation Tower"})
-			public static boolean disable_tower = false;
-			
 			@Comment({"A modifier to apply to the energy costs of every Distillation Tower recipe, default=1"})
 			public static float distillationTower_energyModifier = 1;
 
@@ -85,13 +79,10 @@ public class Config
 			};
 		}
 		
-		public static Generation generation = new Generation();
+		public static Generation generation;
 		
 		public static class Generation
 		{
-			@Comment({"Disable crafting and manual page for Portable Generator"})
-			public static boolean disable_portable_gen = false;
-			
 			@Comment({"List of Portable Generator fuels. Format: fluid_name, mb_used_per_tick, flux_produced_per_tick"})
 			public static String[] fuels = new String[] {
 				"gasoline, 5, 256"
@@ -99,28 +90,21 @@ public class Config
 			
 		}
 				
-		public static Miscellaneous misc = new Miscellaneous();
+		public static Miscellaneous misc;
 				
 		public static class Miscellaneous
 		{
-			@Comment({"Disable crafting and manual page for Motorboat"})
-			public static boolean disable_motorboat = false;
-			
 			@Comment({"List of Motorboat fuels. Format: fluid_name, mb_used_per_tick"})
 			public static String[] boat_fuels = new String[] {
 				"gasoline, 1"
 			};
-			
-			@Comment({"Disable lubricant can and automatic lubricator crafting and manual page"})
-			public static boolean disable_lubricant = false;
 		}
 		
-		public static Tools tools = new Tools();
+		public static Tools tools;
 		
 		public static class Tools
 		{
-			@Comment({"Disable crafting recipe and manual page for Projectors"})
-			public static boolean disable_projector = false;
+
 		}
 	}
 

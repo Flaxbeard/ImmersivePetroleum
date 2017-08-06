@@ -1,0 +1,23 @@
+{
+  "type": "forge:ore_shaped",
+  "quarter_turn": false,
+  "result": {
+    "item": "immersivepetroleum:upgrades",
+    "data": 2,
+    "count": 1
+  },
+  "pattern": [
+    " P ",
+    "PTP",
+    " P "
+  ],
+  "key": {
+    "P": {
+      "item": "#plateIron"
+    },
+    "T": {
+      "item": "immersiveengineering:metal_device0",
+      "data": 4
+    }
+  }
+}

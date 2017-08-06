@@ -48,7 +48,7 @@ public class ContainerDistillationTower extends ContainerIEBase<TileEntityDistil
 			@Override
 			public boolean isItemValid(ItemStack itemStack)
 			{
-				return super.isItemValid(itemStack) || (itemStack!=null && itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null));
+				return super.isItemValid(itemStack) || (!itemStack.isEmpty() && itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null));
 			}
 		});
 		

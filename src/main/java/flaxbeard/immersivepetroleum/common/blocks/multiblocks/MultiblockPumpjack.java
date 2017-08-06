@@ -1,10 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -25,6 +21,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecor
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.blocks.wooden.BlockTypes_WoodenDecoration;
 import blusunrize.immersiveengineering.common.util.Utils;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_IPMetalMultiblock;
@@ -72,6 +69,10 @@ public class MultiblockPumpjack implements IMultiblock
 					{
 						structure[h][l][w] = new ItemStack(IEContent.blockStorage,1,BlockTypes_MetalsIE.STEEL.getMeta());
 					}
+					
+					if (structure[h][l][w] == null) {
+						structure[h][l][w] = ItemStack.EMPTY;
+					}
 
 				}
 	}
@@ -93,17 +94,17 @@ public class MultiblockPumpjack implements IMultiblock
 		}
 		else if (iterator == 11)
 		{
-			ImmersiveEngineering.proxy.drawSpecificFluidPipe("000021");
+			ImmersiveEngineering.proxy.drawSpecificFluidPipe("120000");
 			return true;
 		}
 		else if (iterator == 9)
 		{
-			ImmersiveEngineering.proxy.drawSpecificFluidPipe("000012");
+			ImmersiveEngineering.proxy.drawSpecificFluidPipe("210000");
 			return true;
 		}
 		else if (iterator == 13)
 		{
-			ImmersiveEngineering.proxy.drawSpecificFluidPipe("001200");
+			ImmersiveEngineering.proxy.drawSpecificFluidPipe("002100");
 			return true;
 		}
 		return false;
@@ -111,7 +112,7 @@ public class MultiblockPumpjack implements IMultiblock
 	@Override
 	public IBlockState getBlockstateFromStack(int index, ItemStack stack)
 	{
-		if(stack!=null)
+		if(!stack.isEmpty() && stack.getItem() instanceof ItemBlock)
 		{
 			return ((ItemBlock)stack.getItem()).getBlock().getStateFromMeta(stack.getItemDamage());
 		}
@@ -140,21 +141,7 @@ public class MultiblockPumpjack implements IMultiblock
 			te = new TileEntityPumpjack.TileEntityPumpjackParent();
 		}
 		
-		GlStateManager.pushMatrix();
-		GlStateManager.rotate(-90, 0, 1, 0);
-		GlStateManager.translate(1, 1, -2);
-		
-		float pt = 0;
-		if (Minecraft.getMinecraft().thePlayer != null)
-		{
-			((TileEntityPumpjack.TileEntityPumpjackParent) te).activeTicks = Minecraft.getMinecraft().thePlayer.ticksExisted;
-			pt = Minecraft.getMinecraft().getRenderPartialTicks();
-		}
-		
-		TileEntitySpecialRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getSpecialRenderer((TileEntity) te);
-		
-		tesr.renderTileEntityAt((TileEntity) te, 0, 0, 0, pt, 0);
-		GlStateManager.popMatrix();
+		ImmersivePetroleum.proxy.renderTile((TileEntity) te);
 	}
 
 	@Override
@@ -172,8 +159,6 @@ public class MultiblockPumpjack implements IMultiblock
 	@Override
 	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player)
 	{
-		if (IPConfig.Extraction.disable_pumpjack)
-			return false;
 		side = side.getOpposite();
 		if(side==EnumFacing.UP||side==EnumFacing.DOWN)
 			side = EnumFacing.fromAngle(player.rotationYaw);

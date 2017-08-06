@@ -213,8 +213,8 @@ public class ModelSpeedboat extends ModelBase implements IMultipassModel
 	        float f = 40.0F;
 	        float f1 = boat.getRowingTime(paddle, limbSwing) * 40.0F;
 	        ModelRenderer modelrenderer = this.paddles[paddle];
-	        modelrenderer.rotateAngleX = (float)MathHelper.denormalizeClamp(-1.0471975803375244D, -0.2617993950843811D, (double)((MathHelper.sin(-f1) + 1.0F) / 2.0F));
-	        modelrenderer.rotateAngleY = (float)MathHelper.denormalizeClamp(-(Math.PI / 4D), (Math.PI / 4D), (double)((MathHelper.sin(-f1 + 1.0F) + 1.0F) / 2.0F));
+	        modelrenderer.rotateAngleX = (float)MathHelper.clampedLerp(-1.0471975803375244D, -0.2617993950843811D, (double)((MathHelper.sin(-f1) + 1.0F) / 2.0F));
+	        modelrenderer.rotateAngleY = (float)MathHelper.clampedLerp(-(Math.PI / 4D), (Math.PI / 4D), (double)((MathHelper.sin(-f1 + 1.0F) + 1.0F) / 2.0F));
 	       
 	        modelrenderer.setRotationPoint(3.0F, -5.0F, 9.0F);
 
@@ -276,6 +276,7 @@ public class ModelSpeedboat extends ModelBase implements IMultipassModel
             this.boatSides[i].render(scale);
         }
         
+
         float f1 = ((EntitySpeedboat) entityIn).getRowingTime(0, limbSwing) * 100.0F;
         this.propeller.rotateAngleX = entityboat.isEmergency() ? 0 : f1;
         float pr = entityboat.isEmergency() ? 0f : entityboat.propellerRotation;
@@ -288,8 +289,9 @@ public class ModelSpeedboat extends ModelBase implements IMultipassModel
         //this.coreSampleBoat.render(scale);
         
         GlStateManager.pushMatrix();
+
         if (entityboat.isBeingRidden() && !entityboat.isEmergency())
-        	GlStateManager.translate((entityIn.worldObj.rand.nextFloat() - 0.5F) * 0.01F, (entityIn.worldObj.rand.nextFloat() - 0.5F) * 0.01F, (entityIn.worldObj.rand.nextFloat() - 0.5F) * 0.01F);
+        	GlStateManager.translate((entityIn.world.rand.nextFloat() - 0.5F) * 0.01F, (entityIn.world.rand.nextFloat() - 0.5F) * 0.01F, (entityIn.world.rand.nextFloat() - 0.5F) * 0.01F);
         this.motor.render(scale);
         GlStateManager.popMatrix();
         

@@ -5,10 +5,13 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.client.model.ModelDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
 
+@SideOnly(Side.CLIENT)
 public class MultiblockDistillationTowerRenderer extends TileEntitySpecialRenderer<TileEntityDistillationTower.TileEntityDistillationTowerParent>
 {
 	private static ModelDistillationTower model = new ModelDistillationTower(false);
@@ -26,7 +29,7 @@ public class MultiblockDistillationTowerRenderer extends TileEntitySpecialRender
     }
 	
 	@Override
-	public void renderTileEntityAt(TileEntityDistillationTower.TileEntityDistillationTowerParent te, double x, double y, double z, float partialTicks, int destroyStage)
+	public void render(TileEntityDistillationTower.TileEntityDistillationTowerParent te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
 	{
 		if (te != null)
 		{
@@ -57,7 +60,7 @@ public class MultiblockDistillationTowerRenderer extends TileEntitySpecialRender
 				GlStateManager.translate(0, 0, -3);
 			}
 			
-			float ticks = Minecraft.getMinecraft().thePlayer.ticksExisted + partialTicks;
+			float ticks = Minecraft.getMinecraft().player.ticksExisted + partialTicks;
 
 			if (te.mirrored)
 			{

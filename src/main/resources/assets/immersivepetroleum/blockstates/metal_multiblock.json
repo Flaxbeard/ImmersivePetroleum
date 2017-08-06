@@ -49,33 +49,19 @@
 		{
 			"false":{},
 			"true":{
-				"model": "builtin/generated"
 			}
 		},
 		"_1dynamicrender":
 		{
 			"false":{},
 			"true":{
-				"model": "immersiveengineering:metalMultiblock/bottlingMachine_animated.obj.ie"
 			}
 		},
 		"boolean0": //Mirror
 		{
 			"false":{
-				"model": "forge:multi-layer",
-				"custom": {
-					"base": "immersiveengineering:metalMultiblock_bottlingMachine#normal",
-					"Solid": "immersiveengineering:metalMultiblock_bottlingMachine#normal",
-					"Translucent": "immersiveengineering:metalMultiblock_bottlingMachine#glass"
-				}
 			},
 			"true":{
-				"model": "forge:multi-layer",
-				"custom": {
-					"base": "immersiveengineering:metalMultiblock_bottlingMachine#mirrored",
-					"Solid": "immersiveengineering:metalMultiblock_bottlingMachine#mirrored",
-					"Translucent": "immersiveengineering:metalMultiblock_bottlingMachine#glass"
-				}
 			}
 		}
 	}

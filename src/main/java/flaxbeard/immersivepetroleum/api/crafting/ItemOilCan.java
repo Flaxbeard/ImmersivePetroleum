@@ -3,9 +3,9 @@ package flaxbeard.immersivepetroleum.api.crafting;
 import java.util.List;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityIronGolem;
-import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
@@ -17,11 +17,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -44,16 +44,16 @@ public class ItemOilCan extends ItemIPBase
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean adv)
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
 	{
 		FluidStack fs = FluidUtil.getFluidContained(stack);
 		if (fs!=null)
 		{
 			TextFormatting rarity = fs.getFluid().getRarity() == EnumRarity.COMMON ? TextFormatting.GRAY : fs.getFluid().getRarity().rarityColor;
-			list.add(rarity + fs.getLocalizedName() + TextFormatting.GRAY+": " +fs.amount + "/" + 8000 + "mB");
+			tooltip.add(rarity + fs.getLocalizedName() + TextFormatting.GRAY+": " +fs.amount + "/" + 8000 + "mB");
 		}
 		else
-			list.add(I18n.format(Lib.DESC_FLAVOUR + "drill.empty"));
+			tooltip.add(I18n.format(Lib.DESC_FLAVOUR + "drill.empty"));
 	}
 	
 	@Override
@@ -96,14 +96,17 @@ public class ItemOilCan extends ItemIPBase
 	}
 
 	@Override
-	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
+    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
 	{
+		ItemStack stack = player.getHeldItem(hand);
 		EnumActionResult ret = EnumActionResult.PASS;
 		TileEntity tileEntity = world.getTileEntity(pos);
 		if (tileEntity != null && tileEntity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null))
 		{
-			if (FluidUtil.interactWithFluidHandler(stack, tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null), player))
+			if (FluidUtil.interactWithFluidHandler(player, hand, tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)))
+			{
 				ret = EnumActionResult.SUCCESS;
+			}
 			else
 				ret = EnumActionResult.FAIL;
 		}

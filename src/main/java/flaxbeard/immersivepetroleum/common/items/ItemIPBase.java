@@ -1,24 +1,14 @@
 package flaxbeard.immersivepetroleum.common.items;
 
-import java.util.List;
-
-import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import blusunrize.immersiveengineering.common.items.IEItemInterfaces.IColouredItem;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 
 public class ItemIPBase extends Item implements IColouredItem
 {
@@ -36,7 +26,7 @@ public class ItemIPBase extends Item implements IColouredItem
 		this.itemName = name;
 		this.subNames = subNames!=null&&subNames.length>0?subNames:null;
 		this.isMetaHidden = new boolean[this.subNames!=null?this.subNames.length:1];
-		ImmersivePetroleum.register(this, name);
+		//ImmersivePetroleum.register(this, name);
 		IPContent.registeredIPItems.add(this);
 	}
 
@@ -46,16 +36,17 @@ public class ItemIPBase extends Item implements IColouredItem
 	}
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs tab, List list)
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list)
 	{
-		if(getSubNames()!=null)
-		{
-			for(int i=0;i<getSubNames().length;i++)
-				if(!isMetaHidden(i))
-					list.add(new ItemStack(this,1,i));
-		}
-		else
-			list.add(new ItemStack(this));
+		if (this.isInCreativeTab(tab))
+			if (getSubNames() != null)
+			{
+				for (int i = 0; i < getSubNames().length; i++)
+					if (!isMetaHidden(i))
+						list.add(new ItemStack(this,1,i));
+			}
+			else
+				list.add(new ItemStack(this));
 
 	}
 	@Override
@@ -93,5 +84,4 @@ public class ItemIPBase extends Item implements IColouredItem
 		this.registerSubModels = register;
 		return this;
 	}
-
 }

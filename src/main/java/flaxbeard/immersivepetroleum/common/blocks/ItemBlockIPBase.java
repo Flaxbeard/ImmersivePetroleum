@@ -8,15 +8,16 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -37,6 +38,8 @@ public class ItemBlockIPBase extends ItemBlock
 		if(((BlockIPBase)b).enumValues.length>1)
 			setHasSubtypes(true);
 	}
+	
+	
 
 	@Override
 	public int getMetadata (int damageValue)
@@ -44,9 +47,10 @@ public class ItemBlockIPBase extends ItemBlock
 		return damageValue;
 	}
 	@Override
-	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> itemList)
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> itemList)
 	{
-		this.block.getSubBlocks(item, tab, itemList);
+		if (this.isInCreativeTab(tab))
+			this.block.getSubBlocks(tab, itemList);
 	}
 	@Override
 	public String getUnlocalizedName(ItemStack stack)
@@ -62,7 +66,7 @@ public class ItemBlockIPBase extends ItemBlock
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean advInfo)
+	public void addInformation(ItemStack stack, World worldIn, List<String> list, ITooltipFlag advInfo)
 	{
 		if(((BlockIPBase)block).hasFlavour(stack))
 		{
@@ -70,7 +74,7 @@ public class ItemBlockIPBase extends ItemBlock
 			String flavourKey = "desc." + ImmersivePetroleum.MODID + ".flavor." + ((BlockIPBase)this.block).name+"."+subName;
 			list.add(TextFormatting.GRAY.toString()+ I18n.format(flavourKey));
 		}
-		super.addInformation(stack, player, list, advInfo);
+		super.addInformation(stack, worldIn, list, advInfo);
 		if(ItemNBTHelper.hasKey(stack, "energyStorage"))
 			list.add(I18n.format("desc.immersiveengineering.info.energyStored", ItemNBTHelper.getInt(stack, "energyStorage")));
 		if(ItemNBTHelper.hasKey(stack, "tank"))
@@ -95,22 +99,23 @@ public class ItemBlockIPBase extends ItemBlock
 		return ret;
 	}
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
+	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
+		ItemStack stack = player.getHeldItem(hand);
 		IBlockState iblockstate = world.getBlockState(pos);
 		Block block = iblockstate.getBlock();
 		if (!block.isReplaceable(world, pos))
 			pos = pos.offset(side);
-		if(stack.stackSize > 0 && player.canPlayerEdit(pos, side, stack) && canBlockBePlaced(world, pos, side, stack))
+		if(stack.getCount() > 0 && player.canPlayerEdit(pos, side, stack) && canBlockBePlaced(world, pos, side, stack))
 		{
 			int i = this.getMetadata(stack.getMetadata());
-			IBlockState iblockstate1 = this.block.onBlockPlaced(world, pos, side, hitX, hitY, hitZ, i, player);
+			IBlockState iblockstate1 = this.block.getStateForPlacement(world, pos, side, hitX, hitY, hitZ, i, player);
 			if(placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, iblockstate1))
 			{
 				SoundType soundtype = world.getBlockState(pos).getBlock().getSoundType(world.getBlockState(pos), world, pos, player);
 				world.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 				if(!player.capabilities.isCreativeMode)
-					--stack.stackSize;
+					stack.shrink(1);
 			}
 			return EnumActionResult.SUCCESS;
 		}
@@ -137,6 +142,6 @@ public class ItemBlockIPBase extends ItemBlock
 		Block block = w.getBlockState(pos).getBlock();
 		AxisAlignedBB axisalignedbb = blockIn.getCollisionBoundingBox( blockIn.getStateFromMeta(stack.getItemDamage()), w, pos);
 		if (axisalignedbb != null && !w.checkNoEntityCollision(axisalignedbb.offset(pos), null)) return false;
-		return block.isReplaceable(w, pos) && blockIn.canReplace(w, pos, side, stack);
+		return block.isReplaceable(w, pos) && blockIn.canPlaceBlockOnSide(w, pos, side);
 	}
 }

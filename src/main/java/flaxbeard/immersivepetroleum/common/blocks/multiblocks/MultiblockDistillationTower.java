@@ -1,12 +1,8 @@
 package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -24,11 +20,11 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecor
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration1;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.util.Utils;
-import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_IPMetalMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 
 public class MultiblockDistillationTower implements IMultiblock
 {
@@ -39,6 +35,7 @@ public class MultiblockDistillationTower implements IMultiblock
 		for(int h=0;h<16;h++)
 			for(int l=0;l<4;l++)
 				for(int w=0;w<4;w++)
+				{
 					
 					if (h > 0 && l > 0 && l < 3 && w > 0 && w < 3)
 					{
@@ -74,6 +71,11 @@ public class MultiblockDistillationTower implements IMultiblock
 						if (w == 0 && l == 2)
 							structure[h][w][3-l] = new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
 					}
+		
+					if (structure[h][w][3-l] == null) {
+						structure[h][w][3-l] = ItemStack.EMPTY;
+					}
+				}
 	}
 
 	@Override
@@ -121,8 +123,8 @@ public class MultiblockDistillationTower implements IMultiblock
 				|| (iterator < 100 && iterator > 29 && (iterator - 29 - 17) % 34 == 0))
 		{
 			GlStateManager.pushMatrix();
-			GlStateManager.translate(0, 1, 0);
-			GlStateManager.rotate(90, 1, 0, 0);
+			//GlStateManager.translate(0, 1, 0);
+			//GlStateManager.rotate(90, 1, 0, 0);
 			ImmersiveEngineering.proxy.drawSpecificFluidPipe("000011");
 			GlStateManager.popMatrix();
 			return true;
@@ -132,7 +134,7 @@ public class MultiblockDistillationTower implements IMultiblock
 	@Override
 	public IBlockState getBlockstateFromStack(int index, ItemStack stack)
 	{
-		if(stack!=null)
+		if(!stack.isEmpty() && stack.getItem() instanceof ItemBlock)
 		{
 			return ((ItemBlock)stack.getItem()).getBlock().getStateFromMeta(stack.getItemDamage());
 		}
@@ -160,15 +162,8 @@ public class MultiblockDistillationTower implements IMultiblock
 		{
 			 te = new TileEntityDistillationTower.TileEntityDistillationTowerParent();
 		}
-		GlStateManager.pushMatrix();
-		GlStateManager.rotate(-90, 0, 1, 0);
-		GlStateManager.translate(0, 1, -4);
 		
-		
-		TileEntitySpecialRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getSpecialRenderer((TileEntity) te);
-		
-		tesr.renderTileEntityAt((TileEntity) te, 0, 0, 0, 0, 0);
-		GlStateManager.popMatrix();
+		ImmersivePetroleum.proxy.renderTile((TileEntity) te);
 	}
 
 	@Override
@@ -186,8 +181,7 @@ public class MultiblockDistillationTower implements IMultiblock
 	@Override
 	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player)
 	{
-		if (IPConfig.Refining.disable_tower)
-			return false;
+
 		if(side==EnumFacing.UP||side==EnumFacing.DOWN)
 			side = EnumFacing.fromAngle(player.rotationYaw);
 

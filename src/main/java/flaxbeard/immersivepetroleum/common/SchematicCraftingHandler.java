@@ -3,6 +3,7 @@ package flaxbeard.immersivepetroleum.common;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.RecipeSorter;
 import blusunrize.immersiveengineering.common.IEContent;
@@ -10,7 +11,7 @@ import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.items.ItemProjector;
 
-public class SchematicCraftingHandler implements IRecipe
+public class SchematicCraftingHandler extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
 {
 	static
 	{
@@ -30,19 +31,13 @@ public class SchematicCraftingHandler implements IRecipe
 	}
 
 	@Override
-	public int getRecipeSize()
-	{
-		return 0;
-	}
-
-	@Override
 	public ItemStack getRecipeOutput()
 	{
-		return null;
+		return ItemStack.EMPTY;
 	}
 
 	@Override
-	public ItemStack[] getRemainingItems(InventoryCrafting inv)
+	public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
 	{
 		return new SchematicResult(inv).remaining;
 	}
@@ -50,7 +45,7 @@ public class SchematicCraftingHandler implements IRecipe
 	private class SchematicResult
 	{
 		private final boolean canCraft;
-		private final ItemStack[] remaining;
+		private final NonNullList<ItemStack> remaining;
 		private final ItemStack output;
 		
 		private ItemStack manual;
@@ -58,12 +53,12 @@ public class SchematicCraftingHandler implements IRecipe
 
 		public SchematicResult(InventoryCrafting inv)
 		{
-			this.manual = null;
+			this.manual = ItemStack.EMPTY;
 			this.canCraft = process(inv);
 			if (canCraft)
 			{
-				remaining = new ItemStack[9];
-				remaining[manualStack] = ItemStack.copyItemStack(manual);
+				remaining = NonNullList.withSize(9, ItemStack.EMPTY);
+				remaining.set(manualStack, manual.copy());
 				String last = "";
 				last = ItemNBTHelper.getString(manual, "lastMultiblock");
 				ItemStack op = new ItemStack(IPContent.itemProjector, 1, 0);
@@ -73,8 +68,8 @@ public class SchematicCraftingHandler implements IRecipe
 			}
 			else
 			{
-				remaining = new ItemStack[9];
-				output = null;
+				remaining = NonNullList.withSize(9, ItemStack.EMPTY);
+				output = ItemStack.EMPTY;;
 			}
 		}
 		
@@ -84,11 +79,11 @@ public class SchematicCraftingHandler implements IRecipe
 			for (int i = 0; i < inv.getSizeInventory(); i++)
 			{
 				ItemStack stack = inv.getStackInSlot(i);
-				if (stack != null)
-				{					
+				if (!stack.isEmpty())
+				{				
 					if (stack.getItem() == IEContent.itemTool && stack.getItemDamage() == 3)
 					{
-						if (manual == null && ItemNBTHelper.hasKey(stack, "lastMultiblock"))
+						if (manual.isEmpty() && ItemNBTHelper.hasKey(stack, "lastMultiblock"))
 						{
 							manual = stack;
 							manualStack = i;
@@ -116,8 +111,14 @@ public class SchematicCraftingHandler implements IRecipe
 					
 				}
 			}
-			return manual != null && hasPaper;
+			return !manual.isEmpty() && hasPaper;
 		}
+	}
+
+	@Override
+	public boolean canFit(int width, int height)
+	{
+		return width >= 2 && height >= 2;
 	}
 
 }

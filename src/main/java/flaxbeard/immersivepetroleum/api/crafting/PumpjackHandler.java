@@ -16,6 +16,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
@@ -252,9 +253,15 @@ public class PumpjackHandler
 		}
 	}
 	
+	private static HashMap<Biome, String> biomeNames = new HashMap<Biome, String>();
 	public static String getBiomeName(Biome biome)
 	{
-		return biome.getBiomeName().replace(" ", "").replace("_", "").toLowerCase();
+		if (!biomeNames.containsKey(biome))
+		{
+			String biomeName = ReflectionHelper.getPrivateValue(Biome.class, biome, 17);
+			biomeNames.put(biome, biomeName.replace(" ", "").replace("_", "").toLowerCase());
+		}
+		return biomeNames.get(biome);
 	}
 	
 	public static String convertConfigName(String str)
@@ -344,8 +351,8 @@ public class PumpjackHandler
 			{
 				for (String white : biomeWhitelist)
 				{
-					for (BiomeDictionary.Type biomeType : BiomeDictionary.getTypesForBiome(biome))
-						if (convertConfigName(white).equals(biomeType.name()))
+					for (BiomeDictionary.Type biomeType : BiomeDictionary.getTypes(biome))
+						if (convertConfigName(white).equals(biomeType.getName()))
 							return true;
 				}
 				return false;
@@ -354,8 +361,8 @@ public class PumpjackHandler
 			{
 				for (String black : biomeBlacklist)
 				{
-					for (BiomeDictionary.Type biomeType : BiomeDictionary.getTypesForBiome(biome))
-						if (convertConfigName(black).equals(biomeType.name()))
+					for (BiomeDictionary.Type biomeType : BiomeDictionary.getTypes(biome))
+						if (convertConfigName(black).equals(biomeType.getName()))
 							return false;
 				}
 				return true;

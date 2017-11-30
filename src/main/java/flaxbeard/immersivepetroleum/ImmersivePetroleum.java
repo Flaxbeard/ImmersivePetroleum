@@ -42,7 +42,7 @@ import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.util.CommandHandler;
 
-@Mod(modid = ImmersivePetroleum.MODID, version = ImmersivePetroleum.VERSION, dependencies = "required-after:immersiveengineering;")
+@Mod(modid = ImmersivePetroleum.MODID, version = ImmersivePetroleum.VERSION, dependencies = "required-after:immersiveengineering@[0.12,);")
 public class ImmersivePetroleum
 {
 	public static final String MODID = "immersivepetroleum";

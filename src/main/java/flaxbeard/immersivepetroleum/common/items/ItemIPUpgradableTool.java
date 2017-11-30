@@ -8,7 +8,10 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import blusunrize.immersiveengineering.api.tool.IUpgrade;
 import blusunrize.immersiveengineering.api.tool.IUpgradeableTool;
@@ -48,21 +51,24 @@ public abstract class ItemIPUpgradableTool extends ItemIPInternalStorage impleme
 	public void recalculateUpgrades(ItemStack stack)
 	{
 		clearUpgrades(stack);
-		NonNullList<ItemStack> inv = getContainedItems(stack);
+		IItemHandler inv = (IItemHandler)stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (EnumFacing)null);
 		NBTTagCompound upgradeTag = getUpgradeBase(stack).copy();
-		for(int i=0; i<inv.size(); i++)//start at 1, 0 is the drill
-		{
-			ItemStack u = inv.get(i);
-			if(!u.isEmpty() && u.getItem() instanceof IUpgrade)
-			{
-				IUpgrade upg = (IUpgrade)u.getItem();
-				if(upg.getUpgradeTypes(u).contains(upgradeType) && upg.canApplyUpgrades(stack, u))
-					upg.applyUpgrades(stack, u, upgradeTag);
+		if (inv != null) {
+			for(int i = 0; i < inv.getSlots(); ++i) {
+				ItemStack u = inv.getStackInSlot(i);
+				if (!u.isEmpty() && u.getItem() instanceof IUpgrade) {
+					IUpgrade upg = (IUpgrade)u.getItem();
+					if (upg.getUpgradeTypes(u).contains(this.upgradeType) && upg.canApplyUpgrades(stack, u)) {
+						upg.applyUpgrades(stack, u, upgradeTag);
+					}
+				}
 			}
+
+			ItemNBTHelper.setTagCompound(stack, "upgrades", upgradeTag);
+			this.finishUpgradeRecalculation(stack);
 		}
-		ItemNBTHelper.setTagCompound(stack, "upgrades", upgradeTag);
-		finishUpgradeRecalculation(stack);
 	}
+
 	public NBTTagCompound getUpgradeBase(ItemStack stack)
 	{
 		return new NBTTagCompound();

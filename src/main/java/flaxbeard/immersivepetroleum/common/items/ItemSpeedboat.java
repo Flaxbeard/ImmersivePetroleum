@@ -161,4 +161,10 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 		}
 	}
 
+	@Override
+	public int getSlotCount(ItemStack stack) {
+		return 4;
+	}
+
+
 }

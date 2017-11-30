@@ -1,10 +1,25 @@
 package flaxbeard.immersivepetroleum.common.items;
 
+import blusunrize.immersiveengineering.common.util.IELogger;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import blusunrize.immersiveengineering.common.util.Utils;
+import flaxbeard.immersivepetroleum.common.util.IPItemStackHandler;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.play.server.SPacketSetSlot;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import blusunrize.immersiveengineering.api.tool.IInternalStorageItem;
+import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+
+import javax.annotation.Nullable;
 
 public abstract class ItemIPInternalStorage extends ItemIPBase implements IInternalStorageItem 
 {
@@ -12,53 +27,59 @@ public abstract class ItemIPInternalStorage extends ItemIPBase implements IInter
 	{
 		super(name, stackSize, subNames);
 	}
-	
-	@Override
-	public NonNullList<ItemStack> getContainedItems(ItemStack stack)
-	{
-		NonNullList<ItemStack> stackList = NonNullList.withSize(getInternalSlots(stack), ItemStack.EMPTY);
-		if(stack.hasTagCompound())
-		{
-			NBTTagList inv = stack.getTagCompound().getTagList("Inv",10);
-			for (int i=0; i<inv.tagCount(); i++)
-			{
-				NBTTagCompound tag = inv.getCompoundTagAt(i);
-				int slot = tag.getByte("Slot") & 0xFF;
-				if ((slot >= 0) && (slot < stackList.size()))
-					stackList.set(slot, new ItemStack(tag));
-			}
-		}
-		return stackList;
-	}
-	
-	@Override
-	public void setContainedItems(ItemStack stack, NonNullList<ItemStack> stackList)
-	{
-		NBTTagList inv = new NBTTagList();
-		for (int i = 0; i < stackList.size(); i++)
-			if (!stackList.get(i).isEmpty())
-			{
-				NBTTagCompound tag = new NBTTagCompound();
-				tag.setByte("Slot", (byte)i);
-				stackList.get(i).writeToNBT(tag);
-				inv.appendTag(tag);
-			}
-		if (stack.hasTagCompound())
-		{
-			NBTTagList invExisting = stack.getTagCompound().getTagList("Inv",10);
-			for (int i=0; i<invExisting.tagCount(); i++)
-			{
-				NBTTagCompound tag = invExisting.getCompoundTagAt(i);
-				int slot = tag.getByte("Slot") & 0xFF;
-				if ((slot >= stackList.size()) && (slot < stackList.size()))
-					inv.appendTag(tag);
-			}
-		}
-		else
-			stack.setTagCompound(new NBTTagCompound());
-		stack.getTagCompound().setTag("Inv",inv);
+
+	public abstract int getSlotCount(ItemStack var1);
+
+	@Nullable
+	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+		return !stack.isEmpty() ? new IPItemStackHandler(stack) : null;
 	}
 
-	@Override
-	public abstract int getInternalSlots(ItemStack stack);
+	public void setContainedItems(ItemStack stack, NonNullList<ItemStack> inventory) {
+		IItemHandler handler = (IItemHandler)stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (EnumFacing)null);
+		if (handler instanceof IItemHandlerModifiable) {
+			if (inventory.size() != handler.getSlots()) {
+				throw new IllegalArgumentException("Parameter inventory has " + inventory.size() + " slots, capability inventory has " + handler.getSlots());
+			}
+
+			for(int i = 0; i < handler.getSlots(); ++i) {
+				((IItemHandlerModifiable)handler).setStackInSlot(i, (ItemStack)inventory.get(i));
+			}
+		} else {
+			IELogger.warn("No valid inventory handler found for " + stack);
+		}
+
+	}
+
+	public NonNullList<ItemStack> getContainedItems(ItemStack stack) {
+		IItemHandler handler = (IItemHandler)stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (EnumFacing)null);
+		if (handler instanceof IPItemStackHandler) {
+			return ((IPItemStackHandler)handler).getContainedItems();
+		} else if (handler == null) {
+			IELogger.info("No valid inventory handler found for " + stack);
+			return NonNullList.create();
+		} else {
+			IELogger.warn("Inefficiently getting contained items. Why does " + stack + " have a non-IE IItemHandler?");
+			NonNullList<ItemStack> inv = NonNullList.withSize(handler.getSlots(), ItemStack.EMPTY);
+
+			for(int i = 0; i < handler.getSlots(); ++i) {
+				inv.set(i, handler.getStackInSlot(i));
+			}
+
+			return inv;
+		}
+	}
+
+	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
+		if (ItemNBTHelper.hasKey(stack, "Inv")) {
+			NBTTagList list = ItemNBTHelper.getTag(stack).getTagList("Inv", 10);
+			this.setContainedItems(stack, Utils.readInventory(list, this.getSlotCount(stack)));
+			ItemNBTHelper.remove(stack, "Inv");
+			if (entityIn instanceof EntityPlayerMP && !worldIn.isRemote) {
+				((EntityPlayerMP)entityIn).connection.sendPacket(new SPacketSetSlot(-2, itemSlot, stack));
+			}
+		}
+
+	}
 }

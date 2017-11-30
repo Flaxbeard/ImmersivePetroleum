@@ -41,6 +41,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -610,6 +611,9 @@ public class EventHandler
 	{
 		if (event.getEntity() instanceof EntityPlayer)
 		{
+			if (event.getEntity() instanceof FakePlayer) {
+				return;
+			}
 			List<IRecipe> l = new ArrayList<IRecipe>();
 			for (IRecipe recipe : CraftingManager.REGISTRY)
 			{

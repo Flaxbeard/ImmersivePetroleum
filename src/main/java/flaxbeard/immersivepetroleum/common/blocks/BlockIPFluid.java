@@ -26,7 +26,7 @@ public class BlockIPFluid extends BlockFluidClassic
 		super(fluid, material);
 		this.setUnlocalizedName(ImmersivePetroleum.MODID + "." + name);
 		this.setCreativeTab(ImmersivePetroleum.creativeTab);
-		ImmersivePetroleum.registerBlock(this, ItemBlock.class, name);
+		//ImmersivePetroleum.registerBlock(this, ItemBlock.class, name);
 		IPContent.registeredIPBlocks.add(this);
 	}
 

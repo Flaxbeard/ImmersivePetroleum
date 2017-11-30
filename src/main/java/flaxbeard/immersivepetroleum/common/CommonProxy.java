@@ -65,6 +65,7 @@ public class CommonProxy implements IGuiHandler
 		return null;
 	}
 
+	public void renderTile(TileEntity te) {}
 	public void handleEntitySound(SoundEvent soundEvent, Entity e, boolean active, float volume, float pitch)
 	{		
 	}

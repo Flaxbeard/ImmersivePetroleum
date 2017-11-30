@@ -1,0 +1,25 @@
+{
+  "type": "forge:ore_shaped",
+  "quarter_turn": false,
+  "result": {
+    "item": "immersivepetroleum:speedboat",
+    "data": 0,
+    "count": 1
+  },
+  "pattern": [
+    "PME",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "#plankTreatedWood"
+    },
+    "E": {
+      "item": "immersiveengineering:metal_decoration0",
+      "data": 4
+    },
+    "M": {
+      "item": "#componentIron"
+    }
+  }
+}

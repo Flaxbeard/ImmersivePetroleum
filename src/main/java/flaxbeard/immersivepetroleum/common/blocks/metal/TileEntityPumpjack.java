@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -37,6 +38,7 @@ import com.google.common.collect.Lists;
 
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 
 public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPumpjack, IMultiblockRecipe> implements IAdvancedSelectionBounds,IAdvancedCollisionBounds, IGuiTile
@@ -85,22 +87,22 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	
 	public int availableOil()
 	{
-		return PumpjackHandler.getFluidAmount(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return PumpjackHandler.getFluidAmount(world, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
 	public Fluid availableFluid()
 	{
-		return PumpjackHandler.getFluid(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return PumpjackHandler.getFluid(world, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
 	public int getResidualOil()
 	{
-		return PumpjackHandler.getResidualFluid(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return PumpjackHandler.getResidualFluid(world, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
 	public void extractOil(int amount)
 	{
-		PumpjackHandler.depleteFluid(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4, amount);
+		PumpjackHandler.depleteFluid(world, getPos().getX() >> 4, getPos().getZ() >> 4, amount);
 	}
 	
 	private boolean hasPipes()
@@ -110,9 +112,9 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		for (int y = basePos.getY() - 2; y > 0; y--)
 		{
 			BlockPos pos = new BlockPos(basePos.getX(), y, basePos.getZ());
-			IBlockState state = worldObj.getBlockState(pos);
+			IBlockState state = world.getBlockState(pos);
 			if (state.getBlock() == Blocks.BEDROCK) return true;
-			if (!Utils.isBlockAt(worldObj, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta()))
+			if (!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta()))
 			{
 				return false;
 			}
@@ -134,9 +136,9 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		state = null;
 		if (nbt.hasKey("comp"))
 		{
-			ItemStack stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("comp"));
+			ItemStack stack = new ItemStack(nbt.getCompoundTag("comp"));
 			
-			if (stack != null)
+			if (!stack.isEmpty())
 			{
 				Block block = Block.getBlockFromItem(stack.getItem());
 				state = block.getDefaultState();
@@ -171,15 +173,15 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	{
 		//System.out.println("TEST");
 		super.update();
-		if (worldObj.isRemote || isDummy())
+		if(world.isRemote || isDummy())
 		{
-			if (worldObj.isRemote && !isDummy() && state != null && wasActive)
+			if (world.isRemote && !isDummy() && state != null && wasActive)
 			{
 				BlockPos particlePos = this.getPos().offset(facing, 4);
-				float r1 = (worldObj.rand.nextFloat() - .5F) * 2F;
-				float r2 = (worldObj.rand.nextFloat() - .5F) * 2F;
+				float r1 = (world.rand.nextFloat() - .5F) * 2F;
+				float r2 = (world.rand.nextFloat() - .5F) * 2F;
 
-				worldObj.spawnParticle(EnumParticleTypes.BLOCK_DUST, particlePos.getX() + 0.5F, particlePos.getY(), particlePos.getZ() + 0.5F, r1 * 0.04F, 0.25F, r2 * 0.025F, new int[] {Block.getStateId(state)});
+				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, particlePos.getX() + 0.5F, particlePos.getY(), particlePos.getZ() + 0.5F, r1 * 0.04F, 0.25F, r2 * 0.025F, new int[] {Block.getStateId(state)});
 			}
 			if (wasActive && consumePower)
 			{
@@ -210,7 +212,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 					active = true;
 					FluidStack out = new FluidStack(availableFluid(), Math.min(IPConfig.Extraction.pumpjack_speed, oilAmnt));
 					BlockPos outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY().getOpposite(), 2).offset(EnumFacing.DOWN, 1);
-					IFluidHandler output = FluidUtil.getFluidHandler(worldObj, outputPos, facing);
+					IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
 					if(output != null)
 					{
 						int accepted = output.fill(out, false);
@@ -221,9 +223,10 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 							out = Utils.copyFluidStackWithAmount(out, out.amount - drained, false);
 						}
 					}
-					
+
+				
 					outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY(), 2).offset(EnumFacing.DOWN, 1);
-					output = FluidUtil.getFluidHandler(worldObj, outputPos, facing);
+					output = FluidUtil.getFluidHandler(world, outputPos, facing);
 					if(output != null)
 					{
 						int accepted = output.fill(out, false);
@@ -550,7 +553,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	}
 
 	@Override
-	public ItemStack[] getInventory()
+	public NonNullList<ItemStack> getInventory()
 	{
 		return null;
 	}
@@ -614,7 +617,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		{
 			return this;
 		}
-		TileEntity te = worldObj.getTileEntity(getPos().add(-offset[0],-offset[1],-offset[2]));
+		TileEntity te = world.getTileEntity(getPos().add(-offset[0],-offset[1],-offset[2]));
 		return this.getClass().isInstance(te) ? (TileEntityPumpjack) te : null;
 	}
 	
@@ -622,7 +625,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	public TileEntityPumpjack getTileForPos(int targetPos)
 	{
 		BlockPos target = getBlockPosForPos(targetPos);
-		TileEntity tile = worldObj.getTileEntity(target);
+		TileEntity tile = world.getTileEntity(target);
 		return tile instanceof TileEntityPumpjack ? (TileEntityPumpjack) tile : null;
 	}
 }

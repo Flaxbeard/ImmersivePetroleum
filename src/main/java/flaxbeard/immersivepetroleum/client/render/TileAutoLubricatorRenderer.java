@@ -15,6 +15,7 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationH
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes.Base;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 
 public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEntityAutoLubricator>
 {
@@ -28,7 +29,7 @@ public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEn
     }
 	
 	@Override
-	public void renderTileEntityAt(TileEntityAutoLubricator te, double x, double y, double z, float partialTicks, int destroyStage)
+	public void render(TileEntityAutoLubricator te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
 	{
 		if (te == null)
 		{

@@ -7,8 +7,13 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.tool.IUpgrade;
@@ -22,13 +27,14 @@ public class ItemIPUpgrade extends ItemIPBase implements IUpgrade
 	}
 	
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean adv)
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
 	{
 		if (stack.getItemDamage()<getSubNames().length)
 		{
 			String[] flavour = ImmersiveEngineering.proxy.splitStringOnWidth(I18n.format("desc.immersivepetroleum.flavour.upgrades." + this.getSubNames()[stack.getItemDamage()]), 200);
 			for (String s : flavour)
-				list.add(s);
+				tooltip.add(s);
 		}
 	}
 
@@ -45,8 +51,10 @@ public class ItemIPUpgrade extends ItemIPBase implements IUpgrade
 	}
 
 	@Override
-	public void applyUpgrades(ItemStack target, ItemStack upgrade, HashMap<String, Object> modifications)
-	{		
+	public void applyUpgrades(ItemStack target, ItemStack upgrade, NBTTagCompound modifications) {
+		// TODO Auto-generated method stub
+		
 	}
+
 
 }

@@ -22,3 +22,6 @@ src/main/java/cofh/api/energy/IEnergyReceiver.java
 *.iws
 
 out/
+eclipse/
+*.launch
+*.txt

@@ -1,0 +1,25 @@
+{
+  "type": "forge:ore_shaped",
+  "quarter_turn": false,
+  "result": {
+    "item": "immersivepetroleum:upgrades",
+    "data": 1,
+    "count": 1
+  },
+  "pattern": [
+    "I P",
+    " IP",
+    "PPB"
+  ],
+  "key": {
+    "P": {
+      "item": "#plateSteel"
+    },
+    "B": {
+      "item": "#blockSteel"
+    },
+    "I": {
+      "item": "#ingotSteel"
+    }
+  }
+}

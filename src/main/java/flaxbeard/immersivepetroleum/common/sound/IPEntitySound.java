@@ -134,9 +134,9 @@ public class IPEntitySound implements ITickableSound
 	public void evaluateVolume()
 	{
 		volumeAjustment=1f;
-		if(ClientUtils.mc().thePlayer!=null && ClientUtils.mc().thePlayer.getItemStackFromSlot(EntityEquipmentSlot.HEAD)!=null)
+		if(ClientUtils.mc().player!=null && ClientUtils.mc().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD)!=null)
 		{
-			ItemStack stack = ClientUtils.mc().thePlayer.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+			ItemStack stack = ClientUtils.mc().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
 			if(ItemNBTHelper.hasKey(stack,"IE:Earmuffs"))
 				stack = ItemNBTHelper.getItemStack(stack, "IE:Earmuffs");
 			if(stack!=null && IEContent.itemEarmuffs.equals(stack.getItem()))
@@ -146,7 +146,7 @@ public class IPEntitySound implements ITickableSound
 			for(int dx = (int)Math.floor(entity.posX-8)>>4; dx<=(int)Math.floor(entity.posX+8)>>4; dx++)
 				for(int dz = (int)Math.floor(entity.posZ-8)>>4; dz<=(int)Math.floor(entity.posZ+8)>>4; dz++)
 				{
-					Iterator it = ClientUtils.mc().thePlayer.worldObj.getChunkFromChunkCoords(dx, dz).getTileEntityMap().values().iterator();
+					Iterator it = ClientUtils.mc().player.world.getChunkFromChunkCoords(dx, dz).getTileEntityMap().values().iterator();
 					while (it.hasNext())
 					{
 						TileEntity tile = (TileEntity)it.next();
@@ -167,7 +167,7 @@ public class IPEntitySound implements ITickableSound
 	@Override
 	public void update()
 	{
-		if(ClientUtils.mc().thePlayer!=null && ClientUtils.mc().thePlayer.worldObj.getTotalWorldTime()%40==0)
+		if(ClientUtils.mc().player!=null && ClientUtils.mc().player.world.getTotalWorldTime()%40==0)
 			evaluateVolume();
 	}
 

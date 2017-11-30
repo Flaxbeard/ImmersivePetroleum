@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -11,17 +12,17 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
@@ -40,6 +41,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
@@ -47,9 +49,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -86,6 +86,7 @@ import blusunrize.lib.manual.IManualPage;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.ManualInstance.ManualEntry;
 import blusunrize.lib.manual.gui.GuiManual;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
@@ -98,25 +99,26 @@ import flaxbeard.immersivepetroleum.common.network.CloseBookPacket;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageReservoirListSync;
 
+@Mod.EventBusSubscriber(modid=ImmersivePetroleum.MODID)
 public class EventHandler
 {
 	@SubscribeEvent
-	public void onSave(WorldEvent.Save event)
+	public static void onSave(WorldEvent.Save event)
 	{
 		IPSaveData.setDirty(0);
 	}
-	
+
 	@SubscribeEvent
-	public void onUnload(WorldEvent.Unload event)
+	public static void onUnload(WorldEvent.Unload event)
 	{
 		IPSaveData.setDirty(0);
 	}
-	
-	private Object lastGui = null;
-	
+
+	private static Object lastGui = null;
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void guiOpen(GuiOpenEvent event)
+	public static void guiOpen(GuiOpenEvent event)
 	{
 		if (event.getGui() == null && lastGui instanceof GuiManual)
 		{
@@ -148,15 +150,15 @@ public class EventHandler
 					}
 				}
 			}
-			EntityPlayer p = ClientUtils.mc().thePlayer;
-			
+			EntityPlayer p = ClientUtils.mc().player;
+
 			ItemStack mainItem = p.getHeldItemMainhand();
 			ItemStack offItem = p.getHeldItemOffhand();
 
-			boolean main = mainItem != null && mainItem.getItem() == IEContent.itemTool && mainItem.getItemDamage() == 3;
-			boolean off = offItem != null && offItem.getItem() == IEContent.itemTool && offItem.getItemDamage() == 3;
+			boolean main = !mainItem.isEmpty() && mainItem.getItem() == IEContent.itemTool && mainItem.getItemDamage() == 3;
+			boolean off = !offItem.isEmpty() && offItem.getItem() == IEContent.itemTool && offItem.getItemDamage() == 3;
 			ItemStack target = main ? mainItem : offItem;
-			
+
 			if (main || off)
 			{
 				IPPacketHandler.INSTANCE.sendToServer(new CloseBookPacket(name));
@@ -174,53 +176,54 @@ public class EventHandler
 
 		lastGui = event.getGui();
 	}
-	
-	
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void renderLast(RenderWorldLastEvent event)
+	public static void renderLast(RenderWorldLastEvent event)
 	{
 		GlStateManager.pushMatrix();
 		Minecraft mc = Minecraft.getMinecraft();
-		if (IPConfig.sample_displayBorder && mc.thePlayer != null)
+		if (IPConfig.sample_displayBorder && mc.player != null)
 		{
-			ItemStack mainItem = mc.thePlayer.getHeldItemMainhand();
-			ItemStack secondItem = mc.thePlayer.getHeldItemOffhand();
-			
+			ItemStack mainItem = mc.player.getHeldItemMainhand();
+			ItemStack secondItem = mc.player.getHeldItemOffhand();
+
+			boolean main = !mainItem.isEmpty() && mainItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(mainItem, "coords");
+			boolean off = !secondItem.isEmpty() && secondItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(secondItem, "coords");
+
 			boolean chunkBorders = false;
 			for(EnumHand hand : EnumHand.values())
-				if(OreDictionary.itemMatches(new ItemStack(IEContent.blockMetalDevice1,1, BlockTypes_MetalDevice1.SAMPLE_DRILL.getMeta()), ClientUtils.mc().thePlayer.getHeldItem(hand),true))
+				if(OreDictionary.itemMatches(new ItemStack(IEContent.blockMetalDevice1,1, BlockTypes_MetalDevice1.SAMPLE_DRILL.getMeta()), ClientUtils.mc().player.getHeldItem(hand),true))
 				{
 					chunkBorders = true;
 					break;
 				}
-			if(!chunkBorders && ClientUtils.mc().objectMouseOver!=null && ClientUtils.mc().objectMouseOver.typeOfHit==Type.BLOCK && ClientUtils.mc().theWorld.getTileEntity(ClientUtils.mc().objectMouseOver.getBlockPos()) instanceof TileEntitySampleDrill)
+			if(!chunkBorders && ClientUtils.mc().objectMouseOver!=null && ClientUtils.mc().objectMouseOver.typeOfHit==Type.BLOCK && ClientUtils.mc().world.getTileEntity(ClientUtils.mc().objectMouseOver.getBlockPos()) instanceof TileEntitySampleDrill)
 				chunkBorders = true;
-			
-			boolean main = mainItem != null && mainItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(mainItem, "coords");
-			boolean off = secondItem != null && secondItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(secondItem, "coords");
+
 			ItemStack target = main ? mainItem : secondItem;
-			
+
 			if (!chunkBorders && (main || off))
 			{
-			
-				int[] coords = ItemNBTHelper.getIntArray(target, "coords");
-				//World world = DimensionManager.getWorld(coords[0]);
-				//if (world.provider.getDimension() == mc.thePlayer.worldObj.provider.getDimension())
-				//{
-					EntityPlayer player = mc.thePlayer;
 
+				int[] coords = ItemNBTHelper.getIntArray(target, "coords");
+
+				//World world = DimensionManager.getWorld(coords[0]);
+				//if (world.provider.getDimension() == mc.player.worldObj.provider.getDimension())
+				//{
+					EntityPlayer player = mc.player;
 					renderChunkBorder(coords[1] << 4, coords[2] << 4);
 				//}
 			}
 		}
 		GlStateManager.popMatrix();
+
 	}
-	
+
 	@SideOnly(Side.CLIENT)
-	public void renderChunkBorder(int chunkX, int chunkZ)
+	public static void renderChunkBorder(int chunkX, int chunkZ)
 	{
-		EntityPlayer player = ClientUtils.mc().thePlayer;
+		EntityPlayer player = ClientUtils.mc().player;
 
 		double px = TileEntityRendererDispatcher.staticPlayerX;
 		double py = TileEntityRendererDispatcher.staticPlayerY;
@@ -228,7 +231,7 @@ public class EventHandler
 		int y = Math.min((int)player.posY-2,player.getEntityWorld().getChunkFromBlockCoords(new BlockPos(chunkX, 0, chunkZ)).getLowestHeight());
 		float h = (float)Math.max(32, player.posY-y+4);
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer vertexbuffer = tessellator.getBuffer();
+		BufferBuilder vertexbuffer = tessellator.getBuffer();
 
 		GlStateManager.disableTexture2D();
 		GlStateManager.enableBlend();
@@ -265,9 +268,9 @@ public class EventHandler
 		GlStateManager.disableBlend();
 		GlStateManager.enableTexture2D();
 	}
-	
+
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void handlePickupItem(RightClickBlock event)
+	public static void handlePickupItem(RightClickBlock event)
 	{
 		BlockPos pos = event.getPos();
 		IBlockState state = event.getWorld().getBlockState(pos);
@@ -277,7 +280,7 @@ public class EventHandler
 			if (te instanceof TileEntitySampleDrill)
 			{
 				TileEntitySampleDrill drill = (TileEntitySampleDrill) te;
-				
+
 				if (drill.dummy != 0)
 				{
 					te = event.getWorld().getTileEntity(pos.add(0, - drill.dummy, 0));
@@ -286,13 +289,13 @@ public class EventHandler
 						drill = (TileEntitySampleDrill) te;
 					}
 				}
-				if (drill.sample != null)
+				if (!drill.sample.isEmpty())
 				{
 					if(ItemNBTHelper.hasKey(drill.sample, "coords"))
 					{
 						int[] coords = ItemNBTHelper.getIntArray(drill.sample, "coords");
 						World world = DimensionManager.getWorld(coords[0]);
-						
+
 						OilWorldInfo info = PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]);
 						if (info.getType() != null)
 						{
@@ -309,10 +312,10 @@ public class EventHandler
 		}
 
 	}
-	
+
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	@SideOnly(Side.CLIENT)
-	public void handleItemTooltip(ItemTooltipEvent event)
+	public static void handleItemTooltip(ItemTooltipEvent event)
 	{
 		ItemStack stack = event.getItemStack();
 		if (stack.getItem() instanceof ItemCoresample)
@@ -324,7 +327,7 @@ public class EventHandler
 				{
 					resName = "";
 				}
-				
+
 				ReservoirType res = null;
 				for (ReservoirType type : PumpjackHandler.reservoirList.keySet())
 				{
@@ -333,7 +336,7 @@ public class EventHandler
 						res = type;
 					}
 				}
-				
+
 				int amnt = ItemNBTHelper.getInt(stack, "oil");
 				List<String> tooltip = event.getToolTip();
 				if (amnt > 0)
@@ -342,7 +345,7 @@ public class EventHandler
 					String test = new DecimalFormat("#,###.##").format(est);
 					Fluid f = FluidRegistry.getFluid(res.fluid);
 					String fluidName = f.getLocalizedName(new FluidStack(f, 1));
-					
+
 					tooltip.add(2, I18n.format("chat.immersivepetroleum.info.coresample.oil", test, fluidName));
 				}
 				else
@@ -361,12 +364,12 @@ public class EventHandler
 			}
 		}
 	}
-	
+
 	@SubscribeEvent(priority = EventPriority.HIGH)
-	public void onLogin(PlayerLoggedInEvent event)
+	public static void onLogin(PlayerLoggedInEvent event)
 	{
 		ExcavatorHandler.allowPackets = true;
-		if (!event.player.worldObj.isRemote)
+		if (!event.player.world.isRemote)
 		{
 			HashMap<ReservoirType, Integer> packetMap = new HashMap<ReservoirType,Integer>();
 			for (Entry<ReservoirType,Integer> e: PumpjackHandler.reservoirList.entrySet())
@@ -375,14 +378,14 @@ public class EventHandler
 			IPPacketHandler.INSTANCE.sendToAll(new MessageReservoirListSync(packetMap));
 		}
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent()
-	public void renderCoresampleInfo(RenderGameOverlayEvent.Post event)
+	public static void renderCoresampleInfo(RenderGameOverlayEvent.Post event)
 	{
-		if (ClientUtils.mc().thePlayer!=null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT)
+		if (ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT)
 		{
-			EntityPlayer player = ClientUtils.mc().thePlayer;
+			EntityPlayer player = ClientUtils.mc().player;
 
 			if (ClientUtils.mc().objectMouseOver!=null)
 			{
@@ -390,12 +393,12 @@ public class EventHandler
 				RayTraceResult mop = ClientUtils.mc().objectMouseOver;
 				if (mop!=null && mop.getBlockPos()!=null)
 				{
-					TileEntity tileEntity = player.worldObj.getTileEntity(mop.getBlockPos());
+					TileEntity tileEntity = player.world.getTileEntity(mop.getBlockPos());
 					if (tileEntity instanceof TileEntityCoresample)
 					{
 						IBlockOverlayText overlayBlock = (IBlockOverlayText) tileEntity;
-						String[] text = overlayBlock.getOverlayText(ClientUtils.mc().thePlayer, mop, hammer);
-						boolean useNixie = overlayBlock.useNixieFont(ClientUtils.mc().thePlayer, mop);
+						String[] text = overlayBlock.getOverlayText(ClientUtils.mc().player, mop, hammer);
+						boolean useNixie = overlayBlock.useNixieFont(ClientUtils.mc().player, mop);
 						ItemStack coresample = ((TileEntityCoresample) tileEntity).coresample;
 						if (ItemNBTHelper.hasKey(coresample, "oil") && text != null && text.length > 0)
 						{
@@ -404,7 +407,7 @@ public class EventHandler
 							FontRenderer font = useNixie?ClientProxy.nixieFontOptional:ClientUtils.font();
 							int col = (useNixie&& IEConfig.nixietubeFont)?Lib.colour_nixieTubeText:0xffffff;
 							int i = text.length;
-							
+
 							ReservoirType res = null;
 							for (ReservoirType type : PumpjackHandler.reservoirList.keySet())
 							{
@@ -413,7 +416,7 @@ public class EventHandler
 									res = type;
 								}
 							}
-							
+
 							String s = I18n.format("chat.immersivepetroleum.info.coresample.noOil");
 							if (amnt > 0)
 							{
@@ -421,7 +424,7 @@ public class EventHandler
 								String test = new DecimalFormat("#,###.##").format(est);
 								Fluid f = FluidRegistry.getFluid(res.fluid);
 								String fluidName = f.getLocalizedName(new FluidStack(f, 1));
-								
+
 
 								s = I18n.format("chat.immersivepetroleum.info.coresample.oil", test, fluidName);
 							}
@@ -431,16 +434,16 @@ public class EventHandler
 								String fluidName = f.getLocalizedName(new FluidStack(f, 1));
 								s = I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName);
 							}
-							
+
 							font.drawString(s, event.getResolution().getScaledWidth()/2+8, event.getResolution().getScaledHeight()/2+8+i*font.FONT_HEIGHT, col, true);
 
-	
+
 						}
 					}
 				}
 				else if (mop != null && mop.entityHit != null && mop.entityHit instanceof EntitySpeedboat)
 				{
-					String[] text = ((EntitySpeedboat) mop.entityHit).getOverlayText(ClientUtils.mc().thePlayer, mop);
+					String[] text = ((EntitySpeedboat) mop.entityHit).getOverlayText(ClientUtils.mc().player, mop);
 					if(text!=null && text.length>0)
 					{
 						FontRenderer font = ClientUtils.font();
@@ -456,9 +459,9 @@ public class EventHandler
 	}
 	
 	@SubscribeEvent
-	public void handleBoatImmunity(LivingAttackEvent event)
+	public static void handleBoatImmunity(LivingAttackEvent event)
 	{
-		if (event.getSource() == DamageSource.lava || event.getSource() == DamageSource.onFire || event.getSource() == DamageSource.inFire)
+		if (event.getSource() == DamageSource.LAVA || event.getSource() == DamageSource.ON_FIRE || event.getSource() == DamageSource.IN_FIRE)
 		{
 			EntityLivingBase entity = event.getEntityLiving();
 			if (entity.getRidingEntity() instanceof EntitySpeedboat)
@@ -473,7 +476,7 @@ public class EventHandler
 	}
 	
 	@SubscribeEvent
-	public void handleBoatImmunity(PlayerTickEvent event)
+	public static void handleBoatImmunity(PlayerTickEvent event)
 	{
 		EntityPlayer entity = event.player;
 		if (entity.isBurning() && entity.getRidingEntity() instanceof EntitySpeedboat)
@@ -492,7 +495,7 @@ public class EventHandler
 	
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void handleBoatImmunity(RenderBlockOverlayEvent event)
+	public static void handleBoatImmunity(RenderBlockOverlayEvent event)
 	{
 		EntityPlayer entity = event.getPlayer();
 		if (event.getOverlayType() == OverlayType.FIRE && entity.isBurning() && entity.getRidingEntity() instanceof EntitySpeedboat)
@@ -507,7 +510,7 @@ public class EventHandler
 	
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void handleFireRender(RenderPlayerEvent.Pre event)
+	public static void handleFireRender(RenderPlayerEvent.Pre event)
 	{
 		EntityPlayer entity = event.getEntityPlayer();
 		if (entity.isBurning() && entity.getRidingEntity() instanceof EntitySpeedboat)
@@ -523,16 +526,16 @@ public class EventHandler
 	
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void handleLubricatingMachinesClient(ClientTickEvent event)
+	public static void handleLubricatingMachinesClient(ClientTickEvent event)
 	{
-		if (event.phase == Phase.END && Minecraft.getMinecraft().theWorld != null)
+		if (event.phase == Phase.END && Minecraft.getMinecraft().world != null)
 		{
-			handleLubricatingMachines(Minecraft.getMinecraft().theWorld);
+			handleLubricatingMachines(Minecraft.getMinecraft().world);
 		}
 	}
 	
 	@SubscribeEvent
-	public void handleLubricatingMachinesServer(WorldTickEvent event)
+	public static void handleLubricatingMachinesServer(WorldTickEvent event)
 	{
 
 		if (event.phase == Phase.END)
@@ -541,7 +544,7 @@ public class EventHandler
 		}
 	}
 		
-	public void handleLubricatingMachines(World world)
+	public static void handleLubricatingMachines(World world)
 	{
 		Set<LubricatedTileInfo> toRemove = new HashSet<LubricatedTileInfo>();
 		for (LubricatedTileInfo info : LubricatedHandler.lubricatedTiles)
@@ -602,24 +605,43 @@ public class EventHandler
 		}
 	}
 	
+	@SubscribeEvent
+	public static void onEntityJoiningWorld(EntityJoinWorldEvent event)
+	{
+		if (event.getEntity() instanceof EntityPlayer)
+		{
+			List<IRecipe> l = new ArrayList<IRecipe>();
+			for (IRecipe recipe : CraftingManager.REGISTRY)
+			{
+				String name = recipe.getRegistryName().toString();
+				if (name.length() > 18 && name.substring(0, ImmersivePetroleum.MODID.length()).equals(ImmersivePetroleum.MODID))
+				{
+					l.add(recipe);
+				}
+			}
+			((EntityPlayer) event.getEntity()).unlockRecipes(l);
+			
+		}
+	}
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent()
-	public void onRenderOverlayPost(RenderGameOverlayEvent.Post event)
+	public static void onRenderOverlayPost(RenderGameOverlayEvent.Post event)
 	{
-		if (ClientUtils.mc().thePlayer != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT)
+		if (ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT)
 		{
-			EntityPlayer player = ClientUtils.mc().thePlayer;
+			EntityPlayer player = ClientUtils.mc().player;
 			
 			if (player.getRidingEntity() instanceof EntitySpeedboat)
 			{
 				int offset = 0;
-				for(EnumHand hand : EnumHand.values())
+				for (EnumHand hand : EnumHand.values())
 				{
-					if(player.getHeldItem(hand) != null)
+					if (!player.getHeldItem(hand).isEmpty())
 					{
 						ItemStack equipped = player.getHeldItem(hand);
-						if ((equipped.getItem() instanceof ItemDrill && equipped.getItemDamage()==0)
-								||equipped.getItem() instanceof ItemChemthrower)
+						if ((equipped.getItem() instanceof ItemDrill && equipped.getItemDamage() == 0)
+								|| equipped.getItem() instanceof ItemChemthrower)
 						{
 							offset -= 85;
 						}

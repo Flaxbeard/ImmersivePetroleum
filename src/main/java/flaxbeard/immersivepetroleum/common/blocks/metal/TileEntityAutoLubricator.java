@@ -610,6 +610,9 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	{
 		dummy = nbt.getInteger("dummy");
 		facing = EnumFacing.getFront(nbt.getInteger("facing"));
+		if (facing == EnumFacing.DOWN || facing == EnumFacing.UP) {
+			facing = EnumFacing.NORTH;
+		}
 		active = nbt.getBoolean("active");
 		tank.readFromNBT(nbt.getCompoundTag("tank"));
 		count = nbt.getInteger("count");
@@ -640,6 +643,9 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	@Override
 	public void setFacing(EnumFacing facing)
 	{
+		if (facing == EnumFacing.DOWN || facing == EnumFacing.UP) {
+			facing = EnumFacing.NORTH;
+		}
 		this.facing = facing;
 	}
 	@Override

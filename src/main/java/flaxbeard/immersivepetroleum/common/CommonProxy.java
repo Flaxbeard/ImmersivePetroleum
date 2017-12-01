@@ -2,8 +2,16 @@ package flaxbeard.immersivepetroleum.common;
 
 import javax.annotation.Nonnull;
 
+import blusunrize.immersiveengineering.common.IEContent;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -68,5 +76,8 @@ public class CommonProxy implements IGuiHandler
 	public void renderTile(TileEntity te) {}
 	public void handleEntitySound(SoundEvent soundEvent, Entity e, boolean active, float volume, float pitch)
 	{		
+	}
+
+	public void drawUpperHalfSlab(ItemStack stack) {
 	}
 }

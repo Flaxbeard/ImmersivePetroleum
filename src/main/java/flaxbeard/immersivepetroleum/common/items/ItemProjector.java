@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum.common.items;
 
 import java.util.List;
 
+import blusunrize.immersiveengineering.common.blocks.TileEntityIESlab;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -1127,28 +1128,19 @@ public class ItemProjector extends ItemIPBase
 				}
 			}
 		}
+
+		if (mb.getUniqueName().equals("IP:DistillationTower")) {
+			if (state.getBlock() == IEContent.blockMetalDecorationSlabs1) {
+				if (event.getWorld().getBlockState(event.getPos()).getBlock() == IEContent.blockMetalDecorationSlabs1) {
+					event.setIsEqual(true);
+				}
+			}
+		}
 	}
 	
 	@SubscribeEvent
 	public void handleMultiblockComplete(MultiblockFormEvent event)
 	{
-		/*EntityPlayer player = event.getEntityPlayer();
-		
-		
-		if (player != null)
-		{
-			for (int i = 0; i < 11; i++)
-			{
-				ItemStack stack = (i == 10 ? player.getHeldItemOffhand() : player.inventory.getStackInSlot(i));
-				if (!stack.isEmpty() && stack.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(stack, "multiblock"))
-				{
-					if (doesIntersect(player, stack, event.getClickedBlock()))
-					{
-						ItemNBTHelper.remove(stack, "pos");
-					}
-				}
-			}
-		}*/
 	}
 	
 	public boolean doesIntersect(EntityPlayer player, ItemStack target, BlockPos check)
@@ -1245,6 +1237,29 @@ public class ItemProjector extends ItemIPBase
 		{
 			GlStateManager.rotate(180, 1, 0, 0);
 		}
+
+		if (mb.getUniqueName().equals("IP:DistillationTower")) {
+			if (state.getBlock() == IEContent.blockMetalDecorationSlabs1) {
+				GlStateManager.translate(0, .25F, 0);
+
+			}
+		}
 	}
-	
+
+	@SubscribeEvent
+	public void handleSlabPlace(SchematicPlaceBlockPostEvent event)
+	{
+		IMultiblock mb = event.getMultiblock();
+
+		IBlockState state = event.getBlockState();
+		if (mb.getUniqueName().equals("IP:DistillationTower")) {
+			TileEntity te = event.getWorld().getTileEntity(event.getPos());
+			if (te instanceof TileEntityIESlab)
+			{
+				((TileEntityIESlab) te).slabType = 1;
+			}
+		}
+	}
+
+
 }

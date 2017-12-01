@@ -10,8 +10,11 @@ import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
@@ -471,5 +474,28 @@ public class ClientProxy extends CommonProxy
 			tesr.render((TileEntity) te, 0, 0, 0, 0, 0, 0);
 			GlStateManager.popMatrix();
 		}
+	}
+
+	@Override
+	public void drawUpperHalfSlab(ItemStack stack) {
+		// Render slabs on top half
+		BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
+		IBlockState state = IEContent.blockMetalDecorationSlabs1.getStateFromMeta(stack.getMetadata());
+		IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState((IBlockState)state);
+
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(0.0F, 0.5F, 1.0F);
+		RenderHelper.disableStandardItemLighting();
+		GlStateManager.blendFunc(770, 771);
+		GlStateManager.enableBlend();
+		GlStateManager.disableCull();
+		if (Minecraft.isAmbientOcclusionEnabled()) {
+			GlStateManager.shadeModel(7425);
+		} else {
+			GlStateManager.shadeModel(7424);
+		}
+
+		blockRenderer.getBlockModelRenderer().renderModelBrightness(model, (IBlockState)state, 0.75F, false);
+		GlStateManager.popMatrix();
 	}
 }

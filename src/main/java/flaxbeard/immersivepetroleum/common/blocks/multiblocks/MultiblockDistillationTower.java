@@ -103,25 +103,7 @@ public class MultiblockDistillationTower implements IMultiblock
 	{
 		if (stack.getItem() == Item.getItemFromBlock(IEContent.blockMetalDecorationSlabs1)) {
 
-			// Render slabs on top half
-			BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
-			IBlockState state = IEContent.blockMetalDecorationSlabs1.getStateFromMeta(stack.getMetadata());
-			IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState((IBlockState)state);
-
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(0.0F, 0.5F, 1.0F);
-			RenderHelper.disableStandardItemLighting();
-			GlStateManager.blendFunc(770, 771);
-			GlStateManager.enableBlend();
-			GlStateManager.disableCull();
-			if (Minecraft.isAmbientOcclusionEnabled()) {
-				GlStateManager.shadeModel(7425);
-			} else {
-				GlStateManager.shadeModel(7424);
-			}
-
-			blockRenderer.getBlockModelRenderer().renderModelBrightness(model, (IBlockState)state, 0.75F, false);
-			GlStateManager.popMatrix();
+			ImmersivePetroleum.proxy.drawUpperHalfSlab(stack);
 			return true;
 		}
 		if (iterator == 25)
@@ -257,46 +239,8 @@ public class MultiblockDistillationTower implements IMultiblock
 						world.addBlockEvent(pos2, IPContent.blockMetalMultiblock, 255, 0);
 					}
 				}
-		
-		
-		/*side = side.getOpposite();
-		if(side==EnumFacing.UP||side==EnumFacing.DOWN)
-			side = EnumFacing.fromAngle(player.rotationYaw);
 
-		boolean mirror = false;
-		boolean b = this.structureCheck(world, pos, side, mirror);
-		if(!b)
-		{
-			mirror = true;
-			b = structureCheck(world, pos, side, mirror);
-		}
-		
 
-		for(int h=-1;h<=1;h++)
-			for(int l=-1;l<=1;l++)
-				for(int w=-1;w<=1;w++)
-				{
-					if((h==0&&w==0&&l==-1)||(h==0&&w==1&&l>-1)||(h==1&&(l<0||w>0)))
-						continue;
-
-					int ww = mirror?-w:w;
-					BlockPos pos2 = pos.offset(side, l).offset(side.rotateY(), ww).add(0, h, 0);
-
-					world.setBlockState(pos2, IEContent.blockMetalMultiblock.getStateFromMeta(BlockTypes_MetalMultiblock.FERMENTER.getMeta()));
-					TileEntity curr = world.getTileEntity(pos2);
-					if(curr instanceof TileEntityFermenter)
-					{
-						TileEntityFermenter tile = (TileEntityFermenter)curr;
-						tile.facing=side;
-						tile.formed=true;
-						tile.pos = (h+1)*9 + (l+1)*3 + (w+1);
-						tile.offset = new int[]{(side==EnumFacing.WEST?-l: side==EnumFacing.EAST?l: side==EnumFacing.NORTH?ww: -ww),h,(side==EnumFacing.NORTH?-l: side==EnumFacing.SOUTH?l: side==EnumFacing.EAST?ww : -ww)};
-						tile.mirrored=mirror;
-						tile.markDirty();
-						world.addBlockEvent(pos2, IEContent.blockMetalMultiblock, 255, 0);
-					}
-				}
-		return true;*/
 		return false;
 	}
 

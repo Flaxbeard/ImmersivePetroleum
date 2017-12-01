@@ -1,14 +1,23 @@
 package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
+import blusunrize.immersiveengineering.common.blocks.BlockIEScaffoldSlab;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import blusunrize.immersiveengineering.ImmersiveEngineering;
@@ -45,9 +54,13 @@ public class MultiblockDistillationTower implements IMultiblock
 					{
 						structure[h][w][3-l] = new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
 					}
-					else if (h > 0 && (h % 4 == 0 || (l == 0 && w == 1 && h < 13)))
+					else if (h > 0 && (l == 0 && w == 1 && h < 13))
 					{
 						structure[h][w][3-l] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_1.getMeta());
+					}
+					else if (h > 0 && (h % 4 == 0))
+					{
+						structure[h][w][3-l] = new ItemStack(IEContent.blockMetalDecorationSlabs1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_1.getMeta());
 					}
 					else if (h == 0)
 					{
@@ -88,29 +101,42 @@ public class MultiblockDistillationTower implements IMultiblock
 	@SideOnly(Side.CLIENT)
 	public boolean overwriteBlockRender(ItemStack stack, int iterator)
 	{
-		/*if(iterator==10)
-		{
-			ImmersiveEngineering.proxy.drawSpecificFluidPipe("001010");
+		if (stack.getItem() == Item.getItemFromBlock(IEContent.blockMetalDecorationSlabs1)) {
+
+			// Render slabs on top half
+			BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
+			IBlockState state = IEContent.blockMetalDecorationSlabs1.getStateFromMeta(stack.getMetadata());
+			IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState((IBlockState)state);
+
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(0.0F, 0.5F, 1.0F);
+			RenderHelper.disableStandardItemLighting();
+			GlStateManager.blendFunc(770, 771);
+			GlStateManager.enableBlend();
+			GlStateManager.disableCull();
+			if (Minecraft.isAmbientOcclusionEnabled()) {
+				GlStateManager.shadeModel(7425);
+			} else {
+				GlStateManager.shadeModel(7424);
+			}
+
+			blockRenderer.getBlockModelRenderer().renderModelBrightness(model, (IBlockState)state, 0.75F, false);
+			GlStateManager.popMatrix();
 			return true;
 		}
-		if(iterator==14)
-		{
-			ImmersiveEngineering.proxy.drawSpecificFluidPipe("002200");
-			return true;
-		}*/
 		if (iterator == 25)
 		{
-			ImmersiveEngineering.proxy.drawSpecificFluidPipe("001002");
+			ImmersiveEngineering.proxy.drawSpecificFluidPipe("100100");
 			return true;
 		}
 		else if (iterator == 8)
 		{
-			ImmersiveEngineering.proxy.drawSpecificFluidPipe("200010");
+			ImmersiveEngineering.proxy.drawSpecificFluidPipe("010001");
 			return true;
 		}
 		else if (iterator == 134)
 		{
-			ImmersiveEngineering.proxy.drawSpecificFluidPipe("020001");
+			ImmersiveEngineering.proxy.drawSpecificFluidPipe("100010");
 			return true;
 		}
 		else if (iterator == 21 || iterator == 29
@@ -123,9 +149,7 @@ public class MultiblockDistillationTower implements IMultiblock
 				|| (iterator < 100 && iterator > 29 && (iterator - 29 - 17) % 34 == 0))
 		{
 			GlStateManager.pushMatrix();
-			//GlStateManager.translate(0, 1, 0);
-			//GlStateManager.rotate(90, 1, 0, 0);
-			ImmersiveEngineering.proxy.drawSpecificFluidPipe("000011");
+			ImmersiveEngineering.proxy.drawSpecificFluidPipe("110000");
 			GlStateManager.popMatrix();
 			return true;
 		}
@@ -315,15 +339,18 @@ public class MultiblockDistillationTower implements IMultiblock
 							if(!Utils.isOreBlockAt(world, pos, "blockSheetmetalIron"))
 								return false;
 						}
-						else if ((h + 1) % 4 == 0 && h > 0)
+						else if (w == 3 && l == -2 && h < 12)
 						{
 							if (!Utils.isOreBlockAt(world, pos, "scaffoldingSteel"))
 								return false;
 						}
-						else if (w == 3 && l == -2 && h < 11)
+						else if ((h + 1) % 4 == 0 && h > 0)
 						{
-							if (!Utils.isOreBlockAt(world, pos, "scaffoldingSteel"))
+							if (!(world.getBlockState(pos).getBlock() instanceof BlockIEScaffoldSlab)) {
+								System.out.println(pos + " " + world.getBlockState(pos).getBlock());
 								return false;
+
+							}
 						}
 						else if (h == 0)
 						{

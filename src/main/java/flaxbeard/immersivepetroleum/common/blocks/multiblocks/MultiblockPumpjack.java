@@ -89,22 +89,22 @@ public class MultiblockPumpjack implements IMultiblock
 	{
 		if (iterator == 10)
 		{
-			ImmersiveEngineering.proxy.drawSpecificFluidPipe("111000");
+			ImmersiveEngineering.proxy.drawSpecificFluidPipe("000111");
 			return true;
 		}
 		else if (iterator == 11)
 		{
-			ImmersiveEngineering.proxy.drawSpecificFluidPipe("120000");
+			ImmersiveEngineering.proxy.drawSpecificFluidPipe("000021");
 			return true;
 		}
 		else if (iterator == 9)
 		{
-			ImmersiveEngineering.proxy.drawSpecificFluidPipe("210000");
+			ImmersiveEngineering.proxy.drawSpecificFluidPipe("000012");
 			return true;
 		}
 		else if (iterator == 13)
 		{
-			ImmersiveEngineering.proxy.drawSpecificFluidPipe("002100");
+			ImmersiveEngineering.proxy.drawSpecificFluidPipe("001200");
 			return true;
 		}
 		return false;

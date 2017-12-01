@@ -13,10 +13,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -167,18 +164,19 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 			int amountLeft = 80;
 			
 			BlockPos outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY().getOpposite(), 1).offset(EnumFacing.DOWN, 1);
-			IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing.getOpposite().rotateY());
+			IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing.rotateY());
 
-			if (this.mirrored)
-				outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY(), 1).offset(EnumFacing.DOWN, 1);				//System.out.println(outputPos);
-				output = FluidUtil.getFluidHandler(world, outputPos, facing.rotateY());
+			if (this.mirrored) {
+				outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY(), 1).offset(EnumFacing.DOWN, 1);                //System.out.println(outputPos);
+				output = FluidUtil.getFluidHandler(world, outputPos, facing.rotateYCCW());
+			}
 
 			if (output != null)
 			{
 				int totalOut = 0;
 				Iterator<FluidStack> it = this.tanks[1].fluids.iterator();
 
-				while(it.hasNext()) {
+				while (it.hasNext()) {
 					FluidStack fs = (FluidStack) it.next();
 					if (fs != null) {
 						FluidStack out = Utils.copyFluidStackWithAmount(fs, Math.min(fs.amount, 80 - totalOut), false);
@@ -509,15 +507,15 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side)
 	{
 		TileEntityDistillationTower master = this.master();
-		if(master != null)
+		if (master != null)
 		{
 			if(pos == 0 && (side == null || side == facing.getOpposite()))
 			{
-				return new MultiFluidTank[] {master.tanks[0]};
+				return new MultiFluidTank[] { master.tanks[0] };
 			}
 			else if (pos == 8 && (side == null || side == facing.getOpposite().rotateY() || side == facing.rotateY()))
 			{
-				return new MultiFluidTank[] {master.tanks[1]};
+				return new IFluidTank[] { master.tanks[1] };
 			}
 		}
 		return new FluidTank[0];
@@ -551,7 +549,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 	@Override
 	protected boolean canDrainTankFrom(int iTank, EnumFacing side)
 	{
-		return (pos == 8 && (side == null || side == facing.getOpposite().rotateY()));
+		return (pos == 8 && (side == null || side == facing.getOpposite().rotateY() || side == facing.rotateY()));
 	}
 	@Override
 	public void doGraphicalUpdates(int slot)

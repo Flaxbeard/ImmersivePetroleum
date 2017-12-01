@@ -212,7 +212,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 					active = true;
 					FluidStack out = new FluidStack(availableFluid(), Math.min(IPConfig.Extraction.pumpjack_speed, oilAmnt));
 					BlockPos outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY().getOpposite(), 2).offset(EnumFacing.DOWN, 1);
-					IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
+					IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing.rotateY());
 					if(output != null)
 					{
 						int accepted = output.fill(out, false);
@@ -226,7 +226,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 
 				
 					outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY(), 2).offset(EnumFacing.DOWN, 1);
-					output = FluidUtil.getFluidHandler(world, outputPos, facing);
+					output = FluidUtil.getFluidHandler(world, outputPos, facing.rotateYCCW());
 					if(output != null)
 					{
 						int accepted = output.fill(out, false);

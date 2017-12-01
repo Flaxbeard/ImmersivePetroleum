@@ -148,7 +148,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 		}
 		
 
-		if (this.tanks[1].getFluidAmount()>0)
+		if (this.tanks[1].getFluidAmount() > 0)
 		{
 
 			ItemStack filledContainer = Utils.fillFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
@@ -167,37 +167,39 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 			int amountLeft = 80;
 			
 			BlockPos outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY().getOpposite(), 1).offset(EnumFacing.DOWN, 1);
+			IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing.getOpposite().rotateY());
+
 			if (this.mirrored)
 				outputPos = this.getPos().offset(facing.getOpposite(), 1).offset(facing.rotateY(), 1).offset(EnumFacing.DOWN, 1);				//System.out.println(outputPos);
-			IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
-			
-			if (output!=null)
+				output = FluidUtil.getFluidHandler(world, outputPos, facing.rotateY());
+
+			if (output != null)
 			{
 				int totalOut = 0;
 				Iterator<FluidStack> it = this.tanks[1].fluids.iterator();
-				while (it.hasNext())
-				{
-					FluidStack fs = it.next();
-					if(fs!=null)
-					{
-						FluidStack out = Utils.copyFluidStackWithAmount(fs, Math.min(fs.amount, 80-totalOut), false);
+
+				while(it.hasNext()) {
+					FluidStack fs = (FluidStack) it.next();
+					if (fs != null) {
+						FluidStack out = Utils.copyFluidStackWithAmount(fs, Math.min(fs.amount, 80 - totalOut), false);
 						int accepted = output.fill(out, false);
-						if(accepted > 0)
-						{
+						if (accepted > 0) {
 							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
 							MultiFluidTank.drain(drained, fs, it, true);
 							totalOut += drained;
 							update = true;
 						}
-						if(totalOut>=80)
+
+						if (totalOut >= 80) {
 							break;
+						}
 					}
 				}
 			}
 			
 		}
 
-		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[1], inventory.get(0), inventory.get(1), null);
+		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
 		if (!emptyContainer.isEmpty() && emptyContainer.getCount() > 0)
 		{
 			if(!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), emptyContainer, true))

@@ -41,15 +41,15 @@ item.immersivepetroleum.speedboat.name=汽艇
 
 item.immersivepetroleum.oil_can.name=润滑油罐
 
-itemGroup.immersivepetroleum=沉浸石油
+itemGroup.immersivepetroleum=沉浸原油
 
 ie.manual.entry.blank_text=
 
 desc.immersiveengineering.info.multiblock.IP:DistillationTower=精馏塔
 desc.immersiveengineering.info.multiblock.IP:Pumpjack=采油机
 
-desc.immersiveengineering.info.multiblock.IE:AutoWorkbench=Automated Workbench
-desc.immersiveengineering.info.multiblock.IE:AlloySmelter=Alloy Smelter
+desc.immersiveengineering.info.multiblock.IE:AutoWorkbench=自动转配台
+desc.immersiveengineering.info.multiblock.IE:AlloySmelter=合金冶炼炉
 
 desc.immersivepetroleum.info.reservoir.oil=油藏
 desc.immersivepetroleum.info.reservoir.aquifer=淡水层
@@ -128,16 +128,16 @@ ie.manual.category.ip.name=原油处理
 
 chat.immersivepetroleum.command.help.help=§6Usage: /ip help <command> [sub-commands ...]§r<br>获取有关命令以及子命令的更多信息
 chat.immersivepetroleum.command.reservoir.help=§6Usage: /ip reservoir <list|get|set|setAmount|setCapacity>§r
-chat.immersivepetroleum.command.reservoir.list.help=§6Usage: /ip reservoir list§r<br>列出以发现的石油区块
-chat.immersivepetroleum.command.reservoir.get.help=§6Usage: /ip reservoir get§r<br>显示大型的石油区块
-chat.immersivepetroleum.command.reservoir.set.help=§6Usage: /ip reservoir set [reservoir]§r<br> Sets a reservoir override for the chunk. Specify no reservoir to clear the override.
-chat.immersivepetroleum.command.reservoir.setAmount.help=§6Usage: /ip reservoir setAmount <number>§r<br>设置区块内流体mB储量
-chat.immersivepetroleum.command.reservoir.setCapacity.help=§6Usage: /ip reservoir setCapacity <number>§r<br>设置区块内流体最大mB储量
+chat.immersivepetroleum.command.reservoir.list.help=§6Usage: /ip reservoir list§r<br>列出以发现的油藏
+chat.immersivepetroleum.command.reservoir.get.help=§6Usage: /ip reservoir get§r<br>显示区块中大型的油藏
+chat.immersivepetroleum.command.reservoir.set.help=§6Usage: /ip reservoir set [reservoir]§r<br>设置该区块的油藏类型，如果不加参数可重置油藏种类
+chat.immersivepetroleum.command.reservoir.setAmount.help=§6Usage: /ip reservoir setAmount <number>§r<br>设置区块内油藏mB储量
+chat.immersivepetroleum.command.reservoir.setCapacity.help=§6Usage: /ip reservoir setCapacity <number>§r<br>设置区块内油藏最大mB储量
 chat.immersivepetroleum.command.reservoir.get=Chunk contains: %1$s <br>Override: %2$s <br>Amount: %3$s
-chat.immersivepetroleum.command.reservoir.set.invalidReservoir=§c无效的区块，‘%1$s’不是一个有效的标识符。请使用‘/ip reservoir list’列出所有有关区块标识符§r
-chat.immersivepetroleum.command.reservoir.set.sucess=Reservoir override set to '%1$s'
-chat.immersivepetroleum.command.reservoir.set.clear=Reservoir override (%1$s) cleared.
+chat.immersivepetroleum.command.reservoir.set.invalidReservoir=§c无效的油藏，‘%1$s’不是一个有效的油藏类型。请使用‘/ip reservoir list’列出所有有关重置区块油藏种类§r
+chat.immersivepetroleum.command.reservoir.set.sucess=油藏种类以设置为‘%1$s’
+chat.immersivepetroleum.command.reservoir.set.clear=已清除重设的油藏（%1$s）类型
 chat.immersivepetroleum.command.reservoir.setAmount.NFE=错误，‘%1$s’不是一个有效的数字
-chat.immersivepetroleum.command.reservoir.setAmount.sucess=石油区块中石油储量以设置为‘%1$s’
+chat.immersivepetroleum.command.reservoir.setAmount.sucess=区块中油藏储量以设置为‘%1$s’
 chat.immersivepetroleum.command.reservoir.setCapacity.NFE=错误，‘%1$s’不是一个有效的数字
-chat.immersivepetroleum.command.reservoir.setCapacity.sucess=石油区块的流体容量以设置为‘%1$s’
+chat.immersivepetroleum.command.reservoir.setCapacity.sucess=区块中的油藏储量以设置为‘%1$s’

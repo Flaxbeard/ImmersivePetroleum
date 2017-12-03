@@ -91,14 +91,14 @@ public class ModelCoresampleExtended extends ModelCoresample
 				int pixelLength = 0;
 
 				HashMap<TextureAtlasSprite, Integer> textureOre = new HashMap();
-				if(mineral!=null && mineral.oreOutput!=null)
+				if (mineral!=null && mineral.oreOutput!=null)
 				{
-					for(int i=0; i<mineral.oreOutput.length; i++)
-						if(mineral.oreOutput[i]!=null)
+					for (int i=0; i<mineral.oreOutput.size(); i++)
+						if (!mineral.oreOutput.get(i).isEmpty())
 						{
 							int weight = Math.max(2, Math.round(16*mineral.recalculatedChances[i]));
-							Block b = Block.getBlockFromItem(mineral.oreOutput[i].getItem());
-							IBlockState state = b!=null?b.getStateFromMeta(mineral.oreOutput[i].getMetadata()): Blocks.STONE.getDefaultState();
+							Block b = Block.getBlockFromItem(mineral.oreOutput.get(i).getItem());
+							IBlockState state = b!=null?b.getStateFromMeta(mineral.oreOutput.get(i).getMetadata()): Blocks.STONE.getDefaultState();
 							
 							IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(state);
 							if (b == IPContent.blockDummy)
@@ -276,13 +276,14 @@ public class ModelCoresampleExtended extends ModelCoresample
 											}
 											MineralMix mix2 = new MineralMix(mix.name, mix.failChance, newOres, newChances);
 											mix2.recalculateChances();
-											mix2.oreOutput[mix2.oreOutput.length - 1] = new ItemStack(IPContent.blockDummy, 1, BlockTypes_Dummy.OIL_DEPOSIT.getMeta());
+											mix2.oreOutput.set(mix2.oreOutput.size() - 1, new ItemStack(IPContent.blockDummy, 1, BlockTypes_Dummy.OIL_DEPOSIT.getMeta()));
 											
 											Fluid fluid = type.getFluid();
 											modelCache.put(indexName, new ModelCoresampleExtended(mix2, fluid));
 											break outer;
 										}
 									}
+									
 									modelCache.put(indexName, new ModelCoresample(mix));
 								}
 								else
@@ -308,7 +309,7 @@ public class ModelCoresampleExtended extends ModelCoresample
 						{
 							MineralMix mix = new MineralMix(resName, 1, new String[] { "obsidian" }, new float[] { 1F } );
 							mix.recalculateChances();
-							mix.oreOutput[0] = new ItemStack(IPContent.blockDummy, 1, BlockTypes_Dummy.OIL_DEPOSIT.getMeta());
+							mix.oreOutput.set(0, new ItemStack(IPContent.blockDummy, 1, BlockTypes_Dummy.OIL_DEPOSIT.getMeta()));
 							Fluid fluid = FluidRegistry.getFluid(type.fluid);
 							modelCache.put("_" + resName, new ModelCoresampleExtended(mix, fluid));
 						}

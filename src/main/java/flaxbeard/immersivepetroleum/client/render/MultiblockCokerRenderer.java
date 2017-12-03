@@ -21,7 +21,7 @@ public class MultiblockCokerRenderer extends TileEntitySpecialRenderer<TileEntit
     }
 	
 	@Override
-	public void renderTileEntityAt(TileEntityCoker.TileEntityCokerParent te, double x, double y, double z, float partialTicks, int destroyStage)
+	public void render(TileEntityCoker.TileEntityCokerParent te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
 	{
 		if (te != null)
 		{
@@ -31,8 +31,11 @@ public class MultiblockCokerRenderer extends TileEntitySpecialRenderer<TileEntit
 			
 			EnumFacing rotation = te.facing;
 			
-			float ticks = Minecraft.getMinecraft().thePlayer.ticksExisted + partialTicks;
+			float ticks = Minecraft.getMinecraft().player.ticksExisted + partialTicks;
+			if (rotation == EnumFacing.EAST) {
+				GlStateManager.translate(0, 0, -4);
 
+			}
 			if (rotation == EnumFacing.SOUTH)
 			{
 				GlStateManager.rotate(270F, 0, 1, 0);

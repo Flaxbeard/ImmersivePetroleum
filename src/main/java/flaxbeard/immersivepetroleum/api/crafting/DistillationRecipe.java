@@ -1,15 +1,18 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.common.util.ListUtils;
 
-import com.google.common.collect.Lists;
 
 /**
  * @author BluSunrize - 02.03.2016
@@ -36,9 +39,9 @@ public class DistillationRecipe extends MultiblockRecipe
 		
 		this.chance = chance;
 
-		this.fluidInputList = Lists.newArrayList(this.input);
-		this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
-		this.outputList = Lists.newArrayList(this.itemOutput);
+		this.fluidInputList = Collections.singletonList(this.input);
+		this.fluidOutputList = Arrays.asList(this.fluidOutput);
+		this.outputList = ListUtils.fromItem(this.itemOutput);
 	}
 
 	public static ArrayList<DistillationRecipe> recipeList = new ArrayList();
@@ -48,6 +51,8 @@ public class DistillationRecipe extends MultiblockRecipe
 		recipeList.add(r);
 		return r;
 	}
+	
+	
 	public static DistillationRecipe findRecipe(FluidStack input)
 	{
 		for (DistillationRecipe recipe : recipeList)
@@ -100,7 +105,7 @@ public class DistillationRecipe extends MultiblockRecipe
 	}
 	
 	@Override
-	public List<ItemStack> getActualItemOutputs(TileEntity tile)
+	public NonNullList<ItemStack> getActualItemOutputs(TileEntity tile)
 	{
 		if (tile.getWorld().rand.nextFloat() <= chance)
 		{
@@ -108,7 +113,7 @@ public class DistillationRecipe extends MultiblockRecipe
 		}
 		else
 		{
-			return Lists.newArrayList();
+			return ListUtils.fromItems();
 		}
 	}
 }

@@ -427,9 +427,9 @@ public class ModelCoker extends ModelBase
 	@Override
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
 	{
-		if (Minecraft.getMinecraft().thePlayer != null)
+		if (Minecraft.getMinecraft().player != null)
 		{
-			if (Minecraft.getMinecraft().thePlayer.isSneaking())
+			if (Minecraft.getMinecraft().player.isSneaking())
 			{
 				refresh();
 			}

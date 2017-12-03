@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -27,15 +28,15 @@ public class ContainerDistillationTower extends ContainerIEBase<TileEntityDistil
 			@Override
 			public boolean isItemValid(ItemStack itemStack)
 			{
-				IFluidHandler h = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
-				if (h==null||h.getTankProperties().length==0)
+				IFluidHandler h = (IFluidHandler)itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, (EnumFacing)null);
+				if (h == null || h.getTankProperties().length == 0)
 					return false;
 				FluidStack fs = h.getTankProperties()[0].getContents();
 				if(fs==null)
 					return false;
 				if(RefineryRecipe.findIncompleteRefineryRecipe(fs, null)==null)
 					return false;
-				if(tileF.tanks[0].getFluidAmount()>0&&!fs.isFluidEqual(tileF.tanks[0].getFluid()))
+				if(tileF.tanks[0].getFluidAmount() >0 && !fs.isFluidEqual(tileF.tanks[0].getFluid()))
 					return false;
 				DistillationRecipe incomplete = DistillationRecipe.findRecipe(fs);
 				return incomplete!=null;
@@ -48,7 +49,7 @@ public class ContainerDistillationTower extends ContainerIEBase<TileEntityDistil
 			@Override
 			public boolean isItemValid(ItemStack itemStack)
 			{
-				return super.isItemValid(itemStack) || (itemStack!=null && itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null));
+				return super.isItemValid(itemStack) || (!itemStack.isEmpty() && itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null));
 			}
 		});
 		

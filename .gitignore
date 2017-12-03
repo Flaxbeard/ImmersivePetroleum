@@ -16,3 +16,16 @@ src/main/java/cofh/api/energy/IEnergyConnection.java
 src/main/java/cofh/api/energy/IEnergyHandler.java
 src/main/java/cofh/api/energy/IEnergyProvider.java
 src/main/java/cofh/api/energy/IEnergyReceiver.java
+.idea/
+*.iml
+*.ipr
+*.iws
+
+out/
+eclipse/
+*.launch
+*.txt
+run/
+*.project
+*.classpath
+.settings/

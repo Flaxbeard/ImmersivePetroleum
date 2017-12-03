@@ -26,11 +26,14 @@ public class GuiDistillationTower extends GuiContainer
 	@Override
 	public void drawScreen(int mx, int my, float partial)
 	{
+		this.drawDefaultBackground();
 		super.drawScreen(mx, my, partial);
+		this.renderHoveredToolTip(mx, my);
+
 		ArrayList<String> tooltip = new ArrayList();
 		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 62, guiTop + 21, 16, 47, 177, 31, 20, 51, mx,my, "immersivepetroleum:textures/gui/distillation.png", tooltip);
-		
-		
+
+
 		//ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+112,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivepetroleum:textures/gui/distillation.png", tooltip);
 		if(mx >= guiLeft+112 && mx <= guiLeft+112+16 && my >= guiTop+21 && my <= guiTop+21+47)
 		{
@@ -51,13 +54,13 @@ public class GuiDistillationTower extends GuiContainer
 					}
 				}
 		}
-		
+
 		if(mx>guiLeft+157&&mx<guiLeft+164 && my>guiTop+21&&my<guiTop+67)
 			tooltip.add(tile.getEnergyStored(null)+"/"+tile.getMaxEnergyStored(null)+" RF");
 
 		if(!tooltip.isEmpty())
 		{
-			ClientUtils.drawHoveringText(tooltip, mx, my, fontRendererObj, guiLeft+xSize,-1);
+			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft+xSize,-1);
 			RenderHelper.enableGUIStandardItemLighting();
 		}
 	}
@@ -81,7 +84,7 @@ public class GuiDistillationTower extends GuiContainer
 
 		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft+62,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivepetroleum:textures/gui/distillation.png", null);
 		//ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+112,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivepetroleum:textures/gui/distillation.png", null);
-		
+
 		float capacity = tile.tanks[1].getCapacity();
 		int yy = guiTop + 21 + 47;
 		for(int i=tile.tanks[1].getFluidTypes()-1; i>=0; i--)
@@ -94,7 +97,7 @@ public class GuiDistillationTower extends GuiContainer
 				ClientUtils.drawRepeatedFluidSprite(fs, guiLeft+112,yy, 16,fluidHeight);
 			}
 		}
-		
+
 		//		if(tile.tank.getFluid()!=null && tile.tank.getFluid().getFluid()!=null)
 		//		{
 		//			int h = (int)(47*(tile.tank.getFluid().amount/(float)tile.tank.getCapacity()));

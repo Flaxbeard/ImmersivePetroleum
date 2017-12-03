@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -70,7 +71,7 @@ public class TileEntityCoker extends TileEntityMultiblockMetal<TileEntityCoker, 
 	{
 		//System.out.println("TEST");
 		super.update();
-		if(worldObj.isRemote || isDummy())
+		if (world.isRemote || isDummy())
 		{
 			return;
 		}
@@ -635,7 +636,7 @@ public class TileEntityCoker extends TileEntityMultiblockMetal<TileEntityCoker, 
 	}
 
 	@Override
-	public ItemStack[] getInventory()
+	public NonNullList<ItemStack> getInventory()
 	{
 		return null;
 	}
@@ -681,7 +682,7 @@ public class TileEntityCoker extends TileEntityMultiblockMetal<TileEntityCoker, 
 	{
 		return false;
 	}
-	
+
 	@Override
 	public boolean isDummy()
 	{
@@ -695,7 +696,7 @@ public class TileEntityCoker extends TileEntityMultiblockMetal<TileEntityCoker, 
 		{
 			return this;
 		}
-		TileEntity te = worldObj.getTileEntity(getPos().add(-offset[0],-offset[1],-offset[2]));
+		TileEntity te = world.getTileEntity(getPos().add(-offset[0],-offset[1],-offset[2]));
 		return this.getClass().isInstance(te) ? (TileEntityCoker) te : null;
 	}
 	
@@ -703,10 +704,10 @@ public class TileEntityCoker extends TileEntityMultiblockMetal<TileEntityCoker, 
 	public TileEntityCoker getTileForPos(int targetPos)
 	{
 		BlockPos target = getBlockPosForPos(targetPos);
-		TileEntity tile = worldObj.getTileEntity(target);
+		TileEntity tile = world.getTileEntity(target);
 		return tile instanceof TileEntityCoker ? (TileEntityCoker) tile : null;
 	}
-	
+
 	public boolean isLadder()
 	{
 		return pos % (5 * 9) == 18;

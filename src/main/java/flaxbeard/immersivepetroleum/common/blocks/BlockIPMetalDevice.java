@@ -21,7 +21,7 @@ public class BlockIPMetalDevice extends BlockIPTileProvider<BlockTypes_IPMetalDe
 {
 	public BlockIPMetalDevice()
 	{
-		super("metal_device",Material.IRON, PropertyEnum.create("type", BlockTypes_IPMetalDevice.class), ItemBlockIPBase.class, IEProperties.FACING_ALL, IEProperties.MULTIBLOCKSLAVE);
+		super("metal_device",Material.IRON, PropertyEnum.create("type", BlockTypes_IPMetalDevice.class), ItemBlockIPBase.class, IEProperties.FACING_HORIZONTAL, IEProperties.MULTIBLOCKSLAVE);
 		setHardness(3.0F);
 		setResistance(15.0F);
 		lightOpacity = 0;

@@ -8,6 +8,10 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import blusunrize.immersiveengineering.api.tool.IUpgrade;
 import blusunrize.immersiveengineering.api.tool.IUpgradeableTool;
@@ -43,47 +47,28 @@ public abstract class ItemIPUpgradableTool extends ItemIPInternalStorage impleme
 	public void finishUpgradeRecalculation(ItemStack stack)
 	{
 	}
-
 	@Override
 	public void recalculateUpgrades(ItemStack stack)
 	{
 		clearUpgrades(stack);
-		ItemStack[] inv = getContainedItems(stack);
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		for(int i=0; i<inv.length; i++)//start at 1, 0 is the drill
-		{
-			ItemStack u = inv[i];
-			if(u!=null && u.getItem() instanceof IUpgrade)
-			{
-				IUpgrade upg = (IUpgrade)u.getItem();
-				if(upg.getUpgradeTypes(u).contains(upgradeType) && upg.canApplyUpgrades(stack, u))
-					upg.applyUpgrades(stack, u, map);
-			}
-		}
+		IItemHandler inv = (IItemHandler)stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (EnumFacing)null);
 		NBTTagCompound upgradeTag = getUpgradeBase(stack).copy();
-		for(String key : map.keySet())
-		{
-			Object o = map.get(key);
-			if(o instanceof Byte)
-				upgradeTag.setByte(key, (Byte)o);
-			else if(o instanceof byte[])
-				upgradeTag.setByteArray(key, (byte[])o);
-			else if(o instanceof Boolean)
-				upgradeTag.setBoolean(key, (Boolean)o);
-			else if(o instanceof Integer)
-				upgradeTag.setInteger(key, (Integer)o);
-			else if(o instanceof int[])
-				upgradeTag.setIntArray(key, (int[])o);
-			else if(o instanceof Float)
-				upgradeTag.setFloat(key, (Float)o);
-			else if(o instanceof Double)
-				upgradeTag.setDouble(key, (Double)o);
-			else if(o instanceof String)
-				upgradeTag.setString(key, (String)o);
+		if (inv != null) {
+			for(int i = 0; i < inv.getSlots(); ++i) {
+				ItemStack u = inv.getStackInSlot(i);
+				if (!u.isEmpty() && u.getItem() instanceof IUpgrade) {
+					IUpgrade upg = (IUpgrade)u.getItem();
+					if (upg.getUpgradeTypes(u).contains(this.upgradeType) && upg.canApplyUpgrades(stack, u)) {
+						upg.applyUpgrades(stack, u, upgradeTag);
+					}
+				}
+			}
+
+			ItemNBTHelper.setTagCompound(stack, "upgrades", upgradeTag);
+			this.finishUpgradeRecalculation(stack);
 		}
-		ItemNBTHelper.setTagCompound(stack, "upgrades", upgradeTag);
-		finishUpgradeRecalculation(stack);
 	}
+
 	public NBTTagCompound getUpgradeBase(ItemStack stack)
 	{
 		return new NBTTagCompound();
@@ -101,5 +86,5 @@ public abstract class ItemIPUpgradableTool extends ItemIPInternalStorage impleme
 	@Override
 	public abstract boolean canModify(ItemStack stack);
 	@Override
-	public abstract Slot[] getWorkbenchSlots(Container container, ItemStack stack, IInventory invItem);
+	public abstract Slot[] getWorkbenchSlots(Container var1, ItemStack var2);
 }

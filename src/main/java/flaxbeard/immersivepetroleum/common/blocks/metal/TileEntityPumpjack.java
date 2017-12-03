@@ -6,11 +6,13 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -24,18 +26,19 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
 import blusunrize.immersiveengineering.common.Config.IEConfig;
+import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import com.google.common.collect.Lists;
 
-import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
-import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 
 public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPumpjack, IMultiblockRecipe> implements IAdvancedSelectionBounds,IAdvancedCollisionBounds, IGuiTile
@@ -73,6 +76,8 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 
 	public boolean wasActive = false;
 	public float activeTicks = 0;
+	private int pipeTicks = 0;
+	private boolean lastHadPipes = true;
 	public IBlockState state = null;
 	
 	public boolean canExtract()
@@ -82,22 +87,39 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	
 	public int availableOil()
 	{
-		return PumpjackHandler.getFluidAmount(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return PumpjackHandler.getFluidAmount(world, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
 	public Fluid availableFluid()
 	{
-		return PumpjackHandler.getFluid(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return PumpjackHandler.getFluid(world, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
 	public int getResidualOil()
 	{
-		return PumpjackHandler.getResidualFluid(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return PumpjackHandler.getResidualFluid(world, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
 	public void extractOil(int amount)
 	{
-		PumpjackHandler.depleteFluid(worldObj, getPos().getX() >> 4, getPos().getZ() >> 4, amount);
+		PumpjackHandler.depleteFluid(world, getPos().getX() >> 4, getPos().getZ() >> 4, amount);
+	}
+	
+	private boolean hasPipes()
+	{
+		if (!IPConfig.Extraction.req_pipes) return true;
+		BlockPos basePos = getPos().offset(this.getFacing(), 4);
+		for (int y = basePos.getY() - 2; y > 0; y--)
+		{
+			BlockPos pos = new BlockPos(basePos.getX(), y, basePos.getZ());
+			IBlockState state = world.getBlockState(pos);
+			if (state.getBlock() == Blocks.BEDROCK) return true;
+			if (!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta()))
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	@Override
@@ -106,6 +128,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		super.readCustomNBT(nbt, descPacket);
 		boolean lastActive = wasActive;
 		this.wasActive = nbt.getBoolean("wasActive");
+		this.lastHadPipes = nbt.getBoolean("lastHadPipes");
 		if (!wasActive && lastActive)
 		{
 			this.activeTicks++;
@@ -113,9 +136,9 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		state = null;
 		if (nbt.hasKey("comp"))
 		{
-			ItemStack stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("comp"));
+			ItemStack stack = new ItemStack(nbt.getCompoundTag("comp"));
 			
-			if (stack != null)
+			if (!stack.isEmpty())
 			{
 				Block block = Block.getBlockFromItem(stack.getItem());
 				state = block.getDefaultState();
@@ -127,7 +150,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	{
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.setBoolean("wasActive", wasActive);
-		
+		nbt.setBoolean("lastHadPipes", lastHadPipes);
 		if (availableFluid() != null)
 		{
 			if (availableFluid().getBlock() != null)
@@ -150,15 +173,15 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	{
 		//System.out.println("TEST");
 		super.update();
-		if (worldObj.isRemote || isDummy())
+		if(world.isRemote || isDummy())
 		{
-			if (worldObj.isRemote && !isDummy() && state != null && wasActive)
+			if (world.isRemote && !isDummy() && state != null && wasActive)
 			{
 				BlockPos particlePos = this.getPos().offset(facing, 4);
-				float r1 = (worldObj.rand.nextFloat() - .5F) * 2F;
-				float r2 = (worldObj.rand.nextFloat() - .5F) * 2F;
+				float r1 = (world.rand.nextFloat() - .5F) * 2F;
+				float r2 = (world.rand.nextFloat() - .5F) * 2F;
 
-				worldObj.spawnParticle(EnumParticleTypes.BLOCK_DUST, particlePos.getX() + 0.5F, particlePos.getY(), particlePos.getZ() + 0.5F, r1 * 0.04F, 0.25F, r2 * 0.025F, new int[] {Block.getStateId(state)});
+				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, particlePos.getX() + 0.5F, particlePos.getY(), particlePos.getZ() + 0.5F, r1 * 0.04F, 0.25F, r2 * 0.025F, new int[] {Block.getStateId(state)});
 			}
 			if (wasActive && consumePower)
 			{
@@ -171,49 +194,58 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		
 		int consumed = IPConfig.Extraction.pumpjack_consumption;
 		int extracted = consumePower ? energyStorage.extractEnergy(consumed, true) : consumed;
-				
+		
 		if (extracted >= consumed && canExtract() && !this.isRSDisabled())
 		{
-			int residual = getResidualOil();
-			if (availableOil() > 0 || residual > 0)
+			if ((getPos().getX() + getPos().getZ()) % IPConfig.Extraction.pipe_check_ticks == pipeTicks)
 			{
-				int oilAmnt = availableOil() <= 0 ? residual : availableOil();
-				
-				energyStorage.extractEnergy(consumed, false);
-				active = true;
-				FluidStack out = new FluidStack(availableFluid(), Math.min(IPConfig.Extraction.pumpjack_speed, oilAmnt));
-				BlockPos outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY().getOpposite(), 2).offset(EnumFacing.DOWN, 1);
-				IFluidHandler output = FluidUtil.getFluidHandler(worldObj, outputPos, facing);
-				if(output != null)
-				{
-					int accepted = output.fill(out, false);
-					if(accepted > 0)
-					{
-						int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-						extractOil(drained);
-						out = Utils.copyFluidStackWithAmount(out, out.amount - drained, false);
-					}
-				}
-				
-				outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY(), 2).offset(EnumFacing.DOWN, 1);
-				output = FluidUtil.getFluidHandler(worldObj, outputPos, facing);
-				if(output != null)
-				{
-					int accepted = output.fill(out, false);
-					if(accepted > 0)
-					{
-						int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-						extractOil(drained);
-	
-					}
-				}
-							
-				
-				activeTicks++;
+				lastHadPipes = hasPipes();
 			}
+			if (lastHadPipes)
+			{
+				int residual = getResidualOil();
+				if (availableOil() > 0 || residual > 0)
+				{
+					int oilAmnt = availableOil() <= 0 ? residual : availableOil();
+					
+					energyStorage.extractEnergy(consumed, false);
+					active = true;
+					FluidStack out = new FluidStack(availableFluid(), Math.min(IPConfig.Extraction.pumpjack_speed, oilAmnt));
+					BlockPos outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY().getOpposite(), 2).offset(EnumFacing.DOWN, 1);
+					IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing.rotateY());
+					if(output != null)
+					{
+						int accepted = output.fill(out, false);
+						if(accepted > 0)
+						{
+							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+							extractOil(drained);
+							out = Utils.copyFluidStackWithAmount(out, out.amount - drained, false);
+						}
+					}
+
+				
+					outputPos = this.getPos().offset(facing, 2).offset(facing.rotateY(), 2).offset(EnumFacing.DOWN, 1);
+					output = FluidUtil.getFluidHandler(world, outputPos, facing.rotateYCCW());
+					if(output != null)
+					{
+						int accepted = output.fill(out, false);
+						if(accepted > 0)
+						{
+							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+							extractOil(drained);
+		
+						}
+					}
+								
+					
+					activeTicks++;
+				}
+			}
+			pipeTicks = (pipeTicks + 1) % IPConfig.Extraction.pipe_check_ticks;
 		}
 
-		if(active != wasActive)
+		if (active != wasActive)
 		{
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);
@@ -521,7 +553,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	}
 
 	@Override
-	public ItemStack[] getInventory()
+	public NonNullList<ItemStack> getInventory()
 	{
 		return null;
 	}
@@ -549,6 +581,10 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 				return new FluidTank[] { fakeTank };
 			}
 			else if (pos == 11 && (side == null || side == facing.rotateY() || side == facing.getOpposite().rotateY()))
+			{
+				return new FluidTank[] { fakeTank };
+			}
+			else if (pos == 16 && IPConfig.Extraction.req_pipes && (side == null || side == EnumFacing.DOWN))
 			{
 				return new FluidTank[] { fakeTank };
 			}
@@ -581,7 +617,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 		{
 			return this;
 		}
-		TileEntity te = worldObj.getTileEntity(getPos().add(-offset[0],-offset[1],-offset[2]));
+		TileEntity te = world.getTileEntity(getPos().add(-offset[0],-offset[1],-offset[2]));
 		return this.getClass().isInstance(te) ? (TileEntityPumpjack) te : null;
 	}
 	
@@ -589,7 +625,7 @@ public class TileEntityPumpjack extends TileEntityMultiblockMetal<TileEntityPump
 	public TileEntityPumpjack getTileForPos(int targetPos)
 	{
 		BlockPos target = getBlockPosForPos(targetPos);
-		TileEntity tile = worldObj.getTileEntity(target);
+		TileEntity tile = world.getTileEntity(target);
 		return tile instanceof TileEntityPumpjack ? (TileEntityPumpjack) tile : null;
 	}
 }

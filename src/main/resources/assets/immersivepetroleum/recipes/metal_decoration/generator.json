@@ -1,0 +1,27 @@
+{
+  "type": "forge:ore_shaped",
+  "quarter_turn": false,
+  "result": {
+    "item": "immersivepetroleum:metal_device",
+    "data": 1,
+    "count": 1
+  },
+  "pattern": [
+    "III",
+    "IGR",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "#plateIron"
+    },
+    "G": {
+      "item": "immersiveengineering:metal_decoration0",
+      "data": 6
+    },
+    "R": {
+      "item": "immersiveengineering:metal_device0",
+      "data": 0
+    }
+  }
+}

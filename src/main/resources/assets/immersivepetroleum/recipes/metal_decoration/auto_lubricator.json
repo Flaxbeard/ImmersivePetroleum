@@ -1,0 +1,26 @@
+{
+  "type": "forge:ore_shaped",
+  "quarter_turn": false,
+  "result": {
+    "item": "immersivepetroleum:metal_device",
+    "data": 0,
+    "count": 1
+  },
+  "pattern": [
+    " G ",
+    "G G",
+    "WPW"
+  ],
+  "key": {
+    "W": {
+      "item": "#plankTreatedWood"
+    },
+    "P": {
+      "item": "immersiveengineering:metal_device1",
+      "data": 6
+    },
+    "G": {
+      "item": "#blockGlass"
+    }
+  }
+}

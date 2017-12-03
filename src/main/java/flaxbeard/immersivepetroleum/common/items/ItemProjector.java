@@ -2,18 +2,20 @@ package flaxbeard.immersivepetroleum.common.items;
 
 import java.util.List;
 
+import blusunrize.immersiveengineering.common.blocks.TileEntityIESlab;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -26,6 +28,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -87,7 +90,7 @@ public class ItemProjector extends ItemIPBase
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
 	{
 		if (ItemNBTHelper.hasKey(stack, "multiblock"))
 		{
@@ -173,29 +176,31 @@ public class ItemProjector extends ItemIPBase
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs tab, List list)
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list)
 	{
-		if (!IPConfig.Tools.disable_projector)
+		if (this.isInCreativeTab(tab))
 		{
-			list.add(new ItemStack(item, 1, 0));
+			list.add(new ItemStack(this, 1, 0));
 			List<IMultiblock> multiblocks = MultiblockHandler.getMultiblocks();
 			for (IMultiblock multiblock : multiblocks)
 			{
 				String str = multiblock.getUniqueName();
 				if (str.equals("IE:BucketWheel") || str.equals("IE:Excavator")) continue;
-				ItemStack stack = new ItemStack(item, 1, 0);
+				ItemStack stack = new ItemStack(this, 1, 0);
 				ItemNBTHelper.setString(stack, "multiblock", multiblock.getUniqueName());
 				list.add(stack);
 			}
-			ItemStack stack = new ItemStack(item, 1, 0);
+			ItemStack stack = new ItemStack(this, 1, 0);
 			ItemNBTHelper.setString(stack, "multiblock", MultiblockExcavatorDemo.instance.getUniqueName());
 			setFlipped(stack, true);
 			list.add(stack);
 		}
 	}
 	
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	@Override
+    public EnumActionResult onItemUse(EntityPlayer playerIn, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
+		ItemStack stack = playerIn.getHeldItem(hand);
 		if (ItemNBTHelper.hasKey(stack, "pos") && playerIn.isSneaking())
 		{
 			ItemNBTHelper.remove(stack, "pos");
@@ -226,7 +231,7 @@ public class ItemProjector extends ItemIPBase
 			int zd = (rotate % 2 == 0) ? mw :  ml;
 			
 			Vec3d vec = playerIn.getLookVec();
-			EnumFacing look = (Math.abs(vec.zCoord) > Math.abs(vec.xCoord)) ? (vec.zCoord > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.xCoord > 0 ? EnumFacing.EAST : EnumFacing.WEST);
+			EnumFacing look = (Math.abs(vec.z) > Math.abs(vec.x)) ? (vec.z > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.x > 0 ? EnumFacing.EAST : EnumFacing.WEST);
 			if (look == EnumFacing.NORTH || look == EnumFacing.SOUTH)
 			{
 				hit = hit.add(-xd / 2, 0, 0);
@@ -261,7 +266,7 @@ public class ItemProjector extends ItemIPBase
 					{
 						for(int w = 0; w < mw; w++)
 						{							
-							if (mb.getStructureManual()[h][l][w] != null)
+							if (mb.getStructureManual()[h][l][w] != null && !mb.getStructureManual()[h][l][w].isEmpty())
 							{
 								int xo = l;
 								int zo = w;
@@ -385,16 +390,16 @@ public class ItemProjector extends ItemIPBase
 	public void handleKeypress(ClientTickEvent event)
 	{
 		Minecraft mc = ClientUtils.mc();
-		if (event.phase == Phase.START && mc.thePlayer != null)
+		if (event.phase == Phase.START && mc.player != null)
 		{
 			//
-			ItemStack mainItem = mc.thePlayer.getHeldItemMainhand();
-			ItemStack secondItem = mc.thePlayer.getHeldItemOffhand();
+			ItemStack mainItem = mc.player.getHeldItemMainhand();
+			ItemStack secondItem = mc.player.getHeldItemOffhand();
 			
-			boolean main = mainItem != null && mainItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
-			boolean off = secondItem != null && secondItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
+			boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
+			boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
 			ItemStack target = main ? mainItem : secondItem;
-			World world = mc.theWorld;
+			World world = mc.world;
 			
 			if (main || off)
 			{
@@ -410,7 +415,7 @@ public class ItemProjector extends ItemIPBase
 							
 							if (!lastDown)
 							{
-								if (mc.thePlayer.isSneaking())
+								if (mc.player.isSneaking())
 								{
 									ItemProjector.flipClient(target);
 								}
@@ -429,7 +434,7 @@ public class ItemProjector extends ItemIPBase
 						{
 							if (!lastDown)
 							{
-								if (mc.thePlayer.isSneaking())
+								if (mc.player.isSneaking())
 								{
 									ItemProjector.flipClient(target);
 								}
@@ -466,37 +471,37 @@ public class ItemProjector extends ItemIPBase
 		
 		GlStateManager.pushMatrix();
 		
-		if (mc.thePlayer != null)
+		if (mc.player != null)
 		{
-			ItemStack mainItem = mc.thePlayer.getHeldItemMainhand();
-			ItemStack secondItem = mc.thePlayer.getHeldItemOffhand();
+			ItemStack mainItem = mc.player.getHeldItemMainhand();
+			ItemStack secondItem = mc.player.getHeldItemOffhand();
 			
-			boolean main = mainItem != null && mainItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
-			boolean off = secondItem != null && secondItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
+			boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
+			boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
 			
 			for (int i = 0; i < 11; i++)
 			{
 				GlStateManager.pushMatrix();
-				ItemStack stack = (i == 10 ? secondItem : mc.thePlayer.inventory.getStackInSlot(i));
-				if (stack != null && stack.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(stack, "multiblock"))
+				ItemStack stack = (i == 10 ? secondItem : mc.player.inventory.getStackInSlot(i));
+				if (!stack.isEmpty() && stack.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(stack, "multiblock"))
 				{
-					renderSchematic(stack, mc.thePlayer, mc.thePlayer.worldObj, event.getPartialTicks(), i == mc.thePlayer.inventory.currentItem || (i == 10 && off));
+					renderSchematic(stack, mc.player, mc.player.world, event.getPartialTicks(), i == mc.player.inventory.currentItem || (i == 10 && off));
 				}
 				GlStateManager.popMatrix();
 			}
 		}
 		
-		if (mc.thePlayer != null)
+		if (mc.player != null)
 		{
-			ItemStack mainItem = mc.thePlayer.getHeldItemMainhand();
-			ItemStack secondItem = mc.thePlayer.getHeldItemOffhand();
+			ItemStack mainItem = mc.player.getHeldItemMainhand();
+			ItemStack secondItem = mc.player.getHeldItemOffhand();
 			
 			boolean main = mainItem != null && mainItem.getItem() == Item.getItemFromBlock(IPContent.blockMetalDevice);
 			boolean off = secondItem != null && secondItem.getItem() == Item.getItemFromBlock(IPContent.blockMetalDevice);
 			
 			if (main || off)
 			{
-				BlockPos base = mc.thePlayer.getPosition();
+				BlockPos base = mc.player.getPosition();
 				for (int x = -16; x <= 16; x++)
 				{
 					for (int z = -16; z <= 16; z++)
@@ -504,24 +509,24 @@ public class ItemProjector extends ItemIPBase
 						for (int y = -16; y <= 16; y++)
 						{
 							BlockPos pos = base.add(x, y, z);
-							TileEntity te = mc.thePlayer.worldObj.getTileEntity(pos);
+							TileEntity te = mc.player.world.getTileEntity(pos);
 							
 							if (te != null)
 							{
 								ILubricationHandler handler = LubricatedHandler.getHandlerForTile(te);
 								if (handler != null)
 								{
-									Tuple<BlockPos, EnumFacing> target = handler.getGhostBlockPosition(mc.thePlayer.worldObj, te);
+									Tuple<BlockPos, EnumFacing> target = handler.getGhostBlockPosition(mc.player.world, te);
 									if (target != null)
 									{
 										BlockPos targetPos = target.getFirst();
 										EnumFacing targetFacing = target.getSecond();
-										if (mc.thePlayer.worldObj.getBlockState(targetPos).getBlock().isReplaceable(mc.thePlayer.worldObj, targetPos)
-												&& mc.thePlayer.worldObj.getBlockState(targetPos.up()).getBlock().isReplaceable(mc.thePlayer.worldObj, targetPos.up()))
+										if (mc.player.world.getBlockState(targetPos).getBlock().isReplaceable(mc.player.world, targetPos)
+												&& mc.player.world.getBlockState(targetPos.up()).getBlock().isReplaceable(mc.player.world, targetPos.up()))
 										{
 											GlStateManager.pushMatrix();
 											float alpha = .5f;
-											ShaderUtil.alpha_static(alpha, mc.thePlayer.ticksExisted);
+											ShaderUtil.alpha_static(alpha, mc.player.ticksExisted);
 											double px = TileEntityRendererDispatcher.staticPlayerX;
 											double py = TileEntityRendererDispatcher.staticPlayerY;
 											double pz = TileEntityRendererDispatcher.staticPlayerZ;
@@ -621,8 +626,8 @@ public class ItemProjector extends ItemIPBase
 				}
 				
 				
-				Vec3d vec = mc.thePlayer.getLookVec();
-				EnumFacing facing = (Math.abs(vec.zCoord) > Math.abs(vec.xCoord)) ? (vec.zCoord > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.xCoord > 0 ? EnumFacing.EAST : EnumFacing.WEST);
+				Vec3d vec = mc.player.getLookVec();
+				EnumFacing facing = (Math.abs(vec.z) > Math.abs(vec.x)) ? (vec.z > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.x > 0 ? EnumFacing.EAST : EnumFacing.WEST);
 				
 				
 				if (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH)
@@ -668,7 +673,7 @@ public class ItemProjector extends ItemIPBase
 				ClientUtils.mc().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 				
 				Tessellator tessellator = Tessellator.getInstance();
-				VertexBuffer buffer = tessellator.getBuffer();
+				BufferBuilder buffer = tessellator.getBuffer();
 				
 				float flicker = (world.rand.nextInt(10) == 0) ? 0.75F : (world.rand.nextInt(20) == 0 ? 0.5F : 1F);
 				
@@ -686,7 +691,7 @@ public class ItemProjector extends ItemIPBase
 
 							GlStateManager.pushMatrix();
 							
-							if (mb.getStructureManual()[h][l][w] != null)
+							if (mb.getStructureManual()[h][l][w] != null && !mb.getStructureManual()[h][l][w].isEmpty())
 							{
 								BlockPos blockPos = new BlockPos(0, 0, 0);
 								
@@ -720,7 +725,7 @@ public class ItemProjector extends ItemIPBase
 								BlockPos actualPos = hit.add(xo, h, zo);
 								
 								IBlockState otherState = null;
-								if (heldStack != null && heldStack.getItem() instanceof ItemBlock)
+								if (!heldStack.isEmpty() && heldStack.getItem() instanceof ItemBlock)
 								{
 									otherState = ((ItemBlock)heldStack.getItem()).getBlock().getStateFromMeta(heldStack.getItemDamage());
 								}
@@ -745,7 +750,7 @@ public class ItemProjector extends ItemIPBase
 								stateEqual = testEvent.isEqual();
 								
 								
-								if (heldStack != null && otherState != null)
+								if (!heldStack.isEmpty() && otherState != null)
 								{
 									int[] ids2 = OreDictionary.getOreIDs(heldStack);
 									for (int id2 : ids2)
@@ -766,7 +771,7 @@ public class ItemProjector extends ItemIPBase
 								{
 									slicePerfect = false;
 									float alpha = otherStateEqual ? .75F : .5F;
-									ShaderUtil.alpha_static(flicker * alpha, mc.thePlayer.ticksExisted + partialTicks);
+									ShaderUtil.alpha_static(flicker * alpha, mc.player.ticksExisted + partialTicks);
 									GlStateManager.translate(xo, h, zo);
 
 									GlStateManager.translate(.5, .5, .5);	
@@ -808,7 +813,7 @@ public class ItemProjector extends ItemIPBase
 			
 							GlStateManager.pushMatrix();
 
-							if (mb.getStructureManual()[h][l][w] != null)
+							if (mb.getStructureManual()[h][l][w] != null && !mb.getStructureManual()[h][l][w].isEmpty())
 							{
 								BlockPos blockPos = new BlockPos(0, 0, 0);
 								
@@ -842,7 +847,7 @@ public class ItemProjector extends ItemIPBase
 								BlockPos actualPos = hit.add(xo, h, zo);
 								
 								IBlockState otherState = null;
-								if (heldStack != null && heldStack.getItem() instanceof ItemBlock)
+								if (!heldStack.isEmpty() && heldStack.getItem() instanceof ItemBlock)
 								{
 									otherState = ((ItemBlock)heldStack.getItem()).getBlock().getStateFromMeta(heldStack.getItemDamage());
 								}
@@ -866,7 +871,7 @@ public class ItemProjector extends ItemIPBase
 								MinecraftForge.EVENT_BUS.post(testEvent);
 								stateEqual = testEvent.isEqual();
 								
-								if (heldStack != null && otherState != null)
+								if (!heldStack.isEmpty() && otherState != null)
 								{
 									int[] ids2 = OreDictionary.getOreIDs(heldStack);
 									for (int id2 : ids2)
@@ -1022,7 +1027,7 @@ public class ItemProjector extends ItemIPBase
 		if (event.getH() < mb.getStructureManual().length - 1)
 		{
 			ItemStack stack = mb.getStructureManual()[event.getH() + 1][event.getL()][event.getW()];
-			if (stack != null)
+			if (stack != null && !stack.isEmpty())
 			{
 				if (state.getBlock() == IEContent.blockMetalDevice0 && state.getBlock().getMetaFromState(state) == BlockTypes_MetalDevice0.FLUID_PUMP.getMeta() &&
 						!(stack.getItemDamage() != BlockTypes_MetalDevice0.FLUID_PUMP.getMeta() || stack.getItem() != Item.getItemFromBlock(IEContent.blockMetalDevice0)))
@@ -1123,28 +1128,19 @@ public class ItemProjector extends ItemIPBase
 				}
 			}
 		}
+
+		if (mb.getUniqueName().equals("IP:DistillationTower")) {
+			if (state.getBlock() == IEContent.blockMetalDecorationSlabs1) {
+				if (event.getWorld().getBlockState(event.getPos()).getBlock() == IEContent.blockMetalDecorationSlabs1) {
+					event.setIsEqual(true);
+				}
+			}
+		}
 	}
 	
 	@SubscribeEvent
 	public void handleMultiblockComplete(MultiblockFormEvent event)
 	{
-		/*EntityPlayer player = event.getEntityPlayer();
-		
-		
-		if (player != null)
-		{
-			for (int i = 0; i < 11; i++)
-			{
-				ItemStack stack = (i == 10 ? player.getHeldItemOffhand() : player.inventory.getStackInSlot(i));
-				if (stack != null && stack.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(stack, "multiblock"))
-				{
-					if (doesIntersect(player, stack, event.getClickedBlock()))
-					{
-						ItemNBTHelper.remove(stack, "pos");
-					}
-				}
-			}
-		}*/
 	}
 	
 	public boolean doesIntersect(EntityPlayer player, ItemStack target, BlockPos check)
@@ -1241,6 +1237,29 @@ public class ItemProjector extends ItemIPBase
 		{
 			GlStateManager.rotate(180, 1, 0, 0);
 		}
+
+		if (mb.getUniqueName().equals("IP:DistillationTower")) {
+			if (state.getBlock() == IEContent.blockMetalDecorationSlabs1) {
+				GlStateManager.translate(0, .25F, 0);
+
+			}
+		}
 	}
-	
+
+	@SubscribeEvent
+	public void handleSlabPlace(SchematicPlaceBlockPostEvent event)
+	{
+		IMultiblock mb = event.getMultiblock();
+
+		IBlockState state = event.getBlockState();
+		if (mb.getUniqueName().equals("IP:DistillationTower")) {
+			TileEntity te = event.getWorld().getTileEntity(event.getPos());
+			if (te instanceof TileEntityIESlab)
+			{
+				((TileEntityIESlab) te).slabType = 1;
+			}
+		}
+	}
+
+
 }

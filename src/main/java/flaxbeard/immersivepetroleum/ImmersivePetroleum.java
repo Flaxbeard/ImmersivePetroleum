@@ -1,20 +1,20 @@
 package flaxbeard.immersivepetroleum;
 
 import java.util.HashMap;
-import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeModContainer;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.UniversalBucket;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -26,9 +26,9 @@ import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import blusunrize.immersiveengineering.common.Config;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
@@ -42,7 +42,7 @@ import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.util.CommandHandler;
 
-@Mod(modid = ImmersivePetroleum.MODID, version = ImmersivePetroleum.VERSION, dependencies = "required-after:immersiveengineering;")
+@Mod(modid = ImmersivePetroleum.MODID, version = ImmersivePetroleum.VERSION, dependencies = "required-after:immersiveengineering@[0.12,);")
 public class ImmersivePetroleum
 {
 	public static final String MODID = "immersivepetroleum";
@@ -111,8 +111,6 @@ public class ImmersivePetroleum
 		
 		NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, proxy);
 		proxy.init();
-		
-		MinecraftForge.EVENT_BUS.register(new EventHandler());
 	}
 	
 	@Mod.EventHandler
@@ -123,7 +121,7 @@ public class ImmersivePetroleum
 	}
 	
 	
-
+	/*
 	public static <T extends IForgeRegistryEntry<?>> T register(T object, String name)
 	{
 		return registerByFullName(object, MODID+":"+name);
@@ -152,14 +150,14 @@ public class ImmersivePetroleum
 			return registerBlockByFullName(block, itemBlock.getConstructor(Block.class).newInstance(block), MODID+":"+name);
 		}catch(Exception e){e.printStackTrace();}
 		return null;
-	}
+	}*/
 	
 	public static CreativeTabs creativeTab = new CreativeTabs(MODID)
 	{
 		@Override
-		public Item getTabIconItem()
+		public ItemStack getTabIconItem()
 		{
-			return null;
+			return ItemStack.EMPTY;
 		}
 		
 		@Override
@@ -168,9 +166,10 @@ public class ImmersivePetroleum
 			UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
 			ItemStack stack = new ItemStack(bucket);
             FluidStack fs = new FluidStack(IPContent.fluidCrudeOil, bucket.getCapacity());
-			if (bucket.fill(stack, fs, true) == fs.amount)
+            IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
+			if (fluidHandler.fill(fs, true) == fs.amount)
 			{
-				return stack;
+				return fluidHandler.getContainer();
 			}
 			
 			return new ItemStack(IPContent.blockFluidDiesel,1,0);
@@ -178,35 +177,39 @@ public class ImmersivePetroleum
 		
 		@Override
 		@SideOnly(Side.CLIENT)
-		public void displayAllRelevantItems(List<ItemStack> list)
+		public void displayAllRelevantItems(NonNullList<ItemStack> list)
 		{
 			UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
 			ItemStack stack = new ItemStack(bucket);
             FluidStack fs = new FluidStack(IPContent.fluidCrudeOil, bucket.getCapacity());
-			if (bucket.fill(stack, fs, true) == fs.amount)
+            IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
+			if (fluidHandler.fill(fs, true) == fs.amount)
 			{
-				list.add(stack);
+				list.add(fluidHandler.getContainer());
 			}
 			
 			stack = new ItemStack(bucket);
             fs = new FluidStack(IPContent.fluidDiesel, bucket.getCapacity());
-			if (bucket.fill(stack, fs, true) == fs.amount)
+            fluidHandler = new FluidBucketWrapper(stack);
+        	if (fluidHandler.fill(fs, true) == fs.amount)
 			{
-				list.add(stack);
+				list.add(fluidHandler.getContainer());
 			}
 			
-			stack = new ItemStack(bucket);
-            fs = new FluidStack(IPContent.fluidLubricant, bucket.getCapacity());
-			if (bucket.fill(stack, fs, true) == fs.amount)
-			{
-				list.add(stack);
-			}
-			
-			stack = new ItemStack(bucket);
+        	stack = new ItemStack(bucket);
             fs = new FluidStack(IPContent.fluidGasoline, bucket.getCapacity());
-			if (bucket.fill(stack, fs, true) == fs.amount)
+            fluidHandler = new FluidBucketWrapper(stack);
+        	if (fluidHandler.fill(fs, true) == fs.amount)
 			{
-				list.add(stack);
+				list.add(fluidHandler.getContainer());
+			}
+        	
+        	stack = new ItemStack(bucket);
+            fs = new FluidStack(IPContent.fluidLubricant, bucket.getCapacity());
+            fluidHandler = new FluidBucketWrapper(stack);
+        	if (fluidHandler.fill(fs, true) == fs.amount)
+			{
+				list.add(fluidHandler.getContainer());
 			}
 			
 			super.displayAllRelevantItems(list);
@@ -221,11 +224,11 @@ public class ImmersivePetroleum
 			World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
 			if(!world.isRemote)
 			{
-				IPSaveData worldData = (IPSaveData) world.loadItemData(IPSaveData.class, IPSaveData.dataName);
+				IPSaveData worldData = (IPSaveData) world.loadData(IPSaveData.class, IPSaveData.dataName);
 				if(worldData == null)
 				{
 					worldData = new IPSaveData(IPSaveData.dataName);
-					world.setItemData(IPSaveData.dataName, worldData);
+					world.setData(IPSaveData.dataName, worldData);
 				}
 				IPSaveData.setInstance(world.provider.getDimension(), worldData);
 			}

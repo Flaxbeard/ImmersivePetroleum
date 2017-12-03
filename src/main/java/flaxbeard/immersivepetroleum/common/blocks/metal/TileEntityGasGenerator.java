@@ -147,13 +147,13 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 	public void update()
 	{
 		
-		if (lastTank != this.tank.getFluidAmount())
+		if (!world.isRemote && lastTank != this.tank.getFluidAmount())
 		{
 			markContainingBlockForUpdate(null);
 			lastTank = this.tank.getFluidAmount();
 		}
 		active = false;
-		if (!worldObj.isBlockPowered(pos) && this.tank.getFluid() != null)
+		if (!world.isBlockPowered(pos) && this.tank.getFluid() != null)
 		{
 			Fluid fuel = this.tank.getFluid().getFluid();
 			if (FuelHandler.isValidFuel(fuel))
@@ -161,10 +161,10 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 				int amount = FuelHandler.getFuelUsedPerTick(fuel);
 				if (this.tank.getFluidAmount() >= amount)
 				{
-					if (!this.worldObj.isRemote)
+					if (!this.world.isRemote)
 					{						
 						BlockPos outputPos = getPos().offset(facing);
-						TileEntity te = Utils.getExistingTileEntity(worldObj, outputPos);
+						TileEntity te = Utils.getExistingTileEntity(world, outputPos);
 						if (this.energyStorage.receiveEnergy(FuelHandler.getFluxGeneratedPerTick(fuel), false) > 0)
 						{
 							this.tank.drain(new FluidStack(fuel, amount), true);
@@ -173,7 +173,7 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 					else
 					{
 						BlockPos outputPos = getPos().offset(facing);
-						TileEntity te = Utils.getExistingTileEntity(worldObj, outputPos);
+						TileEntity te = Utils.getExistingTileEntity(world, outputPos);
 						if (this.energyStorage.receiveEnergy(FuelHandler.getFluxGeneratedPerTick(fuel), true) > 0)
 						{
 							active = true;
@@ -183,7 +183,7 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 			}
 		}
 		
-		if (!worldObj.isRemote)
+		if (!world.isRemote)
 		{
 			//				if(Lib.IC2 && !this.inICNet)
 			//				{
@@ -203,24 +203,24 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 		}
 		else if (firstTick)
 		{
-			Set<Connection> conns = ImmersiveNetHandler.INSTANCE.getConnections(worldObj, pos);
+			Set<Connection> conns = ImmersiveNetHandler.INSTANCE.getConnections(world, pos);
 			if (conns!=null)
 				for (Connection conn:conns)
-					if (pos.compareTo(conn.end)<0 && worldObj.isBlockLoaded(conn.end))
+					if (pos.compareTo(conn.end)<0 && world.isBlockLoaded(conn.end))
 						this.markContainingBlockForUpdate(null);
 			firstTick = false;
 		}
 	
-		if (this.worldObj.isRemote)
+		if (this.world.isRemote)
 		{
 			ImmersiveEngineering.proxy.handleTileSound(IESounds.dieselGenerator, this, active, .3f, .5f);
-			if (active && worldObj.getTotalWorldTime() % 4 == 0)
+			if (active && world.getTotalWorldTime() % 4 == 0)
 			{
 				BlockPos exhaust = pos;
 				EnumFacing fl = facing;
 				EnumFacing fw = facing.rotateY();
-				worldObj.spawnParticle(
-						worldObj.rand.nextInt(10) == 0 ? EnumParticleTypes.SMOKE_LARGE : EnumParticleTypes.SMOKE_NORMAL, 
+				world.spawnParticle(
+						world.rand.nextInt(10) == 0 ? EnumParticleTypes.SMOKE_LARGE : EnumParticleTypes.SMOKE_NORMAL, 
 						exhaust.getX()+.5+(fl.getFrontOffsetX()*2/16F)+(-fw.getFrontOffsetX()*.6125f),
 						exhaust.getY()+.4,
 						exhaust.getZ()+.5+(fl.getFrontOffsetZ()*2/16F)+(-fw.getFrontOffsetZ()*.6125f), 0,0,0);
@@ -233,7 +233,7 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ)
 	{
 		FluidStack f = FluidUtil.getFluidContained(heldItem);
-		if (FluidUtil.interactWithFluidHandler(heldItem, tank, player))
+		if (FluidUtil.interactWithFluidHandler(player, hand, tank))
 		{
 			markContainingBlockForUpdate(null);
 			return true;
@@ -241,18 +241,18 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 		else if (player.isSneaking())
 		{
 			boolean added = false;
-			if (player.inventory.getCurrentItem() == null)
+			if (player.inventory.getCurrentItem().isEmpty())
 			{
 				added = true;
-				player.inventory.setInventorySlotContents(player.inventory.currentItem, getTileDrop(player, worldObj.getBlockState(pos)));
+				player.inventory.setInventorySlotContents(player.inventory.currentItem, getTileDrop(player, world.getBlockState(pos)));
 			}
 			else
 			{
-				added = player.inventory.addItemStackToInventory(getTileDrop(player, worldObj.getBlockState(pos)));
+				added = player.inventory.addItemStackToInventory(getTileDrop(player, world.getBlockState(pos)));
 			}
 			if (added)
 			{
-				worldObj.setBlockToAir(pos);
+				world.setBlockToAir(pos);
 			}
 		}
 		return false;
@@ -429,9 +429,9 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 	public int transferEnergy(int energy, boolean simulate, final int energyType)
 	{
 		int received = 0;
-		if (!worldObj.isRemote)
+		if (!world.isRemote)
 		{
-			Set<AbstractConnection> outputs = ImmersiveNetHandler.INSTANCE.getIndirectEnergyConnections(Utils.toCC(this), worldObj);
+			Set<AbstractConnection> outputs = ImmersiveNetHandler.INSTANCE.getIndirectEnergyConnections(Utils.toCC(this), world);
 			int powerLeft = Math.min(Math.min(getMaxOutput(),getMaxInput()), energy);
 			final int powerForSort = powerLeft;
 
@@ -442,7 +442,7 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 			HashMap<AbstractConnection,Integer> powerSorting = new HashMap<AbstractConnection,Integer>();
 			for (AbstractConnection con : outputs)
 			{
-				IImmersiveConnectable end = ApiUtils.toIIC(con.end, worldObj);
+				IImmersiveConnectable end = ApiUtils.toIIC(con.end, world);
 				if (con.cableType!=null && end!=null)
 				{
 					int atmOut = Math.min(powerForSort,con.cableType.getTransferRate());
@@ -458,7 +458,7 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 			if(sum>0)
 				for(AbstractConnection con : powerSorting.keySet())
 				{
-					IImmersiveConnectable end = ApiUtils.toIIC(con.end, worldObj);
+					IImmersiveConnectable end = ApiUtils.toIIC(con.end, world);
 					if(con.cableType!=null && end!=null)
 					{
 						float prio = powerSorting.get(con)/(float)sum;
@@ -476,15 +476,15 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 							float length = sub.length/(float)sub.cableType.getMaxLength();
 							float baseLoss = (float)sub.cableType.getLossRatio();
 							float mod = (((maxInput-tempR)/(float)maxInput)/.25f)*.1f;
-							intermediaryLoss = MathHelper.clamp_float(intermediaryLoss+length*(baseLoss+baseLoss*mod), 0,1);
+							intermediaryLoss = MathHelper.clamp(intermediaryLoss+length*(baseLoss+baseLoss*mod), 0,1);
 
-							int transferredPerCon = ImmersiveNetHandler.INSTANCE.getTransferedRates(worldObj.provider.getDimension()).containsKey(sub)?ImmersiveNetHandler.INSTANCE.getTransferedRates(worldObj.provider.getDimension()).get(sub):0;
+							int transferredPerCon = ImmersiveNetHandler.INSTANCE.getTransferedRates(world.provider.getDimension()).containsKey(sub)?ImmersiveNetHandler.INSTANCE.getTransferedRates(world.provider.getDimension()).get(sub):0;
 							transferredPerCon += r;
 							if(!simulate)
 							{
-								ImmersiveNetHandler.INSTANCE.getTransferedRates(worldObj.provider.getDimension()).put(sub,transferredPerCon);
-								IImmersiveConnectable subStart = ApiUtils.toIIC(sub.start,worldObj);
-								IImmersiveConnectable subEnd = ApiUtils.toIIC(sub.end,worldObj);
+								ImmersiveNetHandler.INSTANCE.getTransferedRates(world.provider.getDimension()).put(sub,transferredPerCon);
+								IImmersiveConnectable subStart = ApiUtils.toIIC(sub.start,world);
+								IImmersiveConnectable subEnd = ApiUtils.toIIC(sub.end,world);
 								if(subStart!=null && passedConnectors.add(subStart))
 									subStart.onEnergyPassthrough((int)(r-r*intermediaryLoss));
 								if(subEnd!=null && passedConnectors.add(subEnd))

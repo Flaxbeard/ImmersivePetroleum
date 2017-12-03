@@ -40,8 +40,8 @@ public class ConsumeBoatFuelPacket implements IMessage
 		@Override
 		public IMessage onMessage(ConsumeBoatFuelPacket message, MessageContext ctx)
 		{
-			EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-			DimensionManager.getWorld(player.worldObj.provider.getDimension()).addScheduledTask(new DoSync(player, message.amount));
+			EntityPlayerMP player = ctx.getServerHandler().player;
+			DimensionManager.getWorld(player.world.provider.getDimension()).addScheduledTask(new DoSync(player, message.amount));
 
 			return null;
 		}

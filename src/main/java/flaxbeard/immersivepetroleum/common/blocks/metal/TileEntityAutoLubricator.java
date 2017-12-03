@@ -24,6 +24,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
@@ -40,28 +41,23 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOve
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHasDummyBlocks;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityBucketWheel;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCrusher;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityExcavator;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal.MultiblockProcess;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 
-public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirectionalTile, IHasDummyBlocks, ITickable, IPlayerInteraction, IBlockOverlayText, IBlockBounds
+public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirectionalTile, IHasDummyBlocks, ITickable, IPlayerInteraction, IBlockOverlayText, IBlockBounds, ITileDrop
 {
-	static
-	{
-		LubricatedHandler.registerLubricatedTile(TileEntityPumpjack.class, new PumpjackLubricationHandler());
-		LubricatedHandler.registerLubricatedTile(TileEntityExcavator.class, new ExcavatorLubricationHandler());
-		LubricatedHandler.registerLubricatedTile(TileEntityCrusher.class, new CrusherLubricationHandler());
 
-	}
 	public static class PumpjackLubricationHandler implements ILubricationHandler<TileEntityPumpjack>
 	{
 
@@ -99,7 +95,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			{
 				if (ticks % 4 == 0)
 				{
-					master.update(false);
+					master.update(true);
 				}
 			}
 			else
@@ -262,8 +258,22 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			if (center instanceof TileEntityBucketWheel)
 			{
 				TileEntityBucketWheel wheel = (TileEntityBucketWheel) center;
-
-				wheel.rotation += IEConfig.Machines.excavator_speed / 4F;
+				
+				if (!world.isRemote && ticks % 4 == 0)
+				{
+					int consumed = IEConfig.Machines.excavator_consumption;
+					int extracted = master.energyStorage.extractEnergy(consumed, true);
+					if (extracted >= consumed)
+					{
+						master.energyStorage.extractEnergy(extracted, false);
+						wheel.rotation += IEConfig.Machines.excavator_speed / 4F;
+					}
+				}
+				else
+				{
+					wheel.rotation += IEConfig.Machines.excavator_speed / 4F;
+				}
+				
 			}
 		}
 
@@ -418,11 +428,16 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			{
 				if (ticks % 4 == 0)
 				{
-					if (process.processTick < process.maxTicks) process.processTick++;
-					if (process.processTick >= process.maxTicks && master.processQueue.size() > 1)
+					int consume = master.energyStorage.extractEnergy(process.energyPerTick, true);
+					if (consume >= process.energyPerTick)
 					{
-						process = processIterator.next();
+						master.energyStorage.extractEnergy(process.energyPerTick, false);
 						if (process.processTick < process.maxTicks) process.processTick++;
+						if (process.processTick >= process.maxTicks && master.processQueue.size() > 1)
+						{
+							process = processIterator.next();
+							if (process.processTick < process.maxTicks) process.processTick++;
+						}
 					}
 				}
 			}
@@ -530,7 +545,6 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	
 	public boolean active;
 	public int dummy = 0;
-	public FluxStorage energyStorage = new FluxStorage(8000);
 	public EnumFacing facing = EnumFacing.NORTH;
 	public FluidTank tank = new FluidTank(8000)
 	{
@@ -540,6 +554,8 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	        return fluid != null && LubricantHandler.isValidLube(fluid.getFluid());
 	    }
 	};
+	
+	public boolean predictablyDraining = false;
 
 	public int doSpeedup()
 	{
@@ -576,17 +592,17 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	@Override
 	public void placeDummies(BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
-		worldObj.setBlockState(pos.add(0, 1, 0), state);
-		((TileEntityAutoLubricator)worldObj.getTileEntity(pos.add(0, 1, 0))).dummy = 1;
-		((TileEntityAutoLubricator)worldObj.getTileEntity(pos.add(0, 1, 0))).facing = this.facing;
+		world.setBlockState(pos.add(0, 1, 0), state);
+		((TileEntityAutoLubricator)world.getTileEntity(pos.add(0, 1, 0))).dummy = 1;
+		((TileEntityAutoLubricator)world.getTileEntity(pos.add(0, 1, 0))).facing = this.facing;
 	
 	}
 	@Override
 	public void breakDummies(BlockPos pos, IBlockState state)
 	{
 		for (int i = 0; i <= 1; i++)
-			if (worldObj.getTileEntity(getPos().add(0,-dummy,0).add(0,i,0)) instanceof TileEntityAutoLubricator)
-				worldObj.setBlockToAir(getPos().add(0,-dummy,0).add(0,i,0));
+			if (world.getTileEntity(getPos().add(0,-dummy,0).add(0,i,0)) instanceof TileEntityAutoLubricator)
+				world.setBlockToAir(getPos().add(0,-dummy,0).add(0,i,0));
 	}
 
 	@Override
@@ -594,12 +610,15 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	{
 		dummy = nbt.getInteger("dummy");
 		facing = EnumFacing.getFront(nbt.getInteger("facing"));
-		energyStorage.readFromNBT(nbt);
+		if (facing == EnumFacing.DOWN || facing == EnumFacing.UP) {
+			facing = EnumFacing.NORTH;
+		}
 		active = nbt.getBoolean("active");
 		tank.readFromNBT(nbt.getCompoundTag("tank"));
 		count = nbt.getInteger("count");
+		predictablyDraining = nbt.getBoolean("predictablyDraining");
 
-		if(descPacket)
+		if (descPacket)
 			this.markContainingBlockForUpdate(null);
 	}
 
@@ -610,11 +629,10 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		nbt.setInteger("facing", facing.ordinal());
 		nbt.setBoolean("active", active);
 		nbt.setInteger("count", count);
+		nbt.setBoolean("predictablyDraining", predictablyDraining);
 		
 		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
 		nbt.setTag("tank", tankTag);
-		
-		energyStorage.writeToNBT(nbt);
 	}
 
 	@Override
@@ -625,6 +643,9 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	@Override
 	public void setFacing(EnumFacing facing)
 	{
+		if (facing == EnumFacing.DOWN || facing == EnumFacing.UP) {
+			facing = EnumFacing.NORTH;
+		}
 		this.facing = facing;
 	}
 	@Override
@@ -652,7 +673,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	{
 		for(int i=0; i<=1; i++)
 		{
-			TileEntity te = worldObj.getTileEntity(getPos().add(0,-dummy+i,0));
+			TileEntity te = world.getTileEntity(getPos().add(0,-dummy+i,0));
 			if(te instanceof TileEntityAutoLubricator)
 			{
 				((TileEntityAutoLubricator)te).setFacing(newDir);
@@ -667,7 +688,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	{
 		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && dummy == 1 && (facing==null || facing == EnumFacing.UP))
 		{
-			TileEntity te = worldObj.getTileEntity(getPos().add(0,-dummy,0));
+			TileEntity te = world.getTileEntity(getPos().add(0,-dummy,0));
 			if (te instanceof TileEntityAutoLubricator)
 			{
 				return (T) ((TileEntityAutoLubricator)te).tank;
@@ -681,7 +702,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	{
 		if (dummy == 1 && capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
 		{
-			TileEntity te = worldObj.getTileEntity(getPos().add(0,-dummy,0));
+			TileEntity te = world.getTileEntity(getPos().add(0,-dummy,0));
 			if (te instanceof TileEntityAutoLubricator)
 			{
 				return (facing==null || facing == EnumFacing.UP);
@@ -692,6 +713,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	
 	int count = 0;
 	int lastTank = 0;
+	int lastTankUpdate = 0;
 	int countClient = 0;
 	
 	@Override
@@ -702,200 +724,53 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			if (tank.getFluid() != null && tank.getFluid().getFluid() != null && tank.getFluidAmount() >= LubricantHandler.getLubeAmount(tank.getFluid().getFluid()) && LubricantHandler.isValidLube(tank.getFluid().getFluid()))
 			{
 				BlockPos target = pos.offset(facing);
-				TileEntity te = worldObj.getTileEntity(target);
+				TileEntity te = world.getTileEntity(target);
 
 				ILubricationHandler handler = LubricatedHandler.getHandlerForTile(te);
 				if (handler != null)
 				{
-					TileEntity master = handler.isPlacedCorrectly(worldObj, this, facing);
+					TileEntity master = handler.isPlacedCorrectly(world, this, facing);
 					if (master != null)
 					{
-						if (handler.isMachineEnabled(worldObj, master))
+						if (handler.isMachineEnabled(world, master))
 						{
 							count++;
-							handler.lubricate(worldObj, count, master);
+							handler.lubricate(world, count, master);
 							
-							if (!worldObj.isRemote && count % 4 == 0) 
+							if (!world.isRemote && count % 4 == 0) 
 							{
 								tank.drainInternal(LubricantHandler.getLubeAmount(tank.getFluid().getFluid()), true);
-								markContainingBlockForUpdate(null);
 							}
 							
-							if (worldObj.isRemote)
+							if (world.isRemote)
 							{
 								countClient++;
 								if (countClient % 50 == 0)
 								{
-									countClient = worldObj.rand.nextInt(40);
-									handler.spawnLubricantParticles(worldObj, this, facing, master);
+									countClient = world.rand.nextInt(40);
+									handler.spawnLubricantParticles(world, this, facing, master);
 								}
 							}
 						}
 					}
 				}
-				/*BlockPos target = pos.offset(facing, 2).up();
-				TileEntity te = worldObj.getTileEntity(target);
-				
-				if (te instanceof TileEntityPumpjack)
-				{
-					TileEntityPumpjack jack = (TileEntityPumpjack) te;
-					TileEntityPumpjack master = jack.master();
-					
-					EnumFacing f = master.mirrored ? facing : facing.getOpposite() ;
-					if (jack == master && master.wasActive && jack.getFacing().rotateY() == f)
-					{
-						if (worldObj.isRemote)
-						{
-							master.activeTicks += 1F/4F;
-							countClient++;
-							if (countClient % 50 == 0)
-							{
-								countClient = worldObj.rand.nextInt(40);
-								
-								float location = worldObj.rand.nextFloat();
-								
-								boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.POSITIVE ^ !master.mirrored;
-								float xO = 2.5F;
-								float zO = -.15F;
-								float yO = 2.25F;
-				
-								
-								if (location > .5F)
-								{
-									xO = 1.7F;
-									yO = 2.9F;
-									zO = -1.5F;
 
-								}
-								
-								if (facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
-								if (!flip) zO = -zO + 1;
-
-								
-								
-								float x = pos.getX() + (f.getAxis() == Axis.X ? xO : zO);
-								float y = pos.getY() + yO;
-								float z = pos.getZ() + (f.getAxis() == Axis.X ? zO : xO);
-								
-								for (int i = 0; i < 3; i++)
-								{
-					
-									float r1 = (worldObj.rand.nextFloat() - .5F) * 2F;
-									float r2 = (worldObj.rand.nextFloat() - .5F) * 2F;
-									float r3 = worldObj.rand.nextFloat();
-									int n = Block.getStateId(IPContent.blockFluidLubricant.getDefaultState());
-									worldObj.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F, new int[] {n});
-								}
-							}
-						}
-						else
-						{
-							count++;
-							if (count % 4 == 0)
-							{
-								tank.drainInternal(LubricantHandler.getLubeAmount(tank.getFluid().getFluid()), true);
-								master.update();
-								markContainingBlockForUpdate(null);
-	
-								count = 0;
-							}
-						}
-					}
-				}
-				
-				target = pos.offset(facing, 1).up();
-				te = worldObj.getTileEntity(target);
-				if (te instanceof TileEntityExcavator)
-				{
-					TileEntityExcavator ex = (TileEntityExcavator) te;
-					
-					EnumFacing f = ex.mirrored ? facing : facing.getOpposite() ;
-
-					target = pos.offset(facing, 2).offset(f.rotateY(), 4).up();
-					te = worldObj.getTileEntity(target);
-					ex = (TileEntityExcavator) te;
-					
-					TileEntityExcavator master = ex.master();
-					if (ex == master && ex.getFacing().rotateY() == f)
-					{
-						BlockPos wheelPos = master.getBlockPosForPos(31);
-						TileEntity center = worldObj.getTileEntity(wheelPos);
-
-						if (center instanceof TileEntityBucketWheel)
-						{
-							TileEntityBucketWheel wheel = (TileEntityBucketWheel) center;
-							
-							if (wheel.active)
-							{
-								wheel.rotation += IEConfig.Machines.excavator_speed / 4F;
-								
-								if (!worldObj.isRemote)
-								{
-									count++;
-									if (count % 4 == 0)
-									{
-										tank.drainInternal(LubricantHandler.getLubeAmount(tank.getFluid().getFluid()), true);
-										master.update();
-										markContainingBlockForUpdate(null);
-			
-										count = 0;
-									}
-								}
-								else
-								{
-									countClient++;
-									if (countClient % 50 == 0)
-									{
-										countClient = worldObj.rand.nextInt(40);
-										
-										float location = worldObj.rand.nextFloat();
-										
-										boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.POSITIVE ^ !master.mirrored;
-										float xO = 1.2F;
-										float zO = -.5F;
-										float yO = .5F;
-						
-										
-										if (location > .5F)
-										{
-											xO = 0.9F;
-											yO = 0.8F;
-											zO = 1.75F;
-
-										}
-										
-										if (facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
-										if (!flip) zO = -zO + 1;
-
-										
-										float x = pos.getX() + (f.getAxis() == Axis.X ? xO : zO);
-										float y = pos.getY() + yO;
-										float z = pos.getZ() + (f.getAxis() == Axis.X ? zO : xO);
-										
-										for (int i = 0; i < 3; i++)
-										{
-							
-											float r1 = (worldObj.rand.nextFloat() - .5F) * 2F;
-											float r2 = (worldObj.rand.nextFloat() - .5F) * 2F;
-											float r3 = worldObj.rand.nextFloat();
-											int n = Block.getStateId(IPContent.blockFluidLubricant.getDefaultState());
-											worldObj.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F, new int[] {n});
-										}
-									}
-								}
-							}
-
-						}
-					}
-				}*/
 			}
 			
-			if (lastTank != this.tank.getFluidAmount())
+			if (!world.isRemote && lastTank != this.tank.getFluidAmount())
 			{
-				markContainingBlockForUpdate(null);
+				if (predictablyDraining && tank.getFluid() != null && lastTank - this.tank.getFluidAmount() == LubricantHandler.getLubeAmount(tank.getFluid().getFluid()))
+				{
+					lastTank = this.tank.getFluidAmount();
+					return;
+				}
+				if (Math.abs(lastTankUpdate - this.tank.getFluidAmount()) > 25)
+				{
+					markContainingBlockForUpdate(null);
+					predictablyDraining = tank.getFluid() != null && lastTank - this.tank.getFluidAmount() == LubricantHandler.getLubeAmount(tank.getFluid().getFluid());
+					lastTankUpdate = this.tank.getFluidAmount();
+				}
 				lastTank = this.tank.getFluidAmount();
-				
-				
 			}
 		}
 		
@@ -906,11 +781,11 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	@Override
 	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ)
 	{
-		TileEntity master = worldObj.getTileEntity(getPos().add(0,-dummy,0));
+		TileEntity master = world.getTileEntity(getPos().add(0,-dummy,0));
 		if (master != null && master instanceof TileEntityAutoLubricator)
 		{
 			FluidStack f = FluidUtil.getFluidContained(heldItem);
-			if (FluidUtil.interactWithFluidHandler(heldItem, ((TileEntityAutoLubricator) master).tank, player))
+			if (FluidUtil.interactWithFluidHandler(player, hand, ((TileEntityAutoLubricator) master).tank))
 			{
 				((TileEntityAutoLubricator) master).markContainingBlockForUpdate(null);
 				return true;
@@ -940,7 +815,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	{
 		if (Utils.isFluidRelatedItemStack(player.getHeldItem(EnumHand.MAIN_HAND)))
 		{
-			TileEntity master = worldObj.getTileEntity(getPos().add(0,-dummy,0));
+			TileEntity master = world.getTileEntity(getPos().add(0,-dummy,0));
 			if (master != null && master instanceof TileEntityAutoLubricator)
 			{
 				TileEntityAutoLubricator lube = (TileEntityAutoLubricator) master;
@@ -969,4 +844,39 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		else
 			return new float[] { .0625f, 0, .0625f, .9375f, 1, .9375f };
 	}
+	
+	
+	public void readTank(NBTTagCompound nbt)
+	{
+		tank.readFromNBT(nbt.getCompoundTag("tank"));
+	}
+	
+	public void writeTank(NBTTagCompound nbt, boolean toItem)
+	{
+		boolean write = tank.getFluidAmount()>0;
+		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
+		if(!toItem || write)
+			nbt.setTag("tank", tankTag);
+	}
+	
+	@Override
+	public void readOnPlacement(EntityLivingBase placer, ItemStack stack)
+	{
+		if (stack.hasTagCompound())
+		{
+			readTank(stack.getTagCompound());
+		}
+	}
+	
+	@Override
+	public ItemStack getTileDrop(EntityPlayer player, IBlockState state)
+	{
+		ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
+		NBTTagCompound tag = new NBTTagCompound();
+		writeTank(tag, true);
+		if (!tag.hasNoTags())
+			stack.setTagCompound(tag);
+		return stack;
+	}
+
 }

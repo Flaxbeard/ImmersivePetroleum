@@ -45,8 +45,8 @@ public class RotateSchematicPacket implements IMessage
 		@Override
 		public IMessage onMessage(RotateSchematicPacket message, MessageContext ctx)
 		{
-			EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-			DimensionManager.getWorld(player.worldObj.provider.getDimension()).addScheduledTask(new DoSync(player, message.rotate, message.flip));
+			EntityPlayerMP player = ctx.getServerHandler().player;
+			DimensionManager.getWorld(player.world.provider.getDimension()).addScheduledTask(new DoSync(player, message.rotate, message.flip));
 
 			return null;
 		}
@@ -75,8 +75,9 @@ public class RotateSchematicPacket implements IMessage
 				ItemStack mainItem = p.getHeldItemMainhand();
 				ItemStack secondItem = p.getHeldItemOffhand();
 
-				boolean main = mainItem != null && mainItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
-				boolean off = secondItem != null && secondItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
+				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
+				boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
+
 				ItemStack target = main ? mainItem : secondItem;
 				
 				if (main || off)

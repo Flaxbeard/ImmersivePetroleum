@@ -2,6 +2,8 @@ package flaxbeard.immersivepetroleum.common;
 
 import java.util.ArrayList;
 
+import flaxbeard.immersivepetroleum.common.blocks.*;
+import flaxbeard.immersivepetroleum.common.blocks.metal.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -30,19 +32,9 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
-import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
-import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
-import flaxbeard.immersivepetroleum.common.blocks.BlockIPMetalDevice;
-import flaxbeard.immersivepetroleum.common.blocks.BlockIPMetalMultiblocks;
-import flaxbeard.immersivepetroleum.common.blocks.ItemBlockIPBase;
-import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_Dummy;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator.CrusherLubricationHandler;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator.ExcavatorLubricationHandler;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator.PumpjackLubricationHandler;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityGasGenerator;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecoration;
@@ -67,6 +59,7 @@ public class IPContent
 	public static BlockIPBase blockStoneDecoration;
 	
 	public static BlockIPBase blockMetalDevice;
+	public static BlockIPBase blockMetalDeviceFacing;
 
 	public static BlockIPBase blockDummy;
 
@@ -117,6 +110,7 @@ public class IPContent
 		blockMetalMultiblock = new BlockIPMetalMultiblocks();
 		
 		blockMetalDevice = new BlockIPMetalDevice();
+		blockMetalDeviceFacing = new BlockIPMetalDeviceFacing();
 
 		blockStoneDecoration = (BlockIPBase)new BlockIPBase("stone_decoration", Material.ROCK, PropertyEnum.create("type", BlockTypes_IPStoneDecoration.class), ItemBlockIPBase.class).setHardness(2.0F).setResistance(10.0F);
 		blockDummy = (BlockIPBase)new BlockIPBase("dummy", Material.ROCK, PropertyEnum.create("type", BlockTypes_Dummy.class), ItemBlockIPBase.class);
@@ -150,86 +144,12 @@ public class IPContent
 		registerTile(TileEntityPumpjack.TileEntityPumpjackParent.class);
 		registerTile(TileEntityAutoLubricator.class);
 		registerTile(TileEntityGasGenerator.class);
-//
-//		DistillationRecipe.addRecipe(
-//				new FluidStack[] { 
-//					new FluidStack(fluidLubricant, 3),
-//					new FluidStack(fluidDiesel, 9),
-//					new FluidStack(fluidGasoline, 13)
-//				},
-//				new ItemStack(itemMaterial, 1, 0), new FluidStack(fluidCrudeOil, 25), 2048, 1, .07F);
+		registerTile(TileEntityFlareStack.class);
 
 		MultiblockHandler.registerMultiblock(MultiblockDistillationTower.instance);
 		MultiblockHandler.registerMultiblock(MultiblockPumpjack.instance);
-		
-		//IERecipes.addIngredientRecipe(new ItemStack(blockStoneDecoration, 8, BlockTypes_IPStoneDecoration.ASPHALT.getMeta()), "SCS", "GBG", "SCS", 'C', new ItemStack(itemMaterial, 1, 0), 'S', "sand", 'G', Blocks.GRAVEL, 'B', new FluidStack(FluidRegistry.WATER,1000)).allowQuarterTurn();
-		//IERecipes.addIngredientRecipe(new ItemStack(blockStoneDecoration, 12, BlockTypes_IPStoneDecoration.ASPHALT.getMeta()), "SCS", "GBG", "SCS", 'C', new ItemStack(itemMaterial, 1, 0), 'S', "itemSlag", 'G', Blocks.GRAVEL, 'B', new FluidStack(FluidRegistry.WATER,1000)).allowQuarterTurn();
-	
-	
-			/*IERecipes.addIngredientRecipe(new ItemStack(itemProjector, 1, 0), "S  ", "IL ", " IW", 
-					'W', "plankTreatedWood", 
-					'L', new ItemStack(IEContent.blockMetalDecoration2, 1, BlockTypes_MetalDecoration2.LANTERN.getMeta()), 
-					'S', "blockGlassColorless",
-					'I', "ingotIron");*/
+
 		ForgeRegistries.RECIPES.register(new SchematicCraftingHandler().setRegistryName(ImmersivePetroleum.MODID, "projector"));
-
-		/*
-		
-<<<<<<< HEAD
-		IERecipes.addIngredientRecipe(new ItemStack(itemSpeedboat, 1, 0), "PME", "PPP", 
-				'P', "plankTreatedWood", 
-				'E', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta()), 
-				'M', new ItemStack(IEContent.itemMaterial, 1, 8));
-=======
-		if (!IPConfig.Miscellaneous.disable_motorboat)
-		{
-			IERecipes.addIngredientRecipe(new ItemStack(itemSpeedboat, 1, 0), "PME", "PPP", 
-					'P', "plankTreatedWood", 
-					'E', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta()), 
-					'M', new ItemStack(IEContent.itemMaterial, 1, 8));
-			
-			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 0), "P P", "PBP", 
-					'P', "plateSteel",
-					'B', "blockSteel");
-			
-			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 1), "I P", " IP", "PPB", 
-					'P', "plateSteel",
-					'B', "blockSteel",
-					'I', "ingotSteel");
-			
-			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 2), " P ", "PTP", " P ",
-					'P', "plateIron",
-					'T', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta()));
-			
-			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 3), " RR", "PPP", "PPP",
-					'P', "plateIron",
-					'R', "stickIron");
-			
-			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 4), "S S", "S S", "P P",
-					'P', "plankTreatedWood",
-					'S', "stickTreatedWood");
-		}
->>>>>>> 1.11
-		
-		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 0), "P P", "PBP", 
-				'P', "plateSteel",
-				'B', "blockSteel");
-		
-		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 1), "I P", " IP", "PPB", 
-				'P', "plateSteel",
-				'B', "blockSteel",
-				'I', "ingotSteel");
-		
-		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 2), " P ", "PTP", " P ",
-				'P', "plateIron",
-				'T', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta()));
-		
-		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 3), " RR", "PPP", "PPP",
-				'P', "plateIron",
-				'R', "stickIron");
-				
-				*/
-
 
 			
 		Config.addConfigReservoirs(IPConfig.extraction.reservoirs);

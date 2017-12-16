@@ -58,6 +58,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 	
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 	public MultiFluidTank[] tanks = new MultiFluidTank[]{new MultiFluidTank(24000),new MultiFluidTank(24000)};
+	public Fluid lastFluidOut = null;
 	
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket)
@@ -67,6 +68,12 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
 		operated = nbt.getBoolean("operated");
 		cooldownTicks = nbt.getInteger("cooldownTicks");
+		String lastFluidName = nbt.getString("lastFluidOut");
+		if (lastFluidName.length() > 0) {
+			lastFluidOut = FluidRegistry.getFluid(lastFluidName);
+		} else {
+			lastFluidOut = null;
+		}
 		if(!descPacket)
 			inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
 	}
@@ -82,6 +89,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
 		nbt.setBoolean("operated", operated);
 		nbt.setInteger("cooldownTicks", cooldownTicks);
+		nbt.setString("lastFluidOut", lastFluidOut == null ? "" : lastFluidOut.getName());
 		if (!descPacket)
 			nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
@@ -171,30 +179,55 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 				output = FluidUtil.getFluidHandler(world, outputPos, facing.rotateYCCW());
 			}
 
-			if (output != null)
-			{
-				int totalOut = 0;
-				Iterator<FluidStack> it = this.tanks[1].fluids.iterator();
-
-				while (it.hasNext()) {
-					FluidStack fs = (FluidStack) it.next();
-					if (fs != null) {
-						FluidStack out = Utils.copyFluidStackWithAmount(fs, Math.min(fs.amount, 80 - totalOut), false);
-						int accepted = output.fill(out, false);
-						if (accepted > 0) {
-							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-							MultiFluidTank.drain(drained, fs, it, true);
-							totalOut += drained;
-							update = true;
+			if (output != null) {
+				FluidStack targetFluidStack = null;
+				if (lastFluidOut != null) {
+					for (FluidStack stack : this.tanks[1].fluids) {
+						if (stack.getFluid() == lastFluidOut) {
+							targetFluidStack = stack;
 						}
+					}
+				}
+				if (targetFluidStack == null) {
+					int max = 0;
+					for (FluidStack stack : this.tanks[1].fluids) {
+						if (stack.amount > max) {
+							max = stack.amount;
+							targetFluidStack = stack;
+						}
+					}
+				}
 
-						if (totalOut >= 80) {
-							break;
+				Iterator<FluidStack> iterator = this.tanks[1].fluids.iterator();
+
+				lastFluidOut = null;
+				if (targetFluidStack != null) {
+					FluidStack out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.amount, 80), false);
+					int accepted = output.fill(out, false);
+					if (accepted > 0) {
+						lastFluidOut = targetFluidStack.getFluid();
+						int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+						this.tanks[1].drain(new FluidStack(targetFluidStack.getFluid(), drained), true);
+						//MultiFluidTank.drain(drained, targetFluidStack, this.tanks[1].fluids.iterator(), true);
+						update = true;
+					} else {
+						while (iterator.hasNext()) {
+							targetFluidStack = iterator.next();
+							out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.amount, 80), false);
+							accepted = output.fill(out, false);
+							if (accepted > 0) {
+								lastFluidOut = targetFluidStack.getFluid();
+								int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+								this.tanks[1].drain(new FluidStack(targetFluidStack.getFluid(), drained), true);
+								//MultiFluidTank.drain(drained, targetFluidStack, this.tanks[1].fluids.iterator(), true);
+								update = true;
+								break;
+							}
 						}
 					}
 				}
 			}
-			
+
 		}
 
 		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);

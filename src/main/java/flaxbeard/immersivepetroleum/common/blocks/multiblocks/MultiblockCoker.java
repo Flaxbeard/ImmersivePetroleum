@@ -1,9 +1,12 @@
 package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
+import blusunrize.immersiveengineering.common.blocks.BlockIEScaffoldSlab;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -49,7 +52,7 @@ public class MultiblockCoker implements IMultiblock
 					}
 					else if (h <= 12)
 					{
-						if ((h != 7 && h != 12) && (l == 0 || l == 4) && (w == 0 || w == 4 || w == 8))
+						if ((l == 0 || l == 4) && (w == 0 || w == 4 || w == 8))
 						{
 							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_FENCE.getMeta());
 						}
@@ -57,9 +60,13 @@ public class MultiblockCoker implements IMultiblock
 						{
 							structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal,1, BlockTypes_MetalsAll.IRON.getMeta());
 						}
-						else if (((h == 7 || h == 12) || (w == 0 && l == 2)) && (l != 2 || (w != 2 && w != 6)))
+						else if (w == 0 && l == 2)
 						{
 							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
+						}
+						else if (((h == 7 || h == 12)) && (l != 2 || (w != 2 && w != 6)))
+						{
+							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecorationSlabs1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
 						}
 						else if (((h == 5 || h == 10) || (w == 0 && l == 2)) && (l != 2 || (w != 2 && w != 6)) && w != 4)
 						{
@@ -78,11 +85,9 @@ public class MultiblockCoker implements IMultiblock
 						}
 						else if (h == 17 && l >= 1 && l <= 3 && w >= 1 && w <= 7)
 						{
-							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
+							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecorationSlabs1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
 						}
 					}
-					
-					
 				}
 	}
 	@Override
@@ -94,7 +99,7 @@ public class MultiblockCoker implements IMultiblock
 	@SideOnly(Side.CLIENT)
 	public boolean overwriteBlockRender(ItemStack stack, int iterator)
 	{
-		if (iterator >= 330 && iterator < 350 && (((iterator - (330)) % 5) == 4 || ((iterator - (330)) % 5) == 2))
+		/*if (iterator >= 330 && iterator < 350 && (((iterator - (330)) % 5) == 4 || ((iterator - (330)) % 5) == 2))
 		{
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(0, 1, 0);
@@ -119,6 +124,11 @@ public class MultiblockCoker implements IMultiblock
 			GlStateManager.rotate(90, 1, 0, 0);
 			ImmersiveEngineering.proxy.drawSpecificFluidPipe("000011");
 			GlStateManager.popMatrix();
+			return true;
+		}*/
+		if (stack.getItem() == Item.getItemFromBlock(IEContent.blockMetalDecorationSlabs1)) {
+
+			ImmersivePetroleum.proxy.drawUpperHalfSlab(stack);
 			return true;
 		}
 		return false;
@@ -232,6 +242,7 @@ public class MultiblockCoker implements IMultiblock
 
 	boolean structureCheck(World world, BlockPos startPos, EnumFacing dir, boolean mirror)
 	{
+
 		for(int l=0;l<5;l++)
 			for(int w=-4;w<=4;w++)
 				for(int h=-1;h<=21;h++)
@@ -262,9 +273,9 @@ public class MultiblockCoker implements IMultiblock
 							if(!Utils.isOreBlockAt(world, pos, "blockSheetmetalIron"))
 								return false;
 						}
-						else if ((h == 11 || h == 6) && (l == 0 || l == 4 || w == 0 || w == 4 || w == -4))
+						else if ((w == -4 || w == 0 || w == 4) && (l == 0 || l == 4))
 						{
-							if (!Utils.isOreBlockAt(world, pos, "scaffoldingSteel"))
+							if (!Utils.isOreBlockAt(world, pos, "fenceSteel"))
 								return false;
 						}
 						else if (w == -4 && l == 2)
@@ -272,12 +283,12 @@ public class MultiblockCoker implements IMultiblock
 							if (!Utils.isOreBlockAt(world, pos, "scaffoldingSteel"))
 								return false;
 						}
-						else if ((h == 9 || h == 4) && (l == 0 || l == 4 || w == 4 || w == -4))
+						else if ((h == 11 || h == 6) && (l == 0 || l == 4 || w == 0 || w == 4 || w == -4))
 						{
-							if (!Utils.isOreBlockAt(world, pos, "fenceSteel"))
+							if (!(world.getBlockState(pos).getBlock() instanceof BlockIEScaffoldSlab))
 								return false;
 						}
-						else if ((w == -4 || w == 0 || w == 4) && (l == 0 || l == 4))
+						else if ((h == 9 || h == 4) && (l == 0 || l == 4 || w == 4 || w == -4))
 						{
 							if (!Utils.isOreBlockAt(world, pos, "fenceSteel"))
 								return false;
@@ -302,7 +313,7 @@ public class MultiblockCoker implements IMultiblock
 						}
 						else if (h == 16 && l > 0 && l < 4 && w > -4 && w < 4)
 						{
-							if (!Utils.isOreBlockAt(world, pos, "scaffoldingSteel"))
+							if (!(world.getBlockState(pos).getBlock() instanceof BlockIEScaffoldSlab))
 								return false;
 						}
 					}

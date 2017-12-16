@@ -291,9 +291,7 @@ public class MultiblockDistillationTower implements IMultiblock
 						else if ((h + 1) % 4 == 0 && h > 0)
 						{
 							if (!(world.getBlockState(pos).getBlock() instanceof BlockIEScaffoldSlab)) {
-								System.out.println(pos + " " + world.getBlockState(pos).getBlock());
 								return false;
-
 							}
 						}
 						else if (h == 0)

@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 
 import flaxbeard.immersivepetroleum.client.render.*;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityCoker;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockCoker;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -217,8 +218,12 @@ public class ClientProxy extends CommonProxy
 		ManualHelper.addEntry("pumpjack", CAT_IP,
 				new ManualPageMultiblock(ManualHelper.getManual(), "pumpjack0", MultiblockPumpjack.instance),
 				new ManualPages.Text(ManualHelper.getManual(), "pumpjack1"));
-	
-	
+
+		ManualHelper.addEntry("coker", CAT_IP,
+				new ManualPageBigMultiblock(ManualHelper.getManual(), MultiblockCoker.instance)
+		);
+
+
 		ArrayList<DistillationRecipe> recipeList = DistillationRecipe.recipeList;
 		List<String[]> l = new ArrayList<String[]>();
 		for (DistillationRecipe recipe : recipeList)

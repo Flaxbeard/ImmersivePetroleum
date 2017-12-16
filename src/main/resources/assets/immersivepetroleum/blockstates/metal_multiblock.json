@@ -25,9 +25,13 @@
 			},
 			"pumpjack": {
 			},
+			"coker": {
+			},
 			"pumpjack_parent": {
 			},
 			"distillation_tower_parent": {
+			},
+			"coker_parent": {
 			}
 		},
 		"facing":

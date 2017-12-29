@@ -25,7 +25,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCrusher;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityExcavator;
 import blusunrize.immersiveengineering.common.util.IEPotions;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.api.crafting.ItemOilCan;
+import flaxbeard.immersivepetroleum.common.items.ItemOilCan;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
@@ -235,7 +235,7 @@ public class IPContent
 		Config.addConfigReservoirs(IPConfig.extraction.reservoirs);
 		Config.addFuel(IPConfig.Generation.fuels);
 		Config.addBoatFuel(IPConfig.Miscellaneous.boat_fuels);
-		Config.addDistillationRecipe(IPConfig.Refining.towerRecipes, IPConfig.Refining.towerByproduct);
+		Config.addDistillationRecipes(IPConfig.Refining.towerRecipes, IPConfig.Refining.towerByproduct);
 
 		LubricantHandler.registerLubricant(fluidLubricant, 3);
 		LubricantHandler.registerLubricant(IEContent.fluidPlantoil, 12);

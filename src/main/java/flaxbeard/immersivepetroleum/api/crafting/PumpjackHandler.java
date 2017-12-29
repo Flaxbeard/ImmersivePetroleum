@@ -35,9 +35,17 @@ public class PumpjackHandler
 	
 	private static int depositSize = 1;
 
+	/**
+	 * Gets amount of fluid in a specific chunk's reservoir in mB
+	 *
+	 * @param world The world to test
+	 * @param chunkX X coordinate of desired chunk
+	 * @param chunkZ Z coordinate of desired chunk
+	 * @return mB of fluid in the given reservoir
+	 */
 	public static int getFluidAmount(World world, int chunkX, int chunkZ)
 	{
-		if(world.isRemote)
+		if (world.isRemote)
 			return 0;
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
 		if (info == null || (info.capacity == 0) || info.getType() == null || info.getType().fluid == null || (info.current == 0 && info.getType().replenishRate == 0))
@@ -45,15 +53,23 @@ public class PumpjackHandler
 
 		return info.current;
 	}
-	
+
+	/**
+	 * Gets Fluid type in a specific chunk's reservoir
+	 *
+	 * @param world The world to test
+	 * @param chunkX X coordinate of desired chunk
+	 * @param chunkZ Z coordinate of desired chunk
+	 * @return Fluid in given reservoir (or null if none)
+	 */
 	public static Fluid getFluid(World world, int chunkX, int chunkZ)
 	{
-		if(world.isRemote)
+		if (world.isRemote)
 			return null;
 		
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
 		
-		if (info.getType() == null)
+		if (info == null || info.getType() == null)
 		{
 			return null;
 		}
@@ -62,7 +78,15 @@ public class PumpjackHandler
 			return info.getType().getFluid();
 		}
 	}
-	
+
+	/**
+	 * Gets the mB/tick of fluid that is produced "residually" in the chunk (can be extracted while empty)
+	 *
+	 * @param world The world to test
+	 * @param chunkX X coordinate of desired chunk
+	 * @param chunkZ Z coordinate of desired chunk
+	 * @return mB of fluid that can be extracted "residually"
+	 */
 	public static int getResidualFluid(World world, int chunkX, int chunkZ)
 	{
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
@@ -83,7 +107,15 @@ public class PumpjackHandler
 		timeCache.put(coords, world.getTotalWorldTime());
 		return lastTime != l ? info.getType().replenishRate : 0;
 	}
-	
+
+	/**
+	 * Gets the OilWorldInfo object associated with the given chunk
+	 *
+	 * @param world The world to retrieve
+	 * @param chunkX X coordinate of desired chunk
+	 * @param chunkZ Z coordinate of desired chunk
+	 * @return The OilWorldInfo corresponding w/ given chunk
+	 */
 	public static OilWorldInfo getOilWorldInfo(World world, int chunkX, int chunkZ)
 	{
 		if(world.isRemote)
@@ -135,6 +167,14 @@ public class PumpjackHandler
 		return worldInfo;
 	}
 
+	/**
+	 * Depletes fluid from a given chunk
+	 *
+	 * @param world World whose chunk to drain
+	 * @param chunkX Chunk x
+	 * @param chunkZ Chunk z
+	 * @param amount Amount of fluid in mB to drain
+	 */
 	public static void depleteFluid(World world, int chunkX, int chunkZ, int amount)
 	{
 		OilWorldInfo info = getOilWorldInfo(world,chunkX,chunkZ);
@@ -142,77 +182,18 @@ public class PumpjackHandler
 		IPSaveData.setDirty(world.provider.getDimension());
 	}
 
-
-	public static class OilWorldInfo
-	{
-		public ReservoirType type;
-		public ReservoirType overrideType;
-		public int capacity;
-		public int current;
-		
-		public ReservoirType getType()
-		{
-			return (overrideType == null) ? type : overrideType;
-		}
-		
-		public NBTTagCompound writeToNBT()
-		{
-			NBTTagCompound tag = new NBTTagCompound();
-			tag.setInteger("capacity", capacity);
-			tag.setInteger("oil", current);
-			if (type != null)
-			{
-				tag.setString("type", type.name);
-			}
-			if (overrideType != null)
-			{
-				tag.setString("overrideType", overrideType.name);
-			}
-			return tag;
-		}
-		
-		public static OilWorldInfo readFromNBT(NBTTagCompound tag)
-		{
-			OilWorldInfo info = new OilWorldInfo();
-			info.capacity = tag.getInteger("capacity");
-			info.current = tag.getInteger("oil");
-			
-			if (tag.hasKey("type"))
-			{
-				String s = tag.getString("type");
-				for (ReservoirType res : reservoirList.keySet())
-					if (s.equalsIgnoreCase(res.name))
-						info.type = res;
-			}
-			else if (info.current > 0)
-			{
-				for (ReservoirType res : reservoirList.keySet())
-					if (res.name.equalsIgnoreCase("oil"))
-						info.type = res;
-			
-				if (info.type == null)
-				{
-					return null;
-				}
-			}
-			
-			if (tag.hasKey("overrideType"))
-			{
-				String s = tag.getString("overrideType");
-				for (ReservoirType res : reservoirList.keySet())
-					if (s.equalsIgnoreCase(res.name))
-						info.overrideType = res;
-			}
-							
-			return info;
-		}
-	}
-	
+	/**
+	 * Gets the total weight of reservoir types for the given dimension ID and biome type
+	 *
+	 * @param dim The dimension id to check
+	 * @param biome The biome type to check
+	 * @return The total weight associated with the dimension/biome pair
+	 */
 	public static int getTotalWeight(int dim, Biome biome)
 	{
 		if (!totalWeightMap.containsKey(dim))
 		{
-			totalWeightMap.put(dim, new HashMap<String, Integer>());
+			totalWeightMap.put(dim, new HashMap<>());
 		}
 		
 		Map<String, Integer> dimMap = totalWeightMap.get(dim);
@@ -232,7 +213,18 @@ public class PumpjackHandler
 		dimMap.put(biomeName, totalWeight);
 		return totalWeight;
 	}
-	
+
+	/**
+	 * Adds a reservoir type to the pool of valid reservoirs
+	 *
+	 * @param name The name of the reservoir type
+	 * @param fluid The String fluidid of the fluid for this reservoir
+	 * @param minSize The minimum reservoir size, in mB
+	 * @param maxSize The maximum reservoir size, in mB
+	 * @param replenishRate The rate at which fluid can be drained from this reservoir when empty, in mB/tick
+	 * @param weight The weight for this reservoir to spawn
+	 * @return The created ReservoirType
+	 */
 	public static ReservoirType addReservoir(String name, String fluid, int minSize, int maxSize, int replenishRate, int weight)
 	{
 		ReservoirType mix = new ReservoirType(name, fluid, minSize, maxSize, replenishRate);
@@ -254,6 +246,13 @@ public class PumpjackHandler
 	}
 	
 	private static HashMap<Biome, String> biomeNames = new HashMap<Biome, String>();
+
+	/**
+	 * Get the biome name associated with a given biome
+	 *
+	 * @param biome The biome to get the name
+	 * @return The biome's name
+	 */
 	public static String getBiomeName(Biome biome)
 	{
 		if (!biomeNames.containsKey(biome))
@@ -263,7 +262,7 @@ public class PumpjackHandler
 		}
 		return biomeNames.get(biome);
 	}
-	
+
 	public static String convertConfigName(String str)
 	{
 		return str.replace(" ", "").toUpperCase();
@@ -431,6 +430,72 @@ public class PumpjackHandler
 			
 			
 			return res;
+		}
+	}
+
+
+	public static class OilWorldInfo
+	{
+		public ReservoirType type;
+		public ReservoirType overrideType;
+		public int capacity;
+		public int current;
+
+		public ReservoirType getType()
+		{
+			return (overrideType == null) ? type : overrideType;
+		}
+
+		public NBTTagCompound writeToNBT()
+		{
+			NBTTagCompound tag = new NBTTagCompound();
+			tag.setInteger("capacity", capacity);
+			tag.setInteger("oil", current);
+			if (type != null)
+			{
+				tag.setString("type", type.name);
+			}
+			if (overrideType != null)
+			{
+				tag.setString("overrideType", overrideType.name);
+			}
+			return tag;
+		}
+
+		public static OilWorldInfo readFromNBT(NBTTagCompound tag)
+		{
+			OilWorldInfo info = new OilWorldInfo();
+			info.capacity = tag.getInteger("capacity");
+			info.current = tag.getInteger("oil");
+
+			if (tag.hasKey("type"))
+			{
+				String s = tag.getString("type");
+				for (ReservoirType res : reservoirList.keySet())
+					if (s.equalsIgnoreCase(res.name))
+						info.type = res;
+			}
+			else if (info.current > 0)
+			{
+				for (ReservoirType res : reservoirList.keySet())
+					if (res.name.equalsIgnoreCase("oil"))
+						info.type = res;
+
+				if (info.type == null)
+				{
+					return null;
+				}
+			}
+
+			if (tag.hasKey("overrideType"))
+			{
+				String s = tag.getString("overrideType");
+				for (ReservoirType res : reservoirList.keySet())
+					if (s.equalsIgnoreCase(res.name))
+						info.overrideType = res;
+			}
+
+			return info;
 		}
 	}
 }

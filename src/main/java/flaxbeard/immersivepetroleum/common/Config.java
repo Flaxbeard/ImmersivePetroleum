@@ -1,26 +1,25 @@
 package flaxbeard.immersivepetroleum.common;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.NumberInvalidException;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.config.Config.Comment;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-
-import org.apache.commons.lang3.ArrayUtils;
-
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.NumberInvalidException;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Tuple;
+import net.minecraftforge.common.config.Config.Comment;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class Config
 {
@@ -73,7 +72,7 @@ public class Config
 			public static String[] towerRecipes = new String[] {
 				"2048, oil, 75 -> lubricant, 9, diesel, 27, gasoline, 39"
 			};
-			@Comment({"Distillation Tower byproducts. Format: item_name, stack_size, metadata, percent_chance"})
+			@Comment({"Distillation Tower byproducts. Need one for each recipe. Multiple solid outputs for a single recipe can be separated by semicolons. Format: item_name, stack_size, metadata, percent_chance"})
 			public static String[] towerByproduct = new String[] {
 				"immersivepetroleum:material, 1, 0, 7"
 			};
@@ -109,229 +108,275 @@ public class Config
 	}
 
 	static Configuration config;
-	
-	public static void addDistillationRecipe(String[] recipes, String[] byproducts)
+
+	/**
+	 * Loads all distillation recipes from config strings
+	 *
+	 * @param recipes All recipe strings
+	 * @param byproducts All byproduct strings
+	 */
+	public static void addDistillationRecipes(String[] recipes, String[] byproducts)
 	{
 		if (recipes.length != byproducts.length)
 			throw new RuntimeException("Mismatch in number of distillation tower config recipes and byproducts");
 
 		for (int i = 0; i < recipes.length; i++)
 	    {
-			String byprod = byproducts[i];
-			String str = recipes[i];
-			if (str.isEmpty()) continue;
+			String byproductString = byproducts[i];
+			String recipeString = recipes[i];
+			if (recipeString.isEmpty()) continue;
 
+		    addDistillationRecipe(i + 1, recipeString, byproductString);
+	    }
+	}
 
-			String input = null;
-			int inputAmount = 0;
-			int powerCost = 0;
-			List<String> output = new ArrayList<String>();
-			List<Integer> outputAmount = new ArrayList<Integer>();
+	/**
+	 * Attempts to parse an integer from the given String, throwing exceptions if things go poorly
+	 *
+	 * @param text The String to parse
+	 * @param canBeZero Whether the integer config can be zero
+	 * @param canBeNegative Whether the integer config can be negative
+	 * @param termName The name of what's being read, for output purposes
+	 * @return The parsed value
+	 */
+	private static int attemptParseInteger(String text, boolean canBeZero, boolean canBeNegative, String termName)
+	{
+		try
+		{
+			int value = Integer.parseInt(text);
 
-			String remain = str;
-			
-			int index = 0;
-			
-			while (remain.indexOf(",") != -1)
+			if (!canBeNegative && value < 0)
 			{
-				int arrowIndex = remain.indexOf("->");
-				int commaIndex = remain.indexOf(",");
-				boolean arrow = (arrowIndex > 0 && arrowIndex < commaIndex);
-				int endPos = arrow ? arrowIndex : commaIndex;
-				
-				String current = remain.substring(0, endPos).trim();
-				
-				if (index == 0)
-				{
-					try
-					{
-						powerCost = Integer.parseInt(current);
-						if (powerCost < 0)
-						{
-							throw new RuntimeException("Negative value for distillation tower power cost for recipe " + (i + 1));
-						}
-					}
-					catch (NumberFormatException e)
-					{
-						throw new RuntimeException("Invalid value for distillation towerpower cost for recipe " + (i + 1));
-					}
-				}
-				else if (index == 1) input = current;
-				else if (index == 2)
-				{
-					try
-					{
-						inputAmount = Integer.parseInt(current);
-						if (inputAmount <= 0)
-						{
-							throw new RuntimeException("Negative value for distillation tower input for recipe " + (i + 1));
-						}
-					}
-					catch (NumberFormatException e)
-					{
-						throw new RuntimeException("Invalid value for distillation tower input for recipe " + (i + 1));
-					}
-				}
-				else if (index % 2 == 1)
-				{
-					output.add(current);
-				}
-				else
-				{
-					try
-					{
-						int num = Integer.parseInt(current);
-						if (num <= 0)
-						{
-							throw new RuntimeException("Negative value for distillation tower output for recipe " + (i + 1));
-						}
-						outputAmount.add(num);
-					}
-					catch (NumberFormatException e)
-					{
-						throw new RuntimeException("Invalid value for distillation tower output for recipe " + (i + 1));
-					}
-				}
-
-				remain = remain.substring(endPos + (arrow ? 2 : 1));
-				index++;
+				throw new RuntimeException("Negative value for " + termName);
 			}
-			String current = remain.trim();
-
-			if (index % 2 == 1)
+			else if (!canBeZero && value == 0)
 			{
-				output.add(current);
+				throw new RuntimeException("Zero value for " + termName);
+			}
+
+			return value;
+		}
+		catch (NumberFormatException e)
+		{
+			throw new RuntimeException("Invalid value for " + termName);
+		}
+	}
+
+	/**
+	 * Attempts to parse an float from the given String, throwing exceptions if things go poorly
+	 *
+	 * @param text The String to parse
+	 * @param canBeZero Whether the float config can be zero
+	 * @param canBeNegative Whether the float config can be negative
+	 * @param termName The name of what's being read, for output purposes
+	 * @return The parsed value
+	 */
+	private static float attemptParseFloat(String text, boolean canBeZero, boolean canBeNegative, String termName)
+	{
+		try
+		{
+			float value = Float.parseFloat(text);
+
+			if (!canBeNegative && value < 0)
+			{
+				throw new RuntimeException("Negative value for " + termName);
+			}
+			else if (!canBeZero && value == 0)
+			{
+				throw new RuntimeException("Zero value for " + termName);
+			}
+
+			return value;
+		}
+		catch (NumberFormatException e)
+		{
+			throw new RuntimeException("Invalid value for " + termName);
+		}
+	}
+
+	/**
+	 * Parses one segment of a distillation output fluid config
+	 *
+	 * @param recipeNum The recipe number of this recipe
+	 * @param termIndex The index of this term in the fluid recipe
+	 * @param text The text to parse
+	 * @param outputs A list of current fluid output names
+ 	 * @param outputAmounts A list of current fluid output amounts
+	 */
+	private static void parseDistillationOutput(int recipeNum, int termIndex, String text, List<String> outputs, List<Integer> outputAmounts)
+	{
+		if (termIndex % 2 == 1)
+		{
+			outputs.add(text);
+		}
+		else
+		{
+			int num = attemptParseInteger(text, false, false, "distillation tower output for recipe " + recipeNum);
+			outputAmounts.add(num);
+		}
+	}
+
+	/**
+	 * Parses a String associated with a distillation byproduct and returns the byproduct ItemStack and chance
+	 *
+	 * @param recipeNum The recipe number of this recipe
+	 * @param byproductString The String associated with this byproduct
+	 * @return A tuple of the desired ItemStack and chance, as a Float
+	 */
+	private static Tuple<ItemStack, Float> parseDistillationByproduct(int recipeNum, String byproductString)
+	{
+		String itemName = null;
+		int amount = 0;
+		int meta = 0;
+		float chance = 0;
+
+		String current = "";
+
+		String remain = byproductString;
+
+		int termIndex = 0;
+
+		while (remain.contains(","))
+		{
+			int endPos = remain.indexOf(",");
+
+			current = remain.substring(0, endPos).trim();
+
+			if (termIndex == 0) itemName = current;
+			else if (termIndex == 1)
+			{
+				amount = attemptParseInteger(current, false, false, "distillation byproduct stacksize " + recipeNum);
+			}
+			else if (termIndex == 2)
+			{
+				meta = attemptParseInteger(current, true, false, "distillation byproduct meta " + recipeNum);
+			}
+
+			remain = remain.substring(endPos + 1);
+			termIndex++;
+		}
+
+		current = remain.trim();
+
+		chance = attemptParseFloat(current, true, false, "distillation byproduct chance " + recipeNum);
+
+		Item item;
+		try
+		{
+			item = CommandBase.getItemByText(null, itemName);
+		}
+		catch (NumberInvalidException e)
+		{
+			throw new RuntimeException("Item " + itemName + " does not exist for distillation byproduct " + recipeNum);
+		}
+
+		ItemStack stack = new ItemStack(item, amount, meta);
+
+		return new Tuple<>(stack, chance);
+	}
+
+	/**
+	 * Adds a distillation recipe based on recipe + byproduct string, throwing exceptions if invalid
+	 *
+	 * @param recipeNum The recipe number (for exception output)
+	 * @param recipeString The string representing the recipe to add
+	 * @param byproductString The string representing the byproducts for this recipe
+	 */
+	private static void addDistillationRecipe(int recipeNum, String recipeString, String byproductString)
+	{
+		String input = null;
+		int inputAmount = 0;
+		int powerCost = 0;
+		List<String> outputs = new ArrayList<String>();
+		List<Integer> outputAmounts = new ArrayList<Integer>();
+
+		String remainingText = recipeString;
+
+		int termIndex = 0;
+
+		// Iterate through each comma (or arrow) separated term
+		while (remainingText.contains(","))
+		{
+			int arrowIndex = remainingText.indexOf("->");
+			int commaIndex = remainingText.indexOf(",");
+			boolean arrow = (arrowIndex > 0 && arrowIndex < commaIndex);
+			int endPos = arrow ? arrowIndex : commaIndex;
+
+			String current = remainingText.substring(0, endPos).trim();
+
+			if (termIndex == 0)
+			{
+				// Read power cost
+				powerCost = attemptParseInteger(current, true, false, "distillation tower power cost for recipe " + recipeNum);
+			}
+			else if (termIndex == 1)
+			{
+				// Read input fluid name
+				input = current;
+			}
+			else if (termIndex == 2)
+			{
+				// Read input fluid amount
+				inputAmount = attemptParseInteger(current, false, false, "distillation tower input for recipe " + recipeNum);
 			}
 			else
 			{
-				try
-				{
-					int num = Integer.parseInt(current);
-					if (inputAmount <= 0)
-					{
-						throw new RuntimeException("Negative value for distillation tower output for recipe " + (i + 1));
-					}
-					outputAmount.add(num);
-				}
-				catch (NumberFormatException e)
-				{
-					throw new RuntimeException("Invalid value for distillation tower output for recipe " + (i + 1));
-				}
+				// Read output fluid name / amount
+				parseDistillationOutput(recipeNum, termIndex, current, outputs, outputAmounts);
 			}
-			
-			if (output.size() != outputAmount.size())
-			{
-				throw new RuntimeException("Mismatched outputs for distillation recipe " + (i + 1));
-			}
-			
-			FluidStack[] outputFluid = new FluidStack[output.size()];
-			for (int n = 0; n < output.size(); n++)
-			{
-				output.set(n, output.get(n).toLowerCase(Locale.ENGLISH));
-				if (FluidRegistry.getFluid(output.get(n)) == null)
-				{
-					throw new RuntimeException("Invalid output fluid name #" + (n + 1) + " for distillation recipe " + (i + 1));
-				}
-				Fluid f = FluidRegistry.getFluid(output.get(n));
-				outputFluid[n] = new FluidStack(f, outputAmount.get(n));
-			}
-			
-			input = input.toLowerCase(Locale.ENGLISH);
-			if (FluidRegistry.getFluid(input) == null)
-			{
-				throw new RuntimeException("Invalid input fluid name for distillation recipe " + (i + 1));
-			}
-			Fluid f = FluidRegistry.getFluid(input);
-			FluidStack inputFluid = new FluidStack(f, inputAmount);
-			
-			
-			
-			
-			String itemName = null;
-			int amount = 0;
-			int meta = 0;
-			float chance = 0;
 
-			remain = byprod;
-			
-			index = 0;
-			
-			while (remain.indexOf(",") != -1)
-			{
-				int endPos = remain.indexOf(",");
-				
-				current = remain.substring(0, endPos).trim();
-				
-				if (index == 0) itemName = current;
-				else if (index == 1)
-				{
-					try
-					{
-						amount = Integer.parseInt(current);
-						if (amount <= 0)
-						{
-							throw new RuntimeException("Negative stack size for distillation byproduct " + (i + 1));
-						}
-					}
-					catch (NumberFormatException e)
-					{
-						throw new RuntimeException("Invalid stack size for distillation byproduct " + (i + 1));
-					}
-				}
-				else if (index == 2)
-				{
-					try
-					{
-						meta = Integer.parseInt(current);
-						if (meta < 0)
-						{
-							throw new RuntimeException("Negative metadata for distillation byproduct " + (i + 1));
-						}
-					}
-					catch (NumberFormatException e)
-					{
-						throw new RuntimeException("Invalid metadata for distillation byproduct " + (i + 1));
-					}
-				}
+			remainingText = remainingText.substring(endPos + (arrow ? 2 : 1));
+			termIndex++;
+		}
+		String current = remainingText.trim();
 
-				remain = remain.substring(endPos + 1);
-				index++;
-			}
-			
-			current = remain.trim();
+		// Read last output fluid name / amount
+		parseDistillationOutput(recipeNum, termIndex, current, outputs, outputAmounts);
 
-			try
+		// Validate that each output has an output amount
+		if (outputs.size() != outputAmounts.size())
+		{
+			throw new RuntimeException("Mismatched outputs for distillation recipe " + recipeNum);
+		}
+
+		// Convert fluid names to Fluid values from the FluidRegistry
+		FluidStack[] outputFluids = new FluidStack[outputs.size()];
+		for (int n = 0; n < outputs.size(); n++)
+		{
+			outputs.set(n, outputs.get(n).toLowerCase(Locale.ENGLISH));
+			if (FluidRegistry.getFluid(outputs.get(n)) == null)
 			{
-				chance = Float.parseFloat(current);
-				if (chance < 0)
-				{
-					throw new RuntimeException("Negative chance for distillation byproduct " + (i + 1));
-				}
+				throw new RuntimeException("Invalid output fluid name #" + (n + 1) + " for distillation recipe " + recipeNum);
 			}
-			catch (NumberFormatException e)
-			{
-				throw new RuntimeException("Invalid chance for distillation byproduct " + (i + 1));
-			}
-			
-			
-			Item item;
-			try
-			{
-				item = CommandBase.getItemByText(null, itemName);
-			}
-			catch (NumberInvalidException e)
-			{
-				throw new RuntimeException("Item " + itemName + " does not exist for distillation byproduct " + (i + 1));
-			}
-			
-			ItemStack stack = new ItemStack(item, amount, meta);
-			
-			
-			DistillationRecipe.addRecipe(outputFluid, stack, inputFluid, powerCost, 1, chance / 100F);
-	    }
-		
+			Fluid f = FluidRegistry.getFluid(outputs.get(n));
+			outputFluids[n] = new FluidStack(f, outputAmounts.get(n));
+		}
+
+		input = input.toLowerCase(Locale.ENGLISH);
+		if (FluidRegistry.getFluid(input) == null)
+		{
+			throw new RuntimeException("Invalid input fluid name for distillation recipe " + recipeNum);
+		}
+		Fluid f = FluidRegistry.getFluid(input);
+		FluidStack inputFluid = new FluidStack(f, inputAmount);
+
+		String[] byproducts = byproductString.split(";");
+		ItemStack[] itemOutputs = new ItemStack[byproducts.length];
+		float[] chances = new float[byproducts.length];
+
+		for (int i = 0; i < byproducts.length; i++) {
+			Tuple<ItemStack, Float> result = parseDistillationByproduct(recipeNum, byproducts[i]);
+			itemOutputs[i] = result.getFirst();
+			chances[i] = result.getSecond() / 100F;
+		}
+
+		System.out.println("Added distillation recipe using " + input);
+		for (ItemStack itemOutput : itemOutputs) {
+			System.out.println(itemOutput.getDisplayName());
+		}
+		DistillationRecipe.addRecipe(outputFluids, itemOutputs, inputFluid, powerCost, 1, chances);
 	}
-	
+
 	public static void addFuel(String[] fuels)
 	{
 		for (int i = 0; i < fuels.length; i++)

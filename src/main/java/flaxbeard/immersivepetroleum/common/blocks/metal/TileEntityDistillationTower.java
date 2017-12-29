@@ -563,9 +563,9 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[0].getFluid(), 1000, false);
 
 
-			if(master==null || master.tanks[iTank].getFluidAmount()>=master.tanks[iTank].getCapacity())
+			if (master==null || master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity())
 				return false;
-			if(master.tanks[0].getFluid()==null)
+			if (master.tanks[0].getFluid()==null)
 			{
 				DistillationRecipe incompleteRecipes = DistillationRecipe.findRecipe(resourceClone);
 				return incompleteRecipes!=null;

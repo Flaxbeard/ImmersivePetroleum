@@ -9,31 +9,45 @@ public class LubricantHandler
 	static final HashMap<String, Integer> lubricantAmounts = new HashMap<String, Integer>();
 
 	/**
-	 * @param lube the fluid to be used as lubricant
-	 * @param amount of mB of lubricant to spend every 4 ticks
+	 * Registers a lubricant to be used in the Lubricant Can and Automatic Lubricator
+	 *
+	 * @param lube The fluid to be used as lubricant
+	 * @param amount mB of lubricant to spend every 4 ticks
 	 */
 	public static void registerLubricant(Fluid lube, int amount)
 	{
 		if (lube != null)
 			lubricantAmounts.put(lube.getName(), amount);
 	}
-	
 
-	public static int getLubeAmount(Fluid lube)
+	/**
+	 * Gets amount of this Fluid that is used every four ticks for the Automatic Lubricator. 0 if not valid lube.
+	 * 100 * this result is used for the Lubricant Can
+	 *
+	 * @param toCheck Fluid to check
+	 * @return mB of this Fluid used to lubricate
+	 */
+	public static int getLubeAmount(Fluid toCheck)
 	{
-		if (lube != null)
+		if (toCheck != null)
 		{
-			String s = lube.getName();
+			String s = toCheck.getName();
 			if (lubricantAmounts.containsKey(s))
 				return lubricantAmounts.get(s);
 		}
 		return 0;
 	}
 
-	public static boolean isValidLube(Fluid lube)
+	/**
+	 * Whether or not the given Fluid is a valid lubricant
+	 *
+	 * @param toCheck Fluid to check
+	 * @return Whether or not the Fluid is a lubricant
+	 */
+	public static boolean isValidLube(Fluid toCheck)
 	{
-		if (lube != null)
-			return lubricantAmounts.containsKey(lube.getName());
+		if (toCheck != null)
+			return lubricantAmounts.containsKey(toCheck.getName());
 		return false;
 	}
 

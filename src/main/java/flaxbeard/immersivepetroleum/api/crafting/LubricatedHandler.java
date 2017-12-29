@@ -28,17 +28,17 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator
 
 public class LubricatedHandler
 {
-	public static interface ILubricationHandler<E extends TileEntity>
+	public interface ILubricationHandler<E extends TileEntity>
 	{
-		public TileEntity isPlacedCorrectly(World world, TileEntityAutoLubricator tile, EnumFacing facing);
-		public boolean isMachineEnabled(World world, E master);
-		public void lubricate(World world, int ticks, E master);
-		public void spawnLubricantParticles(World world, TileEntityAutoLubricator tile, EnumFacing facing, E master);
+		TileEntity isPlacedCorrectly(World world, TileEntityAutoLubricator tile, EnumFacing facing);
+		boolean isMachineEnabled(World world, E master);
+		void lubricate(World world, int ticks, E master);
+		void spawnLubricantParticles(World world, TileEntityAutoLubricator tile, EnumFacing facing, E master);
 		@SideOnly(Side.CLIENT)
-		public void renderPipes(World world, TileEntityAutoLubricator tile, EnumFacing facing, E master);
+		void renderPipes(World world, TileEntityAutoLubricator tile, EnumFacing facing, E master);
 		
-		public Tuple<BlockPos, EnumFacing> getGhostBlockPosition(World world, E tile);
-		public int[] getStructureDimensions();
+		Tuple<BlockPos, EnumFacing> getGhostBlockPosition(World world, E tile);
+		int[] getStructureDimensions();
 	}
 	
 	static final HashMap<Class<? extends TileEntity>, ILubricationHandler> lubricationHandlers = new HashMap<Class<? extends TileEntity>, ILubricationHandler>();

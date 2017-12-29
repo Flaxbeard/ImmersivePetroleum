@@ -1,7 +1,9 @@
-package flaxbeard.immersivepetroleum.api.crafting;
+package flaxbeard.immersivepetroleum.common.items;
 
 import java.util.List;
 
+import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;

@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum;
 
 import java.util.HashMap;
 
+import flaxbeard.immersivepetroleum.common.fluid.FluidDiesel;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
@@ -187,7 +188,16 @@ public class ImmersivePetroleum
 			{
 				list.add(fluidHandler.getContainer());
 			}
-			
+
+			stack = new ItemStack(bucket);
+			fs = new FluidStack(IPContent.fluidDiesel, bucket.getCapacity());
+			fs = FluidDiesel.addSulfur(fs);
+			fluidHandler = new FluidBucketWrapper(stack);
+			if (fluidHandler.fill(fs, true) == fs.amount)
+			{
+				list.add(fluidHandler.getContainer());
+			}
+
 			stack = new ItemStack(bucket);
             fs = new FluidStack(IPContent.fluidDiesel, bucket.getCapacity());
             fluidHandler = new FluidBucketWrapper(stack);

@@ -22,7 +22,8 @@ chat.immersivepetroleum.info.schematic.build1=for making a %s
 chat.immersivepetroleum.info.schematic.center=Centered at (%d, %d, %d)
 chat.immersivepetroleum.info.schematic.controls=%s to rotate, %s + %s to mirror
 
-fluid.diesel=Diesel
+fluid.diesel.sulfur=Diesel
+fluid.diesel=Low Sulfur Diesel
 fluid.oil=Crude Oil
 fluid.lubricant=Lubricant
 fluid.gasoline=Gasoline

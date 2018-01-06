@@ -9,6 +9,7 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.NumberInvalidException;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.config.Config.Comment;
 import net.minecraftforge.common.config.Configuration;
@@ -70,7 +71,7 @@ public class Config
 			
 			@Comment({"Distillation Tower recipes. Format: power_cost, input_name, input_mb -> output1_name, output1_mb, output2_name, output2_mb"})
 			public static String[] towerRecipes = new String[] {
-				"2048, oil, 75 -> lubricant, 9, diesel, 27, gasoline, 39"
+				"2048, oil, 75 -> lubricant, 9, diesel:hasSulfur=true, 27, gasoline, 39"
 			};
 			@Comment({"Distillation Tower byproducts. Need one for each recipe. Multiple solid outputs for a single recipe can be separated by semicolons. Format: item_name, stack_size, metadata, percent_chance"})
 			public static String[] towerByproduct = new String[] {
@@ -203,16 +204,78 @@ public class Config
 	 * @param outputs A list of current fluid output names
  	 * @param outputAmounts A list of current fluid output amounts
 	 */
-	private static void parseDistillationOutput(int recipeNum, int termIndex, String text, List<String> outputs, List<Integer> outputAmounts)
+	private static void parseDistillationOutput(int recipeNum, int termIndex, String text, List<String> outputs, List<Integer> outputAmounts, List<NBTTagCompound> outputCompounds)
 	{
 		if (termIndex % 2 == 1)
 		{
-			outputs.add(text);
+			String name = text;
+			NBTTagCompound nbt = null;
+			int colonIndex = name.indexOf(":");
+			if (colonIndex != -1) {
+				name = text.substring(0, colonIndex);
+				nbt = getTags(recipeNum, text.substring(colonIndex + 1));
+			}
+			outputs.add(name);
+			outputCompounds.add(nbt);
 		}
 		else
 		{
 			int num = attemptParseInteger(text, false, false, "distillation tower output for recipe " + recipeNum);
 			outputAmounts.add(num);
+		}
+	}
+
+	private static NBTTagCompound getTags(int recipeNum, String tagString)
+	{
+		NBTTagCompound nbt = new NBTTagCompound();
+		String[] subtags = tagString.split(",");
+		for (String subtag : subtags)
+		{
+			int equalIndex = subtag.indexOf("=");
+			if (equalIndex == -1)
+			{
+				throw new RuntimeException("Invalid NBT tags for output for distillation recipe " + recipeNum);
+			}
+			String tagName = subtag.substring(0, equalIndex);
+			Object value = stringToValue(subtag.substring(equalIndex + 1));
+			if (value instanceof Boolean)
+			{
+				nbt.setBoolean(tagName, (Boolean) value);
+			} else if (value instanceof Integer)
+			{
+				nbt.setInteger(tagName, (Integer) value);
+			} else if (value instanceof Float)
+			{
+				nbt.setFloat(tagName, (Float) value);
+			} else if (value instanceof String)
+			{
+				nbt.setString(tagName, (String) value);
+			}
+		}
+
+		return nbt;
+	}
+
+	private static Object stringToValue(String valueString)
+	{
+		if (valueString.equals("true"))
+		{
+			return true;
+		} else if (valueString.equals("false"))
+		{
+			return false;
+		}
+
+		try {
+			return Integer.parseInt(valueString);
+		} catch (NumberFormatException e)
+		{
+			try {
+				return Float.parseFloat(valueString);
+			} catch (NumberFormatException g)
+			{
+				return valueString;
+			}
 		}
 	}
 
@@ -287,8 +350,9 @@ public class Config
 		String input = null;
 		int inputAmount = 0;
 		int powerCost = 0;
-		List<String> outputs = new ArrayList<String>();
-		List<Integer> outputAmounts = new ArrayList<Integer>();
+		List<String> outputs = new ArrayList<>();
+		List<Integer> outputAmounts = new ArrayList<>();
+		List<NBTTagCompound> outputCompounds = new ArrayList<>();
 
 		String remainingText = recipeString;
 
@@ -322,7 +386,7 @@ public class Config
 			else
 			{
 				// Read output fluid name / amount
-				parseDistillationOutput(recipeNum, termIndex, current, outputs, outputAmounts);
+				parseDistillationOutput(recipeNum, termIndex, current, outputs, outputAmounts, outputCompounds);
 			}
 
 			remainingText = remainingText.substring(endPos + (arrow ? 2 : 1));
@@ -331,7 +395,7 @@ public class Config
 		String current = remainingText.trim();
 
 		// Read last output fluid name / amount
-		parseDistillationOutput(recipeNum, termIndex, current, outputs, outputAmounts);
+		parseDistillationOutput(recipeNum, termIndex, current, outputs, outputAmounts, outputCompounds);
 
 		// Validate that each output has an output amount
 		if (outputs.size() != outputAmounts.size())
@@ -350,6 +414,10 @@ public class Config
 			}
 			Fluid f = FluidRegistry.getFluid(outputs.get(n));
 			outputFluids[n] = new FluidStack(f, outputAmounts.get(n));
+			if (outputCompounds.get(n) != null)
+			{
+				outputFluids[n].tag = outputCompounds.get(n);
+			}
 		}
 
 		input = input.toLowerCase(Locale.ENGLISH);

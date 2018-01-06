@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum.common;
 
 import java.util.ArrayList;
 
+import flaxbeard.immersivepetroleum.common.fluid.FluidDiesel;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -94,7 +95,7 @@ public class IPContent
 			fluidCrudeOil = FluidRegistry.getFluid("oil");
 		FluidRegistry.addBucketForFluid(fluidCrudeOil);
 
-		fluidDiesel = new Fluid("diesel", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_flow")).setDensity(789).setViscosity(1750);
+		fluidDiesel = new FluidDiesel("diesel", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_flow")).setDensity(789).setViscosity(1750);
 		if(!FluidRegistry.registerFluid(fluidDiesel))
 			fluidDiesel = FluidRegistry.getFluid("diesel");
 		FluidRegistry.addBucketForFluid(fluidDiesel);

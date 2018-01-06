@@ -34,10 +34,15 @@ minecraft {
     useDepAts = true
 }
 
+repositories {
+    maven {
+        name 'jared maven'
+        url 'http://blamejared.com/maven'
+    }
+}
+
 dependencies {
-   compile files(
-        'ImmersiveEngineering-0.12-75-293-deobf.jar'
-    )
+    deobfCompile "blusunrize:ImmersiveEngineering:0.12-+:deobf"
 }
 
 jar {

@@ -12,17 +12,22 @@ import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenClass("mods.immersivepetroleum.Motorboat")
 @ZenRegister
-public class MotorboatFuelTweaker {
-    @ZenMethod
-    public static void registerMotorboatFuel(ILiquidStack fuelEntry, int mbPerTick){
-        Fluid mcFluid;
-        FluidStack mcFluidStack;
-        if (fuelEntry == null) {
-            CraftTweakerAPI.logError("Found Null FluidStack in Fuel Entry");
-        } else {
-            mcFluidStack = CraftTweakerMC.getLiquidStack(fuelEntry);
-            mcFluid = mcFluidStack.getFluid();
-            FuelHandler.registerMotorboatFuel(mcFluid, mbPerTick);
-        }
-    }
+public class MotorboatFuelTweaker
+{
+	@ZenMethod
+	public static void registerMotorboatFuel(ILiquidStack fuelEntry, int mbPerTick)
+	{
+		Fluid mcFluid;
+		FluidStack mcFluidStack;
+		if (fuelEntry == null)
+		{
+			CraftTweakerAPI.logError("Found null FluidStack in fuel entry");
+		}
+		else
+		{
+			mcFluidStack = CraftTweakerMC.getLiquidStack(fuelEntry);
+			mcFluid = mcFluidStack.getFluid();
+			FuelHandler.registerMotorboatFuel(mcFluid, mbPerTick);
+		}
+	}
 }

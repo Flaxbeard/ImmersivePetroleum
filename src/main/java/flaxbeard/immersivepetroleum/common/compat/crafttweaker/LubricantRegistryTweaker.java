@@ -12,18 +12,23 @@ import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenClass("mods.immersivepetroleum.Lubricant")
 @ZenRegister
-public class LubricantRegistryTweaker {
+public class LubricantRegistryTweaker
+{
 
-    @ZenMethod
-    public static void registerLubricant(ILiquidStack lubricantEntry, int amount){
-        Fluid mcFluid;
-        FluidStack mcFluidStack;
-        if (lubricantEntry == null){
-            CraftTweakerAPI.logError("Found Null FluidStack in Lubricant Entry");
-        } else {
-            mcFluidStack = CraftTweakerMC.getLiquidStack(lubricantEntry);
-            mcFluid = mcFluidStack.getFluid();
-            LubricantHandler.registerLubricant(mcFluid, amount);
-        }
-    }
+	@ZenMethod
+	public static void registerLubricant(ILiquidStack lubricantEntry, int amount)
+	{
+		Fluid mcFluid;
+		FluidStack mcFluidStack;
+		if (lubricantEntry == null)
+		{
+			CraftTweakerAPI.logError("Found null FluidStack in lubricant entry");
+		}
+		else
+		{
+			mcFluidStack = CraftTweakerMC.getLiquidStack(lubricantEntry);
+			mcFluid = mcFluidStack.getFluid();
+			LubricantHandler.registerLubricant(mcFluid, amount);
+		}
+	}
 }

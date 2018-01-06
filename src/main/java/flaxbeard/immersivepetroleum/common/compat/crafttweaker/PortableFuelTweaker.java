@@ -12,17 +12,22 @@ import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenClass("mods.immersivepetroleum.PortableGenerator")
 @ZenRegister
-public class PortableFuelTweaker {
-    @ZenMethod
-    public static void registerPortableGenFuel(ILiquidStack fuelEntry, int fluxPerTick, int mbPerTick) {
-        Fluid mcFluid;
-        FluidStack mcFluidStack;
-        if (fuelEntry == null) {
-            CraftTweakerAPI.logError("Found Null FluidStack in Fuel Entry");
-        } else {
-            mcFluidStack = CraftTweakerMC.getLiquidStack(fuelEntry);
-            mcFluid = mcFluidStack.getFluid();
-            FuelHandler.registerPortableGeneratorFuel(mcFluid, fluxPerTick, mbPerTick);
-        }
-    }
+public class PortableFuelTweaker
+{
+	@ZenMethod
+	public static void registerPortableGenFuel(ILiquidStack fuelEntry, int fluxPerTick, int mbPerTick)
+	{
+		Fluid mcFluid;
+		FluidStack mcFluidStack;
+		if (fuelEntry == null)
+		{
+			CraftTweakerAPI.logError("Found null FluidStack in fuel entry");
+		}
+		else
+		{
+			mcFluidStack = CraftTweakerMC.getLiquidStack(fuelEntry);
+			mcFluid = mcFluidStack.getFluid();
+			FuelHandler.registerPortableGeneratorFuel(mcFluid, fluxPerTick, mbPerTick);
+		}
+	}
 }

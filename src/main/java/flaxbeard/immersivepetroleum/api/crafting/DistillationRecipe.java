@@ -1,18 +1,15 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import net.minecraft.init.Items;
+import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.common.util.ListUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 
 /**
@@ -20,6 +17,8 @@ import blusunrize.immersiveengineering.common.util.ListUtils;
  *
  * The recipe for the Refinery
  */
+
+
 public class DistillationRecipe extends MultiblockRecipe
 {
 	public static float energyModifier = 1;

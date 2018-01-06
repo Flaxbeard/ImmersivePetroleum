@@ -1,18 +1,16 @@
 package flaxbeard.immersivepetroleum.client.gui;
 
-import java.util.ArrayList;
-
+import blusunrize.immersiveengineering.client.ClientUtils;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
+import flaxbeard.immersivepetroleum.common.gui.ContainerDistillationTower;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraftforge.fluids.FluidStack;
-
 import org.lwjgl.opengl.GL11;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
-import flaxbeard.immersivepetroleum.common.gui.ContainerDistillationTower;
+import java.util.ArrayList;
 
 public class GuiDistillationTower extends GuiContainer
 {

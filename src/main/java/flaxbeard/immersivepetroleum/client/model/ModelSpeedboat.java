@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.client.model;
 
+import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.IMultipassModel;
 import net.minecraft.client.model.ModelBase;
@@ -11,7 +12,6 @@ import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 
 @SideOnly(Side.CLIENT)
 public class ModelSpeedboat extends ModelBase implements IMultipassModel

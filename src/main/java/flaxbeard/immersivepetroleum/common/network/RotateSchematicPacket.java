@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.network;
 
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.items.ItemProjector;
 import io.netty.buffer.ByteBuf;
@@ -10,7 +11,6 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 
 public class RotateSchematicPacket implements IMessage
 {

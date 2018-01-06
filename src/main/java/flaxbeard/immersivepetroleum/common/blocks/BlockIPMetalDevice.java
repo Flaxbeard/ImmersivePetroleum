@@ -1,5 +1,9 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
+import blusunrize.immersiveengineering.api.IEProperties;
+import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_IPMetalDevice;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityGasGenerator;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -12,10 +16,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import blusunrize.immersiveengineering.api.IEProperties;
-import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_IPMetalDevice;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityGasGenerator;
 
 public class BlockIPMetalDevice extends BlockIPTileProvider<BlockTypes_IPMetalDevice>
 {

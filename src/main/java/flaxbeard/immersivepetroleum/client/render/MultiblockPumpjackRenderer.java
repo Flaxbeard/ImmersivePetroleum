@@ -1,13 +1,13 @@
 package flaxbeard.immersivepetroleum.client.render;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
+import flaxbeard.immersivepetroleum.client.model.ModelPumpjack;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import blusunrize.immersiveengineering.client.ClientUtils;
-import flaxbeard.immersivepetroleum.client.model.ModelPumpjack;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 
 @SideOnly(Side.CLIENT)
 public class MultiblockPumpjackRenderer extends TileEntitySpecialRenderer<TileEntityPumpjack.TileEntityPumpjackParent>

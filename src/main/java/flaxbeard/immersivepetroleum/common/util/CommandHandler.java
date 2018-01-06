@@ -1,16 +1,16 @@
 package flaxbeard.immersivepetroleum.common.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
+import blusunrize.immersiveengineering.api.Lib;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import blusunrize.immersiveengineering.api.Lib;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 
 public class CommandHandler extends CommandBase

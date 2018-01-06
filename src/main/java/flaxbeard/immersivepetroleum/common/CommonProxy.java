@@ -1,14 +1,10 @@
 package flaxbeard.immersivepetroleum.common;
 
-import javax.annotation.Nonnull;
-
-import blusunrize.immersiveengineering.common.IEContent;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.block.model.IBakedModel;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.client.gui.GuiDistillationTower;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
+import flaxbeard.immersivepetroleum.common.gui.ContainerDistillationTower;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -17,11 +13,8 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.client.gui.GuiDistillationTower;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
-import flaxbeard.immersivepetroleum.common.gui.ContainerDistillationTower;
+
+import javax.annotation.Nonnull;
 
 
 public class CommonProxy implements IGuiHandler

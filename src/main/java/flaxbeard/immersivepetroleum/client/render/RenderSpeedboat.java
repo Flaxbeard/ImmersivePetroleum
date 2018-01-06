@@ -1,5 +1,8 @@
 package flaxbeard.immersivepetroleum.client.render;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
+import flaxbeard.immersivepetroleum.client.model.ModelSpeedboat;
+import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -7,9 +10,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import blusunrize.immersiveengineering.client.ClientUtils;
-import flaxbeard.immersivepetroleum.client.model.ModelSpeedboat;
-import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 
 @SideOnly(Side.CLIENT)
 public class RenderSpeedboat extends Render<EntitySpeedboat>

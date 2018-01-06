@@ -1,14 +1,14 @@
 package flaxbeard.immersivepetroleum.common.items;
 
+import blusunrize.immersiveengineering.common.items.IEItemInterfaces.IColouredItem;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import blusunrize.immersiveengineering.common.items.IEItemInterfaces.IColouredItem;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.IPContent;
 
 public class ItemIPBase extends Item implements IColouredItem
 {

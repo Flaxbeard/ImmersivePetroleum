@@ -1,13 +1,13 @@
 package flaxbeard.immersivepetroleum.client.page;
 
-import java.util.List;
-
-import net.minecraft.client.gui.GuiButton;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
 import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.gui.GuiManual;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+
+import java.util.List;
 
 public class ManualPageBigMultiblock extends ManualPageMultiblock
 {

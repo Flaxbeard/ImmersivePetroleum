@@ -1,15 +1,15 @@
 package flaxbeard.immersivepetroleum.common.util;
 
-import java.util.ArrayList;
-import java.util.Locale;
-
+import blusunrize.immersiveengineering.api.Lib;
+import flaxbeard.immersivepetroleum.common.util.CommandHandler.IPSubCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.translation.I18n;
-import blusunrize.immersiveengineering.api.Lib;
-import flaxbeard.immersivepetroleum.common.util.CommandHandler.IPSubCommand;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class CommandHelp extends IPSubCommand
 {

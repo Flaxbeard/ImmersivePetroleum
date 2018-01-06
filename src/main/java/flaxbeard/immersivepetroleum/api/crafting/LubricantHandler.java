@@ -1,8 +1,8 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
-import java.util.HashMap;
-
 import net.minecraftforge.fluids.Fluid;
+
+import java.util.HashMap;
 
 public class LubricantHandler
 {

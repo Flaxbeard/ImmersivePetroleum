@@ -1,8 +1,8 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
-import java.util.List;
-import java.util.Locale;
-
+import blusunrize.immersiveengineering.client.ClientProxy;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
@@ -14,11 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -26,9 +22,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import blusunrize.immersiveengineering.client.ClientProxy;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+
+import java.util.List;
+import java.util.Locale;
 
 public class ItemBlockIPBase extends ItemBlock
 {

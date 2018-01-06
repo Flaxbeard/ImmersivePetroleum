@@ -1,9 +1,9 @@
 package flaxbeard.immersivepetroleum.common.sound;
 
-import java.util.Iterator;
-
-import javax.annotation.Nullable;
-
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.items.ItemEarmuffs;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import net.minecraft.client.audio.ITickableSound;
 import net.minecraft.client.audio.Sound;
 import net.minecraft.client.audio.SoundEventAccessor;
@@ -15,12 +15,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
-import blusunrize.immersiveengineering.common.items.ItemEarmuffs;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+
+import javax.annotation.Nullable;
+import java.util.Iterator;
 
 public class IPEntitySound implements ITickableSound
 {

@@ -1,22 +1,18 @@
 package flaxbeard.immersivepetroleum.common.items;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.api.tool.IUpgrade;
 import com.google.common.collect.ImmutableSet;
-
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.api.tool.IUpgrade;
+
+import java.util.List;
+import java.util.Set;
 
 public class ItemIPUpgrade extends ItemIPBase implements IUpgrade
 {

@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.items;
 
+import blusunrize.immersiveengineering.api.tool.IInternalStorageItem;
 import blusunrize.immersiveengineering.common.util.IELogger;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
@@ -12,7 +13,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.play.server.SPacketSetSlot;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
-import blusunrize.immersiveengineering.api.tool.IInternalStorageItem;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;

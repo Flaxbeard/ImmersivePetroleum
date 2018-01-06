@@ -1,19 +1,18 @@
 package flaxbeard.immersivepetroleum.common.network;
 
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.client.ClientProxy;
 import io.netty.buffer.ByteBuf;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
-import flaxbeard.immersivepetroleum.client.ClientProxy;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MessageReservoirListSync implements IMessage
 {

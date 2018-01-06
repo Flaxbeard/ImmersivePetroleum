@@ -39,10 +39,16 @@ repositories {
         name 'jared maven'
         url 'http://blamejared.com/maven'
     }
+    maven {
+        name 'JEI'
+        url 'http://dvs1.progwml6.com/files/maven'
+    }
 }
 
 dependencies {
     deobfCompile "blusunrize:ImmersiveEngineering:0.12-+:deobf"
+    deobfCompile "mezz.jei:jei_1.12.2:4.8.5.133"
+    deobfCompile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.0.9.289"
 }
 
 jar {

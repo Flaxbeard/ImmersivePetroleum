@@ -1,12 +1,8 @@
 package flaxbeard.immersivepetroleum.api.energy;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
 import net.minecraftforge.fluids.Fluid;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public class FuelHandler
 {

@@ -1,7 +1,27 @@
 package flaxbeard.immersivepetroleum.common;
 
-import java.util.ArrayList;
-
+import blusunrize.immersiveengineering.api.MultiblockHandler;
+import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
+import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect_Potion;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCrusher;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityExcavator;
+import blusunrize.immersiveengineering.common.util.IEPotions;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
+import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
+import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.blocks.*;
+import flaxbeard.immersivepetroleum.common.blocks.metal.*;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator.CrusherLubricationHandler;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator.ExcavatorLubricationHandler;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator.PumpjackLubricationHandler;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
+import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecoration;
+import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
+import flaxbeard.immersivepetroleum.common.items.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -17,40 +37,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import blusunrize.immersiveengineering.api.MultiblockHandler;
-import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
-import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect_Potion;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCrusher;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityExcavator;
-import blusunrize.immersiveengineering.common.util.IEPotions;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.items.ItemOilCan;
-import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
-import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
-import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
-import flaxbeard.immersivepetroleum.common.Config.IPConfig;
-import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
-import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
-import flaxbeard.immersivepetroleum.common.blocks.BlockIPMetalDevice;
-import flaxbeard.immersivepetroleum.common.blocks.BlockIPMetalMultiblocks;
-import flaxbeard.immersivepetroleum.common.blocks.ItemBlockIPBase;
-import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_Dummy;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator.CrusherLubricationHandler;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator.ExcavatorLubricationHandler;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator.PumpjackLubricationHandler;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityGasGenerator;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
-import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecoration;
-import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
-import flaxbeard.immersivepetroleum.common.items.ItemIPBase;
-import flaxbeard.immersivepetroleum.common.items.ItemIPUpgrade;
-import flaxbeard.immersivepetroleum.common.items.ItemProjector;
-import flaxbeard.immersivepetroleum.common.items.ItemSpeedboat;
+
+import java.util.ArrayList;
 
 @Mod.EventBusSubscriber(modid=ImmersivePetroleum.MODID)
 public class IPContent

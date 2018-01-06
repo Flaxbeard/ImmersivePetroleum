@@ -1,9 +1,9 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
-import java.util.Locale;
-
-import net.minecraft.util.IStringSerializable;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
+import net.minecraft.util.IStringSerializable;
+
+import java.util.Locale;
 
 public enum BlockTypes_IPMetalMultiblock implements IStringSerializable, BlockIPBase.IBlockEnum
 {

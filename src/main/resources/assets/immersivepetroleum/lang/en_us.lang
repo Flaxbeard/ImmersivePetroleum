@@ -1,7 +1,8 @@
-tile.immersivepetroleum.fluid_diesel.name=Diesel
+tile.immersivepetroleum.fluid_diesel.name=Desulfurised Diesel
 tile.immersivepetroleum.fluid_crude_oil.name=Crude Oil
 tile.immersivepetroleum.fluid_lubricant.name=Lubricant
 tile.immersivepetroleum.fluid_gasoline.name=Gasoline
+tile.immersivepetroleum.fluid_diesel_sulfur.name=Diesel
 
 tile.immersivepetroleum.stone_decoration.asphalt.name=Asphalt Concrete
 
@@ -23,7 +24,7 @@ chat.immersivepetroleum.info.schematic.center=Centered at (%d, %d, %d)
 chat.immersivepetroleum.info.schematic.controls=%s to rotate, %s + %s to mirror
 
 fluid.diesel.sulfur=Diesel
-fluid.diesel=Low Sulfur Diesel
+fluid.diesel=Desulfurised Diesel
 fluid.oil=Crude Oil
 fluid.lubricant=Lubricant
 fluid.gasoline=Gasoline

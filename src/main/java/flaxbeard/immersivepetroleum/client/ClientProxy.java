@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockHydrotreater;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -74,9 +75,11 @@ import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack
 import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecoration;
 import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 import flaxbeard.immersivepetroleum.common.items.ItemIPBase;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SuppressWarnings("deprecation")
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = ImmersivePetroleum.MODID)
+@SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy
 {
 	public static final String CAT_IP = "ip";
@@ -139,7 +142,7 @@ public class ClientProxy extends CommonProxy
 						ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "auto_lube"), "inventory"));
 					}
 				} else if(block instanceof BlockIPFluid)
-					mapFluidState(block, ((BlockIPFluid) block).getFluid());
+					mapFluidState(block, ((BlockIPFluid) block).getRenderName());
 				else
 					ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(loc, "inventory"));
 		}
@@ -245,9 +248,13 @@ public class ClientProxy extends CommonProxy
 				new ManualPages.Text(ManualHelper.getManual(), "distillationTower0"),
 				new ManualPages.Text(ManualHelper.getManual(), "distillationTower1"),
 				new ManualPages.Table(ManualHelper.getManual(), "distillationTower2", table, false));
-	
-	
-	
+
+		ManualHelper.addEntry("hydrotreater", CAT_IP,
+				new ManualPageMultiblock(ManualHelper.getManual(), "hydrotreater0", MultiblockHydrotreater.instance),
+				new ManualPages.Text(ManualHelper.getManual(), "hydrotreater1"),
+				new ManualPages.Text(ManualHelper.getManual(), "hydrotreater2"));
+
+
 		ManualHelper.addEntry("portableGenerator", CAT_IP,
 				new ManualPages.Crafting(ManualHelper.getManual(), "portableGenerator0", new ItemStack(IPContent.blockMetalDevice, 1, 1)),
 				new ManualPages.Text(ManualHelper.getManual(), "portableGenerator1"));
@@ -282,10 +289,10 @@ public class ClientProxy extends CommonProxy
 
 	}
 
-	private static void mapFluidState(Block block, Fluid fluid)
+	private static void mapFluidState(Block block, String fluidName)
 	{
 		Item item = Item.getItemFromBlock(block);
-		FluidStateMapper mapper = new FluidStateMapper(fluid);
+		FluidStateMapper mapper = new FluidStateMapper(fluidName);
 		if(item != null)
 		{
 			ModelLoader.registerItemVariants(item);
@@ -298,9 +305,9 @@ public class ClientProxy extends CommonProxy
 	{
 		public final ModelResourceLocation location;
 
-		public FluidStateMapper(Fluid fluid)
+		public FluidStateMapper(String fluidName)
 		{
-			this.location = new ModelResourceLocation(ImmersivePetroleum.MODID + ":fluid_block", fluid.getName());
+			this.location = new ModelResourceLocation(ImmersivePetroleum.MODID + ":fluid_block", fluidName);
 		}
 
 		@Nonnull

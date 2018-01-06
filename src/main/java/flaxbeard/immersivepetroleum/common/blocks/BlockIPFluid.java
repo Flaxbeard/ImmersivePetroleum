@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
+import flaxbeard.immersivepetroleum.common.fluid.FluidDiesel;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -14,6 +15,10 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+
+import javax.annotation.Nonnull;
 
 public class BlockIPFluid extends BlockFluidClassic
 {
@@ -28,6 +33,11 @@ public class BlockIPFluid extends BlockFluidClassic
 		this.setCreativeTab(ImmersivePetroleum.creativeTab);
 		//ImmersivePetroleum.registerBlock(this, ItemBlock.class, name);
 		IPContent.registeredIPBlocks.add(this);
+	}
+
+	public String getRenderName()
+	{
+		return getFluid().getName();
 	}
 
 	public BlockIPFluid setFlammability(int flammability, int fireSpread)
@@ -68,5 +78,22 @@ public class BlockIPFluid extends BlockFluidClassic
 				if(effect!=null)
 					((EntityLivingBase)entity).addPotionEffect(new PotionEffect(effect));
 		}
+	}
+
+	@Override
+	public int place(World world, BlockPos pos, @Nonnull FluidStack fluidStack, boolean doPlace) {
+		if (fluidStack.getFluid() == IPContent.fluidDiesel && FluidDiesel.hasSulfur(fluidStack)) {
+			if (fluidStack.amount < Fluid.BUCKET_VOLUME)
+			{
+				return 0;
+			}
+			if (doPlace)
+			{
+				FluidUtil.destroyBlockOnFluidPlacement(world, pos);
+				world.setBlockState(pos, IPContent.blockFluidDieselSulfur.getDefaultState(), 11);
+			}
+			return Fluid.BUCKET_VOLUME;
+		}
+		return super.place(world, pos, fluidStack, doPlace);
 	}
 }

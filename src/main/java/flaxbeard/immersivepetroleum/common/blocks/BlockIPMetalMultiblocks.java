@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityHydrotreater;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -57,192 +58,13 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 				return new TileEntityPumpjack();
 			case PUMPJACK_PARENT:
 				return new TileEntityPumpjack.TileEntityPumpjackParent();
+			case HYDROTREATER:
+				return new TileEntityHydrotreater();
+			case HYDROTREATER_PARENT:
+				return new TileEntityHydrotreater.TileEntityHydrotreaterParent();
 		}
 		return null;
 	}
-
-
-	//	@Override
-	//	public void breakBlock(World world, int x, int y, int z, Block par5, int par6)
-	//	{
-	//		TileEntity tileEntity = world.getTileEntity(x, y, z);
-	//		if(tileEntity instanceof TileEntityMultiblockPart && world.getGameRules().getGameRuleBooleanValue("doTileDrops"))
-	//		{
-	//			TileEntityMultiblockPart tile = (TileEntityMultiblockPart)tileEntity;
-	//			if(!tile.formed && tile.pos==-1 && tile.getOriginalBlock()!=null)
-	//				world.spawnEntityInWorld(new EntityItem(world, x+.5,y+.5,z+.5, tile.getOriginalBlock().copy()));
-	//
-	//			if(tileEntity instanceof IInventory)
-	//			{
-	//				if(!world.isRemote && ((TileEntityMultiblockPart)tileEntity).formed)
-	//				{
-	//					TileEntity master = ((TileEntityMultiblockPart)tileEntity).master();
-	//					if(master==null)
-	//						master = tileEntity;
-	//					for(int i=0; i<((IInventory)master).getSizeInventory(); i++)
-	//					{
-	//						ItemStack stack = ((IInventory)master).getStackInSlot(i);
-	//						if(stack!=null)
-	//						{
-	//							float fx = world.rand.nextFloat() * 0.8F + 0.1F;
-	//							float fz = world.rand.nextFloat() * 0.8F + 0.1F;
-	//
-	//							EntityItem entityitem = new EntityItem(world, x+fx, y+.5, z+fz, stack);
-	//							entityitem.motionX = world.rand.nextGaussian()*.05;
-	//							entityitem.motionY = world.rand.nextGaussian()*.05+.2;
-	//							entityitem.motionZ = world.rand.nextGaussian()*.05;
-	//							if(stack.hasTagCompound())
-	//								entityitem.getEntityItem().setTagCompound((NBTTagCompound)stack.getTagCompound().copy());
-	//							world.spawnEntityInWorld(entityitem);
-	//						}
-	//					}
-	//				}
-	//			}
-	//		}
-	//		super.breakBlock(world, x, y, z, par5, par6);
-	//	}
-	//	@Override
-	//	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
-	//	{
-	//		return new ArrayList<ItemStack>();
-	//	}
-	//	@Override
-	//	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z, EntityPlayer player)
-	//	{
-	//		return getOriginalBlock(world, x, y, z);
-	//	}
-
-	//	public ItemStack getOriginalBlock(World world, int x, int y, int z)
-	//	{
-	//		TileEntity te = world.getTileEntity(x, y, z);
-	//		if(te instanceof TileEntityMultiblockPart)
-	//			return ((TileEntityMultiblockPart)te).getOriginalBlock();
-	//		return new ItemStack(this, 1, world.getBlockMetadata(x, y, z));
-	//	}
-
-	//	@Override
-	//	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ)
-	//	{
-	//		TileEntity curr = world.getTileEntity(x, y, z);
-	//		if(curr instanceof TileEntitySqueezer)
-	//		{
-	//			if(!player.isSneaking() && ((TileEntitySqueezer)curr).formed )
-	//			{
-	//				TileEntitySqueezer te = ((TileEntitySqueezer)curr).master();
-	//				if(te==null)
-	//					te = ((TileEntitySqueezer)curr);
-	//				if(!world.isRemote)
-	//					player.openGui(ImmersiveEngineering.instance, Lib.GUIID_Squeezer, world, te.xCoord, te.yCoord, te.zCoord);
-	//				return true;
-	//			}
-	//		}
-	//		else if(curr instanceof TileEntityFermenter)
-	//		{
-	//			if(!player.isSneaking() && ((TileEntityFermenter)curr).formed )
-	//			{
-	//				TileEntityFermenter te = ((TileEntityFermenter)curr).master();
-	//				if(te==null)
-	//					te = ((TileEntityFermenter)curr);
-	//				if(!world.isRemote)
-	//					player.openGui(ImmersiveEngineering.instance, Lib.GUIID_Fermenter, world, te.xCoord, te.yCoord, te.zCoord);
-	//				return true;
-	//			}
-	//		}
-	//		else if(curr instanceof TileEntityRefinery)
-	//		{
-	//			if(!player.isSneaking() && ((TileEntityRefinery)curr).formed )
-	//			{
-	//				TileEntityRefinery te = ((TileEntityRefinery)curr).master();
-	//				if(te==null)
-	//					te = ((TileEntityRefinery)curr);
-	//				if(!world.isRemote)
-	//					player.openGui(ImmersiveEngineering.instance, Lib.GUIID_Refinery, world, te.xCoord, te.yCoord, te.zCoord);
-	//				return true;
-	//			}
-	//		}
-	//		else if(curr instanceof TileEntityDieselGenerator)
-	//		{
-	//			TileEntityDieselGenerator master = ((TileEntityDieselGenerator)curr).master();
-	//			if(master==null)
-	//				master = ((TileEntityDieselGenerator)curr);
-	//			if(((TileEntityDieselGenerator)curr).pos==40 && Utils.isHammer(player.getCurrentEquippedItem()))
-	//			{
-	//				master.mirrored = !master.mirrored;
-	//				master.markDirty();
-	//				world.markBlockForUpdate(master.xCoord, master.yCoord, master.zCoord);
-	//			}
-	//			else if(!world.isRemote && (((TileEntityDieselGenerator)curr).pos==36 || ((TileEntityDieselGenerator)curr).pos==38))
-	//			{
-	//				if(Utils.fillFluidHandlerWithPlayerItem(world, master, player))
-	//				{
-	//					master.markDirty();
-	//					world.markBlockForUpdate(master.xCoord,master.yCoord,master.zCoord);
-	//					return true;
-	//				}
-	//				if(player.getCurrentEquippedItem()!=null && player.getCurrentEquippedItem().getItem() instanceof IFluidContainerItem)
-	//				{
-	//					master.markDirty();
-	//					world.markBlockForUpdate(master.xCoord,master.yCoord,master.zCoord);
-	//					return true;
-	//				}
-	//			}
-	//		}
-	//		else if(curr instanceof TileEntityArcFurnace)
-	//		{
-	//			if(!player.isSneaking() && ((TileEntityArcFurnace)curr).formed )
-	//			{
-	//				TileEntityArcFurnace te = ((TileEntityArcFurnace)curr);
-	//				if(te.pos==2||te.pos==25|| (te.pos>25 && te.pos%5>0 && te.pos%5<4 && te.pos%25/5<4))
-	//				{
-	//					TileEntityArcFurnace master = te.master();
-	//					if(master==null)
-	//						master = te;
-	//					if(!world.isRemote)
-	//						player.openGui(ImmersiveEngineering.instance, Lib.GUIID_ArcFurnace, world, master.xCoord, master.yCoord, master.zCoord);
-	//					return true;
-	//				}
-	//			}
-	//		}
-	//		else if(!player.isSneaking() && curr instanceof TileEntitySheetmetalTank)
-	//		{
-	//			TileEntitySheetmetalTank tank = (TileEntitySheetmetalTank)curr;
-	//			TileEntitySheetmetalTank master = tank.master();
-	//			if(master==null)
-	//				master = tank;
-	//			if(Utils.fillFluidHandlerWithPlayerItem(world, master, player))
-	//			{
-	//				master.markDirty();
-	//				world.markBlockForUpdate(master.xCoord,master.yCoord,master.zCoord);
-	//				return true;
-	//			}
-	//			if(Utils.fillPlayerItemFromFluidHandler(world, master, player, master.tank.getFluid()))
-	//			{
-	//				master.markDirty();
-	//				world.markBlockForUpdate(master.xCoord,master.yCoord,master.zCoord);
-	//				return true;
-	//			}
-	//			if(player.getCurrentEquippedItem()!=null && player.getCurrentEquippedItem().getItem() instanceof IFluidContainerItem)
-	//			{
-	//				master.markDirty();
-	//				world.markBlockForUpdate(master.xCoord,master.yCoord,master.zCoord);
-	//				return true;
-	//			}
-	//		}
-	//		else if(curr instanceof TileEntityAssembler)
-	//		{
-	//			if(!player.isSneaking() && ((TileEntityAssembler)curr).formed)
-	//			{
-	//				TileEntityAssembler te = ((TileEntityAssembler)curr);
-	//				TileEntityAssembler master = te.master();
-	//				if(master==null)
-	//					master = te;
-	//				if(!world.isRemote)
-	//					player.openGui(ImmersiveEngineering.instance, Lib.GUIID_Assembler, world, master.xCoord, master.yCoord, master.zCoord);
-	//				return true;
-	//			}
-	//		}
-	//		return false;
-	//	}
 
 
 	@Override

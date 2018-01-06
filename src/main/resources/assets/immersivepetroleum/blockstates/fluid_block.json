@@ -8,6 +8,9 @@
 		"diesel": [{
 			"custom": { "fluid": "diesel" }
 		}],
+		"diesel_sulfur": [{
+			"custom": { "fluid": "ip_dummy_sulfur" }
+		}],
 		"oil": [{
 			"custom": { "fluid": "oil" }
 		}],

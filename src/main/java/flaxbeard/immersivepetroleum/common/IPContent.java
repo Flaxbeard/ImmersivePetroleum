@@ -2,6 +2,9 @@ package flaxbeard.immersivepetroleum.common;
 
 import java.util.ArrayList;
 
+import flaxbeard.immersivepetroleum.common.blocks.*;
+import flaxbeard.immersivepetroleum.common.blocks.metal.*;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockHydrotreater;
 import flaxbeard.immersivepetroleum.common.fluid.FluidDiesel;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -31,19 +34,9 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
-import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
-import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
-import flaxbeard.immersivepetroleum.common.blocks.BlockIPMetalDevice;
-import flaxbeard.immersivepetroleum.common.blocks.BlockIPMetalMultiblocks;
-import flaxbeard.immersivepetroleum.common.blocks.ItemBlockIPBase;
-import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_Dummy;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator.CrusherLubricationHandler;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator.ExcavatorLubricationHandler;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator.PumpjackLubricationHandler;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityGasGenerator;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.stone.BlockTypes_IPStoneDecoration;
@@ -60,6 +53,7 @@ public class IPContent
 
 	public static BlockIPFluid blockFluidCrudeOil;
 	public static BlockIPFluid blockFluidDiesel;
+	public static BlockIPFluid blockFluidDieselSulfur;
 	public static BlockIPFluid blockFluidLubricant;
 	public static BlockIPFluid blockFluidGasoline;
 
@@ -90,12 +84,20 @@ public class IPContent
 		EntityRegistry.registerModEntity(new ResourceLocation(ImmersivePetroleum.MODID, "speedboat"), EntitySpeedboat.class, "speedboat", 0, ImmersivePetroleum.INSTANCE, 80, 3, true);
 		//EntityRegistry.registerModEntity(EntityBoatDrill.class, "boat_drill", 1, ImmersivePetroleum.INSTANCE, 80, 3, true);
 
+		Fluid fluidDummyDieselSulfur = new Fluid("ip_dummy_sulfur", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_sulfur_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_sulfur_flow")).setDensity(1000).setViscosity(2250);
+		FluidRegistry.registerFluid(fluidDummyDieselSulfur);
+
 		fluidCrudeOil = new Fluid("oil", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/oil_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/oil_flow")).setDensity(1000).setViscosity(2250);
 		if(!FluidRegistry.registerFluid(fluidCrudeOil))
 			fluidCrudeOil = FluidRegistry.getFluid("oil");
 		FluidRegistry.addBucketForFluid(fluidCrudeOil);
 
-		fluidDiesel = new FluidDiesel("diesel", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_flow")).setDensity(789).setViscosity(1750);
+		fluidDiesel = new FluidDiesel("diesel",
+				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_still"),
+				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_flow"),
+				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_sulfur_still"),
+				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_sulfur_flow")
+		).setDensity(789).setViscosity(1750);
 		if(!FluidRegistry.registerFluid(fluidDiesel))
 			fluidDiesel = FluidRegistry.getFluid("diesel");
 		FluidRegistry.addBucketForFluid(fluidDiesel);
@@ -112,6 +114,7 @@ public class IPContent
 		
 		blockFluidCrudeOil = new BlockIPFluid("fluid_crude_oil", fluidCrudeOil, Material.WATER).setFlammability(60, 200);
 		blockFluidDiesel = new BlockIPFluid("fluid_diesel", fluidDiesel, Material.WATER).setFlammability(60, 200);
+		blockFluidDieselSulfur = new BlockDieselSulfur("fluid_diesel_sulfur", fluidDiesel, Material.WATER).setFlammability(60, 200);
 		blockFluidLubricant = new BlockIPFluid("fluid_lubricant", fluidLubricant, Material.WATER);
 		blockFluidGasoline = new BlockIPFluid("fluid_gasoline", fluidGasoline, Material.WATER).setFlammability(60, 200);
 
@@ -149,6 +152,8 @@ public class IPContent
 		registerTile(TileEntityDistillationTower.TileEntityDistillationTowerParent.class);
 		registerTile(TileEntityPumpjack.class);
 		registerTile(TileEntityPumpjack.TileEntityPumpjackParent.class);
+		registerTile(TileEntityHydrotreater.class);
+		registerTile(TileEntityHydrotreater.TileEntityHydrotreaterParent.class);
 		registerTile(TileEntityAutoLubricator.class);
 		registerTile(TileEntityGasGenerator.class);
 //
@@ -162,7 +167,8 @@ public class IPContent
 
 		MultiblockHandler.registerMultiblock(MultiblockDistillationTower.instance);
 		MultiblockHandler.registerMultiblock(MultiblockPumpjack.instance);
-		
+		MultiblockHandler.registerMultiblock(MultiblockHydrotreater.instance);
+
 		//IERecipes.addIngredientRecipe(new ItemStack(blockStoneDecoration, 8, BlockTypes_IPStoneDecoration.ASPHALT.getMeta()), "SCS", "GBG", "SCS", 'C', new ItemStack(itemMaterial, 1, 0), 'S', "sand", 'G', Blocks.GRAVEL, 'B', new FluidStack(FluidRegistry.WATER,1000)).allowQuarterTurn();
 		//IERecipes.addIngredientRecipe(new ItemStack(blockStoneDecoration, 12, BlockTypes_IPStoneDecoration.ASPHALT.getMeta()), "SCS", "GBG", "SCS", 'C', new ItemStack(itemMaterial, 1, 0), 'S', "itemSlag", 'G', Blocks.GRAVEL, 'B', new FluidStack(FluidRegistry.WATER,1000)).allowQuarterTurn();
 	

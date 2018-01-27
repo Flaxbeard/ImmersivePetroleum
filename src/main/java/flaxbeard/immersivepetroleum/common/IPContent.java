@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
+import blusunrize.immersiveengineering.api.crafting.MixerRecipe;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect_Potion;
 import blusunrize.immersiveengineering.common.IEContent;
@@ -25,6 +26,7 @@ import flaxbeard.immersivepetroleum.common.items.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
@@ -32,6 +34,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -49,6 +52,7 @@ public class IPContent
 	public static BlockIPFluid blockFluidDiesel;
 	public static BlockIPFluid blockFluidLubricant;
 	public static BlockIPFluid blockFluidGasoline;
+	public static BlockIPFluid blockFluidNapalm;
 
 	public static BlockIPBase blockMetalMultiblock;
 	
@@ -71,36 +75,78 @@ public class IPContent
 	public static Fluid fluidDiesel;
 	public static Fluid fluidLubricant;
 	public static Fluid fluidGasoline;
+	public static Fluid fluidNapalm;
 
 	public static void preInit()
 	{
 		EntityRegistry.registerModEntity(new ResourceLocation(ImmersivePetroleum.MODID, "speedboat"), EntitySpeedboat.class, "speedboat", 0, ImmersivePetroleum.INSTANCE, 80, 3, true);
 		//EntityRegistry.registerModEntity(EntityBoatDrill.class, "boat_drill", 1, ImmersivePetroleum.INSTANCE, 80, 3, true);
 
-		fluidCrudeOil = new Fluid("oil", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/oil_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/oil_flow")).setDensity(1000).setViscosity(2250);
-		if(!FluidRegistry.registerFluid(fluidCrudeOil))
+		fluidCrudeOil = new Fluid(
+				"oil",
+				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/oil_still"),
+				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/oil_flow")
+		).setDensity(1000).setViscosity(2250);
+		if (!FluidRegistry.registerFluid(fluidCrudeOil))
 			fluidCrudeOil = FluidRegistry.getFluid("oil");
 		FluidRegistry.addBucketForFluid(fluidCrudeOil);
 
-		fluidDiesel = new Fluid("diesel", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_flow")).setDensity(789).setViscosity(1750);
-		if(!FluidRegistry.registerFluid(fluidDiesel))
+		fluidDiesel = new Fluid(
+				"diesel",
+				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_still"),
+				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/diesel_flow")
+		).setDensity(789).setViscosity(1750);
+		if (!FluidRegistry.registerFluid(fluidDiesel))
 			fluidDiesel = FluidRegistry.getFluid("diesel");
 		FluidRegistry.addBucketForFluid(fluidDiesel);
 		
-		fluidLubricant = new Fluid("lubricant", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/lubricant_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/lubricant_flow")).setDensity(925).setViscosity(1000);
-		if(!FluidRegistry.registerFluid(fluidLubricant))
+		fluidLubricant = new Fluid(
+				"lubricant",
+				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/lubricant_still"),
+				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/lubricant_flow")
+		).setDensity(925).setViscosity(1000);
+		if (!FluidRegistry.registerFluid(fluidLubricant))
 			fluidLubricant = FluidRegistry.getFluid("lubricant");
 		FluidRegistry.addBucketForFluid(fluidLubricant);
 		
-		fluidGasoline = new Fluid("gasoline", new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/gasoline_still"), new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/gasoline_flow")).setDensity(789).setViscosity(1200);
-		if(!FluidRegistry.registerFluid(fluidGasoline))
+		fluidGasoline = new Fluid(
+				"gasoline",
+				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/gasoline_still"),
+				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/gasoline_flow")
+		).setDensity(789).setViscosity(1200);
+		if (!FluidRegistry.registerFluid(fluidGasoline))
 			fluidGasoline = FluidRegistry.getFluid("gasoline");
 		FluidRegistry.addBucketForFluid(fluidGasoline);
-		
-		blockFluidCrudeOil = new BlockIPFluid("fluid_crude_oil", fluidCrudeOil, Material.WATER).setFlammability(60, 200);
-		blockFluidDiesel = new BlockIPFluid("fluid_diesel", fluidDiesel, Material.WATER).setFlammability(60, 200);
-		blockFluidLubricant = new BlockIPFluid("fluid_lubricant", fluidLubricant, Material.WATER);
-		blockFluidGasoline = new BlockIPFluid("fluid_gasoline", fluidGasoline, Material.WATER).setFlammability(60, 200);
+
+		fluidNapalm = new Fluid(
+				"napalm",
+				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/napalm_still"),
+				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/napalm_flow")
+		).setDensity(1000).setViscosity(4000);
+		if (!FluidRegistry.registerFluid(fluidNapalm))
+			fluidNapalm = FluidRegistry.getFluid("napalm");
+		FluidRegistry.addBucketForFluid(fluidNapalm);
+
+		if (fluidCrudeOil.getBlock() == null)
+		{
+			blockFluidCrudeOil = new BlockIPFluid("fluid_crude_oil", fluidCrudeOil, Material.WATER).setFlammability(60, 200);
+		}
+		if (fluidDiesel.getBlock() == null)
+		{
+			blockFluidDiesel = new BlockIPFluid("fluid_diesel", fluidDiesel, Material.WATER).setFlammability(60, 600);
+		}
+		if (fluidLubricant.getBlock() == null)
+		{
+			blockFluidLubricant = new BlockIPFluid("fluid_lubricant", fluidLubricant, Material.WATER);
+		}
+		if (fluidGasoline.getBlock() == null)
+		{
+			blockFluidGasoline = new BlockIPFluid("fluid_gasoline", fluidGasoline, Material.WATER).setFlammability(60, 200);
+		}
+		if (fluidNapalm.getBlock() == null)
+		{
+			blockFluidNapalm = new BlockNapalm("fluid_napalm", fluidNapalm, Material.WATER).setFlammability(100, 600);
+		}
 
 		blockMetalMultiblock = new BlockIPMetalMultiblocks();
 		
@@ -123,107 +169,49 @@ public class IPContent
 	
 	public static void init()
 	{
-		blockFluidCrudeOil.setPotionEffects(new PotionEffect(IEPotions.flammable,100,1));
-		blockFluidDiesel.setPotionEffects(new PotionEffect(IEPotions.flammable,100,1));
-		blockFluidLubricant.setPotionEffects(new PotionEffect(IEPotions.slippery,100,1));
+		if (blockFluidCrudeOil != null)
+		{
+			blockFluidCrudeOil.setPotionEffects(new PotionEffect(IEPotions.flammable,100,1));
+		}
+		if (blockFluidDiesel != null)
+		{
+			blockFluidDiesel.setPotionEffects(new PotionEffect(IEPotions.flammable,100,1));
+		}
+		if (blockFluidDiesel != null)
+		{
+			blockFluidLubricant.setPotionEffects(new PotionEffect(IEPotions.slippery,100,1));
+		}
+		if (blockFluidNapalm != null)
+		{
+			blockFluidNapalm.setPotionEffects(new PotionEffect(IEPotions.flammable,140,2));
+		}
+
 		ChemthrowerHandler.registerEffect("lubricant", new LubricantEffect());
 		ChemthrowerHandler.registerEffect("plantoil", new LubricantEffect());
 		ChemthrowerHandler.registerEffect("gasoline", new ChemthrowerEffect_Potion(null,0, IEPotions.flammable,60,1));
 		ChemthrowerHandler.registerFlammable("gasoline");
 		ChemthrowerHandler.registerEffect("lubricant", new ChemthrowerEffect_Potion(null,0, IEPotions.slippery,60,1));
-		
+		ChemthrowerHandler.registerEffect("napalm", new ChemthrowerEffect_Potion(null,0, IEPotions.flammable,60,2));
+
 		registerTile(TileEntityDistillationTower.class);
 		registerTile(TileEntityDistillationTower.TileEntityDistillationTowerParent.class);
 		registerTile(TileEntityPumpjack.class);
 		registerTile(TileEntityPumpjack.TileEntityPumpjackParent.class);
 		registerTile(TileEntityAutoLubricator.class);
 		registerTile(TileEntityGasGenerator.class);
-//
-//		DistillationRecipe.addRecipe(
-//				new FluidStack[] { 
-//					new FluidStack(fluidLubricant, 3),
-//					new FluidStack(fluidDiesel, 9),
-//					new FluidStack(fluidGasoline, 13)
-//				},
-//				new ItemStack(itemMaterial, 1, 0), new FluidStack(fluidCrudeOil, 25), 2048, 1, .07F);
 
 		MultiblockHandler.registerMultiblock(MultiblockDistillationTower.instance);
 		MultiblockHandler.registerMultiblock(MultiblockPumpjack.instance);
-		
-		//IERecipes.addIngredientRecipe(new ItemStack(blockStoneDecoration, 8, BlockTypes_IPStoneDecoration.ASPHALT.getMeta()), "SCS", "GBG", "SCS", 'C', new ItemStack(itemMaterial, 1, 0), 'S', "sand", 'G', Blocks.GRAVEL, 'B', new FluidStack(FluidRegistry.WATER,1000)).allowQuarterTurn();
-		//IERecipes.addIngredientRecipe(new ItemStack(blockStoneDecoration, 12, BlockTypes_IPStoneDecoration.ASPHALT.getMeta()), "SCS", "GBG", "SCS", 'C', new ItemStack(itemMaterial, 1, 0), 'S', "itemSlag", 'G', Blocks.GRAVEL, 'B', new FluidStack(FluidRegistry.WATER,1000)).allowQuarterTurn();
-	
-	
-			/*IERecipes.addIngredientRecipe(new ItemStack(itemProjector, 1, 0), "S  ", "IL ", " IW", 
-					'W', "plankTreatedWood", 
-					'L', new ItemStack(IEContent.blockMetalDecoration2, 1, BlockTypes_MetalDecoration2.LANTERN.getMeta()), 
-					'S', "blockGlassColorless",
-					'I', "ingotIron");*/
+
+
 		ForgeRegistries.RECIPES.register(new SchematicCraftingHandler().setRegistryName(ImmersivePetroleum.MODID, "projector"));
-
-		/*
-		
-<<<<<<< HEAD
-		IERecipes.addIngredientRecipe(new ItemStack(itemSpeedboat, 1, 0), "PME", "PPP", 
-				'P', "plankTreatedWood", 
-				'E', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta()), 
-				'M', new ItemStack(IEContent.itemMaterial, 1, 8));
-=======
-		if (!IPConfig.Miscellaneous.disable_motorboat)
-		{
-			IERecipes.addIngredientRecipe(new ItemStack(itemSpeedboat, 1, 0), "PME", "PPP", 
-					'P', "plankTreatedWood", 
-					'E', new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta()), 
-					'M', new ItemStack(IEContent.itemMaterial, 1, 8));
-			
-			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 0), "P P", "PBP", 
-					'P', "plateSteel",
-					'B', "blockSteel");
-			
-			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 1), "I P", " IP", "PPB", 
-					'P', "plateSteel",
-					'B', "blockSteel",
-					'I', "ingotSteel");
-			
-			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 2), " P ", "PTP", " P ",
-					'P', "plateIron",
-					'T', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta()));
-			
-			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 3), " RR", "PPP", "PPP",
-					'P', "plateIron",
-					'R', "stickIron");
-			
-			IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 4), "S S", "S S", "P P",
-					'P', "plankTreatedWood",
-					'S', "stickTreatedWood");
-		}
->>>>>>> 1.11
-		
-		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 0), "P P", "PBP", 
-				'P', "plateSteel",
-				'B', "blockSteel");
-		
-		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 1), "I P", " IP", "PPB", 
-				'P', "plateSteel",
-				'B', "blockSteel",
-				'I', "ingotSteel");
-		
-		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 2), " P ", "PTP", " P ",
-				'P', "plateIron",
-				'T', new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta()));
-		
-		IERecipes.addIngredientRecipe(new ItemStack(itemUpgrades, 1, 3), " RR", "PPP", "PPP",
-				'P', "plateIron",
-				'R', "stickIron");
-				
-				*/
-
-
 			
 		Config.addConfigReservoirs(IPConfig.extraction.reservoirs);
 		Config.addFuel(IPConfig.Generation.fuels);
 		Config.addBoatFuel(IPConfig.Miscellaneous.boat_fuels);
 		Config.addDistillationRecipes(IPConfig.Refining.towerRecipes, IPConfig.Refining.towerByproduct);
+
+		MixerRecipe.addRecipe(new FluidStack(fluidNapalm, 500), new FluidStack(fluidGasoline, 500), new Object[] {"dustAluminum", "dustAluminum", "dustAluminum"}, 3200);
 
 		LubricantHandler.registerLubricant(fluidLubricant, 3);
 		LubricantHandler.registerLubricant(IEContent.fluidPlantoil, 12);
@@ -231,7 +219,6 @@ public class IPContent
 		LubricatedHandler.registerLubricatedTile(TileEntityPumpjack.class, new PumpjackLubricationHandler());
 		LubricatedHandler.registerLubricatedTile(TileEntityExcavator.class, new ExcavatorLubricationHandler());
 		LubricatedHandler.registerLubricatedTile(TileEntityCrusher.class, new CrusherLubricationHandler());
-
 	}
 	
 	public static void registerTile(Class<? extends TileEntity> tile)

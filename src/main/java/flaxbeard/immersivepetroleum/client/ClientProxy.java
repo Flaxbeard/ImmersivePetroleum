@@ -258,6 +258,9 @@ public class ClientProxy extends CommonProxy
 				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat4", new ItemStack(IPContent.itemUpgrades, 1, 0)),
 				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat5", new ItemStack(IPContent.itemUpgrades, 1, 4))
 		);
+
+		ManualHelper.addEntry("napalm", CAT_IP,
+				new ManualPages.Text(ManualHelper.getManual(), "napalm0"));
 	
 
 		ManualHelper.addEntry("asphalt", CAT_IP,

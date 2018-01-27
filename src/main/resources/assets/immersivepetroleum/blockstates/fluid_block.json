@@ -16,6 +16,9 @@
 		}],
 		"gasoline": [{
 			"custom": { "fluid": "gasoline" }
+		}],
+		"napalm": [{
+			"custom": { "fluid": "napalm" }
 		}]
 	}
 }

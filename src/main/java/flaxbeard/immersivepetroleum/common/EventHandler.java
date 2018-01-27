@@ -66,6 +66,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.world.WorldEvent;
@@ -615,6 +616,15 @@ public class EventHandler
 			}
 			((EntityPlayer) event.getEntity()).unlockRecipes(l);
 			
+		}
+	}
+
+	@SubscribeEvent
+	public static void test(LivingEvent.LivingUpdateEvent event)
+	{
+		if (event.getEntityLiving() instanceof EntityPlayer)
+		{
+			//event.getEntityLiving().setFire(1);
 		}
 	}
 

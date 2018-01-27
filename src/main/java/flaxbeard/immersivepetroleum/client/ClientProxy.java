@@ -15,15 +15,13 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.client.model.ModelCoresampleExtended;
 import flaxbeard.immersivepetroleum.client.page.ManualPageBigMultiblock;
 import flaxbeard.immersivepetroleum.client.page.ManualPageSchematicCrafting;
-import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
-import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
-import flaxbeard.immersivepetroleum.client.render.RenderSpeedboat;
-import flaxbeard.immersivepetroleum.client.render.TileAutoLubricatorRenderer;
+import flaxbeard.immersivepetroleum.client.render.*;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
+import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityHydrotreater;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockHydrotreater;
@@ -282,6 +280,7 @@ public class ClientProxy extends CommonProxy
 	
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDistillationTower.TileEntityDistillationTowerParent.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPumpjack.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHydrotreater.TileEntityHydrotreaterParent.class, new MultiblockHydrotreaterRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAutoLubricator.class, new TileAutoLubricatorRenderer());
 		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice), 0, TileEntityAutoLubricator.class);
 

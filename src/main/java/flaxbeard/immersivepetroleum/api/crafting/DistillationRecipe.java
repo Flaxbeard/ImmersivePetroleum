@@ -12,13 +12,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 
-/**
- * @author BluSunrize - 02.03.2016
- *
- * The recipe for the Refinery
- */
-
-
 public class DistillationRecipe extends MultiblockRecipe
 {
 	public static float energyModifier = 1;

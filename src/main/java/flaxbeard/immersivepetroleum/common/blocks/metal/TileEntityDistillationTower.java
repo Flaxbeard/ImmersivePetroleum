@@ -241,7 +241,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 			update = true;
 		}
 
-		if(update)
+		if (update)
 		{
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);

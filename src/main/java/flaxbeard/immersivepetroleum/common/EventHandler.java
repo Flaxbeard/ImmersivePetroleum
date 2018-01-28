@@ -30,11 +30,13 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.blocks.BlockNapalm;
 import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
 import flaxbeard.immersivepetroleum.common.network.CloseBookPacket;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageReservoirListSync;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockNetherBrick;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -689,6 +691,41 @@ public class EventHandler
 				GL11.glPopMatrix();
 			}
 	
+		}
+	}
+
+	public static Map<World, List<BlockPos>> napalmPositions = new HashMap<>();
+	public static Map<World, List<BlockPos>> toRemove = new HashMap<>();
+
+	@SubscribeEvent
+	public static void handleNapalm(WorldTickEvent event)
+	{
+		if (event.phase == Phase.START)
+		{
+			toRemove.put(event.world, new ArrayList<>());
+			if (napalmPositions.get(event.world) != null)
+			{
+				List<BlockPos> iterate = new ArrayList<>(napalmPositions.get(event.world));
+				for (BlockPos position : iterate)
+				{
+					IBlockState state = event.world.getBlockState(position);
+					if (state.getBlock() instanceof BlockNapalm)
+					{
+						((BlockNapalm) state.getBlock()).processFire(event.world, position);
+					}
+					toRemove.get(event.world).add(position);
+				}
+			}
+		}
+		else if (event.phase == Phase.END)
+		{
+			if (toRemove.get(event.world) != null && napalmPositions.get(event.world) != null)
+			{
+				for (BlockPos position : toRemove.get(event.world))
+				{
+					napalmPositions.get(event.world).remove(position);
+				}
+			}
 		}
 	}
 

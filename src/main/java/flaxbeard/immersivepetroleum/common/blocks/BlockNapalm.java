@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
+import flaxbeard.immersivepetroleum.common.EventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFire;
 import net.minecraft.block.material.Material;
@@ -11,6 +12,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
+import java.util.ArrayList;
 
 public class BlockNapalm extends BlockIPFluid
 {
@@ -37,19 +40,38 @@ public class BlockNapalm extends BlockIPFluid
 	@Override
 	public void neighborChanged(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Block neighborBlock, @Nonnull BlockPos neighbourPos)
 	{
-		BlockPos neighborUp = neighbourPos.up();
-		BlockPos up = pos.up();
 		if (world.getBlockState(neighbourPos).getBlock() instanceof BlockFire
-				|| world.getBlockState(neighbourPos).getMaterial() == Material.FIRE) {
-			world.setBlockState(pos, Blocks.FIRE.getDefaultState(), 1|2);
-			for (EnumFacing facing : EnumFacing.VALUES) {
-				BlockPos notifyPos = pos.offset(facing);
-				Block block = world.getBlockState(notifyPos).getBlock();
-				if (block instanceof BlockNapalm) {
-					world.neighborChanged(notifyPos, block, neighbourPos);
-				}
+				|| world.getBlockState(neighbourPos).getMaterial() == Material.FIRE)
+		{
+			if (!EventHandler.napalmPositions.containsKey(world)
+					|| !EventHandler.napalmPositions.get(world).contains(neighbourPos)) {
+				processFire(world, pos);
 			}
 		}
 		super.neighborChanged(state, world, pos, neighborBlock, neighbourPos);
+	}
+
+	public void processFire(World world, BlockPos pos)
+	{
+		if (!EventHandler.napalmPositions.containsKey(world))
+		{
+			EventHandler.napalmPositions.put(world, new ArrayList<>());
+		}
+		EventHandler.napalmPositions.get(world).add(pos);
+
+		world.setBlockState(pos, Blocks.FIRE.getDefaultState(), 1|2);
+
+		for (EnumFacing facing : EnumFacing.VALUES)
+		{
+			BlockPos notifyPos = pos.offset(facing);
+			Block block = world.getBlockState(notifyPos).getBlock();
+			if (block instanceof BlockNapalm)
+			{
+
+				EventHandler.napalmPositions.get(world).add(notifyPos);
+
+				//world.neighborChanged(notifyPos, block, neighbourPos);
+			}
+		}
 	}
 }

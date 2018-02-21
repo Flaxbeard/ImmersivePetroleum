@@ -2,6 +2,7 @@ tile.immersivepetroleum.fluid_diesel.name=柴油
 tile.immersivepetroleum.fluid_crude_oil.name=原油
 tile.immersivepetroleum.fluid_lubricant.name=润滑油
 tile.immersivepetroleum.fluid_gasoline.name=汽油
+tile.immersivepetroleum.fluid_napalm.name=凝固汽油
 
 tile.immersivepetroleum.stone_decoration.asphalt.name=沥青混凝土
 
@@ -26,6 +27,7 @@ fluid.diesel=柴油
 fluid.oil=原油
 fluid.lubricant=润滑油
 fluid.gasoline=汽油
+fluid.napalm=凝固汽油
 
 item.immersivepetroleum.material.bitumen.name=沥青
 item.immersivepetroleum.material.petcoke.name=石油焦
@@ -35,7 +37,7 @@ item.immersivepetroleum.upgrades.tank.name=扩展油箱
 item.immersivepetroleum.upgrades.rudders.name=机动船舵
 item.immersivepetroleum.upgrades.paddles.name=应急桨
 
-item.immersivepetroleum.schematic.name=多方块结构投影仪-%s
+item.immersivepetroleum.schematic.name=多方块结构投影仪（%s）
 
 item.immersivepetroleum.speedboat.name=汽艇
 
@@ -115,7 +117,7 @@ ie.manual.entry.lubricant1=润滑油罐可以手动将润滑油涂抹到机械�
 ie.manual.entry.lubricant2=铁傀儡也可以被润滑，当它们被润滑时将获得短暂的生命恢复、速度以及力量Buff。<br><br>还有一件较为有趣的事情，就是<link;chemthrower;§o§n化学§o§n喷射器§r>也能将润滑油喷洒到允许倒入润滑的方块上，尽管这样效果极低。不过只要润滑液是有效的，机械就会因此全速运转。
 
 ie.manual.entry.automaticLubricator.name=自动润滑器
-ie.manual.entry.automaticLubricator.subtext=解放你的双手
+ie.manual.entry.automaticLubricator.subtext=解放双手
 ie.manual.entry.automaticLubricator0=对你而言，也许手动为机械加注<link;distillationTower;§n§o润滑油§r>常常使你感到疲惫。或许，自动润滑器正是你最好的选择。一旦它连接到机械就会为你完成之前繁琐的操作过程。
 ie.manual.entry.automaticLubricator1=当正确放置时，机械周围会形成一些自动润滑器所铺设的管道过去。此时，你只需要为其供应些润滑油或者<link;squeezer;§n§o植物油§r>即可。
 
@@ -123,6 +125,10 @@ ie.manual.entry.portableGenerator.name=便携式发电机
 ie.manual.entry.portableGenerator.subtext=气喘吁吁
 ie.manual.entry.portableGenerator0=便携式发电机被设计为一种可移动式供应能源的设备，从而解决一体化供电问题。使用<link;distillationTower;§n§o汽油§r>作为燃料进行发电最高可产生<config;i;portableGenerator_flux> Flux/t，此外它还具有100000RF的电容量。
 ie.manual.entry.portableGenerator1=便携式发电机还能通过手持燃料桶对其右键进行添加燃料，汽油和其他燃料可以通过在其的正上方连接管道进行输入。而电源可通过低压或者中压线圈（黄色那一端）直接连接不需要接线器；另外，运用红石信号可以控制它的工作。<br><br>玩家潜行时右键便可进行启动发电机进行发电，并且其会存储内部所有的电量与燃料。
+
+ie.manual.entry.napalm.name=凝固汽油
+ie.manual.entry.napalm.subtext=小心河神
+ie.manual.entry.napalm0=凝固汽油是一种极其易燃的物质，它可在<link;mixer;§n§o混合机§r>中使用<link;distillationTower;§n§o汽油§r>和三份铝粉制取。不过对你而言，它除了用来搞破坏，似乎没有别的用途。当凝固汽油被点燃时，火焰会迅速向周围蔓延，足以在短时间内快速烧毁一片森林。另外，它还可以作为<link;chemthrower;§n§o化学喷射器§r>的高效燃料。
 
 ie.manual.category.ip.name=原油处理
 

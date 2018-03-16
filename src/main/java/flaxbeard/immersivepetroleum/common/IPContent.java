@@ -180,6 +180,7 @@ public class IPContent
 		ChemthrowerHandler.registerFlammable("gasoline");
 		ChemthrowerHandler.registerEffect("lubricant", new ChemthrowerEffect_Potion(null,0, IEPotions.slippery,60,1));
 		ChemthrowerHandler.registerEffect("napalm", new ChemthrowerEffect_Potion(null,0, IEPotions.flammable,60,2));
+		ChemthrowerHandler.registerFlammable("napalm");
 
 		registerTile(TileEntityDistillationTower.class);
 		registerTile(TileEntityDistillationTower.TileEntityDistillationTowerParent.class);

@@ -169,22 +169,10 @@ public class IPContent
 	
 	public static void init()
 	{
-		if (blockFluidCrudeOil != null)
-		{
-			blockFluidCrudeOil.setPotionEffects(new PotionEffect(IEPotions.flammable,100,1));
-		}
-		if (blockFluidDiesel != null)
-		{
-			blockFluidDiesel.setPotionEffects(new PotionEffect(IEPotions.flammable,100,1));
-		}
-		if (blockFluidDiesel != null)
-		{
-			blockFluidLubricant.setPotionEffects(new PotionEffect(IEPotions.slippery,100,1));
-		}
-		if (blockFluidNapalm != null)
-		{
-			blockFluidNapalm.setPotionEffects(new PotionEffect(IEPotions.flammable,140,2));
-		}
+		blockFluidCrudeOil.setPotionEffects(new PotionEffect(IEPotions.flammable,100,1));
+		blockFluidDiesel.setPotionEffects(new PotionEffect(IEPotions.flammable,100,1));
+		blockFluidLubricant.setPotionEffects(new PotionEffect(IEPotions.slippery,100,1));
+		blockFluidNapalm.setPotionEffects(new PotionEffect(IEPotions.flammable,140,2));
 
 		ChemthrowerHandler.registerEffect("lubricant", new LubricantEffect());
 		ChemthrowerHandler.registerEffect("plantoil", new LubricantEffect());

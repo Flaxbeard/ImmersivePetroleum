@@ -97,6 +97,9 @@ public class Config
 			public static String[] boat_fuels = new String[] {
 				"gasoline, 1"
 			};
+
+			@Comment({"Automatically unlock IP recipes for new players, default=true"})
+			public static boolean autounlock_recipes = true;
 		}
 		
 		public static Tools tools;

@@ -48,6 +48,8 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
@@ -602,7 +604,7 @@ public class EventHandler
 	@SubscribeEvent
 	public static void onEntityJoiningWorld(EntityJoinWorldEvent event)
 	{
-		if (event.getEntity() instanceof EntityPlayer)
+		if (IPConfig.Miscellaneous.autounlock_recipes && event.getEntity() instanceof EntityPlayer)
 		{
 			if (event.getEntity() instanceof FakePlayer) {
 				return;
@@ -613,7 +615,9 @@ public class EventHandler
 				String name = recipe.getRegistryName().toString();
 				if (name.length() > 18 && name.substring(0, ImmersivePetroleum.MODID.length()).equals(ImmersivePetroleum.MODID))
 				{
-					l.add(recipe);
+					if (recipe.getRecipeOutput().getItem() != Item.getItemFromBlock(Blocks.AIR)) {
+						l.add(recipe);
+					}
 				}
 			}
 			((EntityPlayer) event.getEntity()).unlockRecipes(l);

@@ -127,26 +127,11 @@ public class IPContent
 			fluidNapalm = FluidRegistry.getFluid("napalm");
 		FluidRegistry.addBucketForFluid(fluidNapalm);
 
-		if (fluidCrudeOil.getBlock() == null)
-		{
-			blockFluidCrudeOil = new BlockIPFluid("fluid_crude_oil", fluidCrudeOil, Material.WATER).setFlammability(60, 200);
-		}
-		if (fluidDiesel.getBlock() == null)
-		{
-			blockFluidDiesel = new BlockIPFluid("fluid_diesel", fluidDiesel, Material.WATER).setFlammability(60, 600);
-		}
-		if (fluidLubricant.getBlock() == null)
-		{
-			blockFluidLubricant = new BlockIPFluid("fluid_lubricant", fluidLubricant, Material.WATER);
-		}
-		if (fluidGasoline.getBlock() == null)
-		{
-			blockFluidGasoline = new BlockIPFluid("fluid_gasoline", fluidGasoline, Material.WATER).setFlammability(60, 200);
-		}
-		if (fluidNapalm.getBlock() == null)
-		{
-			blockFluidNapalm = new BlockNapalm("fluid_napalm", fluidNapalm, Material.WATER).setFlammability(100, 600);
-		}
+		blockFluidCrudeOil = new BlockIPFluid("fluid_crude_oil", fluidCrudeOil, Material.WATER).setFlammability(60, 200);
+		blockFluidDiesel = new BlockIPFluid("fluid_diesel", fluidDiesel, Material.WATER).setFlammability(60, 600);
+		blockFluidLubricant = new BlockIPFluid("fluid_lubricant", fluidLubricant, Material.WATER);
+		blockFluidGasoline = new BlockIPFluid("fluid_gasoline", fluidGasoline, Material.WATER).setFlammability(60, 200);
+		blockFluidNapalm = new BlockNapalm("fluid_napalm", fluidNapalm, Material.WATER).setFlammability(100, 600);
 
 		blockMetalMultiblock = new BlockIPMetalMultiblocks();
 		

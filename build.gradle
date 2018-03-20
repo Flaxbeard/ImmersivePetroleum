@@ -11,7 +11,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.1.7"
+version = "1.1.8"
 group= "flaxbeard.immersivepetroleum"
 archivesBaseName = "immersivepetroleum"
 
@@ -55,7 +55,7 @@ repositories {
 }
 
 dependencies {
-    deobfCompile "blusunrize:ImmersiveEngineering:0.12-+"
+    deobfCompile "blusunrize:ImmersiveEngineering:0.12-79-+"
     deobfCompile "mezz.jei:jei_1.12.2:4.8.5.133"
     deobfCompile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.0.9.289"
     deobfCompile "elucent:albedo:2.0-SNAPSHOT"

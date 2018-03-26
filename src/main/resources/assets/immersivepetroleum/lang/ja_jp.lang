@@ -1,46 +1,149 @@
 tile.immersivepetroleum.fluid_diesel.name=軽油
 tile.immersivepetroleum.fluid_crude_oil.name=原油
+tile.immersivepetroleum.fluid_lubricant.name=潤滑油
+tile.immersivepetroleum.fluid_gasoline.name=ガソリン
+tile.immersivepetroleum.fluid_napalm.name=ナパーム
 
 tile.immersivepetroleum.stone_decoration.asphalt.name=アスファルト
+
+tile.immersivepetroleum.metal_device.automatic_lubricator.name=自動注油装置
+tile.immersivepetroleum.metal_device.gas_generator.name=ポータブル発電機
 
 tile.immersivepetroleum.metal_multiblock.pumpjack.name=ポンプジャック
 tile.immersivepetroleum.metal_multiblock.distillation_tower.name=蒸留塔
 tile.immersivepetroleum.metal_multiblock.pumpjack_parent.name=ポンプジャック
 tile.immersivepetroleum.metal_multiblock.distillation_tower_parent.name=蒸留塔
 
-chat.immersivepetroleum.info.coresample.oil=%s mB オイル
-chat.immersivepetroleum.info.coresample.noOil=オイル無し
+chat.immersivepetroleum.info.coresample.oil=%s mB %s
+chat.immersivepetroleum.info.coresample.noOil=埋蔵オイル無し
+chat.immersivepetroleum.info.coresample.oilRep=%d mB/tick間隔で%sを採掘
+chat.immersivepetroleum.info.schematic.noMultiblock=技師の手引書とクラフトしてください
+chat.immersivepetroleum.info.schematic.build0=対象を投影します
+chat.immersivepetroleum.info.schematic.build1=%sを組み立てます
+chat.immersivepetroleum.info.schematic.center=中心部 (%d, %d, %d)
+chat.immersivepetroleum.info.schematic.controls=%s 回転, %s + %s 鏡写し
 
 fluid.diesel=軽油
 fluid.oil=原油
+fluid.lubricant=潤滑油
+fluid.gasoline=ガソリン
+fluid.napalm=ナパーム
 
-item.immersivepetroleum.material.bitumen.name=瀝青
+item.immersivepetroleum.material.bitumen.name=瀝青(レキセイ)
 item.immersivepetroleum.material.petcoke.name=石油コークス
+item.immersivepetroleum.upgrades.reinforced_hull.name=船体補強材
+item.immersivepetroleum.upgrades.icebreaker.name=砕氷衝角
+item.immersivepetroleum.upgrades.tank.name=追加燃料槽
+item.immersivepetroleum.upgrades.rudders.name=機動操舵器
+item.immersivepetroleum.upgrades.paddles.name=緊急用パドル
+
+item.immersivepetroleum.schematic.name=%s プロジェクター
+
+item.immersivepetroleum.speedboat.name=モーターボート
+
+item.immersivepetroleum.oil_can.name=注油缶
 
 itemGroup.immersivepetroleum=Immersive Petroleum
 
 ie.manual.entry.blank_text=
 
 desc.immersiveengineering.info.multiblock.IP:DistillationTower=蒸留塔
+desc.immersiveengineering.info.multiblock.IP:Pumpjack=ポンプジャック
+
+desc.immersiveengineering.info.multiblock.IE:AutoWorkbench=自動技師工具台
+desc.immersiveengineering.info.multiblock.IE:AlloySmelter=Alloy Smelter
+
+desc.immersivepetroleum.info.reservoir.oil=オイル溜り
+desc.immersivepetroleum.info.reservoir.aquifer=帯水層
+desc.immersivepetroleum.info.reservoir.lava=マグマ溜り
+
+desc.immersivepetroleum.flavour.upgrades.reinforced_hull=ボートへ耐火性と耐久性をもたらします
+desc.immersivepetroleum.flavour.upgrades.icebreaker=正面の氷を破壊しMOBにダメージをもたらします
+desc.immersivepetroleum.flavour.upgrades.tank=ボートの燃料タンク容量を増やします
+desc.immersivepetroleum.flavour.upgrades.rudders=ボートの旋回性能を向上させます
+desc.immersivepetroleum.flavour.upgrades.paddles=燃料切れの状態でもボートの操舵ができます
+
+
 
 ie.manual.entry.distillationTower.name=蒸留塔
 ie.manual.entry.distillationTower.subtext=環境にやさしくない
-ie.manual.entry.distillationTower0=蒸留塔は、原油を多くの副生成物に分離する大規模なマルチブロック構造です。これは図示のように構築し、Engineer's HammerをRedstone Engineering Blockで使用することで形成されます。<br><br>原油は、青い点で示される後部のハッチから蒸留塔に注入することができます。蒸留塔では、それが複数の層に分離するまで加熱されます。これは軽油を生産し、副生成物として瀝青を生産することがあります。
-ie.manual.entry.distillationTower1=蒸留塔では、操作ごとに<config;i;distillationTower_operationCost>RFを使用し、ティックごとに原油をディーゼルに 25 mB変換します。生成された軽油は、オレンジ色の点で示される側面ハッチから排出されます。瀝青は前面ハッチから排出されます。これらの出力はそれぞれ<link;dieselgen;§o§n電力生産§r>や<link;asphalt;§o§nアスファルト§r>に使用できます。 <br><br>前面のコントロールパネルにレッドストーン信号を入力すると、機械のプロセスが停止しますが、この動作はEngineer's Hammerを使用して反転できます。
+ie.manual.entry.distillationTower0=蒸留塔は原油を分離させて多くの副生成物を得る大規模なマルチブロック構造体です。<br>前ページの図のように構築し、ハンマーをレッドストーン機構ブロックに使用することで形成されます。<br><br>原油は青い点で示されている後部ハッチから蒸留塔に搬入し、それらを加熱して複数の層に分離させることができます。これにより様々な液体を生産し、副生成物として瀝青が取り出せます。
+ie.manual.entry.distillationTower1=蒸留塔では一度の動作サイクルごとに<config;i;distillationTower_operationCost>RFを消費し、25mBの原油を経由,潤滑油,ガソリン,そして瀝青に変換します。<br>生成された流体類はオレンジ色の点がついた側部ハッチから排出されます。正面ハッチからは瀝青を取り出します。<br>軽油(ディーゼル)は<link;dieselgen;§o§n発電§r>、<br>潤滑油は<link;lubricant;§o§n機械の整備§r>、<br>ガソリンは<link;portableGenerator;§o§nエンジンの駆動§r>や<link;speedboat;§o§n乗り物§r>に使用できます。 瀝青は<link;asphalt;§o§nアスファルト§r>の製造に使用されます。
+ie.manual.entry.distillationTower2=以下は、蒸留塔によって精製されるものです：
 
 ie.manual.entry.pumpjack.name=ポンプジャック
 ie.manual.entry.pumpjack.subtext=ポンプ、汲み上げるもの
-ie.manual.entry.pumpjack0=ポンプジャックは、岩盤の下から原油を抽出するマルチブロックです。これは図示のように構築し、Engineer's Hammerを第二層のHeavy Engineering Blockに使用することで形成されます。
-ie.manual.entry.pumpjack1=ポンプジャックタワーは、<config;i;pumpjack_speed> mB/tで原油を輸送するために<config;i;pumpjack_consumption> RF/t を使用します。 生成された原油は、オレンジ色の点で示される2つの側面ポートから自動的に排出されます。<br><br>埋蔵しているいる原油は平均<config;i;pumpjack_days>日程で枯渇するでしょう。さらに、ポンプジャックを増やすと高速化されます。<br><br>前面のコントロールパネルにレッドストーン信号を入力すると、機械のプロセスが停止しますが、この動作はEngineer's Hammerを使用して反転できます。
+ie.manual.entry.pumpjack0=ポンプジャックは岩盤の下から原油をくみ上げる、マルチブロックの構造体です。図のように構築し、ハンマーを二段目の重機構ブロックに使用することで形成されます。
+ie.manual.entry.pumpjack1=ポンプジャックタワーは、<br><config;i;pumpjack_speed>mB/tの原油を取り出すのに<br><config;i;pumpjack_consumption>RF/tを消費します。<br>生成された原油はオレンジ色の点で示されている、側面2つのポートから自動的に排出されます。<br>埋蔵されている原油は平均で<br><config;i;pumpjack_days>日程で枯渇するでしょう。<br>ポンプジャックの数を増やすとそれは早まります。<br>前面のコントロールパネルにレッドストーン信号を入力すると機械のプロセスが停止しますが、この動作はハンマーを使用して反転できます。
 
-//linkできたら()と()内消して
 ie.manual.entry.oil.name=原油溜まり
-ie.manual.entry.oil.subtext=黒い金
+ie.manual.entry.oil.subtext=黒い黄金
 ie.manual.entry.oil0=岩盤の近くで採掘すると、滑らかな黒い可燃性物質、原油に気づくかもしれません。あなたは、岩盤の下に、より多くが閉じ込められていると思ってもあなた自身で石油溜まりに行くことはできません。あなたは<link;pumpjack;§o§n特別に設計された機械§o§n(ポンプジャック)§r>を使って貴重な燃料を手に入れることができます。
 ie.manual.entry.oil1=<link;minerals;§o§nボーリングマシン§r>は、オイルがチャンクに含まれているかどうかを判断し、石油溜まりのサイズを把握します。<br><br>各石油溜まりの原油の量にかかわらず、枯渇したチャンクから少量（最大<config;i;oil_replenish> mB/t)が引き続き回収される可能性があります。枯渇チャンク内に複数のポンプジャックを使用しても、何のメリットもありません。
+ie.manual.entry.oil2=%1$s%6$s<br>そこでは、%3$s から %4$s mB の%2$sが産出されます。%5$s
+ie.manual.entry.oilConsonant=A
+ie.manual.entry.oilVowel=An
+ie.manual.entry.oilDimValid=%3$s §l%1$s§rは、%2$sで発見できる源泉の一つです。
+ie.manual.entry.oilDimInvalid=%3$s §l%1$s§rは%2$s以外のどこででも発見できる源泉の一つです。
+ie.manual.entry.oilDimAny=%2$s §l%1$s§rはすべてのディメンションで発見できる源泉の一つです。
+ie.manual.entry.oilReplenish=<br>源泉が枯渇した場合、ポンプジャックは%1$dmB/tick間隔での%2$sを採取します。
+ie.manual.entry.oilBiomeValid=<br>この源泉は、%sで生成されます。
+ie.manual.entry.oilBiomeInvalid=<br>この源泉は、%sを除くどのバイオームでも生成されます。
+ie.manual.entry.oilBiomeAny=<br>この源泉は、どのバイオームでも生成されます。
 
 ie.manual.entry.asphalt.name=アスファルト
-ie.manual.entry.asphalt.subtext=道路の材料
-ie.manual.entry.asphalt0=アスファルトは、べたつく瀝青によって作られ、コンクリートよりも暗い色です。<link;distillationTower;§n§o蒸留塔§r>で原油を処理した副産物、瀝青によって作られます。 
+ie.manual.entry.asphalt.subtext=ハイウェイマテリアル
+ie.manual.entry.asphalt0=アスファルトコンクリートはドロドロした瀝青を混ぜ合わせたものであり、通常のコンクリートのよりも暗い色をしています。<br>これらは蒸留塔で原油を精製した際の、副生成物を使って製造することができます。
+
+ie.manual.entry.schematics.name=マルチブロックプロジェクター
+ie.manual.entry.schematics.subtext=貴重な指示
+ie.manual.entry.schematics0=大掛かりなマルチブロックを構築するために長時間手引書を確認するのは面倒になりました。<br>これら構造体のテンプレートをワールド内に投影する基軸として、プロジェクタ装置を作成しました。
+ie.manual.entry.schematics1=技師の手引書を目的のマルチブロック構造体のページに合わせ、それをプロジェクターと一緒にクラフトすると、その内容に合わせたスライドを設定できます。 プロジェクターは立体的な構築ガイドとして機能します。
+ie.manual.entry.schematics2=プロジェクターを持っていると完成図が表示されます。<br>ブロック選択のボタン(ボタン3)を押すと構造物が回転し、その間にスクロールすると構造物が反転します。右クリックすると、画像が固定され、プロジェクタがホットバーにある限り表示され続けます。<br>画像がロックされているプロジェクターを持って、スニーク-右クリックすると、画像のロックが解除されます。<br>クリエイティブモードでは、スニーク-右クリックするとマルチブロックが自動で構築されます。
+
+ie.manual.entry.speedboat.name=モーターボート
+ie.manual.entry.speedboat.subtext=波乗り野郎
+ie.manual.entry.speedboat0=今あなたはモーターボートの助けを借りて、大海原を高速で旅することができます。<br>ボートの動作には<link;distillationTower;§n§oガソリン§r>を使用し、それらはバケツや<br><link;jerrycan;§n§oジェリー缶§r>で補充できます。<br>ジャンプキーを押し続けるとボートは加速し、燃費の向上、また旋回半径がひろがります。
+ie.manual.entry.speedboat1=他の装置と同様に、モーターボートは<link;workbench;§o§n工具台§r>でカスタマイズが可能です。<br><br>§6追加燃料槽§rを取り付ければ、ボートの燃料容量を二倍にすることができます。
+ie.manual.entry.speedboat2=§6機動操舵器§rのセットはより迅速に方向を変える能力をモーターボートにもたらし、取り扱いを大幅に改善します。<br><br>このアップグレードにより、ボートの旋回半径が大幅に減少します。
+ie.manual.entry.speedboat3=極寒の気候の中を航行する場合でも、モーターボートに§6砕氷衝角§rを装備すれば氷を突き抜けて進むことができます。<br>そうした機能に加え、ボートの衝角に衝突するモンスターなどには、ダメージを与えることができます。
+ie.manual.entry.speedboat4=あなたがさらに遠くへ探検に出ようとする場合、もしくは単純に、障害に対してボートの耐久力を向上させたい場合は、§6船体補強材§rを装備することを検討してください。 鋼鉄製の船体はボートの耐久性と耐火性を向上させ、ネザーの広大な溶岩湖での航行を可能にします。
+ie.manual.entry.speedboat5=モーターボートにこの一対の§6非常用パドル§rを装備させることは、ガス欠の悲劇が過去のものになったことを意味します。<br>ボートの燃料タンクが空の場合、伝統的なボートのように操舵することができます。
+
+ie.manual.entry.lubricant.name=潤滑油
+ie.manual.entry.lubricant.subtext=スリップ & スライド
+ie.manual.entry.lubricant0=機械もあなたも、いつでも万全なわけではありません。<br>機械の可動部分に生じる摩擦は、その装置が最大限の機能を発揮するのを阻害します。<br>そこへ潤滑油を塗布すると、その機械はフルスロットル、基本動作速度の<config;d;autoLubricant_speedup>倍で動作させることができます。<br><br><link;pumpjack;§n§oポンプジャック§r>, <link;excavator;§n§o大型採掘機§r>, および<link;crusher;§n§o工業用粉砕機§r>の全てにおいて潤滑油を使用することができます
+ie.manual.entry.lubricant1=注油缶は手動で機械に潤滑油を塗布することができます。 石油製の潤滑剤が最も効果的ですが、<link;squeezer;§n§oプラントオイル§r>でも効果があります。<br>缶がいっぱいになったら有効なブロックを右クリックして注油してください。 潤っている間、マシンは目に見えてスピードアップします。
+ie.manual.entry.lubricant2=アイアンゴーレムは潤滑油を施されると、一時的にその速度と強さが増します。<br><link;chemthrower;§o§nケミカル放射器§r>はブロックに潤滑剤を塗布するためにも使用できますが、あまり効率的ではありません。<br>有効な潤滑油を機械にスプレーするだけで、フルスピードで動作します。
+
+ie.manual.entry.automaticLubricator.name=自動注油装置
+ie.manual.entry.automaticLubricator.subtext=ハンドフリー
+ie.manual.entry.automaticLubricator0=手作業で機械に<link;distillationTower;§n§o潤滑油§r>を塗布するのは、疲れたりイライラしてしまうことがあります。<br>自動注油装置はいったん機械に取り付けられると、そのまま作業を行い続けます。<br>手にこの装置を持っている間、取り付け可能なポイントが機械の周辺に表示されます。
+ie.manual.entry.automaticLubricator1=正しく配置すると、機械の周囲に潤滑油パイプが形成されます。<br>この時点から、潤滑油、または<link;squeezer;§n§oプラントオイル§r>を供給してください
+
+ie.manual.entry.portableGenerator.name=ポータブル発電機
+ie.manual.entry.portableGenerator.subtext=酔っちまった(Gassed up)
+ie.manual.entry.portableGenerator0=ポータブル発電機は名前のとおり、持ち運びできる画期的な携帯型動力源です。<br>この発電機は燃料として<link;distillationTower;§n§oガソ§r><br><link;distillationTower;§n§oリン§r>を使用します。<br>動作させると<config;i;portableGenerator_flux>RF/tを生成、内部に100,000RFを備えられます。燃料の容量は8000mbです。
+ie.manual.entry.portableGenerator1=発電機はガソリン入りのバケツを持って右クリックするだけで即座に動作します。<br>上部にパイプを接続し、そこからもガソリンを入れることができます。接続端子を使わずに低圧,中圧の電線を直接取り付けることもできます。レッドストーン信号を受け取るとRFの生成が停止します。<br><br>スニーク-右クリックすることで、電力、燃料を保ったまま回収ができます。
+
+ie.manual.entry.napalm.name=ナパーム
+ie.manual.entry.napalm.subtext=River Godに気をつけろ
+ie.manual.entry.napalm0=ナパームは、<link;distillationTower;§n§oガソリン§r>にアルミニウムの粉3つを加え、<link;mixer;§n§o撹拌機§r>で混ぜ合わせることで製造できる、引火性の非常に高い物質です。<br>これは、無慈悲な破壊活動以外にはほとんど役に立ちません。<br>点火されたナパームの炎は立ちどころに燃え広がり、迅速な森林破壊を実現します。<br>またそれは、<link;chemthrower;§n§oケミカル放射器§r>に充填して使用することができます。
 
 ie.manual.category.ip.name=原油処理
+
+chat.immersivepetroleum.command.help.help=§6使用方法: /ip help <command> [sub-commands ...]§r<br>コマンドについての詳細情報を得るために、必要に応じてサブコマンドを入力してください。
+chat.immersivepetroleum.command.reservoir.help=§6使用方法: /ip reservoir <list|get|set|setAmount|setCapacity>§r
+chat.immersivepetroleum.command.reservoir.list.help=§6使用方法: /ip reservoir list§r<br> 登録されている源泉(reservoir)の一覧を表示します。
+chat.immersivepetroleum.command.reservoir.get.help=§6使用方法: /ip reservoir get§r<br> 現在居るチャンクの源泉の情報を表示します。
+chat.immersivepetroleum.command.reservoir.set.help=§6使用方法: /ip reservoir set [reservoir]§r<br> 源泉の要素を現在居るチャンクに上書きします。源泉(eservoir)の種類を指定しないことで、上書きを消去します。
+chat.immersivepetroleum.command.reservoir.setAmount.help=§6使用方法: /ip reservoir setAmount <number>§r<br> チャンク内に残っている液体の量を、指定のmb単位で設定します。
+chat.immersivepetroleum.command.reservoir.setCapacity.help=§6使用方法: /ip reservoir setCapacity <number>§r<br> チャンク内の液体の最大量を、指定のmb単位に設定します。
+chat.immersivepetroleum.command.reservoir.get=チャンクに含まれているもの: %1$s <br>上書き: %2$s <br>上限: %3$s
+chat.immersivepetroleum.command.reservoir.set.invalidReservoir=§c源泉が無効になっています。'%1$s'は、有効なidentifier(識別子)ではありません。<br>識別子の一覧につきましては、'/ip reservoir list'を使用してください。
+chat.immersivepetroleum.command.reservoir.set.sucess=源泉に'%1$s'の設定を上書きしました。
+chat.immersivepetroleum.command.reservoir.set.clear=源泉の上書き設定(%1$s)を取り除きました。
+chat.immersivepetroleum.command.reservoir.setAmount.NFE=エラー、'%1$s'は有効なナンバーではありません。
+chat.immersivepetroleum.command.reservoir.setAmount.sucess=源泉の上限を、'%1$s'に設定しました。
+chat.immersivepetroleum.command.reservoir.setCapacity.NFE=エラー、'%1$s'は有効なナンバーではありません。
+chat.immersivepetroleum.command.reservoir.setCapacity.sucess=源泉の容量を、'%1$s'に設定しました。

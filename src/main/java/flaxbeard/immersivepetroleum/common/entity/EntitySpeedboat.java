@@ -47,7 +47,7 @@ public class EntitySpeedboat extends EntityBoat
 	private static final DataParameter<Boolean>[] DATA_ID_PADDLE = new DataParameter[] {EntityDataManager.createKey(EntityBoat.class, DataSerializers.BOOLEAN), EntityDataManager.createKey(EntityBoat.class, DataSerializers.BOOLEAN)};
 	private static final DataParameter<String> TANK_FLUID = EntityDataManager.<String>createKey(EntitySpeedboat.class, DataSerializers.STRING);
 	private static final DataParameter<Integer> TANK_AMOUNT = EntityDataManager.<Integer>createKey(EntitySpeedboat.class, DataSerializers.VARINT);
-	
+
 	private static final DataParameter<ItemStack> UPGRADE_0 = EntityDataManager.createKey(EntitySpeedboat.class, DataSerializers.ITEM_STACK);
 	private static final DataParameter<ItemStack> UPGRADE_1 = EntityDataManager.createKey(EntitySpeedboat.class, DataSerializers.ITEM_STACK);
 	private static final DataParameter<ItemStack> UPGRADE_2 = EntityDataManager.createKey(EntitySpeedboat.class, DataSerializers.ITEM_STACK);
@@ -80,9 +80,9 @@ public class EntitySpeedboat extends EntityBoat
 	private double lastYd;
 	private float lastMoving;
 	public float propellerRotation = 0F;
-	
+
 	public boolean inLava = false;
-		
+
 	public EntitySpeedboat(World worldIn)
 	{
 		super(worldIn);
@@ -180,7 +180,7 @@ public class EntitySpeedboat extends EntityBoat
 				this.setForwardDirection(-this.getForwardDirection());
 				this.setTimeSinceHit(10);
 				this.setDamageTaken(this.getDamageTaken() + amount * 10.0F);
-				this.setBeenAttacked();
+				this.markVelocityChanged();
 				boolean flag = source.getImmediateSource() instanceof EntityPlayer && ((EntityPlayer)source.getImmediateSource()).capabilities.isCreativeMode;
 				boolean flag2 = source.getImmediateSource() instanceof EntityPlayer;
 				if (flag || (this.getDamageTaken() > 40.0F && (!this.isFireproof || flag2)) || (this.getDamageTaken() > 240.0F))
@@ -212,15 +212,15 @@ public class EntitySpeedboat extends EntityBoat
 			return true;
 		}
 	}
-	
+
 	public void readTank(NBTTagCompound nbt)
 	{
 		FluidTank tank = new FluidTank(getMaxFuel());
-		if (nbt != null) 
+		if (nbt != null)
 			tank.readFromNBT(nbt.getCompoundTag("tank"));
 		setContainedFluid(tank.getFluid());
 	}
-	
+
 	public void writeTank(NBTTagCompound nbt, boolean toItem)
 	{
 		FluidTank tank = new FluidTank(getMaxFuel());
@@ -284,7 +284,7 @@ public class EntitySpeedboat extends EntityBoat
 	{
 		return this.getHorizontalFacing().rotateY();
 	}
-	
+
 	public static DataParameter<Byte> getFlags()
 	{
 		return FLAGS;
@@ -357,7 +357,7 @@ public class EntitySpeedboat extends EntityBoat
 			this.motionY = 0.0D;
 			this.motionZ = 0.0D;
 		}
-		
+
 		if (this.world.isRemote)
 		{
 			if (!isEmergency())
@@ -369,7 +369,7 @@ public class EntitySpeedboat extends EntityBoat
 				}
 				ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, this.isBeingRidden() && this.getContainedFluid() != null && this.getContainedFluid().amount > 0, this.forwardInputDown || this.backInputDown ? .5f : .3f, moving);
 				lastMoving = moving;
-				
+
 				if (this.forwardInputDown && this.world.rand.nextInt(2) == 0)
 				{
 					if (inLava)
@@ -429,16 +429,16 @@ public class EntitySpeedboat extends EntityBoat
 				}
 			}
 		}
-		
+
 		//
-		
-		
-		
+
+
+
 		float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F));
 		float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F));
 		Vector2f vec = new Vector2f(xO, zO);
 		vec.normalize();
-		
+
 		if (hasIcebreaker && !isEmergency())
 		{
 			AxisAlignedBB axisalignedbb = this.getEntityBoundingBox().grow(0.1f);
@@ -456,12 +456,12 @@ public class EntitySpeedboat extends EntityBoat
 						{
 							blockpos$pooledmutableblockpos2.setPos(i, j, k);
 							IBlockState iblockstate = this.world.getBlockState(blockpos$pooledmutableblockpos2);
-						 
+
 							Vector2f vec2 = new Vector2f((float) (i + 0.5f - posX), (float) (k + 0.5f - posZ));
 							vec2.normalize();
-							
+
 							float sim = vec2.dot(vec);
-							
+
 							if (iblockstate.getBlock() == Blocks.ICE && sim > .3f)
 							{
 								this.world.destroyBlock(blockpos$pooledmutableblockpos2, false);
@@ -477,7 +477,7 @@ public class EntitySpeedboat extends EntityBoat
 			blockpos$pooledmutableblockpos2.release();
 		}
 
-		
+
 		//
 
 		this.doBlockCollisions();
@@ -500,17 +500,17 @@ public class EntitySpeedboat extends EntityBoat
 					else
 					{
 						this.applyEntityCollision(entity);
-						
+
 						if (hasIcebreaker)
 						{
 							if (entity instanceof EntityLivingBase && !(entity instanceof EntityPlayer) && this.getControllingPassenger() instanceof EntityPlayer)
 							{
-	
+
 								Vector2f vec2 = new Vector2f((float) (entity.posX - posX), (float) (entity.posZ - posZ));
 								vec2.normalize();
-								
+
 								float sim = vec2.dot(vec);
-								
+
 								if (sim > .5f)
 								{
 									entity.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) this.getControllingPassenger()), 4);
@@ -556,7 +556,7 @@ public class EntitySpeedboat extends EntityBoat
 		{
 			return this.getPaddleState(p_184448_1_) ? (float)MathHelper.clampedLerp((double)this.paddlePositions[p_184448_1_] - 0.01D, (double)this.paddlePositions[p_184448_1_], (double)limbSwing) : 0.0F;
 		}
-		
+
 		if (this.getPaddleState(0))
 		{
 			return (float)MathHelper.clampedLerp((double)this.paddlePositions[p_184448_1_] -  (isBoosting ? 0.02D : 0.01D), (double)this.paddlePositions[p_184448_1_], (double)limbSwing);
@@ -863,7 +863,7 @@ public class EntitySpeedboat extends EntityBoat
 					this.boatGlide /= 2.0F;
 				}
 			}
-	
+
 
 			this.motionX *= (double)this.momentum;
 			this.motionZ *= (double)this.momentum;
@@ -879,7 +879,7 @@ public class EntitySpeedboat extends EntityBoat
 			}
 		}
 	}
-	
+
 	public boolean isEmergency()
 	{
 		FluidStack fluid = this.getContainedFluid();
@@ -894,7 +894,7 @@ public class EntitySpeedboat extends EntityBoat
 			return hasPaddles;
 		}
 	}
-	
+
 	private void controlBoat()
 	{
 		if (this.isBeingRidden())
@@ -937,9 +937,9 @@ public class EntitySpeedboat extends EntityBoat
 			else
 			{
 
-	
+
 				this.rotationYaw += this.deltaRotation;
-	
+
 				FluidStack fluid = this.getContainedFluid();
 				int consumeAmount = 0;
 				if (fluid != null)
@@ -958,7 +958,7 @@ public class EntitySpeedboat extends EntityBoat
 							toConsume *= 3;
 						}
 					}
-		
+
 					if (this.backInputDown)
 					{
 						f -= 0.005F * 2F;
@@ -966,20 +966,20 @@ public class EntitySpeedboat extends EntityBoat
 					fluid.amount = Math.max(0, fluid.amount - toConsume);
 					this.setContainedFluid(fluid);
 					IPPacketHandler.INSTANCE.sendToServer(new ConsumeBoatFuelPacket(toConsume));
-					
+
 					this.setPaddleState(this.forwardInputDown, this.backInputDown);
-	
+
 				}
 				else
 				{
 					this.setPaddleState(false, false);
 				}
-							
+
 				this.motionX += (double)(MathHelper.sin(-this.rotationYaw * 0.017453292F) * f);
 				this.motionZ += (double)(MathHelper.cos(this.rotationYaw * 0.017453292F) * f);
-				
+
 				float speed = (float) Math.sqrt(motionX * motionX + motionZ * motionZ);
-				
+
 				if (this.leftInputDown)
 				{
 					this.deltaRotation += -1.1F * speed * (hasRudders ? 1.5F : 1F) * (isBoosting ? 0.5F : 1) * (backInputDown && !forwardInputDown ? 2F : 1F);
@@ -988,7 +988,7 @@ public class EntitySpeedboat extends EntityBoat
 						propellerRotation -= 0.2F;
 					}
 				}
-	
+
 				if (this.rightInputDown)
 				{
 					this.deltaRotation += 1.1F  * speed * (hasRudders ? 1.5F : 1F) *(isBoosting ? 0.5F : 1) * (backInputDown && !forwardInputDown ? 2F : 1F);
@@ -997,13 +997,13 @@ public class EntitySpeedboat extends EntityBoat
 						propellerRotation += 0.2F;
 					}
 				}
-				
+
 				if (!this.rightInputDown && !this.leftInputDown)
 				{
 					propellerRotation *= 0.7F;
 				}
-	
-				
+
+
 			}
 		}
 	}
@@ -1013,7 +1013,7 @@ public class EntitySpeedboat extends EntityBoat
 	{
 		if (this.isPassenger(passenger))
 		{
-			
+
 			float f = 0.0F;
 			float f1 = (float)((this.isDead ? 0.009999999776482582D : this.getMountedYOffset()) + passenger.getYOffset());
 
@@ -1086,7 +1086,7 @@ public class EntitySpeedboat extends EntityBoat
 		compound.setString("tank_fluid", fs == null ? "" : fs.getFluid().getName());
 		compound.setInteger("tank_amount", fs == null ? 0 : fs.amount);
 		NBTTagList list = new NBTTagList();
-		
+
 		NonNullList<ItemStack> upgrades = getUpgrades();
 		for (int i = 0; i < upgrades.size(); i++)
 		{
@@ -1108,14 +1108,14 @@ public class EntitySpeedboat extends EntityBoat
 		{
 			this.setBoatType(EntityBoat.Type.getTypeFromString(compound.getString("Type")));
 		}
-		
+
 		String fluidName = compound.getString("tank_fluid");
 		Fluid f = FluidRegistry.getFluid(fluidName);
 		int amount = compound.getInteger("tank_amount");
 		setContainedFluid(f == null ? null : new FluidStack(f, amount));
-		
+
 		NBTTagList list = (NBTTagList) compound.getTag("upgrades");
-		
+
 		NonNullList<ItemStack> upgrades = NonNullList.withSize(4, ItemStack.EMPTY);
 		for (int i = 0; i < list.tagCount(); i++)
 		{
@@ -1147,7 +1147,7 @@ public class EntitySpeedboat extends EntityBoat
 			setContainedFluid(tank.getFluid());
 			return true;
 		}
-		
+
 		if (!this.world.isRemote && !player.isSneaking() && this.outOfControlTicks < 60.0F && !player.isRidingOrBeingRiddenBy(this))
 		{
 			player.startRiding(this);
@@ -1241,33 +1241,33 @@ public class EntitySpeedboat extends EntityBoat
 			else
 				s = I18n.format(Lib.GUI + "empty");
 			return new String[] {s};
-		
+
 		}
 		return null;
 	}
-	
+
 	protected boolean isFluidValid(FluidStack resource)
 	{
 		return resource != null && resource.getFluid() != null && FuelHandler.isValidBoatFuel(resource.getFluid());
 	}
-	
+
 	public int getMaxFuel()
 	{
 		return hasTank ? 16000 : 8000;
 	}
-	
+
 	public FluidStack getContainedFluid()
 	{
 		String fluidName = ((String) this.dataManager.get(TANK_FLUID));
 		Fluid f = FluidRegistry.getFluid(fluidName);
 		if (f == null) return null;
-		
+
 		int amount = (Integer) this.dataManager.get(TANK_AMOUNT);
 		if (amount == 0) return null;
-		
+
 		return new FluidStack(f, amount);
 	}
-	
+
 	public void setContainedFluid(FluidStack stack)
 	{
 		if (stack == null)
@@ -1282,12 +1282,12 @@ public class EntitySpeedboat extends EntityBoat
 		}
 
 	}
-	
+
 	public boolean canRiderInteract()
 	{
 		return true;
 	}
-		
+
 	public NonNullList<ItemStack> getUpgrades()
 	{
 		NonNullList<ItemStack> stackList = NonNullList.withSize(4, ItemStack.EMPTY);
@@ -1301,7 +1301,7 @@ public class EntitySpeedboat extends EntityBoat
 		stackList.set(3, o3);
 		return stackList;
 	}
-	
+
 	public void setUpgrades(NonNullList<ItemStack> nonNullList)
 	{
 		if (nonNullList != null && nonNullList.size() >= 4)
@@ -1317,8 +1317,8 @@ public class EntitySpeedboat extends EntityBoat
 
 		}
 	}
-	
-	
+
+
 	@Override
 	public void notifyDataManagerChange(DataParameter<?> key)
 	{
@@ -1358,7 +1358,7 @@ public class EntitySpeedboat extends EntityBoat
 		}
 		super.notifyDataManagerChange(key);
 	}
-	
+
 	public boolean isFireproof = false;
 	public boolean hasIcebreaker = false;
 	public boolean hasTank = false;

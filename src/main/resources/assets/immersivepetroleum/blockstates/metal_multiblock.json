@@ -3,7 +3,7 @@
 	"defaults":
 	{
 		"transform": "forge:default-block",
-		"model": "minecraft:cube-all",
+		"model": "minecraft:cube_all",
         "textures": {
             "all": "immersiveengineering:blocks/storage_steel"
         }

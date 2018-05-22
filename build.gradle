@@ -55,7 +55,7 @@ repositories {
 }
 
 dependencies {
-    deobfCompile "blusunrize:ImmersiveEngineering:0.12-79-+"
+    deobfCompile "blusunrize:ImmersiveEngineering:0.12-83-+"
     deobfCompile "mezz.jei:jei_1.12.2:4.8.5.133"
     deobfCompile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.0.9.289"
     deobfCompile "elucent:albedo:2.0-SNAPSHOT"

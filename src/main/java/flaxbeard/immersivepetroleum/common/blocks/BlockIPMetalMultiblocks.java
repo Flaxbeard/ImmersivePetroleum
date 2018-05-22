@@ -304,7 +304,7 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 				entityIn.motionY=.05;
 				return;
 			}
-			if(entityIn.isCollidedHorizontally)
+			if(entityIn.collidedHorizontally)
 				entityIn.motionY=.2;
 		}
 	}

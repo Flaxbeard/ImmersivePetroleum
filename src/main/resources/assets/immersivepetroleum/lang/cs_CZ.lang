@@ -1,0 +1,149 @@
+tile.immersivepetroleum.fluid_diesel.name=Nafta
+tile.immersivepetroleum.fluid_crude_oil.name=Ropa
+tile.immersivepetroleum.fluid_lubricant.name=Lubrikant
+tile.immersivepetroleum.fluid_gasoline.name=Benzín
+tile.immersivepetroleum.fluid_napalm.name=Napalm
+
+tile.immersivepetroleum.stone_decoration.asphalt.name=Asfaltový beton
+
+tile.immersivepetroleum.metal_device.automatic_lubricator.name=Automatický lubrikátor
+tile.immersivepetroleum.metal_device.gas_generator.name=Přenosný generátor
+
+tile.immersivepetroleum.metal_multiblock.pumpjack.name=Vahadlo
+tile.immersivepetroleum.metal_multiblock.distillation_tower.name=Destilační věž
+tile.immersivepetroleum.metal_multiblock.pumpjack_parent.name=Vahadlo
+tile.immersivepetroleum.metal_multiblock.distillation_tower_parent.name=Destilační věž
+
+chat.immersivepetroleum.info.coresample.oil=%s mB %s
+chat.immersivepetroleum.info.coresample.noOil=Žádná zásobárna tekutin
+chat.immersivepetroleum.info.coresample.oilRep=Up to %d mB/tick of trace %s
+chat.immersivepetroleum.info.schematic.noMultiblock=Vytvořit s Inženýrským manuálem
+chat.immersivepetroleum.info.schematic.build0=Zobrazit instrukce
+chat.immersivepetroleum.info.schematic.build1=za vytvoření %s
+chat.immersivepetroleum.info.schematic.center=Se středem na (%d, %d, %d)
+chat.immersivepetroleum.info.schematic.controls=%s pro rotaci, %s + %s pro zrcadlení
+
+fluid.diesel=Diesel
+fluid.oil=Ropa
+fluid.lubricant=Lubrikant
+fluid.gasoline=Palivo
+fluid.napalm=Napalm
+
+item.immersivepetroleum.material.bitumen.name=Živice
+item.immersivepetroleum.material.petcoke.name=Petcoke
+item.immersivepetroleum.upgrades.reinforced_hull.name=Zpevněný trup
+item.immersivepetroleum.upgrades.icebreaker.name=Luk níčící led
+item.immersivepetroleum.upgrades.tank.name=Rozšířená palivová nádrž
+item.immersivepetroleum.upgrades.rudders.name=Manévrovací kormidla
+item.immersivepetroleum.upgrades.paddles.name=Nouzová pádla
+
+item.immersivepetroleum.schematic.name=%s Projektor
+
+item.immersivepetroleum.speedboat.name=Motorová loď
+
+item.immersivepetroleum.oil_can.name=Kanystr lubrikantu
+
+itemGroup.immersivepetroleum=Immersive Petroleum
+
+ie.manual.entry.blank_text=
+
+desc.immersiveengineering.info.multiblock.IP:DistillationTower=Destilační věž
+desc.immersiveengineering.info.multiblock.IP:Pumpjack=Vahadlo
+
+desc.immersiveengineering.info.multiblock.IE:AutoWorkbench=Automatický pracovní stůl
+desc.immersiveengineering.info.multiblock.IE:AlloySmelter=Slitinová pec
+
+desc.immersivepetroleum.info.reservoir.oil=Zásobárna ropy
+desc.immersivepetroleum.info.reservoir.aquifer=Aquifer
+desc.immersivepetroleum.info.reservoir.lava=Magmatická komora
+
+desc.immersivepetroleum.flavour.upgrades.reinforced_hull=Dělá motorovou loď odolnou vůči ohni a zvyšuje její výdrž
+desc.immersivepetroleum.flavour.upgrades.icebreaker=Povoluje motorové lodi níčit led a ubližovat mobům
+desc.immersivepetroleum.flavour.upgrades.tank=Zvyšuje kapacitu palivové nádrže motorové lodi
+desc.immersivepetroleum.flavour.upgrades.rudders=Povoluje lodi vybírat ostřejší zatáčky
+desc.immersivepetroleum.flavour.upgrades.paddles=Umožnuje pádlovat v případě kdy dojde palivo
+
+
+ie.manual.entry.distillationTower.name=Destilační věž
+ie.manual.entry.distillationTower.subtext=Nepřátelské k životnímu prostředí
+ie.manual.entry.distillationTower0=Destilační věž je velká vícekostková struktura která separuje ropu do více menších produktů. Je postavena jak je ukázáno a zformováno použitím Inženýrského kladiva na Ruditový inženýrský blok.<br><br>Ropa může být vkládána do destilační věže vzadu do otvoru označeného modrou tečkou , kde buda zahřána dokud se nerozdělí na více vrstev. Toto produkuje řadu tekutin a má šanci produkovat živici jako vadlejší produkt.
+ie.manual.entry.distillationTower1=Destilační věž používá <config;i;distillationTower_operationCost> toků za operaci, konvertuje až 25 mB ropy na diesel, Likrikant, Benzín a žívice za tick. Produkovaný mix tekutin je výstupní otvor ze strany označený oranžovou tečkou; Živice skrze přední otvor.<br><br>Diesel může být použit pro <link;dieselgen;§o§npower §o§nproduction§r>, Lubrikant pro <link;lubricant;§o§noiling §o§nmachines§r>, a benzín pro <link;portableGenerator;§o§npowering §o§nengines§r> <link;speedboat;§o§nvehicles§r>, nebo <link;napalm;§o§nNapalm§r>. Živice je využita pro <link;asphalt;§o§nAsphalt§r>.
+ie.manual.entry.distillationTower2=Níže jsou operace které může Destilační věž provést :
+
+ie.manual.entry.pumpjack.name=Vahadlo
+ie.manual.entry.pumpjack.subtext=Vyčerpej , vyčerpej to
+ie.manual.entry.pumpjack0=Vahadlo je multikostková struktura která extrahuje Ropu z nalezišť situovaných pod podložím. Struktura je formována použitím inženýrského kladiva na težký inženýrský blok v druhé vrstvě.
+ie.manual.entry.pumpjack1=Vahadlo používá <config;i;pumpjack_consumption> toků/t pro čerpání ropy při tempu <config;i;pumpjack_speed> mB/t. Produkovaná ropa je automaticky vypouštěna skrze dva boční výstupy označenými oranžovými tečkami.<br><br> Průměrné naleziště ropy bude trvat <config;i;pumpjack_days> na vyčerpání, nicměně přidání více vahadel může zrychlit tento proces.<br><br> Aplikování ruditového signálu na kontrolní blok zastaví stroj, toto chování může být obráceno pužitím inženýrského kladiva.
+
+ie.manual.entry.oil.name=Zásobárny tekutin
+ie.manual.entry.oil.subtext=Černé zlato
+ie.manual.entry.oil0=Při těžbe blízko podloží, jste příležitostně zaznamenaly uhlazenou černou hořlavou látku: ropi. Ropa je jedna z mnoha tekutin která může být nalezena pod neproniknutelným kamenem, ale nebudete schopni nabourat tyto zásobárny samy,<br><br> S pomocí <link;pumpjack;§o§nSpeciálně §o§nnavržených §o§nstrojů§r> budete schopni se dostat k obsahu těchto zásobáren.
+ie.manual.entry.oil1=<link;minerals;§o§nVrták §o§nvzorků> zjistí jaké zásobárny se dají najít ve specifickém chunku a dá náhled na velikost ložiska tekutin.<br><br> Ačkoliv je zde omezené  množství tekutin v každém chunku, urřité typy zásobáren mohou mít známky tekutin které mohou být stále vytěženy po tom co je je chunk vyplýtván. Použití více než jednoho vahadla ve vyplýtvaném chunku nedává žádnou výhodu.
+ie.manual.entry.oil2=%1$s %6$s<br>Obsahuje %3$s až %4$s mB %2$s.%5$s
+ie.manual.entry.oilConsonant=A
+ie.manual.entry.oilVowel=An
+ie.manual.entry.oilDimValid=%3$s §l%1$s§r je typ zásobárny která může být nalezena v %2$s.
+ie.manual.entry.oilDimInvalid=%3$s §l%1$s§r je typ zásobárny která může být nalezena všude až na %2$s.
+ie.manual.entry.oilDimAny=%2$s §l%1$s§r je typ zásobárny která může být nalezena v jakékoli dimenzi.
+ie.manual.entry.oilReplenish=<br>Až bude zásobárna vyplýtvána, %1$d mB/tick of trace %2$s může být extrahována jedním vahadlem.
+ie.manual.entry.oilBiomeValid=Tato zásobárna se bude generovat v %s.
+ie.manual.entry.oilBiomeInvalid=Tato zásobárna se bude generovat v jakémkoliv biomu až na %s.
+ie.manual.entry.oilBiomeAny=Tato zásobárna se bude generovat v jakémkoliv biomu.
+
+ie.manual.entry.asphalt.name=Asfaltový beton.
+ie.manual.entry.asphalt.subtext=Dálnicový materiál
+ie.manual.entry.asphalt0=Asfaltový beton, držen k sobě lepkavou živicí, je zatmavenější alternativa normálního betonu. Může být produkována použitím vydlejších produktů zpracování Ropy v <link;distillationTower;§n§oDestilační §n§ověžy§r>. 
+
+ie.manual.entry.schematics.name=Multikostkový projektor
+ie.manual.entry.schematics.subtext=Neocenitelné instrukce
+ie.manual.entry.schematics0=Když přijde na stavbu velkých vícekostkových struktur, nahlížení do inženýrského manuálu dokola a dokola začíná být únavné . Vyrobením primtivního projektoru, můžete projektovat schématické plánky těchto struktur do světa a používat je jako šablonu.
+ie.manual.entry.schematics1=Pokud přetočíte váš inženýrský manuál na stranu o multikostkové struktuře a vložíte do pracovního stolu vedle projektoru , změníte tím předmět který projektor promítá . Projektor se bude chovat jako tří dimensionální stavební návod.
+ie.manual.entry.schematics2=Držení projektoru v ruce zobrazí strukturu. Stisknutí tlačítká vybíráni narotuje strukturu, a krčení se pokud to děláte vyzdrcadlí tuto strukturu. Kliknutí pravým tlařítkem zamkne obrázek na místě , kde s ebude zobrazovat do té doby dokud máte prjektor v hotbaru .<br><br> Kršení se a pravé kliknutí s projektorem který má zamknutý obrázek odemkne tento obrázek.<br><br> V kreativním režimu , krčení se když zamykáte obrázek automaticky postaví strukturu.
+
+ie.manual.entry.speedboat.name=Motorová loď
+ie.manual.entry.speedboat.subtext=Jezdec na vlnách
+ie.manual.entry.speedboat0=Můžete cestovat mořmi ve vysokých rychlostech za pomoci motorové lodě. Motorová loď je poháněna <link;distillationTower;§n§obenzínem§r> který může být vložen kyblíkem nebo <link;jerrycan;§n§okanystrem§r>. Benzín je konzumován když loĎ jede dopředu nebo dozadu. Držení klávesy skoku zrychlí loď zacenu vyšší spotřeby a zhoršení zatáčení.
+ie.manual.entry.speedboat1=Jako ostatním zařízením, motorová loď může být modifikována v <link;workbench;§o§nInženýrském §o§nstolu§r>.<br><br>§6Zvětčená palivová nádrž§r umožňuje lodi držet dvojnásobek paliva.
+ie.manual.entry.speedboat2=Set §6manevrovacích kormidel§r dává motorové lodi schopnost změnit směr rychleji, drasticky zlepšuje ovladatelnost. S tímto vylepšením zatáčecí rádius lodě je velmi snížen.
+ie.manual.entry.speedboat3=Navigace skrze studenější klimata se stane triviální úlohou s §6Ledníčícím lukem§r, který umožňuje motorové lodi prorazit skrze led. Navíc k mobilizačním benefitům, luk umožňuje motorové lodi zraňovat monstra do kterých najede.
+ie.manual.entry.speedboat4=Pokud chcete oběvovat mimo tento svět, nebo prostě chcete aby vaše loď byla více odolná vůči elementům , zvažte instalaci §6Obrněný trup§r. Ocelový trup garantuje obojí , zvyýšené životy a odolnost vůči ohni pro vaši loď, dovolující navigaci v pekelných jezerech .
+ie.manual.entry.speedboat5=Vybavení vaší motorové lodě párem §6Nouzových pádel§r znamená že když vám dojde palivo není taková katastrofa jako dříve. Kdyzž palivová nádrž lodě prázdná mážete pádlovat jako u tradiční lodě.
+
+ie.manual.entry.lubricant.name=Lubrikant
+ie.manual.entry.lubricant.subtext=Uklouzni a sklouzni se
+ie.manual.entry.lubricant0=Nikoho stroje nejsou perfektní, ani ty tvoje. Nevítané tření mezi pohyblivými částmi tvých strojů jim zabraňují využití jejich plných potenciálů - Tady anstupuje lubrikant. Zajistí že připojený stroj poběží na amximálním výkonu, <config;d;autoLubricant_speedup>krát vynásobí základní rychlost. <link;pumpjack;§n§oPumpjacks§r>, <link;excavator;§n§oExcavators§r>, a <link;crusher;§n§oCrushers§r> mohou být promazány.
+ie.manual.entry.lubricant1=Plechovka lubrikantu může být použita pro manuální aplikaci maziva do stroje. Petrolejoví lubrikant je nejvíce efektivní, ale <link;squeezer;§n§oRostlinný olej§r> také funguje. Když je plechovka plná, Jednoduše klikni pravým na platný blok aby jsi ho namazal. Mezitím co bude stroj zrychlen bude viditelně odkapávat.
+ie.manual.entry.lubricant2=Železní golemové mohou také být promazáni , léčí je to a dočasně zvyšuje jejich rychlost a sílu.<br><br> <link;chemthrower;§o§nPlamenomet§r> může být taky použit pro aplikací maziva na bloky , ale je to méně efektivní . Prostě nasprejuj platný lubrikant na stroj a on začne operovat na maximální rychlosti.
+
+ie.manual.entry.automaticLubricator.name=Automatický promazávač
+ie.manual.entry.automaticLubricator.subtext=Bez ruční
+ie.manual.entry.automaticLubricator0=Manuální aplikování <link;distillationTower;§n§oMaziva§r> na stroje může být únavné a občas frustrující. Automatický promazávač to pro tebe udělá jakmile je připojen ke stroji. Bod kde musí být připoje je byzvačen když držíte promazávač v ruce.
+ie.manual.entry.automaticLubricator1=Když je správně položen, librikační trupky se zformují vedle stroje. V tomto bodě, jednodušše poskytni Petrolejoví lubrikant nebo <link;squeezer;§n§orostlinný olej§r>.
+
+ie.manual.entry.portableGenerator.name=Přenosný generátor
+ie.manual.entry.portableGenerator.subtext=Plyn
+ie.manual.entry.portableGenerator0=Přenosný generátor je mobilní vše-v-jednom energetické řešení. Tento <link;distillationTower;§n§oBenzínem§r>-plněný motorový-generátor produkuje až <config;i;portableGenerator_flux> toků/t
+když běží, a má interní zásobník 100,000 RF.
+ie.manual.entry.portableGenerator1=Přenosný generátor může akceptovat palivo jednoduchým pravým kliknutím s kýblem. Banzín nebo další paliva mohou být vedeny potrubím ze shora. Energie je přímo vyvedena skrze LV nebo MV kabely, Konektory nejsou potřeba. Přivedení ruditového signálu zastaví operaci.<br><br>Krčení se a pravé kliknutí na generátor ho sebere a zachová všechno uchované palivo a energii.
+
+ie.manual.entry.napalm.name=Napalm
+ie.manual.entry.napalm.subtext=Dejte si pozor na boha řeky.
+ie.manual.entry.napalm0=Napalm je extrémně hořlavá látka která může být vytvořena v <link;mixer;§n§oMíchačír§r> pomocí <link;distillationTower;§n§oBenzínu§r> a třemi opatřeními hliníkového štěrku. Má velmi malé použití než smyslné níčení; dkyž je Napalm zapálen, oheň se bude rozšiřovat skoro okamžitě na svém povrchu, umožňující rapidní odlesňování. K tomu může být použit jako velmi účinné palivo pro <link;chemthrower;§n§oPlamenomet§r>.
+
+ie.manual.category.ip.name=Zpracování ropy
+
+chat.immersivepetroleum.command.help.help=§6Použití: /ip help <command> [pod-příkaz ...]§r<br> Pro získání více informací o specifickém příkazu, nebo volitelně pod-příkazu
+chat.immersivepetroleum.command.reservoir.help=§6Použití: /ip reservoir <list|get|set|setAmount|setCapacity>§r
+chat.immersivepetroleum.command.reservoir.list.help=§6Použití: /ip reservoir list§r<br> Vypíše všechny registrované zásobárny
+chat.immersivepetroleum.command.reservoir.get.help=§6Použití: /ip reservoir get§r<br> Zobrazí zásobárny pro chunk.
+chat.immersivepetroleum.command.reservoir.set.help=§6Použití: /ip reservoir set [reservoir]§r<br> Nastaví přepsání zásobárny pro chunk. Nespecifikuj žádnou zásobárnou aby jsii zrušil přepsání.
+chat.immersivepetroleum.command.reservoir.setAmount.help=§6Použití: /ip reservoir setAmount <number>§r<br> Nastaví počet mB tekutiny zbývající v chunku.
+chat.immersivepetroleum.command.reservoir.setCapacity.help=§6Použití: /ip reservoir setCapacity <number>§r<br> Nastaví maximální počet mB tekutiny v chunku.
+chat.immersivepetroleum.command.reservoir.get=Chunk contains: %1$s <br>Přepsání: %2$s <br>Množství: %3$s
+chat.immersivepetroleum.command.reservoir.set.invalidReservoir=§cNeplatná zásobárna, '%1$s' není platný identifikátor. Použij '/ip reservoir list' pro seznam všech identifikátorů.§r
+chat.immersivepetroleum.command.reservoir.set.sucess=Přepsání zásobárny nastaveno na '%1$s'
+chat.immersivepetroleum.command.reservoir.set.clear=Pčepsání zásobárny (%1$s) smázáno.
+chat.immersivepetroleum.command.reservoir.setAmount.NFE=Chyba, '%1$s' není platné číslo
+chat.immersivepetroleum.command.reservoir.setAmount.sucess=Množství v zásobárne nastaveno na '%1$s'
+chat.immersivepetroleum.command.reservoir.setCapacity.NFE=Error, '%1$s' není platné číslo
+chat.immersivepetroleum.command.reservoir.setCapacity.sucess=Kapacita zásobárny nastavena na '%1$s'

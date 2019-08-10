@@ -18,7 +18,7 @@ chat.immersivepetroleum.info.coresample.noOil=Нет нефти
 chat.immersivepetroleum.info.coresample.oilRep=До %d mB/t %s
 chat.immersivepetroleum.info.schematic.noMultiblock=Работает с руководством инженера
 chat.immersivepetroleum.info.schematic.build0=Проецирует инструкцию
-chat.immersivepetroleum.info.schematic.build1=для постройки конструкции "%s"
+chat.immersivepetroleum.info.schematic.build1=для постройки "%s"
 chat.immersivepetroleum.info.schematic.center=По центру (%d, %d, %d)
 chat.immersivepetroleum.info.schematic.controls=%s поворот, %s + %s зеркальное отображение
 

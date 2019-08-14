@@ -15,7 +15,7 @@ tile.immersivepetroleum.metal_multiblock.pumpjack_parent.name=Штанговый
 tile.immersivepetroleum.metal_multiblock.distillation_tower_parent.name=Ректификационная колонна
 
 chat.immersivepetroleum.info.coresample.oil=%s mB: %s
-chat.immersivepetroleum.info.coresample.noOil=Нет жидкости
+chat.immersivepetroleum.info.coresample.noOil=Жидкость не найдена
 chat.immersivepetroleum.info.coresample.oilRep=До %d mB/t, %s
 chat.immersivepetroleum.info.schematic.noMultiblock=Объединяется с руководством инженера
 chat.immersivepetroleum.info.schematic.build0=Отображает проекцию
@@ -131,7 +131,6 @@ ie.manual.entry.napalm.subtext=Берегись речного бога
 ie.manual.entry.napalm0=Чрезвычайно горючая субстанция. Производится в <link;mixer;§n§oСмесителе§r> с использованием <link;distillationTower;§n§oБензина§r> и трёх мер алюминиевой пыли. Почти неприменим, кроме бессмысленного уничтожения. При поджигании Напалма, огонь почти мгновенно распространится по его поверхности, позволяя быстро уничтожать лес. Также служит эффективным топливом в <link;chemthrower;§n§oЖидкомёте§r>.
 
 ie.manual.category.ip.name=Обработка нефти
-
 chat.immersivepetroleum.command.help.help=§6Usage: /ip help <command> [sub-commands ...]§r<br> Для получения дополнительной информации для указанной команды или, по желанию, её подкомандах
 chat.immersivepetroleum.command.reservoir.help=§6Usage: /ip reservoir <list|get|set|setAmount|setCapacity>§r
 chat.immersivepetroleum.command.reservoir.list.help=§6Usage: /ip reservoir list§r<br> Перечисляет все зарегистрированные резервуары

@@ -1,0 +1,149 @@
+tile.immersivepetroleum.fluid_diesel.name=柴油機
+tile.immersivepetroleum.fluid_crude_oil.name=原油
+tile.immersivepetroleum.fluid_lubricant.name=潤滑劑
+tile.immersivepetroleum.fluid_gasoline.name=汽油
+tile.immersivepetroleum.fluid_napalm.name=凝固汽油彈
+
+tile.immersivepetroleum.stone_decoration.asphalt.name=瀝青混凝土
+
+tile.immersivepetroleum.metal_device.automatic_lubricator.name=自動注油機
+tile.immersivepetroleum.metal_device.gas_generator.name=便攜式發電機
+
+tile.immersivepetroleum.metal_multiblock.pumpjack.name=抽油泵
+tile.immersivepetroleum.metal_multiblock.distillation_tower.name=蒸餾塔
+tile.immersivepetroleum.metal_multiblock.pumpjack_parent.name=抽油泵
+tile.immersivepetroleum.metal_multiblock.distillation_tower_parent.name=蒸餾塔
+
+chat.immersivepetroleum.info.coresample.oil=%s mB %s
+chat.immersivepetroleum.info.coresample.noOil=沒有儲液罐
+chat.immersivepetroleum.info.coresample.oilRep=最高 %d mB/tick 的 %s 能被挖掘
+chat.immersivepetroleum.info.schematic.noMultiblock=工程師工藝手冊
+chat.immersivepetroleum.info.schematic.build0=顯示指令
+chat.immersivepetroleum.info.schematic.build1=用於製作 %s
+chat.immersivepetroleum.info.schematic.center=集中於 (%d, %d, %d)
+chat.immersivepetroleum.info.schematic.controls=%s 用以旋轉, %s + %s 用以鏡像
+
+fluid.diesel=柴油機
+fluid.oil=原油
+fluid.lubricant=潤滑劑
+fluid.gasoline=汽油
+fluid.napalm=凝固汽油彈
+
+item.immersivepetroleum.material.bitumen.name=瀝青
+item.immersivepetroleum.material.petcoke.name=石油焦
+item.immersivepetroleum.upgrades.reinforced_hull.name=加強型船體
+item.immersivepetroleum.upgrades.icebreaker.name=破冰船弓
+item.immersivepetroleum.upgrades.tank.name=增量型油箱
+item.immersivepetroleum.upgrades.rudders.name=機動船舵
+item.immersivepetroleum.upgrades.paddles.name=緊急船槳
+
+item.immersivepetroleum.schematic.name=%s 投影機
+
+item.immersivepetroleum.speedboat.name=汽艇
+
+item.immersivepetroleum.oil_can.name=潤滑油罐
+
+itemGroup.immersivepetroleum=沉浸石油
+
+ie.manual.entry.blank_text=
+
+desc.immersiveengineering.info.multiblock.IP:DistillationTower=蒸餾塔
+desc.immersiveengineering.info.multiblock.IP:Pumpjack=抽油泵
+
+desc.immersiveengineering.info.multiblock.IE:AutoWorkbench=自動化工作台
+desc.immersiveengineering.info.multiblock.IE:AlloySmelter=合金冶煉廠
+
+desc.immersivepetroleum.info.reservoir.oil=石油儲層
+desc.immersivepetroleum.info.reservoir.aquifer=含水層
+desc.immersivepetroleum.info.reservoir.lava=岩漿庫
+
+desc.immersivepetroleum.flavour.upgrades.reinforced_hull=使汽艇耐火併提高船體耐用度
+desc.immersivepetroleum.flavour.upgrades.icebreaker=允許汽艇具有摧毀冰塊能力並可以傷害小怪
+desc.immersivepetroleum.flavour.upgrades.tank=增加汽艇的油箱容量
+desc.immersivepetroleum.flavour.upgrades.rudders=允許汽艇轉彎速度更快
+desc.immersivepetroleum.flavour.upgrades.paddles=在沒燃料可用時可以划槳來使汽艇繼續移動
+
+
+
+ie.manual.entry.distillationTower.name=蒸餾塔
+ie.manual.entry.distillationTower.subtext=對環境不環保
+ie.manual.entry.distillationTower0=蒸餾塔是一個由多方塊所組成的大型機構，可以用以將原油分解成多種副產物。如圖所示，可以對著紅石工程塊使用工程師錘完成建造。<br><br>原油可以從蒸餾塔外觀中帶有藍色圓點的輸入口輸入，並在那裡加熱直至分解成流體狀的副產物。並有機會產生瀝青作為物體狀的副產品。
+ie.manual.entry.distillationTower1=蒸餾塔每次操作會使用<config;i;distillationTower_operationCost> (RF),並且將25 mB/tick的原油轉換為柴油，潤滑劑，汽油和瀝青,產生的流體狀副產物會從前方帶有橙色點標記的輸出口輸出；<br><br>柴油可用於 <link;dieselgen;§o§n柴油發電機§r>, 潤滑劑可用於 <link;lubricant;§o§n潤滑劑§r>, 汽油可用於 <link;portableGenerator;§o§n便攜式發電機§r>、<link;speedboat;§o§n汽艇§r>, 或是 <link;napalm;§o§n凝固汽油§r>. 瀝青可用於製作 <link;asphalt;§o§n瀝青混泥土§r>.
+ie.manual.entry.distillationTower2=以下是蒸餾塔可以執行的操作：
+
+ie.manual.entry.pumpjack.name=抽油泵
+ie.manual.entry.pumpjack.subtext=抽起來～抽起來～
+ie.manual.entry.pumpjack0=抽油泵是一個由多個方塊所組成的大型機構，可從位於基岩下面的沉積物中提取原油。可以對著第二層的重型工程塊使用工程師錘完成建造。
+ie.manual.entry.pumpjack1=抽油泵會消耗<config;i;pumpjack_consumption>Flux每tick，並以<config;i;pumpjack_speed>mB每tick的速率輸出原油。產出的原油會通過兩側標有橙色點的輸出口輸出。<br><br>平均每一處石油儲層可以輸出<config;i;pumpjack_days>天後便會耗竭，當然如果啟用更多的抽油泵會加速石油儲層耗竭的速度.<br><br>在控制面板上施加紅石信號便會停止機器運轉，也可以通過使用工程師錘來反轉這種行為。
+
+ie.manual.entry.oil.name=流體儲層
+ie.manual.entry.oil.subtext=黑金
+ie.manual.entry.oil0=當您深入地底在基岩附近開採時，您偶爾會注意到一種光滑的黑色易燃物質：石油。石油是在堅不可摧的岩石下面可以找到的多種流體中的一種，但您無法靠自己的能力來獲得借些儲備。<br><br>不過你可以借助<link;pumpjack;§o§n特別設計的機器§r>幫忙來取得這些庫存
+ie.manual.entry.oil1=使用<link;minerals;§o§n岩心鑽井§r>可以確定在這個區塊中是否有這些液體的儲層，並且可以深入了解液體儲層量的大小。<br><br>儘管每個區塊中的流體量有限，不過某些類型的儲層中可能會有微量的流體在耗儘後仍可獲得一點點的收穫。不過必須注意的是在耗竭的區塊中使用多個抽油泵並不會帶來更多好處。
+ie.manual.entry.oil2=%1$s%6$s<br>它包含了%3$s到%4$s mB的%2$s.%5$s。
+ie.manual.entry.oilConsonant=
+ie.manual.entry.oilVowel=
+ie.manual.entry.oilDimValid=%3$s §l%1$s§r 是一種流體儲層可以在 %2$s 找到。
+ie.manual.entry.oilDimInvalid=%3$s §l%1$s§r 是一種流體儲層，可以在任何地方發現但除了 %2$s 。
+ie.manual.entry.oilDimAny=%2$s §l%1$s§r 是一種流體儲層，可以在任何維度中找到他。
+ie.manual.entry.oilReplenish=<br>流體儲層耗儘後，可以通過單個抽油泵提取最高 %1$d mB/tick 的 %2$s 
+ie.manual.entry.oilBiomeValid=這個流體儲層將會在 %s 被找到。
+ie.manual.entry.oilBiomeInvalid=除了 %s 外，任何生態圈都會生成該流體儲層。
+ie.manual.entry.oilBiomeAny=該流體儲層將在任何生態圈中生成。
+
+ie.manual.entry.asphalt.name=瀝青混凝土
+ie.manual.entry.asphalt.subtext=高速公路的材質
+ie.manual.entry.asphalt0=粘稠的瀝青將混凝土粘在一起，是常規混凝土的深色替代品。它是<link;distillationTower;§n§o蒸餾塔§r>在加工原油時的副產物。 
+
+ie.manual.entry.schematics.name=多方塊投影儀
+ie.manual.entry.schematics.subtext=寶貴的指示
+ie.manual.entry.schematics0=在建築大型多方塊結構時，一次又一次的查閱《工程師手冊》將變得乏味。所以通過製作原始的投影儀設備並且可以將這些結構的示意圖投影到世界上用作模板。
+ie.manual.entry.schematics1=如果將工程師手冊轉到多方塊結構的頁面，然後將其放在投影儀旁邊的製作台中，就可以設置內部的幻燈片並用以匹配該多方塊結構。然後，投影儀就可以充當三維建築的指南。
+ie.manual.entry.schematics2=拿著投影儀就可以顯示結構預覽。按下滑鼠中鍵可以將旋轉預覽，而在此過程中按下潛行鍵可對其進行鏡像。單擊右鍵將使圖線預覽鎖定在當前位置，只要投影儀在您的快捷欄中，它就會一直顯示在該位置。<br><br>在“創造”模式下，鎖定圖像時按下潛行會自動搭建多方塊結構。<br><br>對著鎖定的圖像按下潛行鍵以及右鍵，可以將圖像解鎖。<br><br>在"創造"模式下，鎖定圖像時按下潛行鍵將自動構建該多方塊建構。
+
+ie.manual.entry.speedboat.name=汽艇
+ie.manual.entry.speedboat.subtext=踏足波浪的騎士
+ie.manual.entry.speedboat0=您現在可以在汽艇的幫助下在海面上高速航行。汽艇在填加<link;distillationTower;§n§o汽油§r>後即可使用，你可以借由燃料水桶或<link;jerrycan;§n§o油桶§r>來填加。駕駛汽艇向前向後時會消耗汽油。按住跳躍鍵將可以提高船速，但是會以增加燃油消耗速度和增加轉彎半徑為代價的。
+ie.manual.entry.speedboat1=與其他設備一樣，汽艇可以在<link;workbench;§o§n工程師的工作台§r>中進行改裝。<br><br> §6增量型油箱§r 允許汽艇容納兩倍的汽油。
+ie.manual.entry.speedboat2=添加上一組 §6機動船舵§r 可以使汽艇能夠以更快地速度來改變方向，從而大大改善了操縱性。 通過此改裝，船的轉彎半徑將會顯著降低。
+ie.manual.entry.speedboat3=使用 §6破冰船弓§r 可以使在寒冷地區的航行易如反掌，並且使汽艇能夠在擊碎水中的冰。除了機動性的優勢外，“弓”還使汽艇能夠對所有碰到的怪物照成傷害。
+ie.manual.entry.speedboat4=如果您想讓汽艇不單單只是航行在水裡面，或者只是想讓摩托艇對其他元素更具有抵抗力，您可以考慮安裝§6加強型船體§r. 鋼製船體既能增強船的耐用性，又提高了船的耐火性，可以在地域廣闊的熔岩湖中航行。
+ie.manual.entry.speedboat5=為您的汽艇配備一對 §6緊急船槳§r ，這意味著用光燃料並不在是場災難。如果船上的油箱空空如也，您可以像傳統的划船一樣划槳。
+
+ie.manual.entry.lubricant.name=潤滑劑
+ie.manual.entry.lubricant.subtext=滑～行
+ie.manual.entry.lubricant0=沒有人的機器是完美的，就算不是您自己的。活動部件之間不可避免的摩擦會阻止您的設備發揮最大作用-但這就是潤滑劑的價值所在。這將確保使用的機器將以最大速度運行，即 <config;d;autoLubricant_speedup>乘上他的基本速度。 <link;pumpjack;§n§o抽油泵§r>, <link;excavator;§n§o斗輪式挖礦機§r>, 以及 <link;crusher;§n§o破碎機§r> 均可用潤滑。
+ie.manual.entry.lubricant1=您可以使用潤滑劑罐將潤滑液手動施加到機器上。使用石油提煉出的潤滑劑是最有效的，不過 <link;squeezer;§n§o植物油§r> 也可以。使用潤滑劑罐裝滿後，只需右鍵單擊即可對其進行潤滑。加速時，機器會有明顯的潤滑劑水滴滴落。
+ie.manual.entry.lubricant2=鐵巨人也可以被潤滑，可以使它們復原生命並暫時提高其行動速度和強度。<br><br><link;chemthrower;§o§n化學投擲器§r>也可以用於在施加潤滑劑，儘管效率較低。但只需將有效的潤滑油噴灑到機器上，它將開始全速運行。
+
+ie.manual.entry.automaticLubricator.name=自動注油器
+ie.manual.entry.automaticLubricator.subtext=解放雙手
+ie.manual.entry.automaticLubricator0=在機器上持續手動使用<link;distillationTower;§n§o潤滑油罐§r>多次可能會很累，而且令人感到煩躁。自動潤滑器在連接到機器後將為您完成此任務。當您手持自動潤滑器時，安裝點將會發光來告訴您該如何安裝。
+ie.manual.entry.automaticLubricator1=正確放置後，機器周圍會形成潤滑管。此時，只需對自動注油器提供石油潤滑劑或<link;squeezer;§n§o植物油§r>即可。
+
+ie.manual.entry.portableGenerator.name=便攜式發電機
+ie.manual.entry.portableGenerator.subtext=氣死了
+ie.manual.entry.portableGenerator0=便攜式發電機是一種結合移動的多合一電源解決方案，使用<link;distillationTower;§n§o汽油§r>燃料的發電機在運行時最多可以產生 <config;i;portableGenerator_flux> Flux/t,並且具有100,000 RF的內部緩衝器。
+ie.manual.entry.portableGenerator1=便攜式發電機只需使用燃料水桶右鍵單擊即可接受燃料。汽油或其他燃料也可以從上方輸入。電源輸出可以通過LV或MV線，不需要其他的連接器。在施加紅石信號時將停止運轉。<br><br>潛行並右鍵單擊即可對其進行拾取，並保留所有存儲的功率和燃料。
+
+ie.manual.entry.napalm.name=凝固汽油
+ie.manual.entry.napalm.subtext=當心河中之神
+ie.manual.entry.napalm0=凝固汽油彈是一種極易燃燒的物質，可以使用<link;distillationTower;§n§o汽油§r>和三個的鋁砂礫在<link;mixer;§n§o混合器§r>中進行合成。除了肆意破壞之外，它幾乎沒有其他用處。點燃凝固汽油彈時，火會立即蔓延到其表面，並從而迅速砍伐森林。此外，它可以成為<link;chemthrower;§n§o化學噴槍§r>的非常有效的燃料。
+
+ie.manual.category.ip.name=石油加工
+
+chat.immersivepetroleum.command.help.help=§6Usage: /ip help <command> [sub-commands ...]§r<br> To get more info on the specified command or, optionally, its sub commands
+chat.immersivepetroleum.command.reservoir.help=§6Usage: /ip reservoir <list|get|set|setAmount|setCapacity>§r
+chat.immersivepetroleum.command.reservoir.list.help=§6Usage: /ip reservoir list§r<br> Lists all registered reservoirs
+chat.immersivepetroleum.command.reservoir.get.help=§6Usage: /ip reservoir get§r<br> Displays the reservoir for the chunk
+chat.immersivepetroleum.command.reservoir.set.help=§6Usage: /ip reservoir set [reservoir]§r<br> Sets a reservoir override for the chunk. Specify no reservoir to clear the override.
+chat.immersivepetroleum.command.reservoir.setAmount.help=§6Usage: /ip reservoir setAmount <number>§r<br> Set the amount of mB of fluid left inside the chunk.
+chat.immersivepetroleum.command.reservoir.setCapacity.help=§6Usage: /ip reservoir setCapacity <number>§r<br> Set the maximum amount of mB of fluid in the chunk.
+chat.immersivepetroleum.command.reservoir.get=Chunk contains: %1$s <br>Override: %2$s <br>Amount: %3$s
+chat.immersivepetroleum.command.reservoir.set.invalidReservoir=§cInvalid reservoir, '%1$s' is not a valid identifier. Use '/ip reservoir list' for a list of all identifiers.§r
+chat.immersivepetroleum.command.reservoir.set.sucess=Reservoir override set to '%1$s'
+chat.immersivepetroleum.command.reservoir.set.clear=Reservoir override (%1$s) cleared.
+chat.immersivepetroleum.command.reservoir.setAmount.NFE=Error, '%1$s' is not a valid number
+chat.immersivepetroleum.command.reservoir.setAmount.sucess=Reservoir amount set to '%1$s'
+chat.immersivepetroleum.command.reservoir.setCapacity.NFE=Error, '%1$s' is not a valid number
+chat.immersivepetroleum.command.reservoir.setCapacity.sucess=Reservoir capacity set to '%1$s'

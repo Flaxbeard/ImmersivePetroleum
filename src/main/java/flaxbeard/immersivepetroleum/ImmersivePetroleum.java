@@ -114,13 +114,7 @@ public class ImmersivePetroleum
 	public static CreativeTabs creativeTab = new CreativeTabs(MODID)
 	{
 		@Override
-		public ItemStack getTabIconItem()
-		{
-			return ItemStack.EMPTY;
-		}
-		
-		@Override
-		public ItemStack getIconItemStack()
+		public ItemStack createIcon()
 		{
 			UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
 			ItemStack stack = new ItemStack(bucket);

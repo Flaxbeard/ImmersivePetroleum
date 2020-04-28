@@ -80,7 +80,7 @@ public class BlockIPBase<E extends Enum<E> & BlockIPBase.IBlockEnum> extends Blo
 		this.additionalUnlistedProperties = unlistedPropList.toArray(new IUnlistedProperty[unlistedPropList.size()]);
 		this.setDefaultState(getInitDefaultState());
 		String registryName = createRegistryName();
-		this.setUnlocalizedName(registryName.replace(':', '.'));
+		this.setTranslationKey(registryName.replace(':', '.'));
 		this.setCreativeTab(ImmersivePetroleum.creativeTab);
 		this.adjustSound();
 		//ImmersivePetroleum.registerBlockByFullName(this, itemBlock, registryName);
@@ -141,7 +141,7 @@ public class BlockIPBase<E extends Enum<E> & BlockIPBase.IBlockEnum> extends Blo
 	public String getUnlocalizedName(ItemStack stack)
 	{
 		String subName = getStateFromMeta(stack.getItemDamage()).getValue(property).toString().toLowerCase(Locale.US);
-		return super.getUnlocalizedName() + "." + subName;
+		return super.getTranslationKey() + "." + subName;
 	}
 
 	protected static Material setTempProperties(Material material, PropertyEnum<?> property, Object... additionalProperties)
@@ -409,25 +409,25 @@ public class BlockIPBase<E extends Enum<E> & BlockIPBase.IBlockEnum> extends Blo
 
 	void adjustSound()
 	{
-		if(this.blockMaterial==Material.ANVIL)
+		if(this.material==Material.ANVIL)
 			this.blockSoundType = SoundType.ANVIL;
-		else if(this.blockMaterial==Material.CARPET||this.blockMaterial==Material.CLOTH)
+		else if(this.material==Material.CARPET||this.material==Material.CLOTH)
 			this.blockSoundType = SoundType.CLOTH;
-		else if(this.blockMaterial==Material.GLASS||this.blockMaterial==Material.ICE)
+		else if(this.material==Material.GLASS||this.material==Material.ICE)
 			this.blockSoundType = SoundType.GLASS;
-		else if(this.blockMaterial==Material.GRASS||this.blockMaterial==Material.TNT||this.blockMaterial==Material.PLANTS||this.blockMaterial==Material.VINE)
+		else if(this.material==Material.GRASS||this.material==Material.TNT||this.material==Material.PLANTS||this.material==Material.VINE)
 			this.blockSoundType = SoundType.PLANT;
-		else if(this.blockMaterial==Material.GROUND)
+		else if(this.material==Material.GROUND)
 			this.blockSoundType = SoundType.GROUND;
-		else if(this.blockMaterial==Material.IRON)
+		else if(this.material==Material.IRON)
 			this.blockSoundType = SoundType.METAL;
-		else if(this.blockMaterial==Material.SAND)
+		else if(this.material==Material.SAND)
 			this.blockSoundType = SoundType.SAND;
-		else if(this.blockMaterial==Material.SNOW)
+		else if(this.material==Material.SNOW)
 			this.blockSoundType = SoundType.SNOW;
-		else if(this.blockMaterial==Material.ROCK)
+		else if(this.material==Material.ROCK)
 			this.blockSoundType = SoundType.STONE;
-		else if(this.blockMaterial==Material.WOOD||this.blockMaterial==Material.CACTUS)
+		else if(this.material==Material.WOOD||this.material==Material.CACTUS)
 			this.blockSoundType = SoundType.WOOD;
 	}
 
@@ -489,9 +489,9 @@ public class BlockIPBase<E extends Enum<E> & BlockIPBase.IBlockEnum> extends Blo
 		}
 
 		@Override
-		public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
+		public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
 		{
-			super.onEntityCollidedWithBlock(worldIn, pos, state, entityIn);
+			super.onEntityCollision(worldIn, pos, state, entityIn);
 			if (entityIn instanceof EntityLivingBase&&!((EntityLivingBase) entityIn).isOnLadder()&&isLadder(state, worldIn, pos, (EntityLivingBase)entityIn))
 			{
 				float f5 = 0.15F;
@@ -513,7 +513,7 @@ public class BlockIPBase<E extends Enum<E> & BlockIPBase.IBlockEnum> extends Blo
 					entityIn.motionY=.05;
 					return;
 				}
-				if(entityIn.isCollidedHorizontally)
+				if(entityIn.collidedHorizontally)
 					entityIn.motionY=.2;
 			}
 		}

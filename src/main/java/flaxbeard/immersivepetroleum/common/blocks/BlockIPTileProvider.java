@@ -553,7 +553,7 @@ public abstract class BlockIPTileProvider<E extends Enum<E> & BlockIPBase.IBlock
 	}
 
 	@Override
-	public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity)
+	public void onEntityCollision(World world, BlockPos pos, IBlockState state, Entity entity)
 	{
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof TileEntityIEBase)

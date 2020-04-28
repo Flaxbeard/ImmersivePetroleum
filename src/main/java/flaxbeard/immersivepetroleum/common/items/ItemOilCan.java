@@ -49,7 +49,7 @@ public class ItemOilCan extends ItemIPBase
 		FluidStack fs = FluidUtil.getFluidContained(stack);
 		if (fs!=null)
 		{
-			TextFormatting rarity = fs.getFluid().getRarity() == EnumRarity.COMMON ? TextFormatting.GRAY : fs.getFluid().getRarity().rarityColor;
+			TextFormatting rarity = fs.getFluid().getRarity() == EnumRarity.COMMON ? TextFormatting.GRAY : fs.getFluid().getRarity().color;
 			tooltip.add(rarity + fs.getLocalizedName() + TextFormatting.GRAY+": " +fs.amount + "/" + 8000 + "mB");
 		}
 		else

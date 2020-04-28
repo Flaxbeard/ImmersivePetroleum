@@ -21,7 +21,7 @@ compileJava {
 }
 
 minecraft {
-    version = "14.23.1.2582"
+    version = "1.12.2-14.23.5.2838"
     runDir = "run"
 
     replace "@VERSION@", project.version
@@ -31,7 +31,7 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20170903"
+    mappings = "stable_39"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     useDepAts = true
 }
@@ -49,16 +49,12 @@ repositories {
         name 'JEI'
         url 'http://dvs1.progwml6.com/files/maven'
     }
-    maven { // Albedo Lights
-        url 'https://repo.elytradev.com/'
-    }
 }
 
 dependencies {
-    deobfCompile "blusunrize:ImmersiveEngineering:0.12-79-+"
+    deobfCompile "blusunrize:ImmersiveEngineering:0.12-92-+"
     deobfCompile "mezz.jei:jei_1.12.2:4.8.5.133"
     deobfCompile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.0.9.289"
-    deobfCompile "elucent:albedo:2.0-SNAPSHOT"
     compileOnly "mezz.jei:jei_1.12:4.+"
 }
 

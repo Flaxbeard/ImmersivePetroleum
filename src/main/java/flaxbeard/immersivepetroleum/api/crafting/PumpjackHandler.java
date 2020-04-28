@@ -129,7 +129,7 @@ public class PumpjackHandler
 		{
 			ReservoirType res = null;
 
-			Random r = world.getChunkFromChunkCoords(chunkX / depositSize, chunkZ / depositSize).getRandomWithSeed(90210); // Antidote
+			Random r = world.getChunk(chunkX / depositSize, chunkZ / depositSize).getRandomWithSeed(90210); // Antidote
 			double dd = r.nextDouble();
 			boolean empty = dd > oilChance;
 			double size = r.nextDouble();

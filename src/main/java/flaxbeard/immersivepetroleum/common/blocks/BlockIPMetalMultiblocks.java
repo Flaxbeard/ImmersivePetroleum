@@ -280,9 +280,9 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 	}
 	
 	@Override
-	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
+	public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
 	{
-		super.onEntityCollidedWithBlock(worldIn, pos, state, entityIn);
+		super.onEntityCollision(worldIn, pos, state, entityIn);
 		if (entityIn instanceof EntityLivingBase&&!((EntityLivingBase) entityIn).isOnLadder() && isLadder(state, worldIn, pos, (EntityLivingBase)entityIn))
 		{
 			float f5 = 0.15F;
@@ -304,7 +304,7 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 				entityIn.motionY=.05;
 				return;
 			}
-			if(entityIn.isCollidedHorizontally)
+			if(entityIn.collidedHorizontally)
 				entityIn.motionY=.2;
 		}
 	}

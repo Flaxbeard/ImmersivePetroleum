@@ -20,7 +20,7 @@ public class ContainerDistillationTower extends ContainerIEBase<TileEntityDistil
 		super(inventoryPlayer, tile);
 
 		final TileEntityDistillationTower tileF = tile;
-		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 0, 12,17, false)
+		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 0, 12,17, 0)
 		{
 			@Override
 			public boolean isItemValid(ItemStack itemStack)
@@ -41,7 +41,7 @@ public class ContainerDistillationTower extends ContainerIEBase<TileEntityDistil
 		});
 		this.addSlotToContainer(new IESlot.Output(this, this.inv, 1, 12,53));
 
-		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 2, 134,17, true)
+		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 2, 134,17, 2)
 		{
 			@Override
 			public boolean isItemValid(ItemStack itemStack)

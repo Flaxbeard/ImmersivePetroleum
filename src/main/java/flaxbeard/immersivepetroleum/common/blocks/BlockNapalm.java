@@ -43,8 +43,9 @@ public class BlockNapalm extends BlockIPFluid
 		if (world.getBlockState(neighbourPos).getBlock() instanceof BlockFire
 				|| world.getBlockState(neighbourPos).getMaterial() == Material.FIRE)
 		{
-			if (!EventHandler.napalmPositions.containsKey(world)
-					|| !EventHandler.napalmPositions.get(world).contains(neighbourPos)) {
+			int d = world.provider.getDimension();
+			if (!EventHandler.napalmPositions.containsKey(d)
+					|| !EventHandler.napalmPositions.get(d).contains(neighbourPos)) {
 				processFire(world, pos);
 			}
 		}
@@ -53,11 +54,12 @@ public class BlockNapalm extends BlockIPFluid
 
 	public void processFire(World world, BlockPos pos)
 	{
-		if (!EventHandler.napalmPositions.containsKey(world))
+		int d = world.provider.getDimension();
+		if (!EventHandler.napalmPositions.containsKey(d))
 		{
-			EventHandler.napalmPositions.put(world, new ArrayList<>());
+			EventHandler.napalmPositions.put(d, new ArrayList<>());
 		}
-		EventHandler.napalmPositions.get(world).add(pos);
+		EventHandler.napalmPositions.get(d).add(pos);
 
 		world.setBlockState(pos, Blocks.FIRE.getDefaultState(), 1|2);
 
@@ -67,9 +69,7 @@ public class BlockNapalm extends BlockIPFluid
 			Block block = world.getBlockState(notifyPos).getBlock();
 			if (block instanceof BlockNapalm)
 			{
-
-				EventHandler.napalmPositions.get(world).add(notifyPos);
-
+				EventHandler.napalmPositions.get(d).add(notifyPos);
 				//world.neighborChanged(notifyPos, block, neighbourPos);
 			}
 		}

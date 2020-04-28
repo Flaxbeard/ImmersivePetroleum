@@ -19,7 +19,7 @@ public class ItemIPBase extends Item implements IColouredItem
 
 	public ItemIPBase(String name, int stackSize, String... subNames)
 	{
-		this.setUnlocalizedName(ImmersivePetroleum.MODID+"."+name);
+		this.setTranslationKey(ImmersivePetroleum.MODID+"."+name);
 		this.setHasSubtypes(subNames!=null&&subNames.length>0);
 		this.setCreativeTab(ImmersivePetroleum.creativeTab);
 		this.setMaxStackSize(stackSize);
@@ -50,14 +50,14 @@ public class ItemIPBase extends Item implements IColouredItem
 
 	}
 	@Override
-	public String getUnlocalizedName(ItemStack stack)
+	public String getTranslationKey(ItemStack stack)
 	{
 		if(getSubNames()!=null)
 		{
 			String subName = stack.getItemDamage()<getSubNames().length?getSubNames()[stack.getItemDamage()]:"";
-			return this.getUnlocalizedName()+"."+subName;
+			return this.getTranslationKey()+"."+subName;
 		}
-		return this.getUnlocalizedName();
+		return this.getTranslationKey();
 	}
 
 	public ItemIPBase setMetaHidden(int... meta)

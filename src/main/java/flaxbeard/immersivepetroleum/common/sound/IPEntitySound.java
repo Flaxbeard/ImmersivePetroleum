@@ -143,7 +143,7 @@ public class IPEntitySound implements ITickableSound
 			for(int dx = (int)Math.floor(entity.posX-8)>>4; dx<=(int)Math.floor(entity.posX+8)>>4; dx++)
 				for(int dz = (int)Math.floor(entity.posZ-8)>>4; dz<=(int)Math.floor(entity.posZ+8)>>4; dz++)
 				{
-					Iterator it = ClientUtils.mc().player.world.getChunkFromChunkCoords(dx, dz).getTileEntityMap().values().iterator();
+					Iterator it = ClientUtils.mc().player.world.getChunk(dx, dz).getTileEntityMap().values().iterator();
 					while (it.hasNext())
 					{
 						TileEntity tile = (TileEntity)it.next();

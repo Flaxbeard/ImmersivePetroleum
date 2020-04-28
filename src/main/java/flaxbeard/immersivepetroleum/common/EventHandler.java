@@ -224,7 +224,7 @@ public class EventHandler
 		double px = TileEntityRendererDispatcher.staticPlayerX;
 		double py = TileEntityRendererDispatcher.staticPlayerY;
 		double pz = TileEntityRendererDispatcher.staticPlayerZ;
-		int y = Math.min((int)player.posY-2,player.getEntityWorld().getChunkFromBlockCoords(new BlockPos(chunkX, 0, chunkZ)).getLowestHeight());
+		int y = Math.min((int)player.posY-2,player.getEntityWorld().getChunk(chunkX, chunkZ).getLowestHeight());
 		float h = (float)Math.max(32, player.posY-y+4);
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vertexbuffer = tessellator.getBuffer();
@@ -698,18 +698,20 @@ public class EventHandler
 		}
 	}
 
-	public static Map<World, List<BlockPos>> napalmPositions = new HashMap<>();
-	public static Map<World, List<BlockPos>> toRemove = new HashMap<>();
+	public static Map<Integer, List<BlockPos>> napalmPositions = new HashMap<>();
+	public static Map<Integer, List<BlockPos>> toRemove = new HashMap<>();
 
 	@SubscribeEvent
 	public static void handleNapalm(WorldTickEvent event)
 	{
+		int d = event.world.provider.getDimension();
+
 		if (event.phase == Phase.START)
 		{
-			toRemove.put(event.world, new ArrayList<>());
-			if (napalmPositions.get(event.world) != null)
+			toRemove.put(d, new ArrayList<>());
+			if (napalmPositions.get(d) != null)
 			{
-				List<BlockPos> iterate = new ArrayList<>(napalmPositions.get(event.world));
+				List<BlockPos> iterate = new ArrayList<>(napalmPositions.get(d));
 				for (BlockPos position : iterate)
 				{
 					IBlockState state = event.world.getBlockState(position);
@@ -717,17 +719,17 @@ public class EventHandler
 					{
 						((BlockNapalm) state.getBlock()).processFire(event.world, position);
 					}
-					toRemove.get(event.world).add(position);
+					toRemove.get(d).add(position);
 				}
 			}
 		}
 		else if (event.phase == Phase.END)
 		{
-			if (toRemove.get(event.world) != null && napalmPositions.get(event.world) != null)
+			if (toRemove.get(d) != null && napalmPositions.get(d) != null)
 			{
-				for (BlockPos position : toRemove.get(event.world))
+				for (BlockPos position : toRemove.get(d))
 				{
-					napalmPositions.get(event.world).remove(position);
+					napalmPositions.get(d).remove(position);
 				}
 			}
 		}

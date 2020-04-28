@@ -67,7 +67,7 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket)
 	{
-		facing = EnumFacing.getFront(nbt.getInteger("facing"));
+		facing = EnumFacing.byIndex(nbt.getInteger("facing"));
 		active = nbt.getBoolean("active");
 		tank.readFromNBT(nbt.getCompoundTag("tank"));
 		energyStorage.readFromNBT(nbt);
@@ -218,10 +218,10 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 				EnumFacing fl = facing;
 				EnumFacing fw = facing.rotateY();
 				world.spawnParticle(
-						world.rand.nextInt(10) == 0 ? EnumParticleTypes.SMOKE_LARGE : EnumParticleTypes.SMOKE_NORMAL, 
-						exhaust.getX()+.5+(fl.getFrontOffsetX()*2/16F)+(-fw.getFrontOffsetX()*.6125f),
+						world.rand.nextInt(10) == 0 ? EnumParticleTypes.SMOKE_LARGE : EnumParticleTypes.SMOKE_NORMAL,
+						exhaust.getX()+.5+(fl.getXOffset()*2/16F)+(-fw.getXOffset()*.6125f),
 						exhaust.getY()+.4,
-						exhaust.getZ()+.5+(fl.getFrontOffsetZ()*2/16F)+(-fw.getFrontOffsetZ()*.6125f), 0,0,0);
+						exhaust.getZ()+.5+(fl.getZOffset()*2/16F)+(-fw.getZOffset()*.6125f), 0,0,0);
 			}
 		}
 
@@ -318,7 +318,7 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 		ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
 		NBTTagCompound tag = new NBTTagCompound();
 		writeTank(tag, true);
-		if (!tag.hasNoTags())
+		if (!tag.isEmpty())
 			stack.setTagCompound(tag);
 		if (energyStorage.getEnergyStored()>0)
 			ItemNBTHelper.setInt(stack, "energyStorage", energyStorage.getEnergyStored());

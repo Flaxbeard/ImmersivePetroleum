@@ -1122,12 +1122,7 @@ public class ItemProjector extends ItemIPBase
 			}
 		}
 	}
-	
-	@SubscribeEvent
-	public void handleMultiblockComplete(MultiblockFormEvent event)
-	{
-	}
-	
+
 	public boolean doesIntersect(EntityPlayer player, ItemStack target, BlockPos check)
 	{
 		IMultiblock mb = ItemProjector.getMultiblock(ItemNBTHelper.getString(target, "multiblock"));

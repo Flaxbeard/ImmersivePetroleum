@@ -3,7 +3,7 @@
 	"defaults":
 	{
 		"transform": "forge:default-block",
-		"model": "immersiveengineering:ieSixSides",
+		"model": "immersiveengineering:ie_six_sides",
 		"textures": {
 			"all": "immersiveengineering:blocks/metal_device1_thermoelectric_gen_side",
 			"particle": "immersiveengineering:blocks/metal_device1_thermoelectric_gen_side",

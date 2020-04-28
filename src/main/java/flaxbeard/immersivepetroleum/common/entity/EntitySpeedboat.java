@@ -180,7 +180,7 @@ public class EntitySpeedboat extends EntityBoat
 				this.setForwardDirection(-this.getForwardDirection());
 				this.setTimeSinceHit(10);
 				this.setDamageTaken(this.getDamageTaken() + amount * 10.0F);
-				this.setBeenAttacked();
+				this.markVelocityChanged();
 				boolean flag = source.getImmediateSource() instanceof EntityPlayer && ((EntityPlayer)source.getImmediateSource()).capabilities.isCreativeMode;
 				boolean flag2 = source.getImmediateSource() instanceof EntityPlayer;
 				if (flag || (this.getDamageTaken() > 40.0F && (!this.isFireproof || flag2)) || (this.getDamageTaken() > 240.0F))

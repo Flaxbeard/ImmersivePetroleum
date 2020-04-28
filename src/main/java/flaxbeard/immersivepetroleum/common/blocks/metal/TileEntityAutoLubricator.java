@@ -597,7 +597,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket)
 	{
 		dummy = nbt.getInteger("dummy");
-		facing = EnumFacing.getFront(nbt.getInteger("facing"));
+		facing = EnumFacing.byIndex(nbt.getInteger("facing"));
 		if (facing == EnumFacing.DOWN || facing == EnumFacing.UP) {
 			facing = EnumFacing.NORTH;
 		}
@@ -862,7 +862,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
 		NBTTagCompound tag = new NBTTagCompound();
 		writeTank(tag, true);
-		if (!tag.hasNoTags())
+		if (!tag.isEmpty())
 			stack.setTagCompound(tag);
 		return stack;
 	}

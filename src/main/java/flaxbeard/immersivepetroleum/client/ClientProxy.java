@@ -369,15 +369,7 @@ public class ClientProxy extends CommonProxy
 					String validBiomes = "";
 					for (String biome : type.biomeWhitelist)
 					{
-						for (ResourceLocation test : Biome.REGISTRY.getKeys())
-						{
-							Biome testBiome = Biome.REGISTRY.getObject(test);
-							String testName = PumpjackHandler.getBiomeName(testBiome);
-							if (testName != null && testName.equals(biome))
-							{
-								validBiomes += (!validBiomes.isEmpty() ? ", " : "") + PumpjackHandler.getBiomeDisplayName(testBiome.getBiomeName());
-							}
-						}
+						validBiomes += (!validBiomes.isEmpty() ? ", ":"") + PumpjackHandler.getTagDisplayName(biome);
 					}
 					s4 = I18n.format("ie.manual.entry.oilBiomeValid", validBiomes);
 				}
@@ -386,15 +378,7 @@ public class ClientProxy extends CommonProxy
 					String invalidBiomes = "";
 					for (String biome : type.biomeBlacklist)
 					{
-						for (ResourceLocation test : Biome.REGISTRY.getKeys())
-						{
-							Biome testBiome = Biome.REGISTRY.getObject(test);
-							String testName = PumpjackHandler.getBiomeName(testBiome);
-							if (testName != null && testName.equals(biome))
-							{
-								invalidBiomes += (!invalidBiomes.isEmpty() ? ", " : "") + PumpjackHandler.getBiomeDisplayName(testBiome.getBiomeName());
-							}
-						}
+						invalidBiomes += (!invalidBiomes.isEmpty() ? ", ":"") + PumpjackHandler.getTagDisplayName(biome);
 					}
 					s4 = I18n.format("ie.manual.entry.oilBiomeInvalid", invalidBiomes);
 				}

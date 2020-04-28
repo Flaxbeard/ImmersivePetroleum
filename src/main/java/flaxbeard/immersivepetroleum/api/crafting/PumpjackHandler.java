@@ -267,6 +267,11 @@ public class PumpjackHandler
 	{
 		return str.replace(" ", "").toUpperCase();
 	}
+
+	public static String getTagDisplayName(String tag)
+	{
+		return tag.charAt(0) + tag.substring(1).toLowerCase();
+	}
 	
 	public static String getBiomeDisplayName(String str)
 	{

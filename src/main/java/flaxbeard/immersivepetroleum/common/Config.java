@@ -676,7 +676,28 @@ public class Config
 						biomeBlacklist.add(PumpjackHandler.convertConfigName(value.trim()));
 					}
 				}
-				
+				else if (index == 9)
+				{
+					if (!inParens)
+					{
+						current = current.substring(1);
+						inParens = true;
+					}
+
+					int cI = current.indexOf(",");
+					int bI = current.indexOf("]");
+
+					String value = current;
+					if (bI >= 0 && (cI == -1 || bI < cI))
+					{
+						value = value.substring(0, bI);
+						inParens = false;
+					}
+					if (value.length() > 0)
+					{
+						biomeWhitelist.add(PumpjackHandler.convertConfigName(value.trim()));
+					}
+				}
 				
 				remain = remain.substring(endPos + 1);
 				if (!inParens) index++;
@@ -686,7 +707,6 @@ public class Config
 			
 			if (!inParens)
 			{
-				System.out.println(reservoirs[i]);
 				current = current.substring(1);
 				inParens = true;
 			}

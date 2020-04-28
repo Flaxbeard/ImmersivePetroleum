@@ -11,6 +11,7 @@ import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Abst
 import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Connection;
 import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
 import blusunrize.immersiveengineering.common.Config.IEConfig;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
@@ -22,6 +23,7 @@ import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxH
 import blusunrize.immersiveengineering.common.util.IESounds;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.sound.IETileSound;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -51,7 +53,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TileEntityGasGenerator extends TileEntityImmersiveConnectable implements IDirectionalTile, ITickable, IPlayerInteraction, IBlockOverlayText, IIEInternalFluxConnector, ITileDrop, IIEInternalFluxHandler
+public class TileEntityGasGenerator extends TileEntityImmersiveConnectable implements IDirectionalTile, ITickable, IPlayerInteraction, IBlockOverlayText, IIEInternalFluxConnector, ITileDrop, IIEInternalFluxHandler, IEBlockInterfaces.ISoundTile
 {
 	public boolean active;
 	public EnumFacing facing = EnumFacing.NORTH;
@@ -506,5 +508,11 @@ public class TileEntityGasGenerator extends TileEntityImmersiveConnectable imple
 	public int getMaxOutput()
 	{
 		return TileEntityConnectorLV.connectorInputValues[1];
+	}
+
+	@Override
+	public boolean shoudlPlaySound(String sound)
+	{
+		return active;
 	}
 }

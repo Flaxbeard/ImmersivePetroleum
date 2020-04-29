@@ -30,52 +30,58 @@ public class MultiblockPumpjack implements IMultiblock
 {
 	public static MultiblockPumpjack instance = new MultiblockPumpjack();
 	static ItemStack[][][] structure = new ItemStack[4][6][3];
-	
-	static{
-		for(int h=0;h<4;h++)
-			for(int l=0;l<6;l++)
-				for(int w=0;w<3;w++)
+
+	static
+	{
+		for (int h = 0; h < 4; h++)
+		{
+			for (int l = 0; l < 6; l++)
+			{
+				for (int w = 0; w < 3; w++)
 				{
 					if (h < 2 && w == 2 && l == 0)
 					{
-						structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta());
+						structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta());
 					}
 					else if (h < 3 && h > 0 && w == 1 && l == 1)
 					{
-						structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
+						structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
 					}
 					else if (h == 1 && w == 0 && l == 0)
 					{
-						structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta());
+						structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta());
 					}
 					else if (h == 0 && ((w == 1 && l > 2 && l < 5) || (l == 3)))
 					{
-						structure[h][l][w] = new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
+						structure[h][l][w] = new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
 					}
 					else if (l < 5 && l > 0 && w == 1 && h == 3)
 					{
-						structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal,1,BlockTypes_MetalsAll.STEEL.getMeta());
+						structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.STEEL.getMeta());
 					}
 					else if ((h == 0 && (l < 5 || w == 1)))
 					{
-						structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
+						structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
 					}
 					else if (w != 1 && l == 3)
 					{
-						structure[h][l][w] = new ItemStack(IEContent.blockWoodenDecoration,1,BlockTypes_WoodenDecoration.FENCE.getMeta());
+						structure[h][l][w] = new ItemStack(IEContent.blockWoodenDecoration, 1, BlockTypes_WoodenDecoration.FENCE.getMeta());
 					}
 					else if (h >= 2 && l == 5 && w == 1)
 					{
-						structure[h][l][w] = new ItemStack(IEContent.blockStorage,1,BlockTypes_MetalsIE.STEEL.getMeta());
+						structure[h][l][w] = new ItemStack(IEContent.blockStorage, 1, BlockTypes_MetalsIE.STEEL.getMeta());
 					}
-					
-					if (structure[h][l][w] == null) {
+
+					if (structure[h][l][w] == null)
+					{
 						structure[h][l][w] = ItemStack.EMPTY;
 					}
 
 				}
+			}
+		}
 	}
-	
+
 	@Override
 	public ItemStack[][][] getStructureManual()
 	{
@@ -108,29 +114,32 @@ public class MultiblockPumpjack implements IMultiblock
 		}
 		return false;
 	}
+
 	@Override
 	public IBlockState getBlockstateFromStack(int index, ItemStack stack)
 	{
-		if(!stack.isEmpty() && stack.getItem() instanceof ItemBlock)
+		if (!stack.isEmpty() && stack.getItem() instanceof ItemBlock)
 		{
-			return ((ItemBlock)stack.getItem()).getBlock().getStateFromMeta(stack.getItemDamage());
+			return ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getItemDamage());
 		}
 		return null;
 	}
+
 	@Override
 	public float getManualScale()
 	{
 		return 12;
 	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean canRenderFormedStructure()
 	{
 		return true;
 	}
-	
+
 	Object te;
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderFormedStructure()
@@ -139,7 +148,7 @@ public class MultiblockPumpjack implements IMultiblock
 		{
 			te = new TileEntityPumpjack.TileEntityPumpjackParent();
 		}
-		
+
 		ImmersivePetroleum.proxy.renderTile((TileEntity) te);
 	}
 
@@ -152,63 +161,66 @@ public class MultiblockPumpjack implements IMultiblock
 	@Override
 	public boolean isBlockTrigger(IBlockState state)
 	{
-		return state.getBlock()==IEContent.blockMetalDecoration0 && (state.getBlock().getMetaFromState(state)==BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
+		return state.getBlock() == IEContent.blockMetalDecoration0 && (state.getBlock().getMetaFromState(state) == BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
 	}
 
 	@Override
 	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player)
 	{
 		side = side.getOpposite();
-		if(side==EnumFacing.UP||side==EnumFacing.DOWN)
+		if (side == EnumFacing.UP || side == EnumFacing.DOWN)
 			side = EnumFacing.fromAngle(player.rotationYaw);
 
 		boolean mirror = false;
 		boolean b = this.structureCheck(world, pos.offset(side.getOpposite()), side, mirror);
-		if(!b)
+		if (!b)
 		{
 			mirror = true;
 			b = structureCheck(world, pos.offset(side.getOpposite()), side, mirror);
 		}
-		if(!b)
+		if (!b)
 			return false;
 		if (b)
 			for (int h = -1; h <= 2; h++)
+			{
 				for (int l = -1; l <= 4; l++)
+				{
 					for (int w = -1; w <= 1; w++)
 					{
-					int ww = mirror?-w:w;
-					BlockPos pos2 = pos.offset(side, l).offset(side.rotateY(), ww).add(0, h, 0);
-					
-					if ((h == -1 && l == 4 && w != 0)
-							|| (h > -1 && w != 0 && l != 2 && (l != -1 || (w != -1 && w != 1) || h > 0))
-							|| (h > -1 && h < 2 && w == 0 && l != 0 && (l != 4 || h != 1))
-							|| (h == 2 && w == 0 && l == -1)) {
-						continue;
-					}
-					
-					if (l == 0 && w == 0 && h == 0)
-					{
-						world.setBlockState(pos2, IPContent.blockMetalMultiblock.getStateFromMeta(BlockTypes_IPMetalMultiblock.PUMPJACK_PARENT.getMeta()));
-					}
-					else
-					{
-						world.setBlockState(pos2, IPContent.blockMetalMultiblock.getStateFromMeta(BlockTypes_IPMetalMultiblock.PUMPJACK.getMeta()));
-					}
-					TileEntity curr = world.getTileEntity(pos2);
-					if(curr instanceof TileEntityPumpjack)
-					{
-						TileEntityPumpjack tile = (TileEntityPumpjack) curr;
-						tile.facing=side;
-						tile.formed=true;
-						tile.pos = (h+1)*18 + (l+1)*3 + (w+1);
-						tile.offset = new int[]{(side==EnumFacing.WEST?-l: side==EnumFacing.EAST?l: side==EnumFacing.NORTH?ww: -ww),h,(side==EnumFacing.NORTH?-l: side==EnumFacing.SOUTH?l: side==EnumFacing.EAST?ww : -ww)};
-						tile.mirrored=mirror;
-						tile.markDirty();
-						world.addBlockEvent(pos2, IPContent.blockMetalMultiblock, 255, 0);
-					}
-					
-					/*if (h >= 0 && (h+1) % 4 != 0 
-							&& (w == 0 || w == 3 || l == -3 || l == 0) 
+						int ww = mirror ? -w : w;
+						BlockPos pos2 = pos.offset(side, l).offset(side.rotateY(), ww).add(0, h, 0);
+
+						if ((h == -1 && l == 4 && w != 0)
+								|| (h > -1 && w != 0 && l != 2 && (l != -1 || (w != -1 && w != 1) || h > 0))
+								|| (h > -1 && h < 2 && w == 0 && l != 0 && (l != 4 || h != 1))
+								|| (h == 2 && w == 0 && l == -1))
+						{
+							continue;
+						}
+
+						if (l == 0 && w == 0 && h == 0)
+						{
+							world.setBlockState(pos2, IPContent.blockMetalMultiblock.getStateFromMeta(BlockTypes_IPMetalMultiblock.PUMPJACK_PARENT.getMeta()));
+						}
+						else
+						{
+							world.setBlockState(pos2, IPContent.blockMetalMultiblock.getStateFromMeta(BlockTypes_IPMetalMultiblock.PUMPJACK.getMeta()));
+						}
+						TileEntity curr = world.getTileEntity(pos2);
+						if (curr instanceof TileEntityPumpjack)
+						{
+							TileEntityPumpjack tile = (TileEntityPumpjack) curr;
+							tile.facing = side;
+							tile.formed = true;
+							tile.pos = (h + 1) * 18 + (l + 1) * 3 + (w + 1);
+							tile.offset = new int[]{(side == EnumFacing.WEST ? -l : side == EnumFacing.EAST ? l : side == EnumFacing.NORTH ? ww : -ww), h, (side == EnumFacing.NORTH ? -l : side == EnumFacing.SOUTH ? l : side == EnumFacing.EAST ? ww : -ww)};
+							tile.mirrored = mirror;
+							tile.markDirty();
+							world.addBlockEvent(pos2, IPContent.blockMetalMultiblock, 255, 0);
+						}
+
+					/*if (h >= 0 && (h+1) % 4 != 0
+							&& (w == 0 || w == 3 || l == -3 || l == 0)
 							&& ((w != 3 || l != -2) || h >= 11)
 							&& (h > 0 || (!(l == -3 && w == 0) && !(l == -3 && w == 1) && !(l == 0 && w == 0)))
 							&& (h != 1 || !(l == -3 && w == 1))
@@ -216,7 +228,7 @@ public class MultiblockPumpjack implements IMultiblock
 					{
 						continue;
 					}
-					
+
 					if (l == 0 && w == 0 && h == 0)
 					{
 						world.setBlockState(pos2, IPContent.blockMetalMultiblock.getStateFromMeta(BlockTypes_IPMetalMultiblock.DISTILLATION_TOWER_PARENT.getMeta()));
@@ -237,7 +249,9 @@ public class MultiblockPumpjack implements IMultiblock
 						tile.markDirty();
 						world.addBlockEvent(pos2, IPContent.blockMetalMultiblock, 255, 0);
 					}*/
+					}
 				}
+			}
 		
 		
 		/*side = side.getOpposite();
@@ -284,12 +298,14 @@ public class MultiblockPumpjack implements IMultiblock
 	boolean structureCheck(World world, BlockPos startPos, EnumFacing dir, boolean mirror)
 	{
 		for (int h = -1; h <= 2; h++)
+		{
 			for (int l = 0; l <= 5; l++)
+			{
 				for (int w = -1; w <= 1; w++)
 				{
-					int ww = mirror?-w:w;
+					int ww = mirror ? -w : w;
 					BlockPos pos = startPos.offset(dir, l).offset(dir.rotateY(), ww).add(0, h, 0);
-					
+
 					if (l == 0 && w == 1 && h < 1)
 					{
 						if (!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta()))
@@ -302,7 +318,7 @@ public class MultiblockPumpjack implements IMultiblock
 					}
 					else if (l == 0 && w == -1 && h == 0)
 					{
-						if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta()))
+						if (!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta()))
 							return false;
 					}
 					else if (h == -1 && ((l == 4 && w == 0) || l == 3))
@@ -388,6 +404,8 @@ public class MultiblockPumpjack implements IMultiblock
 						}
 					}*/
 				}
+			}
+		}
 		return true;
 	}
 
@@ -400,6 +418,7 @@ public class MultiblockPumpjack implements IMultiblock
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 2, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())),
 			new IngredientStack("blockSteel", 2),
 			new IngredientStack("blockSheetmetalSteel", 4)};
+
 	@Override
 	public IngredientStack[] getTotalMaterials()
 	{

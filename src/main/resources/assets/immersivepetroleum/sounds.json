@@ -1,9 +1,9 @@
 {
-	"projector": {
-		"category": "player",
-		"sounds": [
-			"immersivepetroleum:projector"
-		],
-		"subtitle": "subtitle.immersivepetroleum.projector"
-	}
+  "projector": {
+    "category": "player",
+    "sounds": [
+      "immersivepetroleum:projector"
+    ],
+    "subtitle": "subtitle.immersivepetroleum.projector"
+  }
 }

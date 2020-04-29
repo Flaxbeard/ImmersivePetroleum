@@ -54,19 +54,19 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		{
 			BlockPos target = tile.getPos().offset(facing, 2).up();
 			TileEntity te = world.getTileEntity(target);
-			
+
 			if (te instanceof TileEntityPumpjack)
 			{
 				TileEntityPumpjack jack = (TileEntityPumpjack) te;
 				TileEntityPumpjack master = jack.master();
-				
-				EnumFacing f = master.mirrored ? facing : facing.getOpposite() ;
+
+				EnumFacing f = master.mirrored ? facing : facing.getOpposite();
 				if (jack == master && jack.getFacing().rotateY() == f)
 				{
 					return master;
 				}
 			}
-			
+
 			return null;
 		}
 
@@ -88,21 +88,21 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			}
 			else
 			{
-				master.activeTicks += 1F/4F;
+				master.activeTicks += 1F / 4F;
 			}
 		}
 
 		@Override
 		public void spawnLubricantParticles(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityPumpjack master)
-		{				
-			EnumFacing f = master.mirrored ? facing : facing.getOpposite() ;
+		{
+			EnumFacing f = master.mirrored ? facing : facing.getOpposite();
 			float location = world.rand.nextFloat();
-			
+
 			boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.POSITIVE ^ !master.mirrored;
 			float xO = 2.5F;
 			float zO = -.15F;
 			float yO = 2.25F;
-			
+
 			if (location > .5F)
 			{
 				xO = 1.7F;
@@ -110,24 +110,24 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 				zO = -1.5F;
 
 			}
-			
+
 			if (facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
 			if (!flip) zO = -zO + 1;
-			
+
 			float x = tile.pos.getX() + (f.getAxis() == Axis.X ? xO : zO);
 			float y = tile.pos.getY() + yO;
 			float z = tile.pos.getZ() + (f.getAxis() == Axis.X ? zO : xO);
-			
+
 			for (int i = 0; i < 3; i++)
 			{
 				float r1 = (world.rand.nextFloat() - .5F) * 2F;
 				float r2 = (world.rand.nextFloat() - .5F) * 2F;
 				float r3 = world.rand.nextFloat();
 				int n = Block.getStateId(IPContent.blockFluidLubricant.getDefaultState());
-				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F, new int[] {n});
-			}				
+				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F, new int[]{n});
+			}
 		}
-		
+
 		private static Object pumpjackM;
 		private static Object pumpjack;
 
@@ -141,7 +141,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 				pumpjack = new ModelLubricantPipes.Pumpjack(false);
 			}
 
-	
+
 			GlStateManager.translate(0, -1, 0);
 			Vec3i offset = master.getPos().subtract(tile.getPos());
 			GlStateManager.translate(offset.getX(), offset.getY(), offset.getZ());
@@ -171,9 +171,9 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			else
 			{
 				((ModelLubricantPipes.Pumpjack) pumpjack).render(null, 0, 0, 0, 0, 0, 0.0625F);
-			}	
+			}
 		}
-		
+
 
 		@Override
 		public Tuple<BlockPos, EnumFacing> getGhostBlockPosition(World world, TileEntityPumpjack tile)
@@ -194,7 +194,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		}
 
 	}
-	
+
 	public static class ExcavatorLubricationHandler implements ILubricationHandler<TileEntityExcavator>
 	{
 
@@ -203,22 +203,22 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		{
 			BlockPos initialTarget = tile.getPos().offset(facing);
 			TileEntityExcavator adjacent = (TileEntityExcavator) world.getTileEntity(initialTarget);
-			EnumFacing f = adjacent.mirrored ? facing : facing.getOpposite() ;
+			EnumFacing f = adjacent.mirrored ? facing : facing.getOpposite();
 
 			BlockPos target = tile.getPos().offset(facing, 2).offset(f.rotateY(), 4).up();
 			TileEntity te = world.getTileEntity(target);
-			
+
 			if (te instanceof TileEntityExcavator)
 			{
 				TileEntityExcavator excavator = (TileEntityExcavator) te;
 				TileEntityExcavator master = excavator.master();
-				
+
 				if (excavator == master && excavator.getFacing().rotateY() == f)
 				{
 					return master;
 				}
 			}
-			
+
 			return null;
 		}
 
@@ -231,7 +231,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			if (center instanceof TileEntityBucketWheel)
 			{
 				TileEntityBucketWheel wheel = (TileEntityBucketWheel) center;
-				
+
 				return wheel.active;
 			}
 			return false;
@@ -246,7 +246,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			if (center instanceof TileEntityBucketWheel)
 			{
 				TileEntityBucketWheel wheel = (TileEntityBucketWheel) center;
-				
+
 				if (!world.isRemote && ticks % 4 == 0)
 				{
 					int consumed = IEConfig.Machines.excavator_consumption;
@@ -261,46 +261,46 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 				{
 					wheel.rotation += IEConfig.Machines.excavator_speed / 4F;
 				}
-				
+
 			}
 		}
 
 		@Override
 		public void spawnLubricantParticles(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityExcavator master)
 		{
-			EnumFacing f = master.mirrored ? facing : facing.getOpposite() ;
-			
+			EnumFacing f = master.mirrored ? facing : facing.getOpposite();
+
 			float location = world.rand.nextFloat();
-			
+
 			boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.POSITIVE ^ !master.mirrored;
 			float xO = 1.2F;
 			float zO = -.5F;
 			float yO = .5F;
-			
+
 			if (location > .5F)
 			{
 				xO = 0.9F;
 				yO = 0.8F;
 				zO = 1.75F;
 			}
-			
+
 			if (facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
 			if (!flip) zO = -zO + 1;
 
 			float x = tile.pos.getX() + (f.getAxis() == Axis.X ? xO : zO);
 			float y = tile.pos.getY() + yO;
 			float z = tile.pos.getZ() + (f.getAxis() == Axis.X ? zO : xO);
-			
+
 			for (int i = 0; i < 3; i++)
 			{
 				float r1 = (world.rand.nextFloat() - .5F) * 2F;
 				float r2 = (world.rand.nextFloat() - .5F) * 2F;
 				float r3 = world.rand.nextFloat();
 				int n = Block.getStateId(IPContent.blockFluidLubricant.getDefaultState());
-				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F, new int[] {n});
+				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F, new int[]{n});
 			}
 		}
-		
+
 		private static Object excavator;
 		private static Object excavatorM;
 
@@ -314,7 +314,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 				excavator = new ModelLubricantPipes.Excavator(false);
 			}
 
-	
+
 			GlStateManager.translate(0, -1, 0);
 			Vec3i offset = master.getPos().subtract(tile.getPos());
 			GlStateManager.translate(offset.getX(), offset.getY(), offset.getZ());
@@ -323,7 +323,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			if (rotation == EnumFacing.NORTH)
 			{
 				GlStateManager.rotate(90F, 0, 1, 0);
-				
+
 			}
 			else if (rotation == EnumFacing.WEST)
 			{
@@ -341,7 +341,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 				GlStateManager.translate(1, 0, 0);
 
 			}
-			
+
 			GlStateManager.translate(-1, 0, -1);
 			ClientUtils.bindTexture("immersivepetroleum:textures/blocks/lube_pipe12.png");
 			if (master.mirrored)
@@ -353,7 +353,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 				((ModelLubricantPipes.Excavator) excavator).render(null, 0, 0, 0, 0, 0, 0.0625F);
 			}
 		}
-		
+
 
 		@Override
 		public Tuple<BlockPos, EnumFacing> getGhostBlockPosition(World world, TileEntityExcavator tile)
@@ -366,14 +366,14 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			}
 			return null;
 		}
-		
+
 		@Override
 		public int[] getStructureDimensions()
 		{
-			return new int[]{3,6,3};
+			return new int[]{3, 6, 3};
 		}
 	}
-	
+
 	public static class CrusherLubricationHandler implements ILubricationHandler<TileEntityCrusher>
 	{
 
@@ -383,12 +383,12 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 
 			BlockPos target = tile.getPos().offset(facing, 2).up();
 			TileEntity te = world.getTileEntity(target);
-			
+
 			if (te instanceof TileEntityCrusher)
 			{
 				TileEntityCrusher excavator = (TileEntityCrusher) te;
 				TileEntityCrusher master = excavator.master();
-				
+
 				EnumFacing f = facing;
 				if (excavator == master && excavator.getFacing().getOpposite() == f)
 				{
@@ -396,7 +396,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 					return master;
 				}
 			}
-			
+
 			return null;
 		}
 
@@ -411,7 +411,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		{
 			Iterator<MultiblockProcess<CrusherRecipe>> processIterator = master.processQueue.iterator();
 			MultiblockProcess<CrusherRecipe> process = processIterator.next();
-			
+
 			if (!world.isRemote)
 			{
 				if (ticks % 4 == 0)
@@ -440,39 +440,39 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		public void spawnLubricantParticles(World world, TileEntityAutoLubricator tile, EnumFacing facing, TileEntityCrusher master)
 		{
 
-			EnumFacing f = master.mirrored ? facing : facing.getOpposite() ;
-			
+			EnumFacing f = master.mirrored ? facing : facing.getOpposite();
+
 			float location = world.rand.nextFloat();
-			
+
 			boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.POSITIVE ^ !master.mirrored;
 			float xO = 2.5F;
 			float zO = -0.1F;
 			float yO = 1.3F;
-			
+
 			if (location > .5F)
 			{
 				xO = 1.0F;
 				yO = 3.0F;
 				zO = 1.65F;
 			}
-			
+
 			if (facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
 			if (!flip) zO = -zO + 1;
 
 			float x = tile.pos.getX() + (f.getAxis() == Axis.X ? xO : zO);
 			float y = tile.pos.getY() + yO;
 			float z = tile.pos.getZ() + (f.getAxis() == Axis.X ? zO : xO);
-			
+
 			for (int i = 0; i < 3; i++)
 			{
 				float r1 = (world.rand.nextFloat() - .5F) * 2F;
 				float r2 = (world.rand.nextFloat() - .5F) * 2F;
 				float r3 = world.rand.nextFloat();
 				int n = Block.getStateId(IPContent.blockFluidLubricant.getDefaultState());
-				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F, new int[] {n});
+				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F, new int[]{n});
 			}
 		}
-		
+
 		private static Object excavator;
 
 		@Override
@@ -484,7 +484,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 				excavator = new ModelLubricantPipes.Crusher(false);
 			}
 
-	
+
 			GlStateManager.translate(0, -1, 0);
 			Vec3i offset = master.getPos().subtract(tile.getPos());
 			GlStateManager.translate(offset.getX(), offset.getY(), offset.getZ());
@@ -507,7 +507,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 				GlStateManager.translate(0, 0, -1);
 
 			}
-			
+
 			ClientUtils.bindTexture("immersivepetroleum:textures/blocks/lube_pipe12.png");
 			((ModelLubricantPipes.Crusher) excavator).render(null, 0, 0, 0, 0, 0, 0.0625F);
 		}
@@ -527,10 +527,10 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		@Override
 		public int[] getStructureDimensions()
 		{
-			return new int[]{3,3,5};
+			return new int[]{3, 3, 5};
 		}
 	}
-	
+
 	public boolean active;
 	public int dummy = 0;
 	public EnumFacing facing = EnumFacing.NORTH;
@@ -538,11 +538,11 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	{
 		@Override
 		public boolean canFillFluidType(FluidStack fluid)
-	    {
-	        return fluid != null && LubricantHandler.isValidLube(fluid.getFluid());
-	    }
+		{
+			return fluid != null && LubricantHandler.isValidLube(fluid.getFluid());
+		}
 	};
-	
+
 	public boolean predictablyDraining = false;
 
 	public int doSpeedup()
@@ -565,7 +565,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		}*/
 		return 0;
 	}
-	
+
 	@Override
 	public boolean shouldRenderInPass(int pass)
 	{
@@ -575,22 +575,26 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	@Override
 	public boolean isDummy()
 	{
-		return dummy>0;
+		return dummy > 0;
 	}
+
 	@Override
 	public void placeDummies(BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		world.setBlockState(pos.add(0, 1, 0), state);
-		((TileEntityAutoLubricator)world.getTileEntity(pos.add(0, 1, 0))).dummy = 1;
-		((TileEntityAutoLubricator)world.getTileEntity(pos.add(0, 1, 0))).facing = this.facing;
-	
+		((TileEntityAutoLubricator) world.getTileEntity(pos.add(0, 1, 0))).dummy = 1;
+		((TileEntityAutoLubricator) world.getTileEntity(pos.add(0, 1, 0))).facing = this.facing;
+
 	}
+
 	@Override
 	public void breakDummies(BlockPos pos, IBlockState state)
 	{
 		for (int i = 0; i <= 1; i++)
-			if (world.getTileEntity(getPos().add(0,-dummy,0).add(0,i,0)) instanceof TileEntityAutoLubricator)
-				world.setBlockToAir(getPos().add(0,-dummy,0).add(0,i,0));
+		{
+			if (world.getTileEntity(getPos().add(0, -dummy, 0).add(0, i, 0)) instanceof TileEntityAutoLubricator)
+				world.setBlockToAir(getPos().add(0, -dummy, 0).add(0, i, 0));
+		}
 	}
 
 	@Override
@@ -598,7 +602,8 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	{
 		dummy = nbt.getInteger("dummy");
 		facing = EnumFacing.byIndex(nbt.getInteger("facing"));
-		if (facing == EnumFacing.DOWN || facing == EnumFacing.UP) {
+		if (facing == EnumFacing.DOWN || facing == EnumFacing.UP)
+		{
 			facing = EnumFacing.NORTH;
 		}
 		active = nbt.getBoolean("active");
@@ -618,7 +623,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		nbt.setBoolean("active", active);
 		nbt.setInteger("count", count);
 		nbt.setBoolean("predictablyDraining", predictablyDraining);
-		
+
 		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
 		nbt.setTag("tank", tankTag);
 	}
@@ -628,82 +633,89 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	{
 		return facing;
 	}
+
 	@Override
 	public void setFacing(EnumFacing facing)
 	{
-		if (facing == EnumFacing.DOWN || facing == EnumFacing.UP) {
+		if (facing == EnumFacing.DOWN || facing == EnumFacing.UP)
+		{
 			facing = EnumFacing.NORTH;
 		}
 		this.facing = facing;
 	}
+
 	@Override
 	public int getFacingLimitation()
 	{
 		return 2;
 	}
+
 	@Override
 	public boolean mirrorFacingOnPlacement(EntityLivingBase placer)
 	{
 		return false;
 	}
+
 	@Override
 	public boolean canHammerRotate(EnumFacing side, float hitX, float hitY, float hitZ, EntityLivingBase entity)
 	{
 		return true;
 	}
+
 	@Override
 	public boolean canRotate(EnumFacing axis)
 	{
 		return true;
 	}
+
 	@Override
-	public  void afterRotation(EnumFacing oldDir, EnumFacing newDir)
+	public void afterRotation(EnumFacing oldDir, EnumFacing newDir)
 	{
-		for(int i=0; i<=1; i++)
+		for (int i = 0; i <= 1; i++)
 		{
-			TileEntity te = world.getTileEntity(getPos().add(0,-dummy+i,0));
-			if(te instanceof TileEntityAutoLubricator)
+			TileEntity te = world.getTileEntity(getPos().add(0, -dummy + i, 0));
+			if (te instanceof TileEntityAutoLubricator)
 			{
-				((TileEntityAutoLubricator)te).setFacing(newDir);
+				((TileEntityAutoLubricator) te).setFacing(newDir);
 				te.markDirty();
-				((TileEntityAutoLubricator)te).markContainingBlockForUpdate(null);
+				((TileEntityAutoLubricator) te).markContainingBlockForUpdate(null);
 			}
 		}
 	}
-	
+
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing)
 	{
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && dummy == 1 && (facing==null || facing == EnumFacing.UP))
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && dummy == 1 && (facing == null || facing == EnumFacing.UP))
 		{
-			TileEntity te = world.getTileEntity(getPos().add(0,-dummy,0));
+			TileEntity te = world.getTileEntity(getPos().add(0, -dummy, 0));
 			if (te instanceof TileEntityAutoLubricator)
 			{
-				return (T) ((TileEntityAutoLubricator)te).tank;
+				return (T) ((TileEntityAutoLubricator) te).tank;
 			}
 		}
 		return super.getCapability(capability, facing);
 	}
-	
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing)
 	{
 		if (dummy == 1 && capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
 		{
-			TileEntity te = world.getTileEntity(getPos().add(0,-dummy,0));
+			TileEntity te = world.getTileEntity(getPos().add(0, -dummy, 0));
 			if (te instanceof TileEntityAutoLubricator)
 			{
-				return (facing==null || facing == EnumFacing.UP);
+				return (facing == null || facing == EnumFacing.UP);
 			}
 		}
 		return super.hasCapability(capability, facing);
 	}
-	
+
 	int count = 0;
 	int lastTank = 0;
 	int lastTankUpdate = 0;
 	int countClient = 0;
-	
+
 	@Override
 	public void update()
 	{
@@ -724,12 +736,12 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 						{
 							count++;
 							handler.lubricate(world, count, master);
-							
-							if (!world.isRemote && count % 4 == 0) 
+
+							if (!world.isRemote && count % 4 == 0)
 							{
 								tank.drainInternal(LubricantHandler.getLubeAmount(tank.getFluid().getFluid()), true);
 							}
-							
+
 							if (world.isRemote)
 							{
 								countClient++;
@@ -744,7 +756,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 				}
 
 			}
-			
+
 			if (!world.isRemote && lastTank != this.tank.getFluidAmount())
 			{
 				if (predictablyDraining && tank.getFluid() != null && lastTank - this.tank.getFluidAmount() == LubricantHandler.getLubeAmount(tank.getFluid().getFluid()))
@@ -761,15 +773,14 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 				lastTank = this.tank.getFluidAmount();
 			}
 		}
-		
-		
-	
+
+
 	}
-	
+
 	@Override
 	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ)
 	{
-		TileEntity master = world.getTileEntity(getPos().add(0,-dummy,0));
+		TileEntity master = world.getTileEntity(getPos().add(0, -dummy, 0));
 		if (master != null && master instanceof TileEntityAutoLubricator)
 		{
 			FluidStack f = FluidUtil.getFluidContained(heldItem);
@@ -781,7 +792,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		}
 		return false;
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public AxisAlignedBB getRenderBoundingBox()
@@ -789,12 +800,12 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 		BlockPos nullPos = this.getPos();
 		return new AxisAlignedBB(nullPos.offset(facing, -5).offset(facing.rotateY(), -5).down(1), nullPos.offset(facing, 5).offset(facing.rotateY(), 5).up(3));
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public double getMaxRenderDistanceSquared()
 	{
-		return super.getMaxRenderDistanceSquared()* IEConfig.increasedTileRenderdistance;
+		return super.getMaxRenderDistanceSquared() * IEConfig.increasedTileRenderdistance;
 	}
 
 
@@ -803,16 +814,16 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	{
 		if (Utils.isFluidRelatedItemStack(player.getHeldItem(EnumHand.MAIN_HAND)))
 		{
-			TileEntity master = world.getTileEntity(getPos().add(0,-dummy,0));
+			TileEntity master = world.getTileEntity(getPos().add(0, -dummy, 0));
 			if (master != null && master instanceof TileEntityAutoLubricator)
 			{
 				TileEntityAutoLubricator lube = (TileEntityAutoLubricator) master;
 				String s = null;
 				if (lube.tank.getFluid() != null)
-					s = lube.tank.getFluid().getLocalizedName() + ": " +lube.tank.getFluidAmount() + "mB";
+					s = lube.tank.getFluid().getLocalizedName() + ": " + lube.tank.getFluidAmount() + "mB";
 				else
 					s = I18n.format(Lib.GUI + "empty");
-				return new String[] {s};
+				return new String[]{s};
 			}
 		}
 		return null;
@@ -828,25 +839,25 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 	public float[] getBlockBounds()
 	{
 		if (dummy == 1)
-			return new float[] { .1875F, 0, .1875F, .8125f, 1, .8125f };
+			return new float[]{.1875F, 0, .1875F, .8125f, 1, .8125f};
 		else
-			return new float[] { .0625f, 0, .0625f, .9375f, 1, .9375f };
+			return new float[]{.0625f, 0, .0625f, .9375f, 1, .9375f};
 	}
-	
-	
+
+
 	public void readTank(NBTTagCompound nbt)
 	{
 		tank.readFromNBT(nbt.getCompoundTag("tank"));
 	}
-	
+
 	public void writeTank(NBTTagCompound nbt, boolean toItem)
 	{
-		boolean write = tank.getFluidAmount()>0;
+		boolean write = tank.getFluidAmount() > 0;
 		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
-		if(!toItem || write)
+		if (!toItem || write)
 			nbt.setTag("tank", tankTag);
 	}
-	
+
 	@Override
 	public void readOnPlacement(EntityLivingBase placer, ItemStack stack)
 	{
@@ -855,7 +866,7 @@ public class TileEntityAutoLubricator extends TileEntityIEBase implements IDirec
 			readTank(stack.getTagCompound());
 		}
 	}
-	
+
 	@Override
 	public ItemStack getTileDrop(EntityPlayer player, IBlockState state)
 	{

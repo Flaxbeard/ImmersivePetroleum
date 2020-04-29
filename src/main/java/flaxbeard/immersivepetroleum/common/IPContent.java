@@ -26,7 +26,6 @@ import flaxbeard.immersivepetroleum.common.items.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
@@ -43,7 +42,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.ArrayList;
 
-@Mod.EventBusSubscriber(modid=ImmersivePetroleum.MODID)
+@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID)
 public class IPContent
 {
 	public static ArrayList<Block> registeredIPBlocks = new ArrayList<Block>();
@@ -55,14 +54,14 @@ public class IPContent
 	public static BlockIPFluid blockFluidNapalm;
 
 	public static BlockIPBase blockMetalMultiblock;
-	
+
 	public static BlockIPBase blockStoneDecoration;
-	
+
 	public static BlockIPBase blockMetalDevice;
 
 	public static BlockIPBase blockDummy;
 
-	
+
 	public static ArrayList<Item> registeredIPItems = new ArrayList<Item>();
 
 	public static Item itemMaterial;
@@ -99,7 +98,7 @@ public class IPContent
 		if (!FluidRegistry.registerFluid(fluidDiesel))
 			fluidDiesel = FluidRegistry.getFluid("diesel");
 		FluidRegistry.addBucketForFluid(fluidDiesel);
-		
+
 		fluidLubricant = new Fluid(
 				"lubricant",
 				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/lubricant_still"),
@@ -108,7 +107,7 @@ public class IPContent
 		if (!FluidRegistry.registerFluid(fluidLubricant))
 			fluidLubricant = FluidRegistry.getFluid("lubricant");
 		FluidRegistry.addBucketForFluid(fluidLubricant);
-		
+
 		fluidGasoline = new Fluid(
 				"gasoline",
 				new ResourceLocation(ImmersivePetroleum.MODID + ":blocks/fluid/gasoline_still"),
@@ -134,37 +133,37 @@ public class IPContent
 		blockFluidNapalm = new BlockNapalm("fluid_napalm", fluidNapalm, Material.WATER).setFlammability(100, 600);
 
 		blockMetalMultiblock = new BlockIPMetalMultiblocks();
-		
+
 		blockMetalDevice = new BlockIPMetalDevice();
 
-		blockStoneDecoration = (BlockIPBase)new BlockIPBase("stone_decoration", Material.ROCK, PropertyEnum.create("type", BlockTypes_IPStoneDecoration.class), ItemBlockIPBase.class).setHardness(2.0F).setResistance(10.0F);
-		blockDummy = (BlockIPBase)new BlockIPBase("dummy", Material.ROCK, PropertyEnum.create("type", BlockTypes_Dummy.class), ItemBlockIPBase.class);
+		blockStoneDecoration = (BlockIPBase) new BlockIPBase("stone_decoration", Material.ROCK, PropertyEnum.create("type", BlockTypes_IPStoneDecoration.class), ItemBlockIPBase.class).setHardness(2.0F).setResistance(10.0F);
+		blockDummy = (BlockIPBase) new BlockIPBase("dummy", Material.ROCK, PropertyEnum.create("type", BlockTypes_Dummy.class), ItemBlockIPBase.class);
 
 		itemMaterial = new ItemIPBase("material", 64,
 				"bitumen");
-		
+
 		itemProjector = new ItemProjector("schematic");
 		itemSpeedboat = new ItemSpeedboat("speedboat");
-		
+
 		itemUpgrades = new ItemIPUpgrade("upgrades");
-		
+
 		itemOilCan = new ItemOilCan("oil_can");
 
 	}
-	
+
 	public static void init()
 	{
-		blockFluidCrudeOil.setPotionEffects(new PotionEffect(IEPotions.flammable,100,1));
-		blockFluidDiesel.setPotionEffects(new PotionEffect(IEPotions.flammable,100,1));
-		blockFluidLubricant.setPotionEffects(new PotionEffect(IEPotions.slippery,100,1));
-		blockFluidNapalm.setPotionEffects(new PotionEffect(IEPotions.flammable,140,2));
+		blockFluidCrudeOil.setPotionEffects(new PotionEffect(IEPotions.flammable, 100, 1));
+		blockFluidDiesel.setPotionEffects(new PotionEffect(IEPotions.flammable, 100, 1));
+		blockFluidLubricant.setPotionEffects(new PotionEffect(IEPotions.slippery, 100, 1));
+		blockFluidNapalm.setPotionEffects(new PotionEffect(IEPotions.flammable, 140, 2));
 
 		ChemthrowerHandler.registerEffect("lubricant", new LubricantEffect());
 		ChemthrowerHandler.registerEffect("plantoil", new LubricantEffect());
-		ChemthrowerHandler.registerEffect("gasoline", new ChemthrowerEffect_Potion(null,0, IEPotions.flammable,60,1));
+		ChemthrowerHandler.registerEffect("gasoline", new ChemthrowerEffect_Potion(null, 0, IEPotions.flammable, 60, 1));
 		ChemthrowerHandler.registerFlammable("gasoline");
-		ChemthrowerHandler.registerEffect("lubricant", new ChemthrowerEffect_Potion(null,0, IEPotions.slippery,60,1));
-		ChemthrowerHandler.registerEffect("napalm", new ChemthrowerEffect_Potion(null,0, IEPotions.flammable,60,2));
+		ChemthrowerHandler.registerEffect("lubricant", new ChemthrowerEffect_Potion(null, 0, IEPotions.slippery, 60, 1));
+		ChemthrowerHandler.registerEffect("napalm", new ChemthrowerEffect_Potion(null, 0, IEPotions.flammable, 60, 2));
 		ChemthrowerHandler.registerFlammable("napalm");
 
 		registerTile(TileEntityDistillationTower.class);
@@ -179,13 +178,13 @@ public class IPContent
 
 
 		ForgeRegistries.RECIPES.register(new SchematicCraftingHandler().setRegistryName(ImmersivePetroleum.MODID, "projector"));
-			
+
 		Config.addConfigReservoirs(IPConfig.extraction.reservoirs);
 		Config.addFuel(IPConfig.Generation.fuels);
 		Config.addBoatFuel(IPConfig.Miscellaneous.boat_fuels);
 		Config.addDistillationRecipes(IPConfig.Refining.towerRecipes, IPConfig.Refining.towerByproduct);
 
-		MixerRecipe.addRecipe(new FluidStack(fluidNapalm, 500), new FluidStack(fluidGasoline, 500), new Object[] {"dustAluminum", "dustAluminum", "dustAluminum"}, 3200);
+		MixerRecipe.addRecipe(new FluidStack(fluidNapalm, 500), new FluidStack(fluidGasoline, 500), new Object[]{"dustAluminum", "dustAluminum", "dustAluminum"}, 3200);
 
 		LubricantHandler.registerLubricant(fluidLubricant, 3);
 		LubricantHandler.registerLubricant(IEContent.fluidPlantoil, 12);
@@ -198,22 +197,26 @@ public class IPContent
 	public static void registerTile(Class<? extends TileEntity> tile)
 	{
 		String s = tile.getSimpleName();
-		s = s.substring(s.indexOf("TileEntity")+"TileEntity".length());
-		GameRegistry.registerTileEntity(tile, ImmersivePetroleum.MODID+":"+ s);
+		s = s.substring(s.indexOf("TileEntity") + "TileEntity".length());
+		GameRegistry.registerTileEntity(tile, ImmersivePetroleum.MODID + ":" + s);
 	}
-	
+
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event)
 	{
-		for(Block block : registeredIPBlocks)
+		for (Block block : registeredIPBlocks)
+		{
 			event.getRegistry().register(block.setRegistryName(createRegistryName(block.getTranslationKey())));
+		}
 	}
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event)
 	{
-		for(Item item : registeredIPItems)
+		for (Item item : registeredIPItems)
+		{
 			event.getRegistry().register(item.setRegistryName(createRegistryName(item.getTranslationKey())));
+		}
 	}
 
 	private static ResourceLocation createRegistryName(String unlocalized)
@@ -222,5 +225,5 @@ public class IPContent
 		unlocalized = unlocalized.replaceFirst("\\.", ":");
 		return new ResourceLocation(unlocalized);
 	}
-	
+
 }

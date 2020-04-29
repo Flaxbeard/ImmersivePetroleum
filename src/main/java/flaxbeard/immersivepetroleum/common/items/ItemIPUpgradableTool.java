@@ -20,7 +20,7 @@ public abstract class ItemIPUpgradableTool extends ItemIPInternalStorage impleme
 	public ItemIPUpgradableTool(String name, int stackSize, String upgradeType, String... subNames)
 	{
 		super(name, stackSize, subNames);
-		this.upgradeType=upgradeType;
+		this.upgradeType = upgradeType;
 	}
 
 	@Override
@@ -34,27 +34,34 @@ public abstract class ItemIPUpgradableTool extends ItemIPInternalStorage impleme
 	{
 		return ItemNBTHelper.getTagCompound(stack, "upgrades");
 	}
+
 	@Override
 	public void clearUpgrades(ItemStack stack)
 	{
 		ItemNBTHelper.remove(stack, "upgrades");
 	}
+
 	@Override
 	public void finishUpgradeRecalculation(ItemStack stack)
 	{
 	}
+
 	@Override
 	public void recalculateUpgrades(ItemStack stack)
 	{
 		clearUpgrades(stack);
-		IItemHandler inv = (IItemHandler)stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (EnumFacing)null);
+		IItemHandler inv = (IItemHandler) stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (EnumFacing) null);
 		NBTTagCompound upgradeTag = getUpgradeBase(stack).copy();
-		if (inv != null) {
-			for(int i = 0; i < inv.getSlots(); ++i) {
+		if (inv != null)
+		{
+			for (int i = 0; i < inv.getSlots(); ++i)
+			{
 				ItemStack u = inv.getStackInSlot(i);
-				if (!u.isEmpty() && u.getItem() instanceof IUpgrade) {
-					IUpgrade upg = (IUpgrade)u.getItem();
-					if (upg.getUpgradeTypes(u).contains(this.upgradeType) && upg.canApplyUpgrades(stack, u)) {
+				if (!u.isEmpty() && u.getItem() instanceof IUpgrade)
+				{
+					IUpgrade upg = (IUpgrade) u.getItem();
+					if (upg.getUpgradeTypes(u).contains(this.upgradeType) && upg.canApplyUpgrades(stack, u))
+					{
 						upg.applyUpgrades(stack, u, upgradeTag);
 					}
 				}
@@ -69,11 +76,13 @@ public abstract class ItemIPUpgradableTool extends ItemIPInternalStorage impleme
 	{
 		return new NBTTagCompound();
 	}
+
 	@Override
 	public boolean canTakeFromWorkbench(ItemStack stack)
 	{
 		return true;
 	}
+
 	@Override
 	public void removeFromWorkbench(EntityPlayer player, ItemStack stack)
 	{
@@ -81,6 +90,7 @@ public abstract class ItemIPUpgradableTool extends ItemIPInternalStorage impleme
 
 	@Override
 	public abstract boolean canModify(ItemStack stack);
+
 	@Override
 	public abstract Slot[] getWorkbenchSlots(Container var1, ItemStack var2);
 }

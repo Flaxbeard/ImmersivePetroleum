@@ -1,20 +1,76 @@
 {
-    "textures": {
-        "0": "immersivepetroleum:blocks/dummy_pipe"
-    },
-    "elements": [
-        {
-            "name": "Cube",
-            "from": [ 4.0, 4.0, 4.0 ], 
-            "to": [ 12.0, 12.0, 12.0 ], 
-            "faces": {
-                "north": { "texture": "#0", "uv": [ 4.0, 4.0, 12.0, 12.0 ] },
-                "east": { "texture": "#0", "uv": [ 4.0, 4.0, 12.0, 12.0 ] },
-                "south": { "texture": "#0", "uv": [ 4.0, 4.0, 12.0, 12.0 ] },
-                "west": { "texture": "#0", "uv": [ 4.0, 4.0, 12.0, 12.0 ] },
-                "up": { "texture": "#0", "uv": [ 4.0, 4.0, 12.0, 12.0 ] },
-                "down": { "texture": "#0", "uv": [ 4.0, 5.0, 12.0, 13.0 ] }
-            }
+  "textures": {
+    "0": "immersivepetroleum:blocks/dummy_pipe"
+  },
+  "elements": [
+    {
+      "name": "Cube",
+      "from": [
+        4.0,
+        4.0,
+        4.0
+      ],
+      "to": [
+        12.0,
+        12.0,
+        12.0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#0",
+          "uv": [
+            4.0,
+            4.0,
+            12.0,
+            12.0
+          ]
+        },
+        "east": {
+          "texture": "#0",
+          "uv": [
+            4.0,
+            4.0,
+            12.0,
+            12.0
+          ]
+        },
+        "south": {
+          "texture": "#0",
+          "uv": [
+            4.0,
+            4.0,
+            12.0,
+            12.0
+          ]
+        },
+        "west": {
+          "texture": "#0",
+          "uv": [
+            4.0,
+            4.0,
+            12.0,
+            12.0
+          ]
+        },
+        "up": {
+          "texture": "#0",
+          "uv": [
+            4.0,
+            4.0,
+            12.0,
+            12.0
+          ]
+        },
+        "down": {
+          "texture": "#0",
+          "uv": [
+            4.0,
+            5.0,
+            12.0,
+            13.0
+          ]
         }
-    ]
+      }
+    }
+  ]
 }

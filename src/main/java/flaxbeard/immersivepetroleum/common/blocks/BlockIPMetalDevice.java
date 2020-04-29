@@ -21,7 +21,7 @@ public class BlockIPMetalDevice extends BlockIPTileProvider<BlockTypes_IPMetalDe
 {
 	public BlockIPMetalDevice()
 	{
-		super("metal_device",Material.IRON, PropertyEnum.create("type", BlockTypes_IPMetalDevice.class), ItemBlockIPBase.class, IEProperties.FACING_HORIZONTAL, IEProperties.MULTIBLOCKSLAVE);
+		super("metal_device", Material.IRON, PropertyEnum.create("type", BlockTypes_IPMetalDevice.class), ItemBlockIPBase.class, IEProperties.FACING_HORIZONTAL, IEProperties.MULTIBLOCKSLAVE);
 		setHardness(3.0F);
 		setResistance(15.0F);
 		lightOpacity = 0;
@@ -36,6 +36,7 @@ public class BlockIPMetalDevice extends BlockIPTileProvider<BlockTypes_IPMetalDe
 	{
 		return true;
 	}
+
 	@Override
 	public String getCustomStateMapping(int meta, boolean itemBlock)
 	{
@@ -53,7 +54,7 @@ public class BlockIPMetalDevice extends BlockIPTileProvider<BlockTypes_IPMetalDe
 	@Override
 	public TileEntity createNewTileEntity(World world, int meta)
 	{
-		switch(BlockTypes_IPMetalDevice.values()[meta])
+		switch (BlockTypes_IPMetalDevice.values()[meta])
 		{
 			case AUTOMATIC_LUBRICATOR:
 				return new TileEntityAutoLubricator();
@@ -68,7 +69,7 @@ public class BlockIPMetalDevice extends BlockIPTileProvider<BlockTypes_IPMetalDe
 	{
 		return true;
 	}
-	
+
 	@Override
 	public boolean canIEBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack)
 	{
@@ -79,7 +80,7 @@ public class BlockIPMetalDevice extends BlockIPTileProvider<BlockTypes_IPMetalDe
 		}
 		return true;
 	}
-	
+
 	@Deprecated
 	public EnumBlockRenderType getRenderType(IBlockState state)
 	{
@@ -89,7 +90,7 @@ public class BlockIPMetalDevice extends BlockIPTileProvider<BlockTypes_IPMetalDe
 		}
 		return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
 	}
-	
+
 	@Override
 	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
 	{

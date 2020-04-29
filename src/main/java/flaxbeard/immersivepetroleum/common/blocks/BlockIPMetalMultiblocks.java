@@ -24,7 +24,7 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 {
 	public BlockIPMetalMultiblocks()
 	{
-		super("metal_multiblock",Material.IRON, PropertyEnum.create("type", BlockTypes_IPMetalMultiblock.class), ItemBlockIPBase.class, IEProperties.DYNAMICRENDER,IEProperties.BOOLEANS[0],Properties.AnimationProperty,IEProperties.OBJ_TEXTURE_REMAP);
+		super("metal_multiblock", Material.IRON, PropertyEnum.create("type", BlockTypes_IPMetalMultiblock.class), ItemBlockIPBase.class, IEProperties.DYNAMICRENDER, IEProperties.BOOLEANS[0], Properties.AnimationProperty, IEProperties.OBJ_TEXTURE_REMAP);
 		setHardness(3.0F);
 		setResistance(15.0F);
 		this.setAllNotNormalBlock();
@@ -36,10 +36,11 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 	{
 		return true;
 	}
+
 	@Override
 	public String getCustomStateMapping(int meta, boolean itemBlock)
 	{
-		if(BlockTypes_IPMetalMultiblock.values()[meta].needsCustomState())
+		if (BlockTypes_IPMetalMultiblock.values()[meta].needsCustomState())
 			return BlockTypes_IPMetalMultiblock.values()[meta].getCustomState();
 		return null;
 	}
@@ -47,7 +48,7 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 	@Override
 	public TileEntity createNewTileEntity(World world, int meta)
 	{
-		switch(BlockTypes_IPMetalMultiblock.values()[meta])
+		switch (BlockTypes_IPMetalMultiblock.values()[meta])
 		{
 			case DISTILLATION_TOWER:
 				return new TileEntityDistillationTower();
@@ -249,12 +250,12 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
 		TileEntity te = world.getTileEntity(pos);
-		if(te instanceof TileEntityMultiblockPart)
+		if (te instanceof TileEntityMultiblockPart)
 		{
-			TileEntityMultiblockPart tile = (TileEntityMultiblockPart)te;
-			if(tile instanceof TileEntityMultiblockMetal && ((TileEntityMultiblockMetal) tile).isRedstonePos())
+			TileEntityMultiblockPart tile = (TileEntityMultiblockPart) te;
+			if (tile instanceof TileEntityMultiblockMetal && ((TileEntityMultiblockMetal) tile).isRedstonePos())
 				return true;
-			
+
 			if (te instanceof TileEntityDistillationTower)
 			{
 				return tile.pos <= 1
@@ -262,15 +263,14 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 						|| ((tile.pos / 16) > 0 && (tile.pos / 16) % 4 == 0 && side == EnumFacing.UP)
 						|| (tile.pos / 16 == 15 && side == EnumFacing.UP);
 			}
-			else if(te instanceof TileEntityPumpjack)
+			else if (te instanceof TileEntityPumpjack)
 			{
 				return tile.pos == 2 || tile.pos == 20 || tile.pos == 11 || tile.pos == 9;
 			}
-			
+
 		}
 		return super.isSideSolid(state, world, pos, side);
 	}
-
 
 
 	@Override
@@ -278,12 +278,12 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 	{
 		return true;
 	}
-	
+
 	@Override
 	public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
 	{
 		super.onEntityCollision(worldIn, pos, state, entityIn);
-		if (entityIn instanceof EntityLivingBase&&!((EntityLivingBase) entityIn).isOnLadder() && isLadder(state, worldIn, pos, (EntityLivingBase)entityIn))
+		if (entityIn instanceof EntityLivingBase && !((EntityLivingBase) entityIn).isOnLadder() && isLadder(state, worldIn, pos, (EntityLivingBase) entityIn))
 		{
 			float f5 = 0.15F;
 			if (entityIn.motionX < -f5)
@@ -299,27 +299,27 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 			if (entityIn.motionY < -0.15D)
 				entityIn.motionY = -0.15D;
 
-			if(entityIn.motionY<0 && entityIn instanceof EntityPlayer && entityIn.isSneaking())
+			if (entityIn.motionY < 0 && entityIn instanceof EntityPlayer && entityIn.isSneaking())
 			{
-				entityIn.motionY=.05;
+				entityIn.motionY = .05;
 				return;
 			}
-			if(entityIn.collidedHorizontally)
-				entityIn.motionY=.2;
+			if (entityIn.collidedHorizontally)
+				entityIn.motionY = .2;
 		}
 	}
-	
+
 	@Override
 	public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity)
 	{
 		TileEntity te = world.getTileEntity(pos);
-		if(te instanceof TileEntityDistillationTower)
+		if (te instanceof TileEntityDistillationTower)
 		{
 			return ((TileEntityDistillationTower) te).isLadder();
 		}
 		return false;
 	}
-	
+
 	@Deprecated
 	public EnumBlockRenderType getRenderType(IBlockState state)
 	{

@@ -18,9 +18,9 @@ public class SchematicPlaceBlockPostEvent extends Event
 	private int rotate;
 	private int l;
 	private int h;
-	private int w; 
+	private int w;
 	private BlockPos pos;
-	
+
 	public SchematicPlaceBlockPostEvent(IMultiblock multiblock, int index, IBlockState state, BlockPos pos, World world, int rotate, int l, int h, int w)
 	{
 		super();
@@ -34,37 +34,37 @@ public class SchematicPlaceBlockPostEvent extends Event
 		this.w = w;
 		this.pos = pos;
 	}
-	
+
 	public World getWorld()
 	{
 		return world;
 	}
-	
+
 	public IBlockState getBlockState()
 	{
 		return state;
 	}
-	
+
 	public int getIndex()
 	{
 		return index;
 	}
-	
+
 	public IMultiblock getMultiblock()
 	{
 		return multiblock;
 	}
-	
+
 	public void setBlockState(IBlockState state)
 	{
 		this.state = state;
 	}
-	
+
 	public BlockPos getPos()
 	{
 		return pos;
 	}
-	
+
 	public EnumFacing getRotate()
 	{
 		switch (rotate)
@@ -79,18 +79,18 @@ public class SchematicPlaceBlockPostEvent extends Event
 				return EnumFacing.SOUTH;
 		}
 	}
-	
-	
+
+
 	public int getL()
 	{
 		return l;
 	}
-	
+
 	public int getH()
 	{
 		return h;
 	}
-	
+
 	public int getW()
 	{
 		return w;

@@ -18,8 +18,8 @@ public class SchematicTestEvent extends Event
 	private int rotate;
 	private int l;
 	private int h;
-	private int w; 
-	
+	private int w;
+
 	public SchematicTestEvent(boolean isEqual, IMultiblock multiblock, int index, ItemStack stack, World world, BlockPos pos, int rotate, int l, int h, int w)
 	{
 		super();
@@ -34,42 +34,42 @@ public class SchematicTestEvent extends Event
 		this.w = w;
 		this.rotate = rotate;
 	}
-	
+
 	public World getWorld()
 	{
 		return world;
 	}
-	
+
 	public ItemStack getItemStack()
 	{
 		return stack;
 	}
-	
+
 	public BlockPos getPos()
 	{
 		return pos;
 	}
-	
+
 	public void setIsEqual(boolean equal)
 	{
 		this.isEqual = equal;
 	}
-	
+
 	public boolean isEqual()
 	{
 		return isEqual;
 	}
-	
+
 	public int getIndex()
 	{
 		return index;
 	}
-	
+
 	public IMultiblock getMultiblock()
 	{
 		return multiblock;
 	}
-	
+
 	public EnumFacing getRotate()
 	{
 		switch (rotate)
@@ -84,17 +84,17 @@ public class SchematicTestEvent extends Event
 				return EnumFacing.SOUTH;
 		}
 	}
-	
+
 	public int getL()
 	{
 		return l;
 	}
-	
+
 	public int getH()
 	{
 		return h;
 	}
-	
+
 	public int getW()
 	{
 		return w;

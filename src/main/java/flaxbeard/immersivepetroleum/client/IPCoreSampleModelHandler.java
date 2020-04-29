@@ -12,12 +12,12 @@ public class IPCoreSampleModelHandler
 {
 	public static IPCoreSampleModelHandler instance = new IPCoreSampleModelHandler();
 
-	@SubscribeEvent(priority=EventPriority.LOWEST)
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onModelBakeEvent(ModelBakeEvent event)
 	{
-		
+
 		ModelResourceLocation mLoc = new ModelResourceLocation(new ResourceLocation("immersiveengineering", IEContent.itemCoresample.itemName), "inventory");
 		event.getModelRegistry().putObject(mLoc, new ModelCoresampleExtended());
-		
+
 	}
 }

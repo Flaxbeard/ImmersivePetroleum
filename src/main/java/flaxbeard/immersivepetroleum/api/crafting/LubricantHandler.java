@@ -11,7 +11,7 @@ public class LubricantHandler
 	/**
 	 * Registers a lubricant to be used in the Lubricant Can and Automatic Lubricator
 	 *
-	 * @param lube The fluid to be used as lubricant
+	 * @param lube   The fluid to be used as lubricant
 	 * @param amount mB of lubricant to spend every 4 ticks
 	 */
 	public static void registerLubricant(Fluid lube, int amount)

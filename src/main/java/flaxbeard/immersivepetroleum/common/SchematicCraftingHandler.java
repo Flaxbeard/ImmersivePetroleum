@@ -41,13 +41,13 @@ public class SchematicCraftingHandler extends net.minecraftforge.registries.IFor
 	{
 		return new SchematicResult(inv).remaining;
 	}
-	
+
 	private class SchematicResult
 	{
 		private final boolean canCraft;
 		private final NonNullList<ItemStack> remaining;
 		private final ItemStack output;
-		
+
 		private ItemStack manual;
 		int manualStack = 0;
 
@@ -69,10 +69,11 @@ public class SchematicCraftingHandler extends net.minecraftforge.registries.IFor
 			else
 			{
 				remaining = NonNullList.withSize(9, ItemStack.EMPTY);
-				output = ItemStack.EMPTY;;
+				output = ItemStack.EMPTY;
+				;
 			}
 		}
-		
+
 		private boolean process(InventoryCrafting inv)
 		{
 			boolean hasPaper = false;
@@ -80,7 +81,7 @@ public class SchematicCraftingHandler extends net.minecraftforge.registries.IFor
 			{
 				ItemStack stack = inv.getStackInSlot(i);
 				if (!stack.isEmpty())
-				{				
+				{
 					if (stack.getItem() == IEContent.itemTool && stack.getItemDamage() == 3)
 					{
 						if (manual.isEmpty() && ItemNBTHelper.hasKey(stack, "lastMultiblock"))
@@ -108,7 +109,7 @@ public class SchematicCraftingHandler extends net.minecraftforge.registries.IFor
 					{
 						return false;
 					}
-					
+
 				}
 			}
 			return !manual.isEmpty() && hasPaper;

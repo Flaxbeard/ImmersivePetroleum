@@ -13,8 +13,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class ConsumeBoatFuelPacket implements IMessage
 {
-	public ConsumeBoatFuelPacket() {}
-	
+	public ConsumeBoatFuelPacket()
+	{
+	}
+
 	public int amount;
 
 	public ConsumeBoatFuelPacket(int amount)
@@ -27,13 +29,13 @@ public class ConsumeBoatFuelPacket implements IMessage
 	{
 		buf.writeInt(amount);
 	}
-	
+
 	@Override
 	public void fromBytes(ByteBuf buf)
 	{
 		amount = buf.readInt();
 	}
-	
+
 	public static class Handler implements IMessageHandler<ConsumeBoatFuelPacket, IMessage>
 	{
 
@@ -45,9 +47,9 @@ public class ConsumeBoatFuelPacket implements IMessage
 
 			return null;
 		}
-		
+
 	}
-	
+
 	private static class DoSync implements Runnable
 	{
 		private EntityPlayer p;
@@ -59,7 +61,7 @@ public class ConsumeBoatFuelPacket implements IMessage
 			this.amount = amount;
 		}
 
-		
+
 		@Override
 		public void run()
 		{
@@ -67,17 +69,17 @@ public class ConsumeBoatFuelPacket implements IMessage
 			{
 				Entity entity = p.getRidingEntity();
 
-		        if (entity instanceof EntitySpeedboat)
-		        {
-		        	EntitySpeedboat boat = (EntitySpeedboat) entity;
-		        	FluidStack fluid = boat.getContainedFluid();
-		        	if (fluid != null)
-		        		fluid.amount = Math.max(0, fluid.amount - amount);
+				if (entity instanceof EntitySpeedboat)
+				{
+					EntitySpeedboat boat = (EntitySpeedboat) entity;
+					FluidStack fluid = boat.getContainedFluid();
+					if (fluid != null)
+						fluid.amount = Math.max(0, fluid.amount - amount);
 					boat.setContainedFluid(fluid);
-		        }
+				}
 			}
 		}
-		
+
 
 	}
 

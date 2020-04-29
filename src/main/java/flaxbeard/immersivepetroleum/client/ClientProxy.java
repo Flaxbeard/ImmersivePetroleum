@@ -48,7 +48,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -78,19 +77,19 @@ import java.util.Locale;
 public class ClientProxy extends CommonProxy
 {
 	public static final String CAT_IP = "ip";
-	
+
 	@Override
 	public void preInit()
 	{
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpeedboat.class, RenderSpeedboat::new);
 	}
-	
+
 	@Override
 	public void preInitEnd()
 	{
-		
+
 	}
-		
+
 	@SubscribeEvent
 	public static void registerModels(ModelRegistryEvent evt)
 	{
@@ -103,7 +102,7 @@ public class ClientProxy extends CommonProxy
 				if (block instanceof IIEMetaBlock)
 				{
 					IIEMetaBlock ieMetaBlock = (IIEMetaBlock) block;
-					if(ieMetaBlock.useCustomStateMapper())
+					if (ieMetaBlock.useCustomStateMapper())
 						ModelLoader.setCustomStateMapper(block, IECustomStateMapper.getStateMapper(ieMetaBlock));
 					ModelLoader.setCustomMeshDefinition(blockItem, new ItemMeshDefinition()
 					{
@@ -118,16 +117,16 @@ public class ClientProxy extends CommonProxy
 					{
 						String location = loc.toString();
 						String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getName() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)) : null;
-						if(ieMetaBlock.useCustomStateMapper())
+						if (ieMetaBlock.useCustomStateMapper())
 						{
 							String custom = ieMetaBlock.getCustomStateMapping(meta, true);
-							if(custom != null)
+							if (custom != null)
 								location += "_" + custom;
 						}
 						try
 						{
 							ModelLoader.setCustomModelResourceLocation(blockItem, meta, new ModelResourceLocation(location, prop));
-						} catch(NullPointerException npe)
+						} catch (NullPointerException npe)
 						{
 							throw new RuntimeException("WELP! apparently " + ieMetaBlock + " lacks an item!", npe);
 						}
@@ -136,20 +135,21 @@ public class ClientProxy extends CommonProxy
 					{
 						ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "auto_lube"), "inventory"));
 					}
-				} else if(block instanceof BlockIPFluid)
+				}
+				else if (block instanceof BlockIPFluid)
 					mapFluidState(block, ((BlockIPFluid) block).getFluid());
 				else
 					ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(loc, "inventory"));
 		}
 
-		for(Item item : IPContent.registeredIPItems)
+		for (Item item : IPContent.registeredIPItems)
 		{
-			if(item instanceof ItemIPBase)
+			if (item instanceof ItemIPBase)
 			{
 				ItemIPBase ipMetaItem = (ItemIPBase) item;
-				if(ipMetaItem.registerSubModels && ipMetaItem.getSubNames() != null && ipMetaItem.getSubNames().length > 0)
+				if (ipMetaItem.registerSubModels && ipMetaItem.getSubNames() != null && ipMetaItem.getSubNames().length > 0)
 				{
-					for(int meta = 0; meta < ipMetaItem.getSubNames().length; meta++)
+					for (int meta = 0; meta < ipMetaItem.getSubNames().length; meta++)
 					{
 						ResourceLocation loc = new ResourceLocation("immersivepetroleum", ipMetaItem.itemName + "/" + ipMetaItem.getSubNames()[meta]);
 
@@ -170,7 +170,7 @@ public class ClientProxy extends CommonProxy
 						}
 					});
 				}
-			} 
+			}
 			else
 			{
 				final ResourceLocation loc = Item.REGISTRY.getNameForObject(item);
@@ -191,22 +191,22 @@ public class ClientProxy extends CommonProxy
 	public void init()
 	{
 		ShaderUtil.init();
-	
+
 	}
-	
-	@SubscribeEvent(priority=EventPriority.LOWEST)
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void onModelBakeEvent(ModelBakeEvent event)
 	{
-		
+
 		ModelResourceLocation mLoc = new ModelResourceLocation(new ResourceLocation("immersiveengineering", IEContent.itemCoresample.itemName), "inventory");
 		event.getModelRegistry().putObject(mLoc, new ModelCoresampleExtended());
-		
+
 	}
 
 	@Override
 	public void postInit()
 	{
-	
+
 		ManualHelper.addEntry("schematics", CAT_IP,
 				new ManualPages.Crafting(ManualHelper.getManual(), "schematics0", new ItemStack(IPContent.itemProjector, 1, 0)),
 				new ManualPageSchematicCrafting(ManualHelper.getManual(), "schematics1", new ItemStack(IPContent.itemProjector, 1, 0)),
@@ -217,8 +217,8 @@ public class ClientProxy extends CommonProxy
 		ManualHelper.addEntry("pumpjack", CAT_IP,
 				new ManualPageMultiblock(ManualHelper.getManual(), "pumpjack0", MultiblockPumpjack.instance),
 				new ManualPages.Text(ManualHelper.getManual(), "pumpjack1"));
-	
-	
+
+
 		ArrayList<DistillationRecipe> recipeList = DistillationRecipe.recipeList;
 		List<String[]> l = new ArrayList<String[]>();
 		for (DistillationRecipe recipe : recipeList)
@@ -228,28 +228,27 @@ public class ClientProxy extends CommonProxy
 			{
 				String inputName = recipe.input.getFluid().getLocalizedName(recipe.input);
 				String outputName = output.getFluid().getLocalizedName(output);
-				String[] test = new String[] {
+				String[] test = new String[]{
 						first ? recipe.input.amount + " mB " + inputName : "",
-								output.amount + " mB " + outputName
+						output.amount + " mB " + outputName
 				};
 				l.add(test);
 				first = false;
 			}
 		}
-		
+
 		String[][] table = l.toArray(new String[0][]);
 		ManualHelper.addEntry("distillationTower", CAT_IP,
 				new ManualPageBigMultiblock(ManualHelper.getManual(), MultiblockDistillationTower.instance),
 				new ManualPages.Text(ManualHelper.getManual(), "distillationTower0"),
 				new ManualPages.Text(ManualHelper.getManual(), "distillationTower1"),
 				new ManualPages.Table(ManualHelper.getManual(), "distillationTower2", table, false));
-	
-	
-	
+
+
 		ManualHelper.addEntry("portableGenerator", CAT_IP,
 				new ManualPages.Crafting(ManualHelper.getManual(), "portableGenerator0", new ItemStack(IPContent.blockMetalDevice, 1, 1)),
 				new ManualPages.Text(ManualHelper.getManual(), "portableGenerator1"));
-		
+
 		ManualHelper.addEntry("speedboat", CAT_IP,
 				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat0", new ItemStack(IPContent.itemSpeedboat, 1, 0)),
 				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat1", new ItemStack(IPContent.itemUpgrades, 1, 2)),
@@ -261,21 +260,21 @@ public class ClientProxy extends CommonProxy
 
 		ManualHelper.addEntry("napalm", CAT_IP,
 				new ManualPages.Text(ManualHelper.getManual(), "napalm0"));
-	
+
 
 		ManualHelper.addEntry("asphalt", CAT_IP,
-				new ManualPages.Crafting(ManualHelper.getManual(), "asphalt0", new ItemStack(IPContent.blockStoneDecoration,1,BlockTypes_IPStoneDecoration.ASPHALT.getMeta())));
-			
+				new ManualPages.Crafting(ManualHelper.getManual(), "asphalt0", new ItemStack(IPContent.blockStoneDecoration, 1, BlockTypes_IPStoneDecoration.ASPHALT.getMeta())));
+
 
 		ManualHelper.addEntry("lubricant", CAT_IP,
 				new ManualPages.Text(ManualHelper.getManual(), "lubricant0"),
 				new ManualPages.Crafting(ManualHelper.getManual(), "lubricant1", new ItemStack(IPContent.itemOilCan)),
 				new ManualPages.Text(ManualHelper.getManual(), "lubricant2"));
-		
+
 		ManualHelper.addEntry("automaticLubricator", CAT_IP,
 				new ManualPages.Crafting(ManualHelper.getManual(), "automaticLubricator0", new ItemStack(IPContent.blockMetalDevice, 1, 0)),
 				new ManualPages.Text(ManualHelper.getManual(), "automaticLubricator1"));
-	
+
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDistillationTower.TileEntityDistillationTowerParent.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPumpjack.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAutoLubricator.class, new TileAutoLubricatorRenderer());
@@ -287,7 +286,7 @@ public class ClientProxy extends CommonProxy
 	{
 		Item item = Item.getItemFromBlock(block);
 		FluidStateMapper mapper = new FluidStateMapper(fluid);
-		if(item != null)
+		if (item != null)
 		{
 			ModelLoader.registerItemVariants(item);
 			ModelLoader.setCustomMeshDefinition(item, mapper);
@@ -318,12 +317,13 @@ public class ClientProxy extends CommonProxy
 			return location;
 		}
 	}
-	
-	
+
+
 	static ManualEntry resEntry;
+
 	public static void handleReservoirManual()
 	{
-		if(ManualHelper.getManual()!=null)
+		if (ManualHelper.getManual() != null)
 		{
 			ArrayList<IManualPage> pages = new ArrayList();
 			pages.add(new ManualPages.Text(ManualHelper.getManual(), "oil0"));
@@ -333,9 +333,9 @@ public class ClientProxy extends CommonProxy
 
 			for (ReservoirType type : minerals)
 			{
-				String name = "desc.immersivepetroleum.info.reservoir."+ type.name;
+				String name = "desc.immersivepetroleum.info.reservoir." + type.name;
 				String localizedName = I18n.format(name);
-				if(localizedName.equalsIgnoreCase(name))
+				if (localizedName.equalsIgnoreCase(name))
 					localizedName = type.name;
 
 				boolean isVowel = (localizedName.toLowerCase().charAt(0) == 'a'
@@ -344,32 +344,36 @@ public class ClientProxy extends CommonProxy
 						|| localizedName.toLowerCase().charAt(0) == 'o'
 						|| localizedName.toLowerCase().charAt(0) == 'u');
 				String aOrAn = I18n.format(isVowel ? "ie.manual.entry.oilVowel" : "ie.manual.entry.oilConsonant");
-				
+
 				String s0 = "";
 				if (type.dimensionWhitelist != null && type.dimensionWhitelist.length > 0)
 				{
 					String validDims = "";
 					for (int dim : type.dimensionWhitelist)
-						validDims += (!validDims.isEmpty() ? ", ":"") + "<dim;" + dim + ">";
+					{
+						validDims += (!validDims.isEmpty() ? ", " : "") + "<dim;" + dim + ">";
+					}
 					s0 = I18n.format("ie.manual.entry.oilDimValid", localizedName, validDims, aOrAn);
 				}
 				else if (type.dimensionBlacklist != null && type.dimensionBlacklist.length > 0)
 				{
 					String invalidDims = "";
 					for (int dim : type.dimensionBlacklist)
-						invalidDims += (!invalidDims.isEmpty() ? ", ":"") + "<dim;" + dim + ">";
+					{
+						invalidDims += (!invalidDims.isEmpty() ? ", " : "") + "<dim;" + dim + ">";
+					}
 					s0 = I18n.format("ie.manual.entry.oilDimInvalid", localizedName, invalidDims, aOrAn);
 				}
 				else
 					s0 = I18n.format("ie.manual.entry.oilDimAny", localizedName, aOrAn);
-				
+
 				String s4 = "";
 				if (type.biomeWhitelist != null && type.biomeWhitelist.length > 0)
 				{
 					String validBiomes = "";
 					for (String biome : type.biomeWhitelist)
 					{
-						validBiomes += (!validBiomes.isEmpty() ? ", ":"") + PumpjackHandler.getTagDisplayName(biome);
+						validBiomes += (!validBiomes.isEmpty() ? ", " : "") + PumpjackHandler.getTagDisplayName(biome);
 					}
 					s4 = I18n.format("ie.manual.entry.oilBiomeValid", validBiomes);
 				}
@@ -378,13 +382,12 @@ public class ClientProxy extends CommonProxy
 					String invalidBiomes = "";
 					for (String biome : type.biomeBlacklist)
 					{
-						invalidBiomes += (!invalidBiomes.isEmpty() ? ", ":"") + PumpjackHandler.getTagDisplayName(biome);
+						invalidBiomes += (!invalidBiomes.isEmpty() ? ", " : "") + PumpjackHandler.getTagDisplayName(biome);
 					}
 					s4 = I18n.format("ie.manual.entry.oilBiomeInvalid", invalidBiomes);
 				}
 				else
 					s4 = I18n.format("ie.manual.entry.oilBiomeAny");
-
 
 
 				String s1 = "";
@@ -394,29 +397,29 @@ public class ClientProxy extends CommonProxy
 					s1 = fluid.getLocalizedName(new FluidStack(fluid, 1));
 				}
 				DecimalFormat f = new DecimalFormat("#,###.##");
-				
+
 				String s3 = "";
 				if (type.replenishRate > 0)
 				{
 					s3 = I18n.format("ie.manual.entry.oilReplenish", type.replenishRate, s1);
 				}
 				String s2 = I18n.format("ie.manual.entry.oil2", s0, s1, f.format(type.minSize), f.format(type.maxSize), s3, s4);
-				
+
 				UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
 				ItemStack stack = new ItemStack(bucket);
-	            FluidStack fs = new FluidStack(fluid, bucket.getCapacity());
-	            
-	            IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
+				FluidStack fs = new FluidStack(fluid, bucket.getCapacity());
+
+				IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
 				fluidHandler.fill(fs, true);
-					            
-				ItemStack[] displayStacks = new ItemStack[] { fluidHandler.getContainer() };
-				pages.add(new ManualPages.ItemDisplay(ManualHelper.getManual(), s2, displayStacks ));
+
+				ItemStack[] displayStacks = new ItemStack[]{fluidHandler.getContainer()};
+				pages.add(new ManualPages.ItemDisplay(ManualHelper.getManual(), s2, displayStacks));
 			}
 
 //			String[][][] multiTables = formatToTable_ExcavatorMinerals();
 //			for(String[][] minTable : multiTables)
 //				pages.add(new ManualPages.Table(ManualHelper.getManual(), "", minTable,true));
-			if(resEntry!=null)
+			if (resEntry != null)
 				resEntry.setPages(pages.toArray(new IManualPage[pages.size()]));
 			else
 			{
@@ -425,7 +428,7 @@ public class ClientProxy extends CommonProxy
 			}
 		}
 	}
-	
+
 	public void renderTile(TileEntity te)
 	{
 		if (te instanceof TileEntityPumpjack.TileEntityPumpjackParent)
@@ -433,17 +436,17 @@ public class ClientProxy extends CommonProxy
 			GlStateManager.pushMatrix();
 			GlStateManager.rotate(-90, 0, 1, 0);
 			GlStateManager.translate(1, 1, -2);
-			
+
 			float pt = 0;
 			if (Minecraft.getMinecraft().player != null)
 			{
 				((TileEntityPumpjack.TileEntityPumpjackParent) te).activeTicks = Minecraft.getMinecraft().player.ticksExisted;
 				pt = Minecraft.getMinecraft().getRenderPartialTicks();
 			}
-			
-			
+
+
 			TileEntitySpecialRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer((TileEntity) te);
-			
+
 			tesr.render((TileEntity) te, 0, 0, 0, pt, 0, 0);
 			GlStateManager.popMatrix();
 		}
@@ -452,21 +455,22 @@ public class ClientProxy extends CommonProxy
 			GlStateManager.pushMatrix();
 			GlStateManager.rotate(-90, 0, 1, 0);
 			GlStateManager.translate(0, 1, -4);
-			
-			
+
+
 			TileEntitySpecialRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer((TileEntity) te);
-			
+
 			tesr.render((TileEntity) te, 0, 0, 0, 0, 0, 0);
 			GlStateManager.popMatrix();
 		}
 	}
 
 	@Override
-	public void drawUpperHalfSlab(ItemStack stack) {
+	public void drawUpperHalfSlab(ItemStack stack)
+	{
 		// Render slabs on top half
 		BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
 		IBlockState state = IEContent.blockMetalDecorationSlabs1.getStateFromMeta(stack.getMetadata());
-		IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState((IBlockState)state);
+		IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState((IBlockState) state);
 
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(0.0F, 0.5F, 1.0F);
@@ -474,13 +478,16 @@ public class ClientProxy extends CommonProxy
 		GlStateManager.blendFunc(770, 771);
 		GlStateManager.enableBlend();
 		GlStateManager.disableCull();
-		if (Minecraft.isAmbientOcclusionEnabled()) {
+		if (Minecraft.isAmbientOcclusionEnabled())
+		{
 			GlStateManager.shadeModel(7425);
-		} else {
+		}
+		else
+		{
 			GlStateManager.shadeModel(7424);
 		}
 
-		blockRenderer.getBlockModelRenderer().renderModelBrightness(model, (IBlockState)state, 0.75F, false);
+		blockRenderer.getBlockModelRenderer().renderModelBrightness(model, (IBlockState) state, 0.75F, false);
 		GlStateManager.popMatrix();
 	}
 }

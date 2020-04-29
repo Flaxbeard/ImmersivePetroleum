@@ -40,22 +40,22 @@ public class ItemOilCan extends ItemIPBase
 	{
 		super(name, 1, new String[0]);
 	}
-	
+
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
 	{
 		FluidStack fs = FluidUtil.getFluidContained(stack);
-		if (fs!=null)
+		if (fs != null)
 		{
 			TextFormatting rarity = fs.getFluid().getRarity() == EnumRarity.COMMON ? TextFormatting.GRAY : fs.getFluid().getRarity().color;
-			tooltip.add(rarity + fs.getLocalizedName() + TextFormatting.GRAY+": " +fs.amount + "/" + 8000 + "mB");
+			tooltip.add(rarity + fs.getLocalizedName() + TextFormatting.GRAY + ": " + fs.amount + "/" + 8000 + "mB");
 		}
 		else
 			tooltip.add(I18n.format(Lib.DESC_FLAVOUR + "drill.empty"));
 	}
-	
+
 	@Override
 	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase target, EnumHand hand)
 	{
@@ -87,16 +87,16 @@ public class ItemOilCan extends ItemIPBase
 			return false;
 		}
 	}
-	
+
 	@Override
 	public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker)
 	{
-		this.itemInteractionForEntity(stack, (EntityPlayer)null, target, EnumHand.MAIN_HAND);
+		this.itemInteractionForEntity(stack, (EntityPlayer) null, target, EnumHand.MAIN_HAND);
 		return true;
 	}
 
 	@Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
+	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
 	{
 		ItemStack stack = player.getHeldItem(hand);
 		EnumActionResult ret = EnumActionResult.PASS;
@@ -134,7 +134,7 @@ public class ItemOilCan extends ItemIPBase
 	{
 		return ItemNBTHelper.hasKey(stack, "jerrycanDrain") || FluidUtil.getFluidContained(stack) != null;
 	}
-	
+
 	@Override
 	public ItemStack getContainerItem(ItemStack stack)
 	{
@@ -146,7 +146,7 @@ public class ItemOilCan extends ItemIPBase
 			ItemNBTHelper.remove(ret, "jerrycanDrain");
 			return ret;
 		}
-		else if (FluidUtil.getFluidContained(stack)!=null)
+		else if (FluidUtil.getFluidContained(stack) != null)
 		{
 			ItemStack ret = stack.copy();
 			IFluidHandler handler = FluidUtil.getFluidHandler(ret);

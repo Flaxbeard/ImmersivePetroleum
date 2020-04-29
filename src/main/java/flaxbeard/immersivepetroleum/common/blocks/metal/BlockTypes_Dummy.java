@@ -10,17 +10,19 @@ public enum BlockTypes_Dummy implements IStringSerializable, BlockIPBase.IBlockE
 	PIPE,
 	CONVEYOR,
 	OIL_DEPOSIT;
-	
+
 	@Override
 	public String getName()
 	{
 		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
+
 	@Override
 	public int getMeta()
 	{
 		return ordinal();
 	}
+
 	@Override
 	public boolean listForCreative()
 	{

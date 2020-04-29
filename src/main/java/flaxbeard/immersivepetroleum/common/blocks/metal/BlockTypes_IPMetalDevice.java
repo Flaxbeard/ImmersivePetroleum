@@ -15,11 +15,13 @@ public enum BlockTypes_IPMetalDevice implements IStringSerializable, BlockIPBase
 	{
 		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
+
 	@Override
 	public int getMeta()
 	{
 		return ordinal();
 	}
+
 	@Override
 	public boolean listForCreative()
 	{

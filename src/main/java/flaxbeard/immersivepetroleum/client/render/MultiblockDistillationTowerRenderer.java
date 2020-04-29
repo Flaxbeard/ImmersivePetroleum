@@ -23,10 +23,10 @@ public class MultiblockDistillationTowerRenderer extends TileEntitySpecialRender
 
 	@Override
 	public boolean isGlobalRenderer(TileEntityDistillationTower.TileEntityDistillationTowerParent te)
-    {
-        return true;
-    }
-	
+	{
+		return true;
+	}
+
 	@Override
 	public void render(TileEntityDistillationTower.TileEntityDistillationTowerParent te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
 	{
@@ -36,7 +36,6 @@ public class MultiblockDistillationTowerRenderer extends TileEntitySpecialRender
 			GlStateManager.translate(x, y - 1, z);
 
 
-			
 			EnumFacing rotation = te.facing;
 			if (rotation == EnumFacing.NORTH)
 			{
@@ -58,7 +57,7 @@ public class MultiblockDistillationTowerRenderer extends TileEntitySpecialRender
 			{
 				GlStateManager.translate(0, 0, -3);
 			}
-			
+
 			float ticks = Minecraft.getMinecraft().player.ticksExisted + partialTicks;
 
 			if (te.mirrored)
@@ -75,9 +74,9 @@ public class MultiblockDistillationTowerRenderer extends TileEntitySpecialRender
 				ClientUtils.bindTexture(te.shouldRenderAsActive() ? textureOn : texture);
 				model.renderFurnace(null, 0, 0, 0, 0, 0, 0.0625F);
 			}
-			
+
 			GlStateManager.popMatrix();
-			
+
 		}
 	}
 

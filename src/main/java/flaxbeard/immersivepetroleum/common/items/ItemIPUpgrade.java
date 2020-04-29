@@ -21,16 +21,18 @@ public class ItemIPUpgrade extends ItemIPBase implements IUpgrade
 	{
 		super(name, 1, "reinforced_hull", "icebreaker", "tank", "rudders", "paddles");
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
 	{
-		if (stack.getItemDamage()<getSubNames().length)
+		if (stack.getItemDamage() < getSubNames().length)
 		{
 			String[] flavour = ImmersiveEngineering.proxy.splitStringOnWidth(I18n.format("desc.immersivepetroleum.flavour.upgrades." + this.getSubNames()[stack.getItemDamage()]), 200);
 			for (String s : flavour)
+			{
 				tooltip.add(s);
+			}
 		}
 	}
 
@@ -47,9 +49,10 @@ public class ItemIPUpgrade extends ItemIPBase implements IUpgrade
 	}
 
 	@Override
-	public void applyUpgrades(ItemStack target, ItemStack upgrade, NBTTagCompound modifications) {
+	public void applyUpgrades(ItemStack target, ItemStack upgrade, NBTTagCompound modifications)
+	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 

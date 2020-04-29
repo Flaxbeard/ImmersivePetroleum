@@ -3,7 +3,6 @@ package flaxbeard.immersivepetroleum.common.items;
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
-import blusunrize.immersiveengineering.api.MultiblockHandler.MultiblockFormEvent;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler.ConveyorDirection;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler.IConveyorBelt;
@@ -89,13 +88,13 @@ public class ItemProjector extends ItemIPBase
 				}
 				tooltip.add(I18n.format("chat.immersivepetroleum.info.schematic.build0"));
 				tooltip.add(I18n.format("chat.immersivepetroleum.info.schematic.build1", I18n.format("desc.immersiveengineering.info.multiblock." + multiblock)));
-				
+
 				int h = mb.getStructureManual().length;
 				int l = mb.getStructureManual()[0].length;
 				int w = mb.getStructureManual()[0][0].length;
 
 				tooltip.add(ChatFormatting.DARK_GRAY + (l + " x " + h + " x " + w));
-				
+
 				if (ItemNBTHelper.hasKey(stack, "pos"))
 				{
 					NBTTagCompound pos = ItemNBTHelper.getTagCompound(stack, "pos");
@@ -106,7 +105,7 @@ public class ItemProjector extends ItemIPBase
 				}
 				else
 				{
-					tooltip.add(ChatFormatting.DARK_GRAY + I18n.format("chat.immersivepetroleum.info.schematic.controls", 
+					tooltip.add(ChatFormatting.DARK_GRAY + I18n.format("chat.immersivepetroleum.info.schematic.controls",
 							Minecraft.getMinecraft().gameSettings.keyBindPickBlock.getDisplayName(),
 							Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName(),
 							Minecraft.getMinecraft().gameSettings.keyBindPickBlock.getDisplayName()));
@@ -117,7 +116,7 @@ public class ItemProjector extends ItemIPBase
 		}
 		tooltip.add(ChatFormatting.DARK_GRAY + I18n.format("chat.immersivepetroleum.info.schematic.noMultiblock"));
 	}
-	
+
 	public static IMultiblock getMultiblock(String identifier)
 	{
 		List<IMultiblock> multiblocks = MultiblockHandler.getMultiblocks();
@@ -134,7 +133,7 @@ public class ItemProjector extends ItemIPBase
 		}
 		return null;
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public String getItemStackDisplayName(ItemStack stack)
@@ -158,7 +157,7 @@ public class ItemProjector extends ItemIPBase
 		}
 		return ("" + I18n.format(this.getUnlocalizedNameInefficiently(stack) + ".name", "")).trim();
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list)
@@ -181,9 +180,9 @@ public class ItemProjector extends ItemIPBase
 			list.add(stack);
 		}
 	}
-	
+
 	@Override
-    public EnumActionResult onItemUse(EntityPlayer playerIn, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	public EnumActionResult onItemUse(EntityPlayer playerIn, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
 		ItemStack stack = playerIn.getHeldItem(hand);
 		if (ItemNBTHelper.hasKey(stack, "pos") && playerIn.isSneaking())
@@ -191,30 +190,30 @@ public class ItemProjector extends ItemIPBase
 			ItemNBTHelper.remove(stack, "pos");
 			return EnumActionResult.SUCCESS;
 		}
-		
+
 		IMultiblock mb = ItemProjector.getMultiblock(ItemNBTHelper.getString(stack, "multiblock"));
 		if (!ItemNBTHelper.hasKey(stack, "pos") && mb != null)
 		{
 			NBTTagCompound posTag = new NBTTagCompound();
-			
+
 			IBlockState state = world.getBlockState(pos);
-			
+
 			BlockPos hit = pos;
 			if (!state.getBlock().isReplaceable(world, pos) && facing == EnumFacing.UP)
 			{
 				hit = hit.add(0, 1, 0);
 			}
-			
-			
+
+
 			int mh = mb.getStructureManual().length;
 			int ml = mb.getStructureManual()[0].length;
 			int mw = mb.getStructureManual()[0][0].length;
-			
+
 			int rotate = getRotation(stack);
-			
-			int xd = (rotate % 2 == 0) ? ml :  mw;
-			int zd = (rotate % 2 == 0) ? mw :  ml;
-			
+
+			int xd = (rotate % 2 == 0) ? ml : mw;
+			int zd = (rotate % 2 == 0) ? mw : ml;
+
 			Vec3d vec = playerIn.getLookVec();
 			EnumFacing look = (Math.abs(vec.z) > Math.abs(vec.x)) ? (vec.z > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.x > 0 ? EnumFacing.EAST : EnumFacing.WEST);
 			if (look == EnumFacing.NORTH || look == EnumFacing.SOUTH)
@@ -225,7 +224,7 @@ public class ItemProjector extends ItemIPBase
 			{
 				hit = hit.add(0, 0, -zd / 2);
 			}
-			
+
 			if (look == EnumFacing.NORTH)
 			{
 				hit = hit.add(0, 0, -zd + 1);
@@ -234,28 +233,28 @@ public class ItemProjector extends ItemIPBase
 			{
 				hit = hit.add(-xd + 1, 0, 0);
 			}
-			
+
 			if (playerIn.isSneaking() && playerIn.isCreative())
 			{
 				if (mb.getUniqueName().equals("IE:ExcavatorDemo"))
 				{
 					hit = hit.add(0, -2, 0);
 				}
-				
+
 				boolean flip = getFlipped(stack);
-				
+
 				int idx = 0;
-				for(int h = 0; h < mh; h++)
+				for (int h = 0; h < mh; h++)
 				{
-					for(int l = 0; l < ml; l++)
+					for (int l = 0; l < ml; l++)
 					{
-						for(int w = 0; w < mw; w++)
-						{							
+						for (int w = 0; w < mw; w++)
+						{
 							if (mb.getStructureManual()[h][l][w] != null && !mb.getStructureManual()[h][l][w].isEmpty())
 							{
 								int xo = l;
 								int zo = w;
-								
+
 								switch (rotate)
 								{
 									case 1:
@@ -279,29 +278,29 @@ public class ItemProjector extends ItemIPBase
 								{
 									zo = flip ? zo : (mw - zo - 1);
 								}
-								
+
 								BlockPos actualPos = hit.add(xo, h, zo);
-								
-							
+
+
 								ItemStack toPlace = mb.getStructureManual()[h][l][w];
 								IBlockState stt = mb.getBlockstateFromStack(idx, toPlace);
 								SchematicPlaceBlockEvent placeEvent = new SchematicPlaceBlockEvent(mb, idx, stt, world, rotate, l, h, w);
 								if (!MinecraftForge.EVENT_BUS.post(placeEvent))
 								{
 									world.setBlockState(actualPos, placeEvent.getBlockState());
-									
+
 									SchematicPlaceBlockPostEvent postEvent = new SchematicPlaceBlockPostEvent(mb, idx, stt, actualPos, world, rotate, l, h, w);
 									MinecraftForge.EVENT_BUS.post(postEvent);
 								}
-								
+
 							}
 						}
 					}
 				}
-				
+
 				return EnumActionResult.SUCCESS;
 			}
-			
+
 			posTag.setInteger("x", hit.getX());
 			posTag.setInteger("y", hit.getY());
 			posTag.setInteger("z", hit.getZ());
@@ -310,7 +309,7 @@ public class ItemProjector extends ItemIPBase
 		}
 		return EnumActionResult.PASS;
 	}
-	
+
 	public static int getRotation(ItemStack stack)
 	{
 		if (ItemNBTHelper.hasKey(stack, "rotate"))
@@ -319,7 +318,7 @@ public class ItemProjector extends ItemIPBase
 		}
 		return 0;
 	}
-	
+
 	public static boolean getFlipped(ItemStack stack)
 	{
 		if (ItemNBTHelper.hasKey(stack, "flip"))
@@ -328,7 +327,7 @@ public class ItemProjector extends ItemIPBase
 		}
 		return false;
 	}
-	
+
 	public static void rotateClient(ItemStack stack)
 	{
 		int newRotate = (getRotation(stack) + 1) % 4;
@@ -336,7 +335,7 @@ public class ItemProjector extends ItemIPBase
 		setRotate(stack, newRotate);
 		IPPacketHandler.INSTANCE.sendToServer(new RotateSchematicPacket(newRotate, flip));
 	}
-	
+
 	public static void flipClient(ItemStack stack)
 	{
 		int newRotate = getRotation(stack);
@@ -349,7 +348,7 @@ public class ItemProjector extends ItemIPBase
 	{
 		ItemNBTHelper.setInt(stack, "rotate", rotate);
 	}
-	
+
 	public static void setFlipped(ItemStack stack, boolean flip)
 	{
 		ItemNBTHelper.setBoolean(stack, "flip", flip);
@@ -366,10 +365,9 @@ public class ItemProjector extends ItemIPBase
 	}
 
 
-
 	boolean lastDown = false;
 	private int tempCode = 99999;
-	
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void handleKeypress(ClientTickEvent event)
@@ -380,15 +378,15 @@ public class ItemProjector extends ItemIPBase
 			//
 			ItemStack mainItem = mc.player.getHeldItemMainhand();
 			ItemStack secondItem = mc.player.getHeldItemOffhand();
-			
+
 			boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
 			boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
 			ItemStack target = main ? mainItem : secondItem;
 			World world = mc.world;
-			
+
 			if (main || off)
 			{
-				
+
 				int code = mc.gameSettings.keyBindPickBlock.getKeyCode();
 				if (code != 99999 && !ItemNBTHelper.hasKey(target, "pos"))
 				{
@@ -397,7 +395,7 @@ public class ItemProjector extends ItemIPBase
 						code += 100;
 						if (Mouse.isButtonDown(code))
 						{
-							
+
 							if (!lastDown)
 							{
 								if (mc.player.isSneaking())
@@ -446,24 +444,24 @@ public class ItemProjector extends ItemIPBase
 			lastDown = false;
 		}
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void renderLast(RenderWorldLastEvent event)
 	{
 
 		Minecraft mc = ClientUtils.mc();
-		
+
 		GlStateManager.pushMatrix();
-		
+
 		if (mc.player != null)
 		{
 			ItemStack mainItem = mc.player.getHeldItemMainhand();
 			ItemStack secondItem = mc.player.getHeldItemOffhand();
-			
+
 			boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
 			boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
-			
+
 			for (int i = 0; i < 11; i++)
 			{
 				GlStateManager.pushMatrix();
@@ -475,15 +473,15 @@ public class ItemProjector extends ItemIPBase
 				GlStateManager.popMatrix();
 			}
 		}
-		
+
 		if (mc.player != null)
 		{
 			ItemStack mainItem = mc.player.getHeldItemMainhand();
 			ItemStack secondItem = mc.player.getHeldItemOffhand();
-			
+
 			boolean main = mainItem != null && mainItem.getItem() == Item.getItemFromBlock(IPContent.blockMetalDevice);
 			boolean off = secondItem != null && secondItem.getItem() == Item.getItemFromBlock(IPContent.blockMetalDevice);
-			
+
 			if (main || off)
 			{
 				BlockPos base = mc.player.getPosition();
@@ -495,7 +493,7 @@ public class ItemProjector extends ItemIPBase
 						{
 							BlockPos pos = base.add(x, y, z);
 							TileEntity te = mc.player.world.getTileEntity(pos);
-							
+
 							if (te != null)
 							{
 								ILubricationHandler handler = LubricatedHandler.getHandlerForTile(te);
@@ -515,11 +513,11 @@ public class ItemProjector extends ItemIPBase
 											double px = TileEntityRendererDispatcher.staticPlayerX;
 											double py = TileEntityRendererDispatcher.staticPlayerY;
 											double pz = TileEntityRendererDispatcher.staticPlayerZ;
-											
-											
-											GlStateManager.translate(targetPos.getX() - px, targetPos.getY() - py, targetPos.getZ() -pz);
-											GlStateManager.translate(0.5, -.13, .5);	
-		
+
+
+											GlStateManager.translate(targetPos.getX() - px, targetPos.getY() - py, targetPos.getZ() - pz);
+											GlStateManager.translate(0.5, -.13, .5);
+
 											switch (targetFacing)
 											{
 												case SOUTH:
@@ -535,16 +533,16 @@ public class ItemProjector extends ItemIPBase
 													break;
 												default:
 											}
-											GlStateManager.translate(0.02, 0, .019);	
-		
-											GlStateManager.scale(1/0.65F, 1/0.65F, 1/0.65F);
+											GlStateManager.translate(0.02, 0, .019);
+
+											GlStateManager.scale(1 / 0.65F, 1 / 0.65F, 1 / 0.65F);
 											GlStateManager.scale(2, 2, 2);
-								
-		
+
+
 											ItemStack toRender = new ItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice));
-					
-											ClientUtils.mc().getRenderItem().renderItem(toRender, ItemCameraTransforms.TransformType.FIXED);			
-										
+
+											ClientUtils.mc().getRenderItem().renderItem(toRender, ItemCameraTransforms.TransformType.FIXED);
+
 											ShaderUtil.releaseShader();
 											GlStateManager.popMatrix();
 										}
@@ -556,18 +554,18 @@ public class ItemProjector extends ItemIPBase
 				}
 			}
 		}
-		
+
 		GlStateManager.popMatrix();
 
 	}
-	
+
 	public void renderSchematic(ItemStack target, EntityPlayer player, World world, float partialTicks, boolean shouldRenderMoving)
 	{
 		Minecraft mc = ClientUtils.mc();
-		
+
 		IMultiblock mb = ItemProjector.getMultiblock(ItemNBTHelper.getString(target, "multiblock"));
-		
-		
+
+
 		if (mb != null)
 		{
 			ItemStack heldStack = player.getHeldItemMainhand();
@@ -575,17 +573,17 @@ public class ItemProjector extends ItemIPBase
 			int mh = mb.getStructureManual().length;
 			int ml = mb.getStructureManual()[0].length;
 			int mw = mb.getStructureManual()[0][0].length;
-			
+
 			int rotate = ItemProjector.getRotation(target);
 			boolean flip = ItemProjector.getFlipped(target);
-			
-			int xd = (rotate % 2 == 0) ? ml :  mw;
-			int zd = (rotate % 2 == 0) ? mw :  ml;
+
+			int xd = (rotate % 2 == 0) ? ml : mw;
+			int zd = (rotate % 2 == 0) ? mw : ml;
 
 			BlockPos hit = null;
-			
+
 			boolean isPlaced = false;
-			
+
 			if (ItemNBTHelper.hasKey(target, "pos"))
 			{
 				NBTTagCompound pos = ItemNBTHelper.getTagCompound(target, "pos");
@@ -595,11 +593,11 @@ public class ItemProjector extends ItemIPBase
 				hit = new BlockPos(x, y, z);
 				isPlaced = true;
 			}
-			else if (shouldRenderMoving && ClientUtils.mc().objectMouseOver!=null && ClientUtils.mc().objectMouseOver.typeOfHit==Type.BLOCK)
+			else if (shouldRenderMoving && ClientUtils.mc().objectMouseOver != null && ClientUtils.mc().objectMouseOver.typeOfHit == Type.BLOCK)
 			{
 				BlockPos pos = ClientUtils.mc().objectMouseOver.getBlockPos();
-				
-				
+
+
 				IBlockState state = world.getBlockState(pos);
 				if (state.getBlock().isReplaceable(world, pos) || ClientUtils.mc().objectMouseOver.sideHit != EnumFacing.UP)
 				{
@@ -609,12 +607,12 @@ public class ItemProjector extends ItemIPBase
 				{
 					hit = pos.add(0, 1, 0);
 				}
-				
-				
+
+
 				Vec3d vec = mc.player.getLookVec();
 				EnumFacing facing = (Math.abs(vec.z) > Math.abs(vec.x)) ? (vec.z > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH) : (vec.x > 0 ? EnumFacing.EAST : EnumFacing.WEST);
-				
-				
+
+
 				if (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH)
 				{
 					hit = hit.add(-xd / 2, 0, 0);
@@ -623,7 +621,7 @@ public class ItemProjector extends ItemIPBase
 				{
 					hit = hit.add(0, 0, -zd / 2);
 				}
-				
+
 				if (facing == EnumFacing.NORTH)
 				{
 					hit = hit.add(0, 0, -zd + 1);
@@ -642,47 +640,47 @@ public class ItemProjector extends ItemIPBase
 				double px = TileEntityRendererDispatcher.staticPlayerX;
 				double py = TileEntityRendererDispatcher.staticPlayerY;
 				double pz = TileEntityRendererDispatcher.staticPlayerZ;
-				
+
 				final BlockRendererDispatcher blockRender = Minecraft.getMinecraft().getBlockRendererDispatcher();
 
-				
-				GlStateManager.translate(hit.getX()-px, hit.getY()-py, hit.getZ()-pz);
+
+				GlStateManager.translate(hit.getX() - px, hit.getY() - py, hit.getZ() - pz);
 
 				GlStateManager.disableLighting();
 
-				if(Minecraft.isAmbientOcclusionEnabled())
+				if (Minecraft.isAmbientOcclusionEnabled())
 					GlStateManager.shadeModel(GL11.GL_SMOOTH);
 				else
 					GlStateManager.shadeModel(GL11.GL_FLAT);
 
 				ClientUtils.mc().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-				
+
 				Tessellator tessellator = Tessellator.getInstance();
 				BufferBuilder buffer = tessellator.getBuffer();
-				
+
 				float flicker = (world.rand.nextInt(10) == 0) ? 0.75F : (world.rand.nextInt(20) == 0 ? 0.5F : 1F);
-				
+
 				boolean perfect = true;
-				
+
 				int idx = 0;
-				for(int h = 0; h < mh; h++)
+				for (int h = 0; h < mh; h++)
 				{
 					boolean slicePerfect = true;
-					for(int l = 0; l < ml; l++)
+					for (int l = 0; l < ml; l++)
 					{
-						for(int w = 0; w < mw; w++)
+						for (int w = 0; w < mw; w++)
 						{
 							BlockPos pos = new BlockPos(l, h, w);
 
 							GlStateManager.pushMatrix();
-							
+
 							if (mb.getStructureManual()[h][l][w] != null && !mb.getStructureManual()[h][l][w].isEmpty())
 							{
 								BlockPos blockPos = new BlockPos(0, 0, 0);
-								
+
 								int xo = l;
 								int zo = w;
-								
+
 								switch (rotate)
 								{
 									case 1:
@@ -706,20 +704,20 @@ public class ItemProjector extends ItemIPBase
 								{
 									zo = flip ? zo : (mw - zo - 1);
 								}
-								
+
 								BlockPos actualPos = hit.add(xo, h, zo);
-								
+
 								IBlockState otherState = null;
 								if (!heldStack.isEmpty() && heldStack.getItem() instanceof ItemBlock)
 								{
-									otherState = ((ItemBlock)heldStack.getItem()).getBlock().getStateFromMeta(heldStack.getItemDamage());
+									otherState = ((ItemBlock) heldStack.getItem()).getBlock().getStateFromMeta(heldStack.getItemDamage());
 								}
 								ItemStack stack = mb.getStructureManual()[h][l][w];
 								IBlockState state = mb.getBlockstateFromStack(idx, stack);
 								IBlockState actualState = world.getBlockState(actualPos);
 								boolean stateEqual = actualState.equals(state);
 								boolean otherStateEqual = otherState == null ? false : otherState.equals(state);
-								
+
 								int[] ids = OreDictionary.getOreIDs(stack);
 								for (int id : ids)
 								{
@@ -729,12 +727,12 @@ public class ItemProjector extends ItemIPBase
 										stateEqual = true;
 									}
 								}
-								
+
 								SchematicTestEvent testEvent = new SchematicTestEvent(stateEqual, mb, idx, stack, world, actualPos, rotate, l, h, w);
 								MinecraftForge.EVENT_BUS.post(testEvent);
 								stateEqual = testEvent.isEqual();
-								
-								
+
+
 								if (!heldStack.isEmpty() && otherState != null)
 								{
 									int[] ids2 = OreDictionary.getOreIDs(heldStack);
@@ -759,19 +757,19 @@ public class ItemProjector extends ItemIPBase
 									ShaderUtil.alpha_static(flicker * alpha, mc.player.ticksExisted + partialTicks);
 									GlStateManager.translate(xo, h, zo);
 
-									GlStateManager.translate(.5, .5, .5);	
-									
+									GlStateManager.translate(.5, .5, .5);
+
 									GlStateManager.scale(2.01, 2.01, 2.01);
-									
+
 									SchematicRenderBlockEvent renderEvent = new SchematicRenderBlockEvent(mb, idx, stack, world, rotate, l, h, w);
-									
+
 									if (!MinecraftForge.EVENT_BUS.post(renderEvent))
 									{
 										ItemStack toRender = renderEvent.getItemStack();
-				
-										ClientUtils.mc().getRenderItem().renderItem(toRender, ItemCameraTransforms.TransformType.FIXED);			
+
+										ClientUtils.mc().getRenderItem().renderItem(toRender, ItemCameraTransforms.TransformType.FIXED);
 									}
-									
+
 									ShaderUtil.releaseShader();
 								}
 
@@ -783,28 +781,28 @@ public class ItemProjector extends ItemIPBase
 					}
 					if (!slicePerfect && isPlaced) break;
 				}
-				
+
 				idx = 0;
 				GlStateManager.disableDepth();
 
-				for(int h = 0; h < mh; h++)
+				for (int h = 0; h < mh; h++)
 				{
 					boolean slicePerfect = true;
-					for(int l = 0; l < ml; l++)
+					for (int l = 0; l < ml; l++)
 					{
-						for(int w = 0; w < mw; w++)
+						for (int w = 0; w < mw; w++)
 						{
 							BlockPos pos = new BlockPos(l, h, w);
-			
+
 							GlStateManager.pushMatrix();
 
 							if (mb.getStructureManual()[h][l][w] != null && !mb.getStructureManual()[h][l][w].isEmpty())
 							{
 								BlockPos blockPos = new BlockPos(0, 0, 0);
-								
+
 								int xo = l;
 								int zo = w;
-								
+
 								switch (rotate)
 								{
 									case 1:
@@ -828,20 +826,20 @@ public class ItemProjector extends ItemIPBase
 								{
 									zo = flip ? zo : (mw - zo - 1);
 								}
-								
+
 								BlockPos actualPos = hit.add(xo, h, zo);
-								
+
 								IBlockState otherState = null;
 								if (!heldStack.isEmpty() && heldStack.getItem() instanceof ItemBlock)
 								{
-									otherState = ((ItemBlock)heldStack.getItem()).getBlock().getStateFromMeta(heldStack.getItemDamage());
+									otherState = ((ItemBlock) heldStack.getItem()).getBlock().getStateFromMeta(heldStack.getItemDamage());
 								}
 								ItemStack stack = mb.getStructureManual()[h][l][w];
 								IBlockState state = mb.getBlockstateFromStack(idx, stack);
 								IBlockState actualState = world.getBlockState(actualPos);
 								boolean stateEqual = actualState.equals(state);
 								boolean otherStateEqual = otherState == null ? false : otherState.equals(state);
-								
+
 								int[] ids = OreDictionary.getOreIDs(stack);
 								for (int id : ids)
 								{
@@ -851,11 +849,11 @@ public class ItemProjector extends ItemIPBase
 										stateEqual = true;
 									}
 								}
-								
+
 								SchematicTestEvent testEvent = new SchematicTestEvent(stateEqual, mb, idx, stack, world, actualPos, rotate, l, h, w);
 								MinecraftForge.EVENT_BUS.post(testEvent);
 								stateEqual = testEvent.isEqual();
-								
+
 								if (!heldStack.isEmpty() && otherState != null)
 								{
 									int[] ids2 = OreDictionary.getOreIDs(heldStack);
@@ -870,8 +868,8 @@ public class ItemProjector extends ItemIPBase
 										}
 									}
 								}
-								
-								
+
+
 								if (!stateEqual)
 								{
 									boolean isEmpty = world.getBlockState(actualPos).getBlock().isReplaceable(world, actualPos);
@@ -893,33 +891,33 @@ public class ItemProjector extends ItemIPBase
 										//buffer.setTranslation(l, h, w);
 										GlStateManager.glLineWidth(2f);
 										buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-										buffer.pos(-.5F, .5F, -.5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(.5F, .5F, -.5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(.5F, .5F, -.5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(.5F, .5F, .5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(.5F, .5F, .5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(-.5F, .5F, .5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(-.5F, .5F, .5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(-.5F, .5F, -.5F).color(r,g,b, alpha).endVertex();
-										
-										buffer.pos(-.5F, .5F, -.5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(-.5F, -.5F, -.5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(.5F, .5F, -.5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(.5F, -.5F, -.5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(-.5F, .5F, .5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(-.5F, -.5F, .5F).color(r,g,b, alpha).endVertex();	
-										buffer.pos(.5F, .5F, .5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(.5F, -.5F, .5F).color(r,g,b, alpha).endVertex();
-										
-										buffer.pos(-.5F, -.5F, -.5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(.5F, -.5F, -.5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(.5F, -.5F, -.5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(.5F, -.5F, .5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(.5F, -.5F, .5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(-.5F, -.5F, .5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(-.5F, -.5F, .5F).color(r,g,b, alpha).endVertex();
-										buffer.pos(-.5F, -.5F, -.5F).color(r,g,b, alpha).endVertex();
-										
+										buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
+
+										buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
+
+										buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
+										buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
+
 										tessellator.draw();
 										buffer.setTranslation(0, 0, 0);
 										GlStateManager.shadeModel(GL11.GL_FLAT);
@@ -928,7 +926,7 @@ public class ItemProjector extends ItemIPBase
 										GlStateManager.enableTexture2D();
 										GlStateManager.popMatrix();
 									}
-									
+
 								}
 
 							}
@@ -942,7 +940,7 @@ public class ItemProjector extends ItemIPBase
 
 				if (perfect)
 				{
-					
+
 					GlStateManager.pushMatrix();
 					GlStateManager.disableTexture2D();
 					GlStateManager.enableBlend();
@@ -957,33 +955,33 @@ public class ItemProjector extends ItemIPBase
 					//buffer.setTranslation(l, h, w);
 					GlStateManager.glLineWidth(2f);
 					buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-					buffer.pos(0, 1, 0).color(r,g,b,.375f).endVertex();
-					buffer.pos(1, 1, 0).color(r,g,b,.375f).endVertex();
-					buffer.pos(1, 1, 0).color(r,g,b,.375f).endVertex();
-					buffer.pos(1, 1, 1).color(r,g,b,.375f).endVertex();
-					buffer.pos(1, 1, 1).color(r,g,b,.375f).endVertex();
-					buffer.pos(0, 1, 1).color(r,g,b,.375f).endVertex();
-					buffer.pos(0, 1, 1).color(r,g,b,.375f).endVertex();
-					buffer.pos(0, 1, 0).color(r,g,b,.375f).endVertex();
-					
-					buffer.pos(0, 1, 0).color(r,g,b,.375f).endVertex();
-					buffer.pos(0, 0, 0).color(r,g,b,.375f).endVertex();
-					buffer.pos(1, 1, 0).color(r,g,b,.375f).endVertex();
-					buffer.pos(1, 0, 0).color(r,g,b,.375f).endVertex();
-					buffer.pos(0, 1, 1).color(r,g,b,.375f).endVertex();
-					buffer.pos(0, 0, 1).color(r,g,b,.375f).endVertex();	
-					buffer.pos(1, 1, 1).color(r,g,b,.375f).endVertex();
-					buffer.pos(1, 0, 1).color(r,g,b,.375f).endVertex();
-					
-					buffer.pos(0, 0, 0).color(r,g,b,.375f).endVertex();
-					buffer.pos(1, 0, 0).color(r,g,b,.375f).endVertex();
-					buffer.pos(1, 0, 0).color(r,g,b,.375f).endVertex();
-					buffer.pos(1, 0, 1).color(r,g,b,.375f).endVertex();
-					buffer.pos(1, 0, 1).color(r,g,b,.375f).endVertex();
-					buffer.pos(0, 0, 1).color(r,g,b,.375f).endVertex();
-					buffer.pos(0, 0, 1).color(r,g,b,.375f).endVertex();
-					buffer.pos(0, 0, 0).color(r,g,b,.375f).endVertex();
-					
+					buffer.pos(0, 1, 0).color(r, g, b, .375f).endVertex();
+					buffer.pos(1, 1, 0).color(r, g, b, .375f).endVertex();
+					buffer.pos(1, 1, 0).color(r, g, b, .375f).endVertex();
+					buffer.pos(1, 1, 1).color(r, g, b, .375f).endVertex();
+					buffer.pos(1, 1, 1).color(r, g, b, .375f).endVertex();
+					buffer.pos(0, 1, 1).color(r, g, b, .375f).endVertex();
+					buffer.pos(0, 1, 1).color(r, g, b, .375f).endVertex();
+					buffer.pos(0, 1, 0).color(r, g, b, .375f).endVertex();
+
+					buffer.pos(0, 1, 0).color(r, g, b, .375f).endVertex();
+					buffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
+					buffer.pos(1, 1, 0).color(r, g, b, .375f).endVertex();
+					buffer.pos(1, 0, 0).color(r, g, b, .375f).endVertex();
+					buffer.pos(0, 1, 1).color(r, g, b, .375f).endVertex();
+					buffer.pos(0, 0, 1).color(r, g, b, .375f).endVertex();
+					buffer.pos(1, 1, 1).color(r, g, b, .375f).endVertex();
+					buffer.pos(1, 0, 1).color(r, g, b, .375f).endVertex();
+
+					buffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
+					buffer.pos(1, 0, 0).color(r, g, b, .375f).endVertex();
+					buffer.pos(1, 0, 0).color(r, g, b, .375f).endVertex();
+					buffer.pos(1, 0, 1).color(r, g, b, .375f).endVertex();
+					buffer.pos(1, 0, 1).color(r, g, b, .375f).endVertex();
+					buffer.pos(0, 0, 1).color(r, g, b, .375f).endVertex();
+					buffer.pos(0, 0, 1).color(r, g, b, .375f).endVertex();
+					buffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
+
 					tessellator.draw();
 					buffer.setTranslation(0, 0, 0);
 					GlStateManager.shadeModel(GL11.GL_FLAT);
@@ -1002,7 +1000,7 @@ public class ItemProjector extends ItemIPBase
 		}
 		GlStateManager.enableDepth();
 	}
-	
+
 	@SubscribeEvent
 	public void handlePumpPlace(SchematicPlaceBlockPostEvent event)
 	{
@@ -1024,7 +1022,7 @@ public class ItemProjector extends ItemIPBase
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void handleConveyorPlace(SchematicPlaceBlockPostEvent event)
 	{
@@ -1043,10 +1041,10 @@ public class ItemProjector extends ItemIPBase
 					TileEntityConveyorBelt conveyor = ((TileEntityConveyorBelt) te);
 					ResourceLocation rl = new ResourceLocation(ImmersiveEngineering.MODID, "conveyor");
 					IConveyorBelt subType = ConveyorHandler.getConveyor(rl, conveyor);
-					conveyor.setConveyorSubtype(subType);		
-					
+					conveyor.setConveyorSubtype(subType);
+
 					EnumFacing facing = ((TileEntityConveyorBelt) te).facing;
-					
+
 					if ((mb.getUniqueName().equals("IE:AutoWorkbench") && (event.getW() != 1 || event.getL() != 2))
 							|| mb.getUniqueName().equals("IE:BottlingMachine"))
 					{
@@ -1060,13 +1058,13 @@ public class ItemProjector extends ItemIPBase
 					{
 						conveyor.setFacing(event.getRotate());
 					}
-					
+
 					event.getWorld().setBlockState(event.getPos(), event.getBlockState());
 				}
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void handleConveyorTest(SchematicTestEvent event)
 	{
@@ -1088,9 +1086,9 @@ public class ItemProjector extends ItemIPBase
 						event.setIsEqual(false);
 						return;
 					}
-					
+
 					EnumFacing facing = ((TileEntityConveyorBelt) te).facing;
-					
+
 					if (event.isEqual() && (mb.getUniqueName().equals("IE:AutoWorkbench") && (event.getW() != 1 || event.getL() != 2))
 							|| mb.getUniqueName().equals("IE:BottlingMachine"))
 					{
@@ -1114,9 +1112,12 @@ public class ItemProjector extends ItemIPBase
 			}
 		}
 
-		if (mb.getUniqueName().equals("IP:DistillationTower")) {
-			if (state.getBlock() == IEContent.blockMetalDecorationSlabs1) {
-				if (event.getWorld().getBlockState(event.getPos()).getBlock() == IEContent.blockMetalDecorationSlabs1) {
+		if (mb.getUniqueName().equals("IP:DistillationTower"))
+		{
+			if (state.getBlock() == IEContent.blockMetalDecorationSlabs1)
+			{
+				if (event.getWorld().getBlockState(event.getPos()).getBlock() == IEContent.blockMetalDecorationSlabs1)
+				{
 					event.setIsEqual(true);
 				}
 			}
@@ -1126,40 +1127,40 @@ public class ItemProjector extends ItemIPBase
 	public boolean doesIntersect(EntityPlayer player, ItemStack target, BlockPos check)
 	{
 		IMultiblock mb = ItemProjector.getMultiblock(ItemNBTHelper.getString(target, "multiblock"));
-		
-		
+
+
 		if (mb != null)
 		{
 			int mh = mb.getStructureManual().length;
 			int ml = mb.getStructureManual()[0].length;
 			int mw = mb.getStructureManual()[0][0].length;
-			
+
 			int rotate = ItemProjector.getRotation(target);
 			boolean flip = ItemProjector.getFlipped(target);
-			
-			int xd = (rotate % 2 == 0) ? ml :  mw;
-			int zd = (rotate % 2 == 0) ? mw :  ml;
-			
+
+			int xd = (rotate % 2 == 0) ? ml : mw;
+			int zd = (rotate % 2 == 0) ? mw : ml;
+
 			boolean isPlaced = false;
-			
+
 			if (ItemNBTHelper.hasKey(target, "pos"))
 			{
 				NBTTagCompound pos = ItemNBTHelper.getTagCompound(target, "pos");
 				int x = pos.getInteger("x");
 				int y = pos.getInteger("y");
 				int z = pos.getInteger("z");
-				
+
 				BlockPos hit = new BlockPos(x, y, z);
 				BlockPos end = hit.add(xd, mh, zd);
-				
-				return (check.getX() >= hit.getX() && check.getX() <= end.getX() && 
+
+				return (check.getX() >= hit.getX() && check.getX() <= end.getX() &&
 						check.getY() >= hit.getY() && check.getY() <= end.getY() &&
 						check.getZ() >= hit.getZ() && check.getZ() <= end.getZ());
 			}
 		}
 		return false;
 	}
-	
+
 	@SubscribeEvent
 	public void handleConveyorsAndPipes(SchematicRenderBlockEvent event)
 	{
@@ -1167,9 +1168,9 @@ public class ItemProjector extends ItemIPBase
 		{
 			event.setCanceled(true);
 		}
-		
+
 		IBlockState state = event.getMultiblock().getBlockstateFromStack(event.getIndex(), event.getItemStack());
-		if (state.getBlock() == IEContent.blockMetalDevice1 && BlockTypes_MetalDevice1.values()[state.getBlock().getMetaFromState(state)]==BlockTypes_MetalDevice1.FLUID_PIPE)
+		if (state.getBlock() == IEContent.blockMetalDevice1 && BlockTypes_MetalDevice1.values()[state.getBlock().getMetaFromState(state)] == BlockTypes_MetalDevice1.FLUID_PIPE)
 		{
 			event.setItemStack(new ItemStack(IPContent.blockDummy, 1, BlockTypes_Dummy.PIPE.getMeta()));
 		}
@@ -1177,10 +1178,10 @@ public class ItemProjector extends ItemIPBase
 		{
 			event.setItemStack(new ItemStack(IPContent.blockDummy, 1, BlockTypes_Dummy.CONVEYOR.getMeta()));
 		}
-		
+
 		EnumFacing rotate = event.getRotate();
 		IMultiblock mb = event.getMultiblock();
-		
+
 		if (state.getBlock() == IEContent.blockConveyor)
 		{
 			switch (rotate)
@@ -1208,7 +1209,7 @@ public class ItemProjector extends ItemIPBase
 			}
 			GlStateManager.rotate(90, 0, 1, 0);
 		}
-		else if (state.getBlock() == IEContent.blockMetalDevice0 && BlockTypes_MetalDevice0.values()[state.getBlock().getMetaFromState(state)]==BlockTypes_MetalDevice0.FLUID_PUMP)
+		else if (state.getBlock() == IEContent.blockMetalDevice0 && BlockTypes_MetalDevice0.values()[state.getBlock().getMetaFromState(state)] == BlockTypes_MetalDevice0.FLUID_PUMP)
 		{
 			GlStateManager.translate(0, .225F, 0);
 			GlStateManager.scale(.9F, .9F, .9F);
@@ -1218,8 +1219,10 @@ public class ItemProjector extends ItemIPBase
 			GlStateManager.rotate(180, 1, 0, 0);
 		}
 
-		if (mb.getUniqueName().equals("IP:DistillationTower")) {
-			if (state.getBlock() == IEContent.blockMetalDecorationSlabs1) {
+		if (mb.getUniqueName().equals("IP:DistillationTower"))
+		{
+			if (state.getBlock() == IEContent.blockMetalDecorationSlabs1)
+			{
 				GlStateManager.translate(0, .25F, 0);
 
 			}
@@ -1232,7 +1235,8 @@ public class ItemProjector extends ItemIPBase
 		IMultiblock mb = event.getMultiblock();
 
 		IBlockState state = event.getBlockState();
-		if (mb.getUniqueName().equals("IP:DistillationTower")) {
+		if (mb.getUniqueName().equals("IP:DistillationTower"))
+		{
 			TileEntity te = event.getWorld().getTileEntity(event.getPos());
 			if (te instanceof TileEntityIESlab)
 			{

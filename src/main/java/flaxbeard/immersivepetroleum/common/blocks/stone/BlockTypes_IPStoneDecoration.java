@@ -8,17 +8,19 @@ import java.util.Locale;
 public enum BlockTypes_IPStoneDecoration implements IStringSerializable, BlockIPBase.IBlockEnum
 {
 	ASPHALT;
-	
+
 	@Override
 	public String getName()
 	{
 		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
+
 	@Override
 	public int getMeta()
 	{
 		return ordinal();
 	}
+
 	@Override
 	public boolean listForCreative()
 	{

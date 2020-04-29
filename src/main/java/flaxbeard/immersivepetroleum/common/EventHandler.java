@@ -36,7 +36,6 @@ import flaxbeard.immersivepetroleum.common.network.CloseBookPacket;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageReservoirListSync;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockNetherBrick;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -95,7 +94,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.Map.Entry;
 
-@Mod.EventBusSubscriber(modid=ImmersivePetroleum.MODID)
+@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID)
 public class EventHandler
 {
 	@SubscribeEvent
@@ -188,13 +187,15 @@ public class EventHandler
 			boolean off = !secondItem.isEmpty() && secondItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(secondItem, "coords");
 
 			boolean chunkBorders = false;
-			for(EnumHand hand : EnumHand.values())
-				if(OreDictionary.itemMatches(new ItemStack(IEContent.blockMetalDevice1,1, BlockTypes_MetalDevice1.SAMPLE_DRILL.getMeta()), ClientUtils.mc().player.getHeldItem(hand),true))
+			for (EnumHand hand : EnumHand.values())
+			{
+				if (OreDictionary.itemMatches(new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.SAMPLE_DRILL.getMeta()), ClientUtils.mc().player.getHeldItem(hand), true))
 				{
 					chunkBorders = true;
 					break;
 				}
-			if(!chunkBorders && ClientUtils.mc().objectMouseOver!=null && ClientUtils.mc().objectMouseOver.typeOfHit==Type.BLOCK && ClientUtils.mc().world.getTileEntity(ClientUtils.mc().objectMouseOver.getBlockPos()) instanceof TileEntitySampleDrill)
+			}
+			if (!chunkBorders && ClientUtils.mc().objectMouseOver != null && ClientUtils.mc().objectMouseOver.typeOfHit == Type.BLOCK && ClientUtils.mc().world.getTileEntity(ClientUtils.mc().objectMouseOver.getBlockPos()) instanceof TileEntitySampleDrill)
 				chunkBorders = true;
 
 			ItemStack target = main ? mainItem : secondItem;
@@ -207,8 +208,8 @@ public class EventHandler
 				//World world = DimensionManager.getWorld(coords[0]);
 				//if (world.provider.getDimension() == mc.player.worldObj.provider.getDimension())
 				//{
-					EntityPlayer player = mc.player;
-					renderChunkBorder(coords[1] << 4, coords[2] << 4);
+				EntityPlayer player = mc.player;
+				renderChunkBorder(coords[1] << 4, coords[2] << 4);
 				//}
 			}
 		}
@@ -224,8 +225,8 @@ public class EventHandler
 		double px = TileEntityRendererDispatcher.staticPlayerX;
 		double py = TileEntityRendererDispatcher.staticPlayerY;
 		double pz = TileEntityRendererDispatcher.staticPlayerZ;
-		int y = Math.min((int)player.posY-2,player.getEntityWorld().getChunk(chunkX, chunkZ).getLowestHeight());
-		float h = (float)Math.max(32, player.posY-y+4);
+		int y = Math.min((int) player.posY - 2, player.getEntityWorld().getChunk(chunkX, chunkZ).getLowestHeight());
+		float h = (float) Math.max(32, player.posY - y + 4);
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vertexbuffer = tessellator.getBuffer();
 
@@ -237,26 +238,26 @@ public class EventHandler
 		float r = Lib.COLOUR_F_ImmersiveOrange[0];
 		float g = Lib.COLOUR_F_ImmersiveOrange[1];
 		float b = Lib.COLOUR_F_ImmersiveOrange[2];
-		vertexbuffer.setTranslation(chunkX-px, y+2-py, chunkZ-pz);
+		vertexbuffer.setTranslation(chunkX - px, y + 2 - py, chunkZ - pz);
 		GlStateManager.glLineWidth(5f);
 		vertexbuffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-		vertexbuffer.pos( 0,0, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos( 0,h, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,0, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,h, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,0,16).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,h,16).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos( 0,0,16).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos( 0,h,16).color(r,g,b,.375f).endVertex();
+		vertexbuffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
+		vertexbuffer.pos(0, h, 0).color(r, g, b, .375f).endVertex();
+		vertexbuffer.pos(16, 0, 0).color(r, g, b, .375f).endVertex();
+		vertexbuffer.pos(16, h, 0).color(r, g, b, .375f).endVertex();
+		vertexbuffer.pos(16, 0, 16).color(r, g, b, .375f).endVertex();
+		vertexbuffer.pos(16, h, 16).color(r, g, b, .375f).endVertex();
+		vertexbuffer.pos(0, 0, 16).color(r, g, b, .375f).endVertex();
+		vertexbuffer.pos(0, h, 16).color(r, g, b, .375f).endVertex();
 
-		vertexbuffer.pos( 0,2, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,2, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos( 0,2, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos( 0,2,16).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos( 0,2,16).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,2,16).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,2, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,2,16).color(r,g,b,.375f).endVertex();
+		vertexbuffer.pos(0, 2, 0).color(r, g, b, .375f).endVertex();
+		vertexbuffer.pos(16, 2, 0).color(r, g, b, .375f).endVertex();
+		vertexbuffer.pos(0, 2, 0).color(r, g, b, .375f).endVertex();
+		vertexbuffer.pos(0, 2, 16).color(r, g, b, .375f).endVertex();
+		vertexbuffer.pos(0, 2, 16).color(r, g, b, .375f).endVertex();
+		vertexbuffer.pos(16, 2, 16).color(r, g, b, .375f).endVertex();
+		vertexbuffer.pos(16, 2, 0).color(r, g, b, .375f).endVertex();
+		vertexbuffer.pos(16, 2, 16).color(r, g, b, .375f).endVertex();
 		tessellator.draw();
 		vertexbuffer.setTranslation(0, 0, 0);
 		GlStateManager.shadeModel(GL11.GL_FLAT);
@@ -279,7 +280,7 @@ public class EventHandler
 
 				if (drill.dummy != 0)
 				{
-					te = event.getWorld().getTileEntity(pos.add(0, - drill.dummy, 0));
+					te = event.getWorld().getTileEntity(pos.add(0, -drill.dummy, 0));
 					if (te instanceof TileEntitySampleDrill)
 					{
 						drill = (TileEntitySampleDrill) te;
@@ -287,7 +288,7 @@ public class EventHandler
 				}
 				if (!drill.sample.isEmpty())
 				{
-					if(ItemNBTHelper.hasKey(drill.sample, "coords"))
+					if (ItemNBTHelper.hasKey(drill.sample, "coords"))
 					{
 						int[] coords = ItemNBTHelper.getIntArray(drill.sample, "coords");
 						World world = DimensionManager.getWorld(coords[0]);
@@ -316,7 +317,7 @@ public class EventHandler
 		ItemStack stack = event.getItemStack();
 		if (stack.getItem() instanceof ItemCoresample)
 		{
-			if(ItemNBTHelper.hasKey(stack, "oil"))
+			if (ItemNBTHelper.hasKey(stack, "oil"))
 			{
 				String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
 				if (ItemNBTHelper.hasKey(stack, "oil") && resName == null)
@@ -367,10 +368,12 @@ public class EventHandler
 		ExcavatorHandler.allowPackets = true;
 		if (!event.player.world.isRemote)
 		{
-			HashMap<ReservoirType, Integer> packetMap = new HashMap<ReservoirType,Integer>();
-			for (Entry<ReservoirType,Integer> e: PumpjackHandler.reservoirList.entrySet())
+			HashMap<ReservoirType, Integer> packetMap = new HashMap<ReservoirType, Integer>();
+			for (Entry<ReservoirType, Integer> e : PumpjackHandler.reservoirList.entrySet())
+			{
 				if (e.getKey() != null && e.getValue() != null)
 					packetMap.put(e.getKey(), e.getValue());
+			}
 			IPPacketHandler.INSTANCE.sendToAll(new MessageReservoirListSync(packetMap));
 		}
 	}
@@ -383,11 +386,11 @@ public class EventHandler
 		{
 			EntityPlayer player = ClientUtils.mc().player;
 
-			if (ClientUtils.mc().objectMouseOver!=null)
+			if (ClientUtils.mc().objectMouseOver != null)
 			{
 				boolean hammer = player.getHeldItem(EnumHand.MAIN_HAND) != null && Utils.isHammer(player.getHeldItem(EnumHand.MAIN_HAND));
 				RayTraceResult mop = ClientUtils.mc().objectMouseOver;
-				if (mop!=null && mop.getBlockPos()!=null)
+				if (mop != null && mop.getBlockPos() != null)
 				{
 					TileEntity tileEntity = player.world.getTileEntity(mop.getBlockPos());
 					if (tileEntity instanceof TileEntityCoresample)
@@ -400,8 +403,8 @@ public class EventHandler
 						{
 							String resName = ItemNBTHelper.hasKey(coresample, "resType") ? ItemNBTHelper.getString(coresample, "resType") : "";
 							int amnt = ItemNBTHelper.getInt(coresample, "oil");
-							FontRenderer font = useNixie?ClientProxy.nixieFontOptional:ClientUtils.font();
-							int col = (useNixie&& IEConfig.nixietubeFont)?Lib.colour_nixieTubeText:0xffffff;
+							FontRenderer font = useNixie ? ClientProxy.nixieFontOptional : ClientUtils.font();
+							int col = (useNixie && IEConfig.nixietubeFont) ? Lib.colour_nixieTubeText : 0xffffff;
 							int i = text.length;
 
 							ReservoirType res = null;
@@ -431,7 +434,7 @@ public class EventHandler
 								s = I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName);
 							}
 
-							font.drawString(s, event.getResolution().getScaledWidth()/2+8, event.getResolution().getScaledHeight()/2+8+i*font.FONT_HEIGHT, col, true);
+							font.drawString(s, event.getResolution().getScaledWidth() / 2 + 8, event.getResolution().getScaledHeight() / 2 + 8 + i * font.FONT_HEIGHT, col, true);
 
 
 						}
@@ -440,20 +443,22 @@ public class EventHandler
 				else if (mop != null && mop.entityHit != null && mop.entityHit instanceof EntitySpeedboat)
 				{
 					String[] text = ((EntitySpeedboat) mop.entityHit).getOverlayText(ClientUtils.mc().player, mop);
-					if(text!=null && text.length>0)
+					if (text != null && text.length > 0)
 					{
 						FontRenderer font = ClientUtils.font();
 						int col = 0xffffff;
 						int i = 0;
-						for(String s : text)
-							if(s!=null)
-								font.drawString(s, event.getResolution().getScaledWidth()/2+8, event.getResolution().getScaledHeight()/2+8+(i++)*font.FONT_HEIGHT, col, true);
+						for (String s : text)
+						{
+							if (s != null)
+								font.drawString(s, event.getResolution().getScaledWidth() / 2 + 8, event.getResolution().getScaledHeight() / 2 + 8 + (i++) * font.FONT_HEIGHT, col, true);
+						}
 					}
 				}
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public static void handleBoatImmunity(LivingAttackEvent event)
 	{
@@ -470,7 +475,7 @@ public class EventHandler
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public static void handleBoatImmunity(PlayerTickEvent event)
 	{
@@ -483,12 +488,12 @@ public class EventHandler
 				entity.extinguish();
 				DataParameter<Byte> FLAGS = EntitySpeedboat.getFlags();
 				byte b0 = ((Byte) entity.getDataManager().get(FLAGS)).byteValue();
-					
-				entity.getDataManager().set(FLAGS, Byte.valueOf((byte)(b0 & ~(1 << 0))));		
+
+				entity.getDataManager().set(FLAGS, Byte.valueOf((byte) (b0 & ~(1 << 0))));
 			}
 		}
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void handleBoatImmunity(RenderBlockOverlayEvent event)
@@ -503,7 +508,7 @@ public class EventHandler
 			}
 		}
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void handleFireRender(RenderPlayerEvent.Pre event)
@@ -519,7 +524,7 @@ public class EventHandler
 			}
 		}
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void handleLubricatingMachinesClient(ClientTickEvent event)
@@ -529,7 +534,7 @@ public class EventHandler
 			handleLubricatingMachines(Minecraft.getMinecraft().world);
 		}
 	}
-	
+
 	@SubscribeEvent
 	public static void handleLubricatingMachinesServer(WorldTickEvent event)
 	{
@@ -539,7 +544,7 @@ public class EventHandler
 			handleLubricatingMachines(event.world);
 		}
 	}
-		
+
 	public static void handleLubricatingMachines(World world)
 	{
 		Set<LubricatedTileInfo> toRemove = new HashSet<LubricatedTileInfo>();
@@ -575,11 +580,11 @@ public class EventHandler
 											if (world.rand.nextInt(30) == 0 && world.getBlockState(pos.offset(facing)).getBlock().isReplaceable(world, pos.offset(facing)))
 											{
 												Vec3i direction = facing.getDirectionVec();
-												world.spawnParticle(EnumParticleTypes.BLOCK_DUST, 
-														pos.getX() + .5f + direction.getX() * .65f, 
-														pos.getY() + 1, 
-														pos.getZ() + .5f + direction.getZ() * .65f, 
-														0, 0, 0, new int[] {n});
+												world.spawnParticle(EnumParticleTypes.BLOCK_DUST,
+														pos.getX() + .5f + direction.getX() * .65f,
+														pos.getY() + 1,
+														pos.getZ() + .5f + direction.getZ() * .65f,
+														0, 0, 0, new int[]{n});
 											}
 										}
 									}
@@ -600,13 +605,14 @@ public class EventHandler
 			LubricatedHandler.lubricatedTiles.remove(info);
 		}
 	}
-	
+
 	@SubscribeEvent
 	public static void onEntityJoiningWorld(EntityJoinWorldEvent event)
 	{
 		if (IPConfig.Miscellaneous.autounlock_recipes && event.getEntity() instanceof EntityPlayer)
 		{
-			if (event.getEntity() instanceof FakePlayer) {
+			if (event.getEntity() instanceof FakePlayer)
+			{
 				return;
 			}
 			List<IRecipe> l = new ArrayList<IRecipe>();
@@ -615,13 +621,14 @@ public class EventHandler
 				String name = recipe.getRegistryName().toString();
 				if (name.length() > 18 && name.substring(0, ImmersivePetroleum.MODID.length()).equals(ImmersivePetroleum.MODID))
 				{
-					if (recipe.getRecipeOutput().getItem() != Item.getItemFromBlock(Blocks.AIR)) {
+					if (recipe.getRecipeOutput().getItem() != Item.getItemFromBlock(Blocks.AIR))
+					{
 						l.add(recipe);
 					}
 				}
 			}
 			((EntityPlayer) event.getEntity()).unlockRecipes(l);
-			
+
 		}
 	}
 
@@ -641,7 +648,7 @@ public class EventHandler
 		if (ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT)
 		{
 			EntityPlayer player = ClientUtils.mc().player;
-			
+
 			if (player.getRidingEntity() instanceof EntitySpeedboat)
 			{
 				int offset = 0;
@@ -657,28 +664,28 @@ public class EventHandler
 						}
 					}
 				}
-				
+
 				ClientUtils.bindTexture("immersivepetroleum:textures/gui/hud_elements.png");
 				GL11.glColor4f(1, 1, 1, 1);
-				float dx = event.getResolution().getScaledWidth()-16;
+				float dx = event.getResolution().getScaledWidth() - 16;
 				float dy = event.getResolution().getScaledHeight();
 				GL11.glPushMatrix();
 				GL11.glTranslated(dx, dy + offset, 0);
 				int w = 31;
 				int h = 62;
-				double uMin = 179/256f;
-				double uMax = 210/256f;
-				double vMin = 9/256f;
-				double vMax = 71/256f;
-				ClientUtils.drawTexturedRect(-24,-68, w,h, uMin,uMax,vMin,vMax);
+				double uMin = 179 / 256f;
+				double uMax = 210 / 256f;
+				double vMin = 9 / 256f;
+				double vMax = 71 / 256f;
+				ClientUtils.drawTexturedRect(-24, -68, w, h, uMin, uMax, vMin, vMax);
 
-				GL11.glTranslated(-23,-37,0);
+				GL11.glTranslated(-23, -37, 0);
 				EntitySpeedboat boat = (EntitySpeedboat) player.getRidingEntity();
 				int capacity = boat.getMaxFuel();
-	
-				FluidStack fs =  boat.getContainedFluid();
+
+				FluidStack fs = boat.getContainedFluid();
 				int amount = fs == null || fs.getFluid() == null ? 0 : fs.amount;
-				
+
 				float cap = (float) capacity;
 				float angle = 83 - (166 * amount / cap);
 				GL11.glRotatef(angle, 0, 0, 1);
@@ -688,13 +695,12 @@ public class EventHandler
 				GL11.glTranslated(23, 37, 0);
 				ClientUtils.drawTexturedRect(-41, -73, 53, 72, 8 / 256f, 61 / 256f, 4 / 256f, 76 / 256f);
 
-			//	ClientUtils.drawTexturedRect(-32, -43, 12, 12, 66 / 256f, 78 / 256f, 9 / 256f, 21 / 256f);
+				//	ClientUtils.drawTexturedRect(-32, -43, 12, 12, 66 / 256f, 78 / 256f, 9 / 256f, 21 / 256f);
 
-				
-				
+
 				GL11.glPopMatrix();
 			}
-	
+
 		}
 	}
 

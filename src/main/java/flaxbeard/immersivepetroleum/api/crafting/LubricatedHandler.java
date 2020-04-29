@@ -31,27 +31,32 @@ public class LubricatedHandler
 	public interface ILubricationHandler<E extends TileEntity>
 	{
 		TileEntity isPlacedCorrectly(World world, TileEntityAutoLubricator tile, EnumFacing facing);
+
 		boolean isMachineEnabled(World world, E master);
+
 		void lubricate(World world, int ticks, E master);
+
 		void spawnLubricantParticles(World world, TileEntityAutoLubricator tile, EnumFacing facing, E master);
+
 		@SideOnly(Side.CLIENT)
 		void renderPipes(World world, TileEntityAutoLubricator tile, EnumFacing facing, E master);
-		
+
 		Tuple<BlockPos, EnumFacing> getGhostBlockPosition(World world, E tile);
+
 		int[] getStructureDimensions();
 	}
-	
+
 	static final HashMap<Class<? extends TileEntity>, ILubricationHandler> lubricationHandlers = new HashMap<Class<? extends TileEntity>, ILubricationHandler>();
-	
+
 	public static void registerLubricatedTile(Class<? extends TileEntity> tileClass, ILubricationHandler handler)
 	{
 		lubricationHandlers.put(tileClass, handler);
 	}
-	
+
 	public static ILubricationHandler getHandlerForTile(TileEntity tile)
 	{
 		if (tile == null) return null;
-		
+
 		for (Entry<Class<? extends TileEntity>, ILubricationHandler> e : lubricationHandlers.entrySet())
 		{
 			if (e.getKey().isInstance(tile))
@@ -61,7 +66,7 @@ public class LubricatedHandler
 		}
 		return null;
 	}
-	
+
 	public static class LubricatedTileInfo
 	{
 		public BlockPos pos;
@@ -74,7 +79,7 @@ public class LubricatedHandler
 			this.pos = pos;
 			this.ticks = ticks;
 		}
-		
+
 		public NBTTagCompound writeToNBT()
 		{
 			NBTTagCompound tag = new NBTTagCompound();
@@ -86,7 +91,7 @@ public class LubricatedHandler
 
 			return tag;
 		}
-		
+
 		public static LubricatedTileInfo readFromNBT(NBTTagCompound tag)
 		{
 			int ticks = tag.getInteger("ticks");
@@ -98,14 +103,14 @@ public class LubricatedHandler
 			return new LubricatedTileInfo(world, new BlockPos(x, y, z), ticks);
 		}
 	}
-	
+
 	public static List<LubricatedTileInfo> lubricatedTiles = new ArrayList<LubricatedTileInfo>();
-	
+
 	public static boolean lubricateTile(TileEntity tile, int ticks)
 	{
 		return lubricateTile(tile, ticks, false, -1);
 	}
-	
+
 	public static boolean lubricateTile(TileEntity tile, int ticks, boolean additive, int cap)
 	{
 		if (tile instanceof TileEntityMultiblockPart)
@@ -136,10 +141,10 @@ public class LubricatedHandler
 						}
 						else
 						{
-							 return false;
+							return false;
 						}
 					}
-					
+
 					info.ticks = ticks;
 					return true;
 				}
@@ -150,8 +155,8 @@ public class LubricatedHandler
 		}
 		return false;
 	}
-	
-	
+
+
 	public static class LubricantEffect extends ChemthrowerEffect
 	{
 		@Override
@@ -162,21 +167,21 @@ public class LubricatedHandler
 				if (LubricantHandler.isValidLube(fluid))
 				{
 					int amount = (Math.max(1, IEConfig.Tools.chemthrower_consumption / LubricantHandler.getLubeAmount(fluid)) * 4) / 3;
-					
+
 					PotionEffect activeSpeed = target.getActivePotionEffect(MobEffects.SPEED);
 					int ticksSpeed = amount;
 					if (activeSpeed != null && activeSpeed.getAmplifier() <= 1)
 					{
-						ticksSpeed = Math.min(activeSpeed.getDuration() + amount, 60* 20);
+						ticksSpeed = Math.min(activeSpeed.getDuration() + amount, 60 * 20);
 					}
-					
+
 					PotionEffect activeStrength = target.getActivePotionEffect(MobEffects.STRENGTH);
 					int ticksStrength = amount;
 					if (activeStrength != null && activeStrength.getAmplifier() <= 1)
 					{
 						ticksStrength = Math.min(activeStrength.getDuration() + amount, 60 * 20);
 					}
-					
+
 					target.addPotionEffect(new PotionEffect(MobEffects.SPEED, ticksSpeed, 1));
 					target.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, ticksStrength, 1));
 				}
@@ -193,6 +198,6 @@ public class LubricatedHandler
 				LubricatedHandler.lubricateTile(worldObj.getTileEntity(mop.getBlockPos()), amount, true, 20 * 60);
 			}
 		}
-		
+
 	}
 }

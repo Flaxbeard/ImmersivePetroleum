@@ -37,36 +37,36 @@ public class ImmersivePetroleum
 {
 	public static final String MODID = "immersivepetroleum";
 	public static final String VERSION = "@VERSION@";
-	
-	@SidedProxy(clientSide="flaxbeard.immersivepetroleum.client.ClientProxy", serverSide="flaxbeard.immersivepetroleum.common.CommonProxy")
+
+	@SidedProxy(clientSide = "flaxbeard.immersivepetroleum.client.ClientProxy", serverSide = "flaxbeard.immersivepetroleum.common.CommonProxy")
 	public static CommonProxy proxy;
-	
+
 	@Instance(MODID)
 	public static ImmersivePetroleum INSTANCE;
-	
+
 	static
 	{
 		FluidRegistry.enableUniversalBucket();
 	}
-		
+
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		IPContent.preInit();
 		proxy.preInit();
 		proxy.preInitEnd();
-		
+
 		IPPacketHandler.preInit();
 	}
-	
+
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event)
 	{
 		DistillationRecipe.energyModifier = IPConfig.Refining.distillationTower_energyModifier;
 		DistillationRecipe.timeModifier = IPConfig.Refining.distillationTower_timeModifier;
-		
+
 		PumpjackHandler.oilChance = IPConfig.Extraction.reservoir_chance;
-		
+
 		Config.manual_int.put("distillationTower_operationCost", (int) (2048 * IPConfig.Refining.distillationTower_energyModifier));
 		Config.manual_int.put("pumpjack_consumption", IPConfig.Extraction.pumpjack_consumption);
 		Config.manual_int.put("pumpjack_speed", IPConfig.Extraction.pumpjack_speed);
@@ -86,8 +86,8 @@ public class ImmersivePetroleum
 		Config.manual_double.put("autoLubricant_speedup", 1.25);
 
 		IPContent.init();
-		
-		
+
+
 		HashMap<String, Integer> map = FuelHandler.getFuelFluxesPerTick();
 		if (map.size() > 0 && map.containsKey("gasoline"))
 		{
@@ -98,11 +98,11 @@ public class ImmersivePetroleum
 		{
 			Config.manual_int.put("portableGenerator_flux", -1);
 		}
-		
+
 		NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, proxy);
 		proxy.init();
 	}
-	
+
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
@@ -110,7 +110,7 @@ public class ImmersivePetroleum
 		PumpjackHandler.recalculateChances(true);
 	}
 
-	
+
 	public static CreativeTabs creativeTab = new CreativeTabs(MODID)
 	{
 		@Override
@@ -118,49 +118,49 @@ public class ImmersivePetroleum
 		{
 			UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
 			ItemStack stack = new ItemStack(bucket);
-            FluidStack fs = new FluidStack(IPContent.fluidCrudeOil, bucket.getCapacity());
-            IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
+			FluidStack fs = new FluidStack(IPContent.fluidCrudeOil, bucket.getCapacity());
+			IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
 			if (fluidHandler.fill(fs, true) == fs.amount)
 			{
 				return fluidHandler.getContainer();
 			}
-			
-			return new ItemStack(IPContent.blockFluidDiesel,1,0);
+
+			return new ItemStack(IPContent.blockFluidDiesel, 1, 0);
 		}
-		
+
 		@Override
 		@SideOnly(Side.CLIENT)
 		public void displayAllRelevantItems(NonNullList<ItemStack> list)
 		{
 			UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
 			ItemStack stack = new ItemStack(bucket);
-            FluidStack fs = new FluidStack(IPContent.fluidCrudeOil, bucket.getCapacity());
-            IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
+			FluidStack fs = new FluidStack(IPContent.fluidCrudeOil, bucket.getCapacity());
+			IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
 			if (fluidHandler.fill(fs, true) == fs.amount)
 			{
 				list.add(fluidHandler.getContainer());
 			}
-			
+
 			stack = new ItemStack(bucket);
-            fs = new FluidStack(IPContent.fluidDiesel, bucket.getCapacity());
-            fluidHandler = new FluidBucketWrapper(stack);
-        	if (fluidHandler.fill(fs, true) == fs.amount)
+			fs = new FluidStack(IPContent.fluidDiesel, bucket.getCapacity());
+			fluidHandler = new FluidBucketWrapper(stack);
+			if (fluidHandler.fill(fs, true) == fs.amount)
 			{
 				list.add(fluidHandler.getContainer());
 			}
-			
-        	stack = new ItemStack(bucket);
-            fs = new FluidStack(IPContent.fluidGasoline, bucket.getCapacity());
-            fluidHandler = new FluidBucketWrapper(stack);
-        	if (fluidHandler.fill(fs, true) == fs.amount)
+
+			stack = new ItemStack(bucket);
+			fs = new FluidStack(IPContent.fluidGasoline, bucket.getCapacity());
+			fluidHandler = new FluidBucketWrapper(stack);
+			if (fluidHandler.fill(fs, true) == fs.amount)
 			{
 				list.add(fluidHandler.getContainer());
 			}
-        	
-        	stack = new ItemStack(bucket);
-            fs = new FluidStack(IPContent.fluidLubricant, bucket.getCapacity());
-            fluidHandler = new FluidBucketWrapper(stack);
-        	if (fluidHandler.fill(fs, true) == fs.amount)
+
+			stack = new ItemStack(bucket);
+			fs = new FluidStack(IPContent.fluidLubricant, bucket.getCapacity());
+			fluidHandler = new FluidBucketWrapper(stack);
+			if (fluidHandler.fill(fs, true) == fs.amount)
 			{
 				list.add(fluidHandler.getContainer());
 			}
@@ -172,21 +172,21 @@ public class ImmersivePetroleum
 			{
 				list.add(fluidHandler.getContainer());
 			}
-			
+
 			super.displayAllRelevantItems(list);
 		}
 	};
-	
+
 	@Mod.EventHandler
 	public void serverStarted(FMLServerStartedEvent event)
 	{
-		if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
 		{
 			World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
-			if(!world.isRemote)
+			if (!world.isRemote)
 			{
 				IPSaveData worldData = (IPSaveData) world.loadData(IPSaveData.class, IPSaveData.dataName);
-				if(worldData == null)
+				if (worldData == null)
 				{
 					worldData = new IPSaveData(IPSaveData.dataName);
 					world.setData(IPSaveData.dataName, worldData);
@@ -195,7 +195,7 @@ public class ImmersivePetroleum
 			}
 		}
 	}
-	
+
 	@Mod.EventHandler
 	public void serverStarting(FMLServerStartingEvent event)
 	{

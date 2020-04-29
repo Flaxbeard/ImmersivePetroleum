@@ -16,13 +16,13 @@ import java.util.Map;
 
 public class MessageReservoirListSync implements IMessage
 {
-	Map<ReservoirType,Integer> map = new HashMap<ReservoirType,Integer>();
-	
-	public MessageReservoirListSync(HashMap<ReservoirType,Integer> map)
+	Map<ReservoirType, Integer> map = new HashMap<ReservoirType, Integer>();
+
+	public MessageReservoirListSync(HashMap<ReservoirType, Integer> map)
 	{
 		this.map = map;
 	}
-	
+
 	public MessageReservoirListSync()
 	{
 	}
@@ -37,7 +37,7 @@ public class MessageReservoirListSync implements IMessage
 			ReservoirType mix = ReservoirType.readFromNBT(tag);
 			if (mix != null)
 				map.put(mix, tag.getInteger("weight"));
-		}		
+		}
 
 	}
 
@@ -45,11 +45,11 @@ public class MessageReservoirListSync implements IMessage
 	public void toBytes(ByteBuf buf)
 	{
 		buf.writeInt(map.size());
-		for (Map.Entry<ReservoirType,Integer> e: map.entrySet())
+		for (Map.Entry<ReservoirType, Integer> e : map.entrySet())
 		{
 			NBTTagCompound tag = e.getKey().writeToNBT();
 			tag.setInteger("weight", e.getValue());
-			ByteBufUtils.writeTag(buf,tag); 
+			ByteBufUtils.writeTag(buf, tag);
 		}
 	}
 
@@ -58,14 +58,17 @@ public class MessageReservoirListSync implements IMessage
 		@Override
 		public IMessage onMessage(MessageReservoirListSync message, MessageContext ctx)
 		{
-			Minecraft.getMinecraft().addScheduledTask(()->onMessageMain(message));
+			Minecraft.getMinecraft().addScheduledTask(() -> onMessageMain(message));
 			return null;
 		}
+
 		private void onMessageMain(MessageReservoirListSync message)
 		{
 			PumpjackHandler.reservoirList.clear();
-			for(ReservoirType min : message.map.keySet())
+			for (ReservoirType min : message.map.keySet())
+			{
 				PumpjackHandler.reservoirList.put(min, message.map.get(min));
+			}
 			ClientProxy.handleReservoirManual();
 		}
 	}

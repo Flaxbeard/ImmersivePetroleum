@@ -14,8 +14,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class CloseBookPacket implements IMessage
 {
-	public CloseBookPacket() {}
-	
+	public CloseBookPacket()
+	{
+	}
+
 	public String name;
 
 	public CloseBookPacket(String name)
@@ -30,7 +32,7 @@ public class CloseBookPacket implements IMessage
 		if (name != null)
 			ByteBufUtils.writeUTF8String(buf, name);
 	}
-	
+
 	@Override
 	public void fromBytes(ByteBuf buf)
 	{
@@ -44,7 +46,7 @@ public class CloseBookPacket implements IMessage
 			this.name = null;
 		}
 	}
-	
+
 	public static class Handler implements IMessageHandler<CloseBookPacket, IMessage>
 	{
 
@@ -56,9 +58,9 @@ public class CloseBookPacket implements IMessage
 
 			return null;
 		}
-		
+
 	}
-	
+
 	private static class DoSync implements Runnable
 	{
 		private EntityPlayer p;
@@ -70,7 +72,7 @@ public class CloseBookPacket implements IMessage
 			this.name = string;
 		}
 
-		
+
 		@Override
 		public void run()
 		{
@@ -82,7 +84,7 @@ public class CloseBookPacket implements IMessage
 				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IEContent.itemTool && mainItem.getItemDamage() == 3;
 				boolean off = !offItem.isEmpty() && offItem.getItem() == IEContent.itemTool && offItem.getItemDamage() == 3;
 				ItemStack target = main ? mainItem : offItem;
-				
+
 				if (main || off)
 				{
 					if (name == null && ItemNBTHelper.hasKey(target, "lastMultiblock"))
@@ -96,7 +98,7 @@ public class CloseBookPacket implements IMessage
 				}
 			}
 		}
-		
+
 
 	}
 

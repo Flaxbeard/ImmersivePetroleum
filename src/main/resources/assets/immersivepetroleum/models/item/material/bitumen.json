@@ -1,6 +1,6 @@
 {
-	"parent":"immersivepetroleum:item/ip_item_base",
-	"textures": {
-		"layer0":"immersivepetroleum:items/material_bitumen"
-	}
+  "parent": "immersivepetroleum:item/ip_item_base",
+  "textures": {
+    "layer0": "immersivepetroleum:items/material_bitumen"
+  }
 }

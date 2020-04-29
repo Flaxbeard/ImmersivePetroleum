@@ -12,7 +12,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.ArrayList;
 
 public class BlockNapalm extends BlockIPFluid
@@ -26,11 +25,13 @@ public class BlockNapalm extends BlockIPFluid
 	@Override
 	public void onBlockAdded(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state)
 	{
-		for (EnumFacing facing : EnumFacing.VALUES) {
+		for (EnumFacing facing : EnumFacing.VALUES)
+		{
 			BlockPos notifyPos = pos.offset(facing);
 			if (world.getBlockState(notifyPos).getBlock() instanceof BlockFire
-					|| world.getBlockState(notifyPos).getMaterial() == Material.FIRE) {
-				world.setBlockState(pos, Blocks.FIRE.getDefaultState(), 1|2);
+					|| world.getBlockState(notifyPos).getMaterial() == Material.FIRE)
+			{
+				world.setBlockState(pos, Blocks.FIRE.getDefaultState(), 1 | 2);
 				break;
 			}
 		}
@@ -45,7 +46,8 @@ public class BlockNapalm extends BlockIPFluid
 		{
 			int d = world.provider.getDimension();
 			if (!EventHandler.napalmPositions.containsKey(d)
-					|| !EventHandler.napalmPositions.get(d).contains(neighbourPos)) {
+					|| !EventHandler.napalmPositions.get(d).contains(neighbourPos))
+			{
 				processFire(world, pos);
 			}
 		}
@@ -61,7 +63,7 @@ public class BlockNapalm extends BlockIPFluid
 		}
 		EventHandler.napalmPositions.get(d).add(pos);
 
-		world.setBlockState(pos, Blocks.FIRE.getDefaultState(), 1|2);
+		world.setBlockState(pos, Blocks.FIRE.getDefaultState(), 1 | 2);
 
 		for (EnumFacing facing : EnumFacing.VALUES)
 		{

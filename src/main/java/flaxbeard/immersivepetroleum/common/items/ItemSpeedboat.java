@@ -36,7 +36,7 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 	{
 		super(name, 1, "BOAT", new String[0]);
 	}
-	
+
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
@@ -45,17 +45,17 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 		float f1 = playerIn.prevRotationPitch + (playerIn.rotationPitch - playerIn.prevRotationPitch) * 1.0F;
 		float f2 = playerIn.prevRotationYaw + (playerIn.rotationYaw - playerIn.prevRotationYaw) * 1.0F;
 		double d0 = playerIn.prevPosX + (playerIn.posX - playerIn.prevPosX) * 1.0D;
-		double d1 = playerIn.prevPosY + (playerIn.posY - playerIn.prevPosY) * 1.0D + (double)playerIn.getEyeHeight();
+		double d1 = playerIn.prevPosY + (playerIn.posY - playerIn.prevPosY) * 1.0D + (double) playerIn.getEyeHeight();
 		double d2 = playerIn.prevPosZ + (playerIn.posZ - playerIn.prevPosZ) * 1.0D;
 		Vec3d vec3d = new Vec3d(d0, d1, d2);
-		float f3 = MathHelper.cos(-f2 * 0.017453292F - (float)Math.PI);
-		float f4 = MathHelper.sin(-f2 * 0.017453292F - (float)Math.PI);
+		float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
+		float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
 		float f5 = -MathHelper.cos(-f1 * 0.017453292F);
 		float f6 = MathHelper.sin(-f1 * 0.017453292F);
 		float f7 = f4 * f5;
 		float f8 = f3 * f5;
 		double d3 = 5.0D;
-		Vec3d vec3d1 = vec3d.add((double)f7 * 5.0D, (double)f6 * 5.0D, (double)f8 * 5.0D);
+		Vec3d vec3d1 = vec3d.add((double) f7 * 5.0D, (double) f6 * 5.0D, (double) f8 * 5.0D);
 		RayTraceResult raytraceresult = worldIn.rayTraceBlocks(vec3d, vec3d1, true);
 
 		if (raytraceresult == null)
@@ -70,11 +70,11 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 
 			for (int i = 0; i < list.size(); ++i)
 			{
-				Entity entity = (Entity)list.get(i);
+				Entity entity = (Entity) list.get(i);
 
 				if (entity.canBeCollidedWith())
 				{
-					AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().grow((double)entity.getCollisionBorderSize());
+					AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().grow((double) entity.getCollisionBorderSize());
 
 					if (axisalignedbb.contains(vec3d))
 					{
@@ -132,12 +132,12 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 	@Override
 	public Slot[] getWorkbenchSlots(Container container, ItemStack stack)
 	{
-		IItemHandler inv = (IItemHandler)stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (EnumFacing)null);
+		IItemHandler inv = (IItemHandler) stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (EnumFacing) null);
 		return new Slot[]
 				{
-					new IESlot.Upgrades(container, inv, 0,  78, 35 - 5, "BOAT", stack, true),
-					new IESlot.Upgrades(container, inv, 1,  98, 35 + 5, "BOAT", stack, true),
-					new IESlot.Upgrades(container, inv, 2, 118, 35 - 5, "BOAT", stack, true)
+						new IESlot.Upgrades(container, inv, 0, 78, 35 - 5, "BOAT", stack, true),
+						new IESlot.Upgrades(container, inv, 1, 98, 35 + 5, "BOAT", stack, true),
+						new IESlot.Upgrades(container, inv, 2, 118, 35 - 5, "BOAT", stack, true)
 				};
 	}
 
@@ -146,7 +146,7 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 	{
 		return 4;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
@@ -154,13 +154,14 @@ public class ItemSpeedboat extends ItemIPUpgradableTool
 		if (ItemNBTHelper.hasKey(stack, "tank"))
 		{
 			FluidStack fs = FluidStack.loadFluidStackFromNBT(ItemNBTHelper.getTagCompound(stack, "tank"));
-			if (fs!=null)
-				tooltip.add(fs.getLocalizedName()+": "+fs.amount+"mB");
+			if (fs != null)
+				tooltip.add(fs.getLocalizedName() + ": " + fs.amount + "mB");
 		}
 	}
 
 	@Override
-	public int getSlotCount(ItemStack stack) {
+	public int getSlotCount(ItemStack stack)
+	{
 		return 4;
 	}
 

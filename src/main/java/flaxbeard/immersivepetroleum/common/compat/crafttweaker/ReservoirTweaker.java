@@ -5,7 +5,6 @@ import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.liquid.ILiquidStack;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
-import org.apache.commons.lang3.ArrayUtils;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 

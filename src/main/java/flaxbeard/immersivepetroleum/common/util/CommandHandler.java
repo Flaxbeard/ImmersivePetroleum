@@ -17,12 +17,13 @@ public class CommandHandler extends CommandBase
 {
 	ArrayList<IPSubCommand> commands = new ArrayList<>();
 	final String name;
+
 	public CommandHandler()
 	{
 		commands.add(new CommandHelp());
 		commands.add(new CommandReservoir());
 		name = "ip";
-		
+
 	}
 
 	@Override
@@ -48,20 +49,20 @@ public class CommandHandler extends CommandBase
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos)
 	{
 		ArrayList<String> list = new ArrayList<String>();
-		if (args.length>0)
+		if (args.length > 0)
 			for (IPSubCommand sub : commands)
 			{
-				if (args.length==1)
+				if (args.length == 1)
 				{
 					if (args[0].isEmpty() || sub.getIdent().startsWith(args[0].toLowerCase(Locale.ENGLISH)))
 						list.add(sub.getIdent());
 				}
 				else if (sub.getIdent().equalsIgnoreCase(args[0]))
 				{
-					String[] redArgs = new String[args.length-1];
-					System.arraycopy(args,1, redArgs,0, redArgs.length);
+					String[] redArgs = new String[args.length - 1];
+					System.arraycopy(args, 1, redArgs, 0, redArgs.length);
 					ArrayList<String> subCommands = sub.getSubCommands(this, server, sender, redArgs);
-					if (subCommands!=null)
+					if (subCommands != null)
 						list.addAll(subCommands);
 				}
 			}
@@ -74,8 +75,10 @@ public class CommandHandler extends CommandBase
 		String sub = "";
 		int i = 0;
 		for (IPSubCommand com : commands)
-			sub += ((i++)>0?"|":"")+com.getIdent();
-		return "/"+name+" <"+sub+">";
+		{
+			sub += ((i++) > 0 ? "|" : "") + com.getIdent();
+		}
+		return "/" + name + " <" + sub + ">";
 	}
 
 	@Override
@@ -99,22 +102,28 @@ public class CommandHandler extends CommandBase
 		else
 		{
 			String sub = "";
-			int i=0;
+			int i = 0;
 			for (IPSubCommand com : commands)
-				sub += ((i++)>0?", ":"")+com.getIdent();
-			sender.sendMessage(new TextComponentTranslation(Lib.CHAT_COMMAND+"available",sub));
+			{
+				sub += ((i++) > 0 ? ", " : "") + com.getIdent();
+			}
+			sender.sendMessage(new TextComponentTranslation(Lib.CHAT_COMMAND + "available", sub));
 		}
 	}
 
 	public abstract static class IPSubCommand
 	{
 		public abstract String getIdent();
+
 		public abstract void perform(CommandHandler h, MinecraftServer server, ICommandSender sender, String[] args);
+
 		public String getHelp(String subIdent)
 		{
-			return "chat.immersivepetroleum.command." + getIdent()+subIdent+".help";
+			return "chat.immersivepetroleum.command." + getIdent() + subIdent + ".help";
 		}
-		public abstract ArrayList<String> getSubCommands(CommandHandler h, MinecraftServer server,  ICommandSender sender, String[] args);
+
+		public abstract ArrayList<String> getSubCommands(CommandHandler h, MinecraftServer server, ICommandSender sender, String[] args);
+
 		public abstract int getPermissionLevel();
 	}
 

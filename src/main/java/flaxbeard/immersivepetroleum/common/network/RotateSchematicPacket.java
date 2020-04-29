@@ -14,8 +14,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class RotateSchematicPacket implements IMessage
 {
-	public RotateSchematicPacket() {}
-	
+	public RotateSchematicPacket()
+	{
+	}
+
 	public int rotate;
 	public boolean flip;
 
@@ -31,14 +33,14 @@ public class RotateSchematicPacket implements IMessage
 		buf.writeByte(rotate);
 		buf.writeBoolean(flip);
 	}
-	
+
 	@Override
 	public void fromBytes(ByteBuf buf)
 	{
 		rotate = buf.readByte();
 		flip = buf.readBoolean();
 	}
-	
+
 	public static class Handler implements IMessageHandler<RotateSchematicPacket, IMessage>
 	{
 
@@ -50,9 +52,9 @@ public class RotateSchematicPacket implements IMessage
 
 			return null;
 		}
-		
+
 	}
-	
+
 	private static class DoSync implements Runnable
 	{
 		private EntityPlayer p;
@@ -66,7 +68,7 @@ public class RotateSchematicPacket implements IMessage
 			this.flip = flip;
 		}
 
-		
+
 		@Override
 		public void run()
 		{
@@ -79,7 +81,7 @@ public class RotateSchematicPacket implements IMessage
 				boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
 
 				ItemStack target = main ? mainItem : secondItem;
-				
+
 				if (main || off)
 				{
 					ItemProjector.setFlipped(target, flip);
@@ -87,7 +89,7 @@ public class RotateSchematicPacket implements IMessage
 				}
 			}
 		}
-		
+
 
 	}
 

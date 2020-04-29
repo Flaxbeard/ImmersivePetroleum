@@ -24,7 +24,7 @@ public class MultiblockPumpjackRenderer extends TileEntitySpecialRenderer<TileEn
 		{
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y - 1, z);
-	
+
 			EnumFacing rotation = te.facing;
 			if (rotation == EnumFacing.NORTH)
 			{
@@ -46,10 +46,11 @@ public class MultiblockPumpjackRenderer extends TileEntitySpecialRenderer<TileEn
 			if (te.mirrored)
 			{
 			}
-			
+
 			ClientUtils.bindTexture(texture);
-			
-			float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);;
+
+			float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);
+			;
 			model.ticks = modelM.ticks = 1.5F * ticks;
 
 			if (te.mirrored)
@@ -61,7 +62,7 @@ public class MultiblockPumpjackRenderer extends TileEntitySpecialRenderer<TileEn
 				model.render(null, 0, 0, 0, 0, 0, 0.0625F);
 			}
 			GlStateManager.popMatrix();
-			
+
 		}
 	}
 

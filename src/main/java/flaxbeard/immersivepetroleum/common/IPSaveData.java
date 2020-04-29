@@ -28,21 +28,21 @@ public class IPSaveData extends WorldSavedData
 	public void readFromNBT(NBTTagCompound nbt)
 	{
 		NBTTagList oilList = nbt.getTagList("oilInfo", 10);
-		PumpjackHandler.oilCache.clear();		
-		for(int i = 0; i < oilList.tagCount(); i++)
+		PumpjackHandler.oilCache.clear();
+		for (int i = 0; i < oilList.tagCount(); i++)
 		{
 			NBTTagCompound tag = oilList.getCompoundTagAt(i);
 			DimensionChunkCoords coords = DimensionChunkCoords.readFromNBT(tag);
-			if(coords!=null)
+			if (coords != null)
 			{
 				OilWorldInfo info = OilWorldInfo.readFromNBT(tag.getCompoundTag("info"));
 				PumpjackHandler.oilCache.put(coords, info);
 			}
 		}
-		
+
 		NBTTagList lubricatedList = nbt.getTagList("lubricated", 10);
 		LubricatedHandler.lubricatedTiles.clear();
-		for(int i = 0; i < lubricatedList.tagCount(); i++)
+		for (int i = 0; i < lubricatedList.tagCount(); i++)
 		{
 			NBTTagCompound tag = lubricatedList.getCompoundTagAt(i);
 			LubricatedTileInfo info = LubricatedTileInfo.readFromNBT(tag);
@@ -55,37 +55,41 @@ public class IPSaveData extends WorldSavedData
 	{
 		NBTTagList oilList = new NBTTagList();
 		for (Map.Entry<DimensionChunkCoords, OilWorldInfo> e : PumpjackHandler.oilCache.entrySet())
+		{
 			if (e.getKey() != null && e.getValue() != null)
 			{
 				NBTTagCompound tag = e.getKey().writeToNBT();
 				tag.setTag("info", e.getValue().writeToNBT());
 				oilList.appendTag(tag);
 			}
+		}
 		nbt.setTag("oilInfo", oilList);
-		
+
 		NBTTagList lubricatedList = new NBTTagList();
 		for (LubricatedTileInfo info : LubricatedHandler.lubricatedTiles)
+		{
 			if (info != null)
 			{
 				NBTTagCompound tag = info.writeToNBT();
 				lubricatedList.appendTag(tag);
 			}
+		}
 		nbt.setTag("lubricated", lubricatedList);
-		
+
 		return nbt;
 	}
 
 
 	public static void setDirty(int dimension)
 	{
-		if(FMLCommonHandler.instance().getEffectiveSide()==Side.SERVER && INSTANCE!=null)
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && INSTANCE != null)
 			INSTANCE.markDirty();
 	}
-	
+
 	public static void setInstance(int dimension, IPSaveData in)
 	{
-		if(FMLCommonHandler.instance().getEffectiveSide()==Side.SERVER)
-			INSTANCE=in;
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+			INSTANCE = in;
 	}
 
 }

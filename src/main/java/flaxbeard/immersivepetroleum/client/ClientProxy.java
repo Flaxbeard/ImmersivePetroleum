@@ -387,8 +387,9 @@ public class ClientProxy extends CommonProxy
 					s4 = I18n.format("ie.manual.entry.oilBiomeInvalid", invalidBiomes);
 				}
 				else
+				{
 					s4 = I18n.format("ie.manual.entry.oilBiomeAny");
-
+				}
 
 				String s1 = "";
 				Fluid fluid = FluidRegistry.getFluid(type.fluid);
@@ -416,9 +417,6 @@ public class ClientProxy extends CommonProxy
 				pages.add(new ManualPages.ItemDisplay(ManualHelper.getManual(), s2, displayStacks));
 			}
 
-//			String[][][] multiTables = formatToTable_ExcavatorMinerals();
-//			for(String[][] minTable : multiTables)
-//				pages.add(new ManualPages.Table(ManualHelper.getManual(), "", minTable,true));
 			if (resEntry != null)
 				resEntry.setPages(pages.toArray(new IManualPage[pages.size()]));
 			else

@@ -83,12 +83,12 @@ ie.manual.entry.oil1=The <link;minerals;§o§nCore §o§nSample §o§nDrill§r> 
 ie.manual.entry.oil2=%1$s %6$s<br>It contains %3$s to %4$s mB of %2$s.%5$s
 ie.manual.entry.oilConsonant=A
 ie.manual.entry.oilVowel=An
-ie.manual.entry.oilDimValid=%3$s §l%1$s§r is a type of fluid reservoir that can be found in the %2$s.
-ie.manual.entry.oilDimInvalid=%3$s §l%1$s§r is a type of fluid reservoir that can be found anywhere but in the %2$s.
+ie.manual.entry.oilDimValid=%3$s §l%1$s§r is a type of fluid reservoir that can be found in %2$s.
+ie.manual.entry.oilDimInvalid=%3$s §l%1$s§r is a type of fluid reservoir that can be found anywhere but in %2$s.
 ie.manual.entry.oilDimAny=%2$s §l%1$s§r is a type of fluid reservoir that can be found in any Dimension.
 ie.manual.entry.oilReplenish=<br>After the reservoir is depleted, %1$d mB/tick of trace %2$s can be extracted by a single Pumpjack.
-ie.manual.entry.oilBiomeValid=This reservoir will generate in %s.
-ie.manual.entry.oilBiomeInvalid=This reservoir will generate in any Biome except %s.
+ie.manual.entry.oilBiomeValid=This reservoir will generate in %s Biomes.
+ie.manual.entry.oilBiomeInvalid=This reservoir will generate in %s Biomes.
 ie.manual.entry.oilBiomeAny=This reservoir will generate in any Biome.
 
 ie.manual.entry.asphalt.name=Asphalt Concrete

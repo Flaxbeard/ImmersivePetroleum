@@ -412,7 +412,7 @@ public class PumpjackHandler
 			{
 				bl.appendTag(new NBTTagString(s));
 			}
-			tag.setTag("biomeBlacklist", wl);
+			tag.setTag("biomeBlacklist", bl);
 
 			return tag;
 		}

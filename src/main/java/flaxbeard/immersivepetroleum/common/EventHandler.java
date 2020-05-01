@@ -336,7 +336,7 @@ public class EventHandler
 
 				int amnt = ItemNBTHelper.getInt(stack, "oil");
 				List<String> tooltip = event.getToolTip();
-				if (amnt > 0)
+				if (res != null && amnt > 0)
 				{
 					int est = (amnt / 1000) * 1000;
 					String test = new DecimalFormat("#,###.##").format(est);
@@ -417,7 +417,7 @@ public class EventHandler
 							}
 
 							String s = I18n.format("chat.immersivepetroleum.info.coresample.noOil");
-							if (amnt > 0)
+							if (res != null && amnt > 0)
 							{
 								int est = (amnt / 1000) * 1000;
 								String test = new DecimalFormat("#,###.##").format(est);

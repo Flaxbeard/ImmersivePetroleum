@@ -138,16 +138,20 @@ public class PumpjackHandler
 			if (!empty)
 			{
 				Biome biome = world.getBiomeForCoordsBody(new BlockPos(chunkX << 4, 64, chunkZ << 4));
-				int weight = Math.abs(query % getTotalWeight(dim, biome));
-				for (Map.Entry<ReservoirType, Integer> e : reservoirList.entrySet())
+				int totalWeight = getTotalWeight(dim, biome);
+				if (totalWeight > 0)
 				{
-					if (e.getKey().validDimension(dim) && e.getKey().validBiome(biome))
+					int weight = Math.abs(query % totalWeight);
+					for (Map.Entry<ReservoirType, Integer> e : reservoirList.entrySet())
 					{
-						weight -= e.getValue();
-						if (weight < 0)
+						if (e.getKey().validDimension(dim) && e.getKey().validBiome(biome))
 						{
-							res = e.getKey();
-							break;
+							weight -= e.getValue();
+							if (weight < 0)
+							{
+								res = e.getKey();
+								break;
+							}
 						}
 					}
 				}

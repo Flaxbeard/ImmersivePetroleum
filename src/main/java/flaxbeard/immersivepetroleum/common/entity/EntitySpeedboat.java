@@ -19,6 +19,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -200,7 +201,20 @@ public class EntitySpeedboat extends EntityBoat
 						stack.setTagCompound(new NBTTagCompound());
 						item.setContainedItems(stack, contained);
 						writeTank(stack.getTagCompound(), true);
-						this.entityDropItem(stack, 0F);
+
+						if (source.getImmediateSource() instanceof EntityPlayer)
+						{
+							EntityPlayer player = (EntityPlayer) source.getImmediateSource();
+							if (!player.addItemStackToInventory(stack))
+							{
+								EntityItem entityitem = new EntityItem(this.world, player.posX, player.posY, player.posZ, stack);
+								world.spawnEntity(entityitem);
+							}
+						}
+						else
+						{
+							this.entityDropItem(stack, 0F);
+						}
 					}
 
 					this.setDead();

@@ -1,137 +1,150 @@
 package flaxbeard.immersivepetroleum;
 
-import blusunrize.immersiveengineering.common.Config;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
-import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
+import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
-import flaxbeard.immersivepetroleum.common.Config.IPConfig;
+import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
-import flaxbeard.immersivepetroleum.common.util.CommandHandler;
-import net.minecraft.creativetab.CreativeTabs;
+import flaxbeard.immersivepetroleum.common.util.commands.CommandHandler;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeModContainer;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.UniversalBucket;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-import java.util.HashMap;
-
-@Mod(modid = ImmersivePetroleum.MODID, version = ImmersivePetroleum.VERSION, dependencies = "required-after:immersiveengineering@[0.12,);")
+@Mod(ImmersivePetroleum.MODID)//(modid = ImmersivePetroleum.MODID, version = ImmersivePetroleum.VERSION, dependencies = "required-after:immersiveengineering@[0.12,);")
 public class ImmersivePetroleum
 {
 	public static final String MODID = "immersivepetroleum";
 	public static final String VERSION = "@VERSION@";
 
-	@SidedProxy(clientSide = "flaxbeard.immersivepetroleum.client.ClientProxy", serverSide = "flaxbeard.immersivepetroleum.common.CommonProxy")
-	public static CommonProxy proxy;
+	//@SidedProxy(clientSide = "flaxbeard.immersivepetroleum.client.ClientProxy", serverSide = "flaxbeard.immersivepetroleum.common.CommonProxy")
+	public static CommonProxy proxy=DistExecutor.runForDist(()->ClientProxy::new, ()->CommonProxy::new);
 
-	@Instance(MODID)
 	public static ImmersivePetroleum INSTANCE;
 
-	static
-	{
-		FluidRegistry.enableUniversalBucket();
+	public static final Logger log=LogManager.getLogger(MODID);
+
+	public ImmersivePetroleum(){
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, IPConfig.ALL);
+		
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::loadComplete);
+		
+		MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
+		MinecraftForge.EVENT_BUS.addListener(this::serverStarted);
+		
+		proxy.construct();
+	}
+	
+	public void setup(FMLCommonSetupEvent event){
+		preInit();
+		init();
+		postInit();
+		
+		proxy.setup();
+	}
+	
+	public void loadComplete(FMLLoadCompleteEvent event){
+		proxy.completed();
 	}
 
-	@Mod.EventHandler
-	public void preInit(FMLPreInitializationEvent event)
-	{
-		IPContent.preInit();
+	public void preInit(){
 		proxy.preInit();
-		proxy.preInitEnd();
-
+		
+		IPContent.preInit();
 		IPPacketHandler.preInit();
+		
+		proxy.preInitEnd();
 	}
 
-	@Mod.EventHandler
-	public void init(FMLInitializationEvent event)
-	{
-		DistillationRecipe.energyModifier = IPConfig.Refining.distillationTower_energyModifier;
-		DistillationRecipe.timeModifier = IPConfig.Refining.distillationTower_timeModifier;
+	public void init(){
+		DistillationRecipe.energyModifier = IPConfig.REFINING.distillationTower_energyModifier.get();
+		DistillationRecipe.timeModifier = IPConfig.REFINING.distillationTower_timeModifier.get();
 
-		PumpjackHandler.oilChance = IPConfig.Extraction.reservoir_chance;
+		PumpjackHandler.oilChance = IPConfig.EXTRACTION.reservoir_chance.get();
 
-		Config.manual_int.put("distillationTower_operationCost", (int) (2048 * IPConfig.Refining.distillationTower_energyModifier));
-		Config.manual_int.put("pumpjack_consumption", IPConfig.Extraction.pumpjack_consumption);
-		Config.manual_int.put("pumpjack_speed", IPConfig.Extraction.pumpjack_speed);
+		/*
+		IEConfig.manual_int.put("distillationTower_operationCost", (int) (2048 * IPConfig.REFINING.distillationTower_energyModifier.get()));
+		IEConfig.manual_int.put("pumpjack_consumption", IPConfig.EXTRACTION.pumpjack_consumption.get());
+		IEConfig.manual_int.put("pumpjack_speed", IPConfig.EXTRACTION.pumpjack_speed.get());
 
 		int oil_min = 1000000;
 		int oil_max = 5000000;
-		for (ReservoirType type : PumpjackHandler.reservoirList.keySet())
-		{
-			if (type.name.equals("oil"))
-			{
+		for(ReservoirType type:PumpjackHandler.reservoirList.keySet()){
+			if(type.name.equals("oil")){
 				oil_min = type.minSize;
 				oil_max = type.maxSize;
 				break;
 			}
 		}
-		Config.manual_int.put("pumpjack_days", (((oil_max + oil_min) / 2) + oil_min) / (IPConfig.Extraction.pumpjack_speed * 24000));
-		Config.manual_double.put("autoLubricant_speedup", 1.25);
+		IEConfig.manual_int.put("pumpjack_days", (((oil_max + oil_min) / 2) + oil_min) / (IPConfig.EXTRACTION.pumpjack_speed.get() * 24000));
+		IEConfig.manual_double.put("autoLubricant_speedup", 1.25);
 
+
+		Map<ResourceLocation, Integer> map = FuelHandler.getFuelFluxesPerTick();
+		if(map.size() > 0 && map.containsKey("gasoline")){
+			IEConfig.manual_int.put("portableGenerator_flux", map.get("gasoline"));
+			
+		}else{
+			IEConfig.manual_int.put("portableGenerator_flux", -1);
+		}
+		*/
+		
 		IPContent.init();
-
-
-		HashMap<String, Integer> map = FuelHandler.getFuelFluxesPerTick();
-		if (map.size() > 0 && map.containsKey("gasoline"))
-		{
-			Config.manual_int.put("portableGenerator_flux", map.get("gasoline"));
-
-		}
-		else
-		{
-			Config.manual_int.put("portableGenerator_flux", -1);
-		}
-
-		NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, proxy);
+		
 		proxy.init();
 	}
 
-	@Mod.EventHandler
-	public void postInit(FMLPostInitializationEvent event)
-	{
+	public void postInit(){
 		proxy.postInit();
 		PumpjackHandler.recalculateChances(true);
 	}
 
-
-	public static CreativeTabs creativeTab = new CreativeTabs(MODID)
-	{
-		@Override
-		public ItemStack createIcon()
-		{
-			UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
-			ItemStack stack = new ItemStack(bucket);
-			FluidStack fs = new FluidStack(IPContent.fluidCrudeOil, bucket.getCapacity());
-			IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
-			if (fluidHandler.fill(fs, true) == fs.amount)
-			{
-				return fluidHandler.getContainer();
-			}
-
-			return new ItemStack(IPContent.blockFluidDiesel, 1, 0);
+	public void serverStarting(FMLServerStartingEvent event){
+		CommandHandler.registerServer(event.getCommandDispatcher());
+	}
+	
+	public void serverStarted(FMLServerStartedEvent event){
+		ServerWorld world = event.getServer().getWorld(DimensionType.OVERWORLD);
+		if(!world.isRemote){
+			IPSaveData worldData = world.getSavedData().getOrCreate(IPSaveData::new, IPSaveData.dataName);
+			IPSaveData.setInstance(worldData);
 		}
-
+		
+		PumpjackHandler.recalculateChances(true);
+	}
+	
+	
+	
+	public static final ItemGroup creativeTab = new ItemGroup(MODID){
 		@Override
-		@SideOnly(Side.CLIENT)
-		public void displayAllRelevantItems(NonNullList<ItemStack> list)
-		{
+		public ItemStack createIcon(){
+			return new ItemStack(IPContent.fluidCrudeOil.getFilledBucket());
+		}
+		
+		@Override
+		@OnlyIn(Dist.CLIENT)
+		public void fill(NonNullList<ItemStack> items){ // TODO When i can finaly actualy start the game enough
+			/*
 			UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
 			ItemStack stack = new ItemStack(bucket);
 			FluidStack fs = new FluidStack(IPContent.fluidCrudeOil, bucket.getCapacity());
@@ -172,34 +185,9 @@ public class ImmersivePetroleum
 			{
 				list.add(fluidHandler.getContainer());
 			}
-
-			super.displayAllRelevantItems(list);
+			*/
+			
+			super.fill(items);
 		}
 	};
-
-	@Mod.EventHandler
-	public void serverStarted(FMLServerStartedEvent event)
-	{
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
-		{
-			World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
-			if (!world.isRemote)
-			{
-				IPSaveData worldData = (IPSaveData) world.loadData(IPSaveData.class, IPSaveData.dataName);
-				if (worldData == null)
-				{
-					worldData = new IPSaveData(IPSaveData.dataName);
-					world.setData(IPSaveData.dataName, worldData);
-				}
-				IPSaveData.setInstance(world.provider.getDimension(), worldData);
-			}
-		}
-	}
-
-	@Mod.EventHandler
-	public void serverStarting(FMLServerStartingEvent event)
-	{
-		event.registerServerCommand(new CommandHandler());
-	}
-
 }

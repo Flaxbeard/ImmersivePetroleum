@@ -1,87 +1,84 @@
 package flaxbeard.immersivepetroleum.common.network;
 
+import java.util.function.Supplier;
+
+import blusunrize.immersiveengineering.common.network.IMessage;
 import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent.Context;
 
-public class ConsumeBoatFuelPacket implements IMessage
-{
-	public ConsumeBoatFuelPacket()
-	{
-	}
-
+public class ConsumeBoatFuelPacket implements IMessage{
 	public int amount;
-
-	public ConsumeBoatFuelPacket(int amount)
-	{
+	
+	public ConsumeBoatFuelPacket(int amount){
 		this.amount = amount;
 	}
-
-	@Override
-	public void toBytes(ByteBuf buf)
-	{
-		buf.writeInt(amount);
-	}
-
-	@Override
-	public void fromBytes(ByteBuf buf)
-	{
+	
+	public ConsumeBoatFuelPacket(PacketBuffer buf){
 		amount = buf.readInt();
 	}
-
-	public static class Handler implements IMessageHandler<ConsumeBoatFuelPacket, IMessage>
-	{
-
+	
+	@Override
+	public void toBytes(PacketBuffer buf){
+		buf.writeInt(amount);
+	}
+	
+	@Override
+	public void process(Supplier<Context> context){
+		context.get().enqueueWork(()->{
+			Context con=context.get();
+			
+			if(con.getDirection().getReceptionSide()==LogicalSide.SERVER && con.getSender()!=null){
+				Entity entity = con.getSender().getRidingEntity();
+				
+				if(entity instanceof EntitySpeedboat){
+					EntitySpeedboat boat = (EntitySpeedboat) entity;
+					FluidStack fluid = boat.getContainedFluid();
+					if(fluid != null)
+						fluid.setAmount(Math.max(0, fluid.getAmount() - amount));
+					
+					boat.setContainedFluid(fluid);
+				}
+			}
+		});
+	}
+/*
+	public static class Handler implements IMessageHandler<ConsumeBoatFuelPacket, IMessage>{
+		
 		@Override
-		public IMessage onMessage(ConsumeBoatFuelPacket message, MessageContext ctx)
-		{
+		public IMessage onMessage(ConsumeBoatFuelPacket message, MessageContext ctx){
 			EntityPlayerMP player = ctx.getServerHandler().player;
 			DimensionManager.getWorld(player.world.provider.getDimension()).addScheduledTask(new DoSync(player, message.amount));
-
+			
 			return null;
 		}
-
 	}
-
-	private static class DoSync implements Runnable
-	{
+	
+	private static class DoSync implements Runnable{
 		private EntityPlayer p;
 		private int amount;
-
-		public DoSync(EntityPlayer p, int amount)
-		{
+		
+		public DoSync(EntityPlayer p, int amount){
 			this.p = p;
 			this.amount = amount;
 		}
-
-
+		
 		@Override
-		public void run()
-		{
-			if (p != null)
-			{
+		public void run(){
+			if(p != null){
 				Entity entity = p.getRidingEntity();
-
-				if (entity instanceof EntitySpeedboat)
-				{
+				
+				if(entity instanceof EntitySpeedboat){
 					EntitySpeedboat boat = (EntitySpeedboat) entity;
 					FluidStack fluid = boat.getContainedFluid();
-					if (fluid != null)
-						fluid.amount = Math.max(0, fluid.amount - amount);
+					if(fluid != null) fluid.amount = Math.max(0, fluid.amount - amount);
 					boat.setContainedFluid(fluid);
 				}
 			}
 		}
-
-
 	}
-
-
+	*/
 }

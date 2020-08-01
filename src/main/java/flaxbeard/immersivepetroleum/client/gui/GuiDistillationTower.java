@@ -1,35 +1,39 @@
 package flaxbeard.immersivepetroleum.client.gui;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
-import flaxbeard.immersivepetroleum.common.gui.ContainerDistillationTower;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraftforge.fluids.FluidStack;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
+import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
+import flaxbeard.immersivepetroleum.common.gui.ContainerDistillationTower;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.fluids.FluidStack;
 
-public class GuiDistillationTower extends GuiContainer
+public class GuiDistillationTower extends IEContainerScreen<ContainerDistillationTower>
 {
-	TileEntityDistillationTower tile;
+	DistillationTowerTileEntity tile;
 
-	public GuiDistillationTower(InventoryPlayer inventoryPlayer, TileEntityDistillationTower tile)
+	public GuiDistillationTower(ContainerDistillationTower container, PlayerInventory playerInventory, ITextComponent title)
 	{
-		super(new ContainerDistillationTower(inventoryPlayer, tile));
-		this.tile = tile;
+		super(container, playerInventory, title);
+		this.tile = container.tile;
 	}
-
+	
 	@Override
-	public void drawScreen(int mx, int my, float partial)
+	public void render(int mx, int my, float partial)
 	{
-		this.drawDefaultBackground();
-		super.drawScreen(mx, my, partial);
+		this.renderBackground();
+		super.render(mx, my, partial);
 		this.renderHoveredToolTip(mx, my);
 
-		ArrayList<String> tooltip = new ArrayList();
+		List<ITextComponent> tooltip = new ArrayList<>();
 		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 62, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivepetroleum:textures/gui/distillation.png", tooltip);
 
 
@@ -39,14 +43,14 @@ public class GuiDistillationTower extends GuiContainer
 			float capacity = tile.tanks[1].getCapacity();
 			int yy = guiTop + 21 + 47;
 			if (tile.tanks[1].getFluidTypes() == 0)
-				tooltip.add(I18n.format("gui.immersiveengineering.empty"));
+				tooltip.add(new TranslationTextComponent("gui.immersiveengineering.empty"));
 			else
 				for (int i = tile.tanks[1].getFluidTypes() - 1; i >= 0; i--)
 				{
 					FluidStack fs = tile.tanks[1].fluids.get(i);
 					if (fs != null && fs.getFluid() != null)
 					{
-						int fluidHeight = (int) (47 * (fs.amount / capacity));
+						int fluidHeight = (int) (47 * (fs.getAmount() / capacity));
 						yy -= fluidHeight;
 						if (my >= yy && my < yy + fluidHeight)
 							ClientUtils.addFluidTooltip(fs, tooltip, (int) capacity);
@@ -55,11 +59,11 @@ public class GuiDistillationTower extends GuiContainer
 		}
 
 		if (mx > guiLeft + 157 && mx < guiLeft + 164 && my > guiTop + 21 && my < guiTop + 67)
-			tooltip.add(tile.getEnergyStored(null) + "/" + tile.getMaxEnergyStored(null) + " RF");
+			tooltip.add(new StringTextComponent(tile.getEnergyStored(null) + "/" + tile.getMaxEnergyStored(null) + " RF"));
 
 		if (!tooltip.isEmpty())
 		{
-			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
+			ClientUtils.drawHoveringText(tooltip, mx, my, font, guiLeft + xSize, -1);
 			RenderHelper.enableGUIStandardItemLighting();
 		}
 	}
@@ -70,8 +74,7 @@ public class GuiDistillationTower extends GuiContainer
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		ClientUtils.bindTexture("immersivepetroleum:textures/gui/distillation.png");
-		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-
+		this.blit(guiLeft, guiTop, 0, 0, xSize, ySize);
 		//		if(tile.tick>0)
 		//		{
 		//			int h = (int)(18*(tile.tick/80f));
@@ -91,7 +94,7 @@ public class GuiDistillationTower extends GuiContainer
 			FluidStack fs = tile.tanks[1].fluids.get(i);
 			if (fs != null && fs.getFluid() != null)
 			{
-				int fluidHeight = (int) (47 * (fs.amount / capacity));
+				int fluidHeight = (int) (47 * (fs.getAmount() / capacity));
 				yy -= fluidHeight;
 				ClientUtils.drawRepeatedFluidSprite(fs, guiLeft + 112, yy, 16, fluidHeight);
 			}

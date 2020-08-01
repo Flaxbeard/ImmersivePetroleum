@@ -1,95 +1,75 @@
 package flaxbeard.immersivepetroleum.common;
 
+import java.util.Map;
+
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
 
-import java.util.Map;
-
-public class IPSaveData extends WorldSavedData
-{
-	//	private static HashMap<Integer, IESaveData> INSTANCE = new HashMap<Integer, IESaveData>();
+public class IPSaveData extends WorldSavedData{
 	private static IPSaveData INSTANCE;
 	public static final String dataName = "ImmersivePetroleum-SaveData";
-
-	public IPSaveData(String s)
-	{
-		super(s);
+	
+	public IPSaveData(){
+		super(dataName);
 	}
-
+	
 	@Override
-	public void readFromNBT(NBTTagCompound nbt)
-	{
-		NBTTagList oilList = nbt.getTagList("oilInfo", 10);
+	public void read(CompoundNBT nbt){
+		ListNBT oilList = nbt.getList("oilInfo", 10);
 		PumpjackHandler.oilCache.clear();
-		for (int i = 0; i < oilList.tagCount(); i++)
-		{
-			NBTTagCompound tag = oilList.getCompoundTagAt(i);
+		for(int i = 0;i < oilList.size();i++){
+			CompoundNBT tag = oilList.getCompound(i);
 			DimensionChunkCoords coords = DimensionChunkCoords.readFromNBT(tag);
-			if (coords != null)
-			{
-				OilWorldInfo info = OilWorldInfo.readFromNBT(tag.getCompoundTag("info"));
+			if(coords != null){
+				OilWorldInfo info = OilWorldInfo.readFromNBT(tag.getCompound("info"));
 				PumpjackHandler.oilCache.put(coords, info);
 			}
 		}
-
-		NBTTagList lubricatedList = nbt.getTagList("lubricated", 10);
+		
+		ListNBT lubricatedList = nbt.getList("lubricated", 10);
 		LubricatedHandler.lubricatedTiles.clear();
-		for (int i = 0; i < lubricatedList.tagCount(); i++)
-		{
-			NBTTagCompound tag = lubricatedList.getCompoundTagAt(i);
-			LubricatedTileInfo info = LubricatedTileInfo.readFromNBT(tag);
+		for(int i = 0;i < lubricatedList.size();i++){
+			CompoundNBT tag = lubricatedList.getCompound(i);
+			LubricatedTileInfo info = new LubricatedTileInfo(tag);//LubricatedTileInfo.readFromNBT(tag);
 			LubricatedHandler.lubricatedTiles.add(info);
 		}
 	}
-
+	
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt)
-	{
-		NBTTagList oilList = new NBTTagList();
-		for (Map.Entry<DimensionChunkCoords, OilWorldInfo> e : PumpjackHandler.oilCache.entrySet())
-		{
-			if (e.getKey() != null && e.getValue() != null)
-			{
-				NBTTagCompound tag = e.getKey().writeToNBT();
-				tag.setTag("info", e.getValue().writeToNBT());
-				oilList.appendTag(tag);
+	public CompoundNBT write(CompoundNBT nbt){
+		ListNBT oilList = new ListNBT();
+		for(Map.Entry<DimensionChunkCoords, OilWorldInfo> e:PumpjackHandler.oilCache.entrySet()){
+			if(e.getKey() != null && e.getValue() != null){
+				CompoundNBT tag = e.getKey().writeToNBT();
+				tag.put("info", e.getValue().writeToNBT());
+				oilList.add(tag);
 			}
 		}
-		nbt.setTag("oilInfo", oilList);
-
-		NBTTagList lubricatedList = new NBTTagList();
-		for (LubricatedTileInfo info : LubricatedHandler.lubricatedTiles)
-		{
-			if (info != null)
-			{
-				NBTTagCompound tag = info.writeToNBT();
-				lubricatedList.appendTag(tag);
+		nbt.put("oilInfo", oilList);
+		
+		ListNBT lubricatedList = new ListNBT();
+		for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
+			if(info != null){
+				CompoundNBT tag = info.writeToNBT();
+				lubricatedList.add(tag);
 			}
 		}
-		nbt.setTag("lubricated", lubricatedList);
-
+		nbt.put("lubricated", lubricatedList);
+		
 		return nbt;
 	}
-
-
-	public static void setDirty(int dimension)
-	{
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && INSTANCE != null)
-			INSTANCE.markDirty();
+	
+	public static void setDirty(){
+		INSTANCE.markDirty();
 	}
-
-	public static void setInstance(int dimension, IPSaveData in)
-	{
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
-			INSTANCE = in;
+	
+	public static void setInstance(IPSaveData in){
+		INSTANCE = in;
 	}
-
 }

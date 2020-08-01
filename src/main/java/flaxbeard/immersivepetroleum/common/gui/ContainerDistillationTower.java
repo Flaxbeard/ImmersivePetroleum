@@ -1,34 +1,33 @@
 package flaxbeard.immersivepetroleum.common.gui;
 
 import blusunrize.immersiveengineering.api.crafting.RefineryRecipe;
-import blusunrize.immersiveengineering.common.gui.ContainerIEBase;
+import blusunrize.immersiveengineering.common.gui.IEBaseContainer;
 import blusunrize.immersiveengineering.common.gui.IESlot;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Slot;
+import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-public class ContainerDistillationTower extends ContainerIEBase<TileEntityDistillationTower>
+public class ContainerDistillationTower extends IEBaseContainer<DistillationTowerTileEntity>
 {
-	public ContainerDistillationTower(InventoryPlayer inventoryPlayer, TileEntityDistillationTower tile)
+	public ContainerDistillationTower(int windowId, PlayerInventory inventoryPlayer, DistillationTowerTileEntity tile)
 	{
-		super(inventoryPlayer, tile);
+		super(inventoryPlayer, tile, windowId);
 
-		final TileEntityDistillationTower tileF = tile;
-		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 0, 12, 17, 0)
+		final DistillationTowerTileEntity tileF = tile;
+		this.addSlot(new IESlot.FluidContainer(this, this.inv, 0, 12, 17, 0)
 		{
 			@Override
 			public boolean isItemValid(ItemStack itemStack)
 			{
-				IFluidHandler h = (IFluidHandler) itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, (EnumFacing) null);
-				if (h == null || h.getTankProperties().length == 0)
+				IFluidHandler h = (IFluidHandler) itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+				if (h == null || h.getTanks() == 0)
 					return false;
-				FluidStack fs = h.getTankProperties()[0].getContents();
+				FluidStack fs = h.getFluidInTank(0);
 				if (fs == null)
 					return false;
 				if (RefineryRecipe.findIncompleteRefineryRecipe(fs, null) == null)
@@ -39,18 +38,18 @@ public class ContainerDistillationTower extends ContainerIEBase<TileEntityDistil
 				return incomplete != null;
 			}
 		});
-		this.addSlotToContainer(new IESlot.Output(this, this.inv, 1, 12, 53));
+		this.addSlot(new IESlot.Output(this, this.inv, 1, 12, 53));
 
-		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 2, 134, 17, 2)
+		this.addSlot(new IESlot.FluidContainer(this, this.inv, 2, 134, 17, 2)
 		{
 			@Override
 			public boolean isItemValid(ItemStack itemStack)
 			{
-				return super.isItemValid(itemStack) || (!itemStack.isEmpty() && itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null));
+				return super.isItemValid(itemStack) || (!itemStack.isEmpty() && itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)!=null);
 			}
 		});
 
-		this.addSlotToContainer(new IESlot.Output(this, this.inv, 3, 134, 53));
+		this.addSlot(new IESlot.Output(this, this.inv, 3, 134, 53));
 
 
 		//this.addSlotToContainer(new IESlot.Output(this, this.inv, 4, 133,15));
@@ -63,12 +62,12 @@ public class ContainerDistillationTower extends ContainerIEBase<TileEntityDistil
 		{
 			for (int j = 0; j < 9; j++)
 			{
-				addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18));
+				addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18));
 			}
 		}
 		for (int i = 0; i < 9; i++)
 		{
-			addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 143));
+			addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 143));
 		}
 	}
 }

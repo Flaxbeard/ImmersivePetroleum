@@ -1,8 +1,8 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
-import net.minecraftforge.fluids.Fluid;
-
 import java.util.HashMap;
+
+import net.minecraft.fluid.Fluid;
 
 public class LubricantHandler
 {
@@ -17,7 +17,7 @@ public class LubricantHandler
 	public static void registerLubricant(Fluid lube, int amount)
 	{
 		if (lube != null)
-			lubricantAmounts.put(lube.getName(), amount);
+			lubricantAmounts.put(lube.getRegistryName().toString(), amount);
 	}
 
 	/**
@@ -31,7 +31,7 @@ public class LubricantHandler
 	{
 		if (toCheck != null)
 		{
-			String s = toCheck.getName();
+			String s = toCheck.getRegistryName().toString();
 			if (lubricantAmounts.containsKey(s))
 				return lubricantAmounts.get(s);
 		}
@@ -47,7 +47,7 @@ public class LubricantHandler
 	public static boolean isValidLube(Fluid toCheck)
 	{
 		if (toCheck != null)
-			return lubricantAmounts.containsKey(toCheck.getName());
+			return lubricantAmounts.containsKey(toCheck.getRegistryName().toString());
 		return false;
 	}
 

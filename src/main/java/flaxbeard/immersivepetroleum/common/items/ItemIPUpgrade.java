@@ -1,19 +1,14 @@
 package flaxbeard.immersivepetroleum.common.items;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.api.tool.IUpgrade;
-import com.google.common.collect.ImmutableSet;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
+
+import blusunrize.immersiveengineering.api.tool.IUpgrade;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+
+@Deprecated
 public class ItemIPUpgrade extends ItemIPBase implements IUpgrade
 {
 
@@ -21,11 +16,10 @@ public class ItemIPUpgrade extends ItemIPBase implements IUpgrade
 	{
 		super(name, 1, "reinforced_hull", "icebreaker", "tank", "rudders", "paddles");
 	}
-
+/*
+	@OnlyIn(Dist.CLIENT)
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
-	{
+	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		if (stack.getItemDamage() < getSubNames().length)
 		{
 			String[] flavour = ImmersiveEngineering.proxy.splitStringOnWidth(I18n.format("desc.immersivepetroleum.flavour.upgrades." + this.getSubNames()[stack.getItemDamage()]), 200);
@@ -35,7 +29,7 @@ public class ItemIPUpgrade extends ItemIPBase implements IUpgrade
 			}
 		}
 	}
-
+*/
 	@Override
 	public Set<String> getUpgradeTypes(ItemStack upgrade)
 	{
@@ -49,11 +43,7 @@ public class ItemIPUpgrade extends ItemIPBase implements IUpgrade
 	}
 
 	@Override
-	public void applyUpgrades(ItemStack target, ItemStack upgrade, NBTTagCompound modifications)
+	public void applyUpgrades(ItemStack target, ItemStack upgrade, CompoundNBT modifications)
 	{
-		// TODO Auto-generated method stub
-
 	}
-
-
 }

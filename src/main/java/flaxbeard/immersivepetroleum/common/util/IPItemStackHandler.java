@@ -5,98 +5,88 @@
 
 package flaxbeard.immersivepetroleum.common.util;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import flaxbeard.immersivepetroleum.common.items.ItemIPInternalStorage;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-public class IPItemStackHandler extends ItemStackHandler implements ICapabilityProvider
-{
+public class IPItemStackHandler extends ItemStackHandler implements ICapabilityProvider{
 	private boolean first = true;
 	private ItemStack stack;
 	@Nonnull
-	private Runnable onChange = () ->
-	{
+	private Runnable onChange = () -> {
 	};
-
-	public IPItemStackHandler(ItemStack stack)
-	{
+	
+	public IPItemStackHandler(ItemStack stack){
 		this.stack = stack;
 	}
-
-	public void setTile(TileEntity tile)
-	{
-		if (tile != null)
-		{
+	
+	public void setTile(TileEntity tile){
+		if(tile != null){
 			this.onChange = tile::markDirty;
-		}
-		else
-		{
-			this.onChange = () ->
-			{
+		}else{
+			this.onChange = () -> {
 			};
 		}
-
+		
 	}
-
-	public void setInventoryForUpdate(IInventory inv)
-	{
-		if (inv != null)
-		{
+	
+	public void setInventoryForUpdate(IInventory inv){
+		if(inv != null){
 			this.onChange = inv::markDirty;
-		}
-		else
-		{
-			this.onChange = () ->
-			{
+		}else{
+			this.onChange = () -> {
 			};
 		}
-
+		
 	}
-
-	protected void onContentsChanged(int slot)
-	{
+	
+	protected void onContentsChanged(int slot){
 		super.onContentsChanged(slot);
 		this.onChange.run();
 	}
-
-	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
-	{
+	
+	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable Direction facing){
 		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 	}
-
+	
+	private LazyOptional<Object> dum;
 	@Nullable
-	public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
-	{
-		if (this.first)
-		{
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing){
+		if(this.first){
 			int idealSize = ((ItemIPInternalStorage) this.stack.getItem()).getSlotCount(this.stack);
 			NonNullList<ItemStack> newList = NonNullList.withSize(idealSize, ItemStack.EMPTY);
-
-			for (int i = 0; i < Math.min(this.stacks.size(), idealSize); ++i)
-			{
+			
+			for(int i = 0;i < Math.min(this.stacks.size(), idealSize);++i){
 				newList.set(i, this.stacks.get(i));
 			}
-
+			
 			this.stacks = newList;
 			this.stack = ItemStack.EMPTY;
 			this.first = false;
 		}
-
-		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? (T) this : null;
+		
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+			if(this.dum==null)
+				this.dum=LazyOptional.of(()->this);
+			
+			return this.dum.cast();
+		}else{
+			return null;
+		}
 	}
-
-	public NonNullList<ItemStack> getContainedItems()
-	{
+	
+	public NonNullList<ItemStack> getContainedItems(){
 		return this.stacks;
 	}
 }

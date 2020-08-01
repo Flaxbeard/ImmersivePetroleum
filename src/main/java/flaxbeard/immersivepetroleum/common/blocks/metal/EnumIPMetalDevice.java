@@ -1,13 +1,14 @@
-package flaxbeard.immersivepetroleum.common.blocks.stone;
+package flaxbeard.immersivepetroleum.common.blocks.metal;
+
+import java.util.Locale;
 
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
 import net.minecraft.util.IStringSerializable;
 
-import java.util.Locale;
-
-public enum BlockTypes_IPStoneDecoration implements IStringSerializable, BlockIPBase.IBlockEnum
+public enum EnumIPMetalDevice implements IStringSerializable, BlockIPBase.IBlockEnum
 {
-	ASPHALT;
+	AUTOMATIC_LUBRICATOR,
+	GAS_GENERATOR;
 
 	@Override
 	public String getName()

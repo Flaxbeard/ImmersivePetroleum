@@ -1,33 +1,35 @@
 package flaxbeard.immersivepetroleum.client.render;
 
+import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.platform.GlStateManager;
+
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes.Base;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
-import net.minecraft.client.renderer.GlStateManager;
+import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
-import org.lwjgl.opengl.GL11;
 
-public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEntityAutoLubricator>
+public class TileAutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTileEntity>
 {
 
 	private static Base base = new ModelLubricantPipes.Base();
 
 	@Override
-	public boolean isGlobalRenderer(TileEntityAutoLubricator te)
+	public boolean isGlobalRenderer(AutoLubricatorTileEntity te)
 	{
 		return true;
 	}
 
 	@Override
-	public void render(TileEntityAutoLubricator te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
+	public void render(AutoLubricatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage)
 	{
 		if (te == null)
 		{
@@ -137,7 +139,7 @@ public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEn
 			BlockPos target = te.getPos().offset(te.getFacing());
 			TileEntity test = te.getWorld().getTileEntity(target);
 
-			ILubricationHandler handler = LubricatedHandler.getHandlerForTile(test);
+			ILubricationHandler<?> handler = LubricatedHandler.getHandlerForTile(test);
 			if (handler != null)
 			{
 				TileEntity master = handler.isPlacedCorrectly(te.getWorld(), te, te.getFacing());
@@ -154,9 +156,9 @@ public class TileAutoLubricatorRenderer extends TileEntitySpecialRenderer<TileEn
 			GlStateManager.enableAlpha();
 
 			int rotate = 0;
-			if (te.getFacing() == EnumFacing.NORTH) rotate = 1;
-			if (te.getFacing() == EnumFacing.SOUTH) rotate = 3;
-			if (te.getFacing() == EnumFacing.WEST) rotate = 2;
+			if (te.getFacing() == Direction.NORTH) rotate = 1;
+			if (te.getFacing() == Direction.SOUTH) rotate = 3;
+			if (te.getFacing() == Direction.WEST) rotate = 2;
 			GlStateManager.rotate(rotate * 90, 0, 1, 0);
 			GlStateManager.translate(-.5F, -.5F, -.5F);
 			ClientUtils.bindTexture("immersivepetroleum:textures/models/lubricator.png");

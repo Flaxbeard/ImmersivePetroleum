@@ -1,11 +1,11 @@
 package flaxbeard.immersivepetroleum.api.event;
 
-import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
+import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 @Cancelable
 public class SchematicRenderBlockEvent extends Event
@@ -57,18 +57,18 @@ public class SchematicRenderBlockEvent extends Event
 		this.stack = itemStack;
 	}
 
-	public EnumFacing getRotate()
+	public Direction getRotate()
 	{
 		switch (rotate)
 		{
 			case 0:
-				return EnumFacing.EAST;
+				return Direction.EAST;
 			case 1:
-				return EnumFacing.NORTH;
+				return Direction.NORTH;
 			case 2:
-				return EnumFacing.WEST;
+				return Direction.WEST;
 			default:
-				return EnumFacing.SOUTH;
+				return Direction.SOUTH;
 		}
 	}
 

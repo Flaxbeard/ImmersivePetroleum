@@ -1,78 +1,100 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
+import javax.annotation.Nullable;
+
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.EventHandler;
+import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFire;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FireBlock;
+import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.fluid.IFluidState;
+import net.minecraft.state.IProperty;
+import net.minecraft.state.IStateHolder;
+import net.minecraft.state.StateContainer.Builder;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidAttributes;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-
-public class BlockNapalm extends BlockIPFluid
-{
-
-	public BlockNapalm(String name, Fluid fluid, Material material)
-	{
-		super(name, fluid, material);
-	}
-
-	@Override
-	public void onBlockAdded(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state)
-	{
-		for (EnumFacing facing : EnumFacing.VALUES)
-		{
-			BlockPos notifyPos = pos.offset(facing);
-			if (world.getBlockState(notifyPos).getBlock() instanceof BlockFire
-					|| world.getBlockState(notifyPos).getMaterial() == Material.FIRE)
-			{
-				world.setBlockState(pos, Blocks.FIRE.getDefaultState(), 1 | 2);
-				break;
+public class BlockNapalm extends IPFluid{
+	
+	public BlockNapalm(String name, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidAttributes.Builder> buildAttributes){
+		super(name, stillTexture, flowingTexture, buildAttributes);
+		
+		// Such a roundabout way of doing this. But i don't see having the main class more flexible yet when it's just this one oddball..
+		IPContent.registeredIPBlocks.remove(this.block);
+		this.block=new FlowingFluidBlock(()->this.source, Block.Properties.create(Material.WATER)){
+			@Override
+			protected void fillStateContainer(Builder<Block, BlockState> builder){
+				super.fillStateContainer(builder);
+				builder.add(this.getStateContainer().getProperties().toArray(new IProperty[0]));
 			}
-		}
-		super.onBlockAdded(world, pos, state);
-	}
-
-	@Override
-	public void neighborChanged(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Block neighborBlock, @Nonnull BlockPos neighbourPos)
-	{
-		if (world.getBlockState(neighbourPos).getBlock() instanceof BlockFire
-				|| world.getBlockState(neighbourPos).getMaterial() == Material.FIRE)
-		{
-			int d = world.provider.getDimension();
-			if (!EventHandler.napalmPositions.containsKey(d)
-					|| !EventHandler.napalmPositions.get(d).contains(neighbourPos))
-			{
-				processFire(world, pos);
+			
+			@Override
+			public IFluidState getFluidState(BlockState state){
+				IFluidState baseState=super.getFluidState(state);
+				for(IProperty<?> prop: this.getStateContainer().getProperties())
+					if(prop!=FlowingFluidBlock.LEVEL)
+						baseState = withCopiedValue(prop, baseState, state);
+				return baseState;
 			}
-		}
-		super.neighborChanged(state, world, pos, neighborBlock, neighbourPos);
+			
+			private <T extends IStateHolder<T>, S extends Comparable<S>> T withCopiedValue(IProperty<S> prop, T oldState, IStateHolder<?> copyFrom){
+				return oldState.with(prop, copyFrom.get(prop));
+			}
+			
+			@Override
+			public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving){
+				for(Direction facing:Direction.values()){
+					BlockPos notifyPos = pos.offset(facing);
+					if(worldIn.getBlockState(notifyPos).getBlock() instanceof FireBlock || worldIn.getBlockState(notifyPos).getMaterial() == Material.FIRE){
+						worldIn.setBlockState(pos, Blocks.FIRE.getDefaultState());
+						break;
+					}
+				}
+				super.onBlockAdded(state, worldIn, pos, oldState, isMoving);
+			}
+			
+			@Override
+			public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
+				if(worldIn.getBlockState(fromPos).getBlock() instanceof FireBlock || worldIn.getBlockState(fromPos).getMaterial() == Material.FIRE){
+					int d = worldIn.getDimension().getType().getId();
+					if(!EventHandler.napalmPositions.containsKey(d) || !EventHandler.napalmPositions.get(d).contains(fromPos)){
+						processFire(worldIn, pos);
+					}
+				}
+				
+				super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
+			}
+		};
+		this.block.setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, fluidName+"_fluid_block"));
+		IPContent.registeredIPBlocks.add(this.block);
 	}
-
-	public void processFire(World world, BlockPos pos)
-	{
-		int d = world.provider.getDimension();
-		if (!EventHandler.napalmPositions.containsKey(d))
-		{
+	
+	public void processFire(World world, BlockPos pos){
+		int d = world.getDimension().getType().getId();
+		if(!EventHandler.napalmPositions.containsKey(d)){
 			EventHandler.napalmPositions.put(d, new ArrayList<>());
 		}
 		EventHandler.napalmPositions.get(d).add(pos);
-
+		
 		world.setBlockState(pos, Blocks.FIRE.getDefaultState(), 1 | 2);
-
-		for (EnumFacing facing : EnumFacing.VALUES)
-		{
+		
+		for(Direction facing:Direction.values()){
 			BlockPos notifyPos = pos.offset(facing);
 			Block block = world.getBlockState(notifyPos).getBlock();
-			if (block instanceof BlockNapalm)
-			{
+			if(block == this.block){
 				EventHandler.napalmPositions.get(d).add(notifyPos);
-				//world.neighborChanged(notifyPos, block, neighbourPos);
+				// world.neighborChanged(notifyPos, block, neighbourPos);
 			}
 		}
 	}

@@ -1,15 +1,15 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.NonNullList;
-import net.minecraftforge.fluids.FluidStack;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+
+import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
+import net.minecraftforge.fluids.FluidStack;
 
 
 /**
@@ -30,7 +30,7 @@ public class DistillationRecipe extends MultiblockRecipe
 	public final ItemStack[] itemOutput;
 	public final FluidStack input;
 
-	public static ArrayList<DistillationRecipe> recipeList = new ArrayList();
+	public static ArrayList<DistillationRecipe> recipeList = new ArrayList<>();
 
 	public DistillationRecipe(FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidStack input, int energy, int time, float[] chances)
 	{
@@ -88,15 +88,15 @@ public class DistillationRecipe extends MultiblockRecipe
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt)
+	public CompoundNBT writeToNBT(CompoundNBT nbt)
 	{
-		nbt.setTag("input", input.writeToNBT(new NBTTagCompound()));
+		nbt.put("input", input.writeToNBT(new CompoundNBT()));
 		return nbt;
 	}
 
-	public static DistillationRecipe loadFromNBT(NBTTagCompound nbt)
+	public static DistillationRecipe loadFromNBT(CompoundNBT nbt)
 	{
-		FluidStack input = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input"));
+		FluidStack input = FluidStack.loadFluidStackFromNBT(nbt.getCompound("input"));
 		return findRecipe(input);
 	}
 

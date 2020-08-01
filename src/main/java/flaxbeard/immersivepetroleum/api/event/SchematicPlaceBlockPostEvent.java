@@ -1,17 +1,17 @@
 package flaxbeard.immersivepetroleum.api.event;
 
-import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumFacing;
+import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 @Cancelable
 public class SchematicPlaceBlockPostEvent extends Event
 {
-	private IBlockState state;
+	private BlockState state;
 	private World world;
 	private int index;
 	private IMultiblock multiblock;
@@ -21,7 +21,7 @@ public class SchematicPlaceBlockPostEvent extends Event
 	private int w;
 	private BlockPos pos;
 
-	public SchematicPlaceBlockPostEvent(IMultiblock multiblock, int index, IBlockState state, BlockPos pos, World world, int rotate, int l, int h, int w)
+	public SchematicPlaceBlockPostEvent(IMultiblock multiblock, int index, BlockState state, BlockPos pos, World world, int rotate, int l, int h, int w)
 	{
 		super();
 		this.state = state;
@@ -40,7 +40,7 @@ public class SchematicPlaceBlockPostEvent extends Event
 		return world;
 	}
 
-	public IBlockState getBlockState()
+	public BlockState getBlockState()
 	{
 		return state;
 	}
@@ -55,7 +55,7 @@ public class SchematicPlaceBlockPostEvent extends Event
 		return multiblock;
 	}
 
-	public void setBlockState(IBlockState state)
+	public void setBlockState(BlockState state)
 	{
 		this.state = state;
 	}
@@ -65,18 +65,18 @@ public class SchematicPlaceBlockPostEvent extends Event
 		return pos;
 	}
 
-	public EnumFacing getRotate()
+	public Direction getRotate()
 	{
 		switch (rotate)
 		{
 			case 0:
-				return EnumFacing.EAST;
+				return Direction.EAST;
 			case 1:
-				return EnumFacing.NORTH;
+				return Direction.NORTH;
 			case 2:
-				return EnumFacing.WEST;
+				return Direction.WEST;
 			default:
-				return EnumFacing.SOUTH;
+				return Direction.SOUTH;
 		}
 	}
 

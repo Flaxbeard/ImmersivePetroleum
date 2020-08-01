@@ -1,32 +1,82 @@
 package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
-import blusunrize.immersiveengineering.api.crafting.IngredientStack;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.BlockIEScaffoldSlab;
-import blusunrize.immersiveengineering.common.blocks.BlockTypes_MetalsAll;
-import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration0;
-import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration1;
-import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
-import blusunrize.immersiveengineering.common.util.Utils;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.blocks.metal.BlockTypes_IPMetalMultiblock;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import java.util.List;
 
+import blusunrize.immersiveengineering.api.crafting.IngredientStack;
+import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.World;
+import net.minecraft.world.gen.feature.template.Template.BlockInfo;
+
+/** Save keeping */
+@Deprecated
+public class MultiblockDistillationTower implements IMultiblock{
+
+	@Override
+	public ResourceLocation getUniqueName(){
+		return null;
+	}
+
+	@Override
+	public boolean isBlockTrigger(BlockState state){
+		return false;
+	}
+
+	@Override
+	public boolean createStructure(World world, BlockPos pos, Direction side, PlayerEntity player){
+		return false;
+	}
+
+	@Override
+	public List<BlockInfo> getStructure(){
+		return null;
+	}
+
+	@Override
+	public IngredientStack[] getTotalMaterials(){
+		return null;
+	}
+
+	@Override
+	public boolean overwriteBlockRender(BlockState state, int iterator){
+		return false;
+	}
+
+	@Override
+	public float getManualScale(){
+		return 0;
+	}
+
+	@Override
+	public boolean canRenderFormedStructure(){
+		return false;
+	}
+
+	@Override
+	public void renderFormedStructure(){
+	}
+
+	@Override
+	public Vec3i getSize(){
+		return null;
+	}
+
+	@Override
+	public void disassemble(World world, BlockPos startPos, boolean mirrored, Direction clickDirectionAtCreation){
+	}
+
+	@Override
+	public BlockPos getTriggerOffset(){
+		return null;
+	}
+	
+}
+/*
 public class MultiblockDistillationTower implements IMultiblock
 {
 	public static MultiblockDistillationTower instance = new MultiblockDistillationTower();
@@ -169,7 +219,7 @@ public class MultiblockDistillationTower implements IMultiblock
 	{
 		if (te == null)
 		{
-			te = new TileEntityDistillationTower.TileEntityDistillationTowerParent();
+			te = new DistillationTowerTileEntity.TileEntityDistillationTowerParent();
 		}
 
 		ImmersivePetroleum.proxy.renderTile((TileEntity) te);
@@ -225,16 +275,16 @@ public class MultiblockDistillationTower implements IMultiblock
 
 					if (l == 0 && w == 0 && h == 0)
 					{
-						world.setBlockState(pos2, IPContent.blockMetalMultiblock.getStateFromMeta(BlockTypes_IPMetalMultiblock.DISTILLATION_TOWER_PARENT.getMeta()));
+						world.setBlockState(pos2, IPContent.blockMetalMultiblock.getStateFromMeta(EnumIPMetalMultiblockType.DISTILLATION_TOWER_PARENT.getMeta()));
 					}
 					else
 					{
-						world.setBlockState(pos2, IPContent.blockMetalMultiblock.getStateFromMeta(BlockTypes_IPMetalMultiblock.DISTILLATION_TOWER.getMeta()));
+						world.setBlockState(pos2, IPContent.blockMetalMultiblock.getStateFromMeta(EnumIPMetalMultiblockType.DISTILLATION_TOWER.getMeta()));
 					}
 					TileEntity curr = world.getTileEntity(pos2);
-					if (curr instanceof TileEntityDistillationTower)
+					if (curr instanceof DistillationTowerTileEntity)
 					{
-						TileEntityDistillationTower tile = (TileEntityDistillationTower) curr;
+						DistillationTowerTileEntity tile = (DistillationTowerTileEntity) curr;
 						tile.facing = side;
 						tile.formed = true;
 						tile.pos = (h + 1) * 16 + (l + 3) * 4 + (w);
@@ -274,11 +324,11 @@ public class MultiblockDistillationTower implements IMultiblock
 							if (!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta()))
 								return false;
 						}
-						/*else if (l > -2 && w == 2)
-						{
-							if (!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta()))
-								return false;
-						}*/
+//						else if (l > -2 && w == 2)
+//						{
+//							if (!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta()))
+//								return false;
+//						}
 						else
 						{
 							if (!Utils.isOreBlockAt(world, pos, "scaffoldingSteel"))
@@ -342,4 +392,44 @@ public class MultiblockDistillationTower implements IMultiblock
 	{
 		return materials;
 	}
+
+	@Override
+	public ResourceLocation getUniqueName(){
+		return null;
+	}
+
+	@Override
+	public boolean isBlockTrigger(BlockState state){
+		return false;
+	}
+
+	@Override
+	public boolean createStructure(World world, BlockPos pos, Direction side, PlayerEntity player){
+		return false;
+	}
+
+	@Override
+	public List<BlockInfo> getStructure(){
+		return null;
+	}
+
+	@Override
+	public boolean overwriteBlockRender(BlockState state, int iterator){
+		return false;
+	}
+
+	@Override
+	public Vec3i getSize(){
+		return null;
+	}
+
+	@Override
+	public void disassemble(World world, BlockPos startPos, boolean mirrored, Direction clickDirectionAtCreation){
+	}
+
+	@Override
+	public BlockPos getTriggerOffset(){
+		return null;
+	}
 }
+*/

@@ -1,9 +1,10 @@
 package flaxbeard.immersivepetroleum.client.render;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.client.model.ModelSpeedboat;
 import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;

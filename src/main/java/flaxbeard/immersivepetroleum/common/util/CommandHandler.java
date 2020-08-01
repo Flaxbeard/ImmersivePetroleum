@@ -1,18 +1,8 @@
 package flaxbeard.immersivepetroleum.common.util;
 
-import blusunrize.immersiveengineering.api.Lib;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-
+@Deprecated
+public class CommandHandler{}
+/*
 public class CommandHandler extends CommandBase
 {
 	ArrayList<IPSubCommand> commands = new ArrayList<>();
@@ -37,13 +27,6 @@ public class CommandHandler extends CommandBase
 	{
 		return 4;
 	}
-
-//	/**
-//	 * Check if the given ICommandSender has permission to execute this command
-//	 */
-//	public boolean checkPermission(MinecraftServer server, ICommandSender sender)
-//	{
-//	}
 
 	@Override
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos)
@@ -91,7 +74,7 @@ public class CommandHandler extends CommandBase
 				{
 					if (!sender.canUseCommand(com.getPermissionLevel(), this.getName()))
 					{
-						TextComponentTranslation msg = new TextComponentTranslation("commands.generic.permission");
+						TranslationTextComponent msg = new TranslationTextComponent("commands.generic.permission");
 						msg.getStyle().setColor(TextFormatting.RED);
 						sender.sendMessage(msg);
 					}
@@ -107,7 +90,7 @@ public class CommandHandler extends CommandBase
 			{
 				sub += ((i++) > 0 ? ", " : "") + com.getIdent();
 			}
-			sender.sendMessage(new TextComponentTranslation(Lib.CHAT_COMMAND + "available", sub));
+			sender.sendMessage(new TranslationTextComponent(Lib.CHAT_COMMAND + "available", sub));
 		}
 	}
 
@@ -117,8 +100,7 @@ public class CommandHandler extends CommandBase
 
 		public abstract void perform(CommandHandler h, MinecraftServer server, ICommandSender sender, String[] args);
 
-		public String getHelp(String subIdent)
-		{
+		public String getHelp(String subIdent){
 			return "chat.immersivepetroleum.command." + getIdent() + subIdent + ".help";
 		}
 
@@ -126,5 +108,13 @@ public class CommandHandler extends CommandBase
 
 		public abstract int getPermissionLevel();
 	}
+	
+	// FIXME ! REMOVE LATER !
+	@Deprecated
+	public static interface ICommandSender{
+		void sendMessage(ITextComponent translationTextComponent);
+		boolean canUseCommand(int permissionLevel, String name);
+	}
 
 }
+*/

@@ -20,6 +20,7 @@ import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -49,6 +50,11 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		public net.minecraft.util.math.AxisAlignedBB getRenderBoundingBox(){
 			BlockPos pos = getPos();
 			return new AxisAlignedBB(pos.add(-4, -16, -4), pos.add(4, 16, 4));
+		}
+		
+		@Override
+		public boolean isDummy(){
+			return false;
 		}
 		
 		@Override
@@ -89,7 +95,9 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			lastFluidOut = null;
 		}
 		
-		if(!descPacket) inventory = Utils.readInventory(nbt.getList("inventory", 10), 6);
+		if(!descPacket){
+			inventory = readInventory(nbt.getCompound("inventory"));
+		}
 	}
 	
 	@Override
@@ -100,7 +108,19 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		nbt.putBoolean("operated", operated);
 		nbt.putInt("cooldownTicks", cooldownTicks);
 		nbt.putString("lastFluidOut", lastFluidOut == null ? "" : lastFluidOut.getRegistryName().toString());
-		if(!descPacket) nbt.put("inventory", Utils.writeInventory(inventory));
+		if(!descPacket){
+			nbt.put("inventory", writeInventory(inventory));
+		}
+	}
+	
+	protected NonNullList<ItemStack> readInventory(CompoundNBT nbt){
+		NonNullList<ItemStack> list=NonNullList.create();
+		ItemStackHelper.loadAllItems(nbt, list);
+		return list;
+	}
+	
+	protected CompoundNBT writeInventory(NonNullList<ItemStack> list){
+		return ItemStackHelper.saveAllItems(new CompoundNBT(), list);
 	}
 	
 	public boolean shouldRenderAsActive(){
@@ -135,7 +155,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 				DistillationRecipe recipe = DistillationRecipe.findRecipe(tanks[0].getFluid());
 				if (recipe != null)
 				{
-					MultiblockProcessInMachine<DistillationRecipe> process = new MultiblockProcessInMachine(recipe).setInputTanks(new int[]{0});
+					MultiblockProcessInMachine<DistillationRecipe> process = new MultiblockProcessInMachine<DistillationRecipe>(recipe).setInputTanks(new int[]{0});
 					if (this.addProcessToQueue(process, true))
 					{
 						this.addProcessToQueue(process, false);
@@ -173,72 +193,57 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 					inventory.set(2, ItemStack.EMPTY);
 				update = true;
 			}
-
-			int amountLeft = 80;
-
-			BlockPos outputPos = this.getPos().offset(getFacing().getOpposite(), 1).offset(getFacing().rotateY().getOpposite(), 1).offset(Direction.DOWN, 1);
-			IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, getFacing().rotateY()).orElse(null);
-
-			if (this.getIsMirrored())
-			{
-				outputPos = this.getPos().offset(getFacing().getOpposite(), 1).offset(getFacing().rotateY(), 1).offset(Direction.DOWN, 1); //System.out.println(outputPos);
+			
+			IFluidHandler output;
+			BlockPos outputPos;
+			if(getIsMirrored()){
+				outputPos = this.getPos().offset(getFacing().getOpposite(), 1).offset(getFacing().rotateY(), 1).offset(Direction.DOWN, 1);
 				output = FluidUtil.getFluidHandler(world, outputPos, getFacing().rotateYCCW()).orElse(null);
+			}else{
+				outputPos = this.getPos().offset(getFacing().getOpposite(), 1).offset(getFacing().rotateY().getOpposite(), 1).offset(Direction.DOWN, 1);
+				output = FluidUtil.getFluidHandler(world, outputPos, getFacing().rotateY()).orElse(null);
 			}
-
-			if (output != null)
-			{
+			
+			if(output != null){
 				FluidStack targetFluidStack = null;
-				if (lastFluidOut != null)
-				{
-					for (FluidStack stack : this.tanks[1].fluids)
-					{
-						if (stack.getFluid() == lastFluidOut)
-						{
+				if(lastFluidOut != null){
+					for(FluidStack stack:this.tanks[1].fluids){
+						if(stack.getFluid() == lastFluidOut){
 							targetFluidStack = stack;
 						}
 					}
 				}
-				if (targetFluidStack == null)
-				{
+				if(targetFluidStack == null){
 					int max = 0;
-					for (FluidStack stack : this.tanks[1].fluids)
-					{
-						if (stack.getAmount() > max)
-						{
+					for(FluidStack stack:this.tanks[1].fluids){
+						if(stack.getAmount() > max){
 							max = stack.getAmount();
 							targetFluidStack = stack;
 						}
 					}
 				}
-
+				
 				Iterator<FluidStack> iterator = this.tanks[1].fluids.iterator();
-
+				
 				lastFluidOut = null;
-				if (targetFluidStack != null)
+				if(targetFluidStack != null)
 				{
 					FluidStack out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.getAmount(), 80), false);
 					int accepted = output.fill(out, FluidAction.SIMULATE);
-					if (accepted > 0)
-					{
+					if(accepted > 0){
 						lastFluidOut = targetFluidStack.getFluid();
 						int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.getAmount(), accepted), false), FluidAction.EXECUTE);
 						this.tanks[1].drain(new FluidStack(targetFluidStack.getFluid(), drained), FluidAction.SIMULATE);
-						//MultiFluidTank.drain(drained, targetFluidStack, this.tanks[1].fluids.iterator(), true);
 						update = true;
-					}
-					else
-					{
-						while (iterator.hasNext())
-						{
+					}else{
+						while(iterator.hasNext()){
 							targetFluidStack = iterator.next();
 							out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.getAmount(), 80), false);
 							accepted = output.fill(out, FluidAction.SIMULATE);
-							if (accepted > 0)
-							{
+							if(accepted > 0){
 								lastFluidOut = targetFluidStack.getFluid();
 								int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.getAmount(), accepted), false), FluidAction.EXECUTE);
 								this.tanks[1].drain(new FluidStack(targetFluidStack.getFluid(), drained), FluidAction.EXECUTE);
-								//MultiFluidTank.drain(drained, targetFluidStack, this.tanks[1].fluids.iterator(), true);
 								update = true;
 								break;
 							}
@@ -246,7 +251,6 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 					}
 				}
 			}
-
 		}
 
 		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);

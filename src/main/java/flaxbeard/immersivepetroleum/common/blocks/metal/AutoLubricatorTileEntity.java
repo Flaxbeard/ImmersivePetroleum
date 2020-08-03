@@ -66,6 +66,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class AutoLubricatorTileEntity extends IEBaseTileEntity implements IDirectionalTile, IHasDummyBlocks, ITickable, IPlayerInteraction, IBlockOverlayText, IBlockBounds, ITileDrop{
+	public static TileEntityType<AutoLubricatorTileEntity> TYPE;
 	
 	public static class PumpjackLubricationHandler implements ILubricationHandler<PumpjackTileEntity>{
 		@Override

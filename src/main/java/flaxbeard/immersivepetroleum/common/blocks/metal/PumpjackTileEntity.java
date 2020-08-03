@@ -200,7 +200,6 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 						if(accepted > 0){
 							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.getAmount(), accepted), false), FluidAction.EXECUTE);
 							extractOil(drained);
-							
 						}
 					}
 					

@@ -4,6 +4,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
@@ -21,10 +24,8 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.client.model.ModelCoresampleExtended;
 import flaxbeard.immersivepetroleum.client.page.ManualElementSchematicCrafting;
-import flaxbeard.immersivepetroleum.client.render.TileAutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -46,11 +47,11 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID)
 public class ClientProxy extends CommonProxy{
+	private static final Logger log=LogManager.getLogger(ImmersivePetroleum.MODID+"/ClientProxy");
 	public static final String CAT_IP = "ip";
 	
 	@Override
@@ -76,10 +77,10 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void init(){
-		ShaderUtil.init();
+		//ShaderUtil.init(); // Get's initialized when actualy needed.
 	}
 	
-	/** Entry Priority */
+	/** ImmersivePetroleum's Manual Category */
 	private static InnerNode<ResourceLocation, ManualEntry> IP_CATEGORY;
 	public void setupManualPages(){
 		ManualInstance man=ManualHelper.getManual();
@@ -137,7 +138,6 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	static final DecimalFormat FORMATTER = new DecimalFormat("#,###.##");
 	public static void handleReservoirManual(ResourceLocation location, int priority){
 		ManualInstance man=ManualHelper.getManual();
 		
@@ -147,6 +147,7 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 
+	static final DecimalFormat FORMATTER = new DecimalFormat("#,###.##");
 	static ManualEntry entry;
 	private static String[] createContent(TextSplitter splitter){
 		ArrayList<ItemStack> list = new ArrayList<>();
@@ -279,7 +280,7 @@ public class ClientProxy extends CommonProxy{
 		// FIXME TileEntity Registration
 		//ClientRegistry.bindTileEntitySpecialRenderer(DistillationTowerTileEntity.TileEntityDistillationTowerParent.class, new MultiblockDistillationTowerRenderer());
 		//ClientRegistry.bindTileEntitySpecialRenderer(PumpjackTileEntity.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
-		ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorTileEntity.class, new TileAutoLubricatorRenderer());
+		//ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorTileEntity.class, new TileAutoLubricatorRenderer());
 		//ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice), 0, AutoLubricatorTileEntity.class);
 	}
 
@@ -303,64 +304,55 @@ public class ClientProxy extends CommonProxy{
 	
 	static ManualEntry resEntry;
 	
-	public void renderTile(TileEntity te)
-	{
-		if (te instanceof PumpjackTileEntity.TileEntityPumpjackParent)
-		{
+	public void renderTile(TileEntity te){
+		
+		if(te instanceof PumpjackTileEntity.TileEntityPumpjackParent){
 			GlStateManager.pushMatrix();
 			GlStateManager.rotatef(-90, 0, 1, 0);
 			GlStateManager.translatef(1, 1, -2);
-
+			
 			float pt = 0;
-			if (Minecraft.getInstance().player != null)
-			{
+			if(Minecraft.getInstance().player != null){
 				((PumpjackTileEntity.TileEntityPumpjackParent) te).activeTicks = Minecraft.getInstance().player.ticksExisted;
 				pt = Minecraft.getInstance().getRenderPartialTicks();
 			}
-
-
+			
 			TileEntityRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer((TileEntity) te);
-
+			
 			tesr.render((TileEntity) te, 0, 0, 0, pt, 0);
 			GlStateManager.popMatrix();
-		}
-		else
-		{
+		}else{
 			GlStateManager.pushMatrix();
 			GlStateManager.rotatef(-90, 0, 1, 0);
 			GlStateManager.translatef(0, 1, -4);
-
-
+			
 			TileEntityRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer((TileEntity) te);
-
+			
 			tesr.render((TileEntity) te, 0, 0, 0, 0, 0);
 			GlStateManager.popMatrix();
 		}
 	}
 
 	@Override
-	public void drawUpperHalfSlab(ItemStack stack)
-	{
+	public void drawUpperHalfSlab(ItemStack stack){
+		
 		// Render slabs on top half
 		BlockRendererDispatcher blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
 		BlockState state = IEBlocks.MetalDecoration.steelScaffolding.get(MetalScaffoldingType.STANDARD).getDefaultState();
 		IBakedModel model = blockRenderer.getBlockModelShapes().getModel(state);
-
+		
 		GlStateManager.pushMatrix();
 		GlStateManager.translatef(0.0F, 0.5F, 1.0F);
 		RenderHelper.disableStandardItemLighting();
 		GlStateManager.blendFunc(770, 771);
 		GlStateManager.enableBlend();
 		GlStateManager.disableCull();
-		if (Minecraft.isAmbientOcclusionEnabled())
-		{
+		if(Minecraft.isAmbientOcclusionEnabled()){
 			GlStateManager.shadeModel(7425);
-		}
-		else
-		{
+		}else{
 			GlStateManager.shadeModel(7424);
 		}
-
+		
 		blockRenderer.getBlockModelRenderer().renderModelBrightness(model, state, 0.75F, false);
 		GlStateManager.popMatrix();
 	}

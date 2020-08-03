@@ -31,7 +31,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidAttributes;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -46,15 +45,19 @@ public class ItemOilCan extends IPItemBase{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		FluidStack fs = FluidUtil.getFluidContained(stack).orElse(null);
+		if(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY==null)
+			return;
 		
-		if(fs != null){
-			FluidAttributes att = fs.getFluid().getAttributes();
-			
-			TextFormatting rarity = att.getRarity() == Rarity.COMMON ? TextFormatting.GRAY : att.getRarity().color;
-			tooltip.add(new StringTextComponent(rarity + fs.getDisplayName().toString() + TextFormatting.GRAY + ": " + fs.getAmount() + "/" + 8000 + "mB"));
-		}else
-			tooltip.add(new StringTextComponent(I18n.format(Lib.DESC_FLAVOUR + "drill.empty")));
+		FluidUtil.getFluidContained(stack).ifPresent(fluid->{
+			if(fluid!=null && fluid.getAmount()>0){
+				FluidAttributes att = fluid.getFluid().getAttributes();
+				
+				TextFormatting rarity = att.getRarity() == Rarity.COMMON ? TextFormatting.GRAY : att.getRarity().color;
+				tooltip.add(new StringTextComponent(rarity + fluid.getDisplayName().toString() + TextFormatting.GRAY + ": " + fluid.getAmount() + "/" + 8000 + "mB"));
+			}else{
+				tooltip.add(new StringTextComponent(I18n.format(Lib.DESC_FLAVOUR + "drill.empty")));
+			}
+		});
 	}
 	
 	@Override
@@ -131,7 +134,7 @@ public class ItemOilCan extends IPItemBase{
 	
 	@Override
 	public boolean hasContainerItem(ItemStack stack){
-		return ItemNBTHelper.hasKey(stack, "jerrycanDrain") || FluidUtil.getFluidContained(stack) != null;
+		return ItemNBTHelper.hasKey(stack, "jerrycanDrain") || FluidUtil.getFluidContained(stack).isPresent();
 	}
 	
 	@Override
@@ -153,11 +156,6 @@ public class ItemOilCan extends IPItemBase{
 	
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, CompoundNBT nbt){
-		return new FluidHandlerItemStack(stack, 8000){
-			@Override
-			public boolean canFillFluidType(FluidStack fluid){
-				return fluid != null && LubricantHandler.isValidLube(fluid.getFluid());
-			}
-		};
+		return new FluidHandlerItemStack(stack, 8000);
 	}
 }

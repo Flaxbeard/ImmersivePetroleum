@@ -43,7 +43,7 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.blocks.BlockNapalm;
-import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
+import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.network.CloseBookPacket;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import net.minecraft.block.BlockState;
@@ -321,11 +321,10 @@ public class EventHandler{
 				int amnt = ItemNBTHelper.getInt(stack, "oil");
 				List<ITextComponent> tooltip = event.getToolTip();
 				if(res != null && amnt > 0){
-					int est = (amnt / 1000) * 1000;
-					String test = FORMATTER.format(est);
+					int est = (amnt / 1000) * 1000; // ?!
 					String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
 					
-					tooltip.add(2, new StringTextComponent(I18n.format("chat.immersivepetroleum.info.coresample.oil", test, fluidName)));
+					tooltip.add(2, new StringTextComponent(I18n.format("chat.immersivepetroleum.info.coresample.oil", FORMATTER.format(est), fluidName)));
 				}else{
 					if(res != null && res.replenishRate > 0){
 						String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
@@ -384,11 +383,10 @@ public class EventHandler{
 							
 							String s = I18n.format("chat.immersivepetroleum.info.coresample.noOil");
 							if(res != null && amnt > 0){
-								int est = (amnt / 1000) * 1000;
-								String test = FORMATTER.format(est);
+								int est = (amnt / 1000) * 1000; // Why?
 								String fluidName = new FluidStack(res.getFluid(), 0).getDisplayName().getUnformattedComponentText();
 								
-								s = I18n.format("chat.immersivepetroleum.info.coresample.oil", test, fluidName);
+								s = I18n.format("chat.immersivepetroleum.info.coresample.oil", FORMATTER.format(est), fluidName);
 							}else if(res != null && res.replenishRate > 0){
 								String fluidName = new FluidStack(res.getFluid(), 0).getDisplayName().getUnformattedComponentText();
 								s = I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName);
@@ -399,8 +397,8 @@ public class EventHandler{
 							font.drawStringWithShadow(s, fx, fy, col);
 						}
 					}
-				}else if(mop != null && mop.getType() != Type.ENTITY && mop.hitInfo instanceof EntitySpeedboat){
-					String[] text = ((EntitySpeedboat) mop.hitInfo).getOverlayText(player, mop);
+				}else if(mop != null && mop.getType() != Type.ENTITY && mop.hitInfo instanceof SpeedboatEntity){
+					String[] text = ((SpeedboatEntity) mop.hitInfo).getOverlayText(player, mop);
 					if(text != null && text.length > 0){
 						FontRenderer font = ClientUtils.font();
 						int col = 0xffffff;
@@ -421,8 +419,8 @@ public class EventHandler{
 	public static void handleBoatImmunity(LivingAttackEvent event){
 		if(event.getSource() == DamageSource.LAVA || event.getSource() == DamageSource.ON_FIRE || event.getSource() == DamageSource.IN_FIRE){
 			LivingEntity entity = event.getEntityLiving();
-			if(entity.getRidingEntity() instanceof EntitySpeedboat){
-				EntitySpeedboat boat = (EntitySpeedboat) entity.getRidingEntity();
+			if(entity.getRidingEntity() instanceof SpeedboatEntity){
+				SpeedboatEntity boat = (SpeedboatEntity) entity.getRidingEntity();
 				if(boat.isFireproof){
 					event.setCanceled(true);
 				}
@@ -433,11 +431,11 @@ public class EventHandler{
 	@SubscribeEvent
 	public static void handleBoatImmunity(PlayerTickEvent event){
 		PlayerEntity entity = event.player;
-		if(entity.isBurning() && entity.getRidingEntity() instanceof EntitySpeedboat){
-			EntitySpeedboat boat = (EntitySpeedboat) entity.getRidingEntity();
+		if(entity.isBurning() && entity.getRidingEntity() instanceof SpeedboatEntity){
+			SpeedboatEntity boat = (SpeedboatEntity) entity.getRidingEntity();
 			if(boat.isFireproof){
 				entity.extinguish();
-				DataParameter<Byte> FLAGS = EntitySpeedboat.getFlags();
+				DataParameter<Byte> FLAGS = SpeedboatEntity.getFlags();
 				byte b0 = ((Byte) entity.getDataManager().get(FLAGS)).byteValue();
 				
 				entity.getDataManager().set(FLAGS, Byte.valueOf((byte) (b0 & ~(1 << 0))));
@@ -449,8 +447,8 @@ public class EventHandler{
 	@SubscribeEvent
 	public static void handleBoatImmunity(RenderBlockOverlayEvent event){
 		PlayerEntity entity = event.getPlayer();
-		if(event.getOverlayType() == OverlayType.FIRE && entity.isBurning() && entity.getRidingEntity() instanceof EntitySpeedboat){
-			EntitySpeedboat boat = (EntitySpeedboat) entity.getRidingEntity();
+		if(event.getOverlayType() == OverlayType.FIRE && entity.isBurning() && entity.getRidingEntity() instanceof SpeedboatEntity){
+			SpeedboatEntity boat = (SpeedboatEntity) entity.getRidingEntity();
 			if(boat.isFireproof){
 				event.setCanceled(true);
 			}
@@ -461,8 +459,8 @@ public class EventHandler{
 	@SubscribeEvent
 	public static void handleFireRender(RenderPlayerEvent.Pre event){
 		PlayerEntity entity = event.getPlayer();
-		if(entity.isBurning() && entity.getRidingEntity() instanceof EntitySpeedboat){
-			EntitySpeedboat boat = (EntitySpeedboat) entity.getRidingEntity();
+		if(entity.isBurning() && entity.getRidingEntity() instanceof SpeedboatEntity){
+			SpeedboatEntity boat = (SpeedboatEntity) entity.getRidingEntity();
 			if(boat.isFireproof){
 				entity.extinguish();
 				
@@ -578,7 +576,7 @@ public class EventHandler{
 		if(ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
 			PlayerEntity player = ClientUtils.mc().player;
 			
-			if(player.getRidingEntity() instanceof EntitySpeedboat){
+			if(player.getRidingEntity() instanceof SpeedboatEntity){
 				int offset = 0;
 				for(Hand hand:Hand.values()){
 					if(!player.getHeldItem(hand).isEmpty()){
@@ -604,7 +602,7 @@ public class EventHandler{
 				ClientUtils.drawTexturedRect(-24, -68, w, h, uMin, uMax, vMin, vMax);
 				
 				GL11.glTranslated(-23, -37, 0);
-				EntitySpeedboat boat = (EntitySpeedboat) player.getRidingEntity();
+				SpeedboatEntity boat = (SpeedboatEntity) player.getRidingEntity();
 				int capacity = boat.getMaxFuel();
 				
 				FluidStack fs = boat.getContainedFluid();

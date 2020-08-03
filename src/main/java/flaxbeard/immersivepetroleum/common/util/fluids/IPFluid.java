@@ -42,10 +42,10 @@ public class IPFluid extends FlowingFluid{
 	protected final ResourceLocation flowingTexture;
 	protected IPFluid source;
 	protected IPFluid flowing;
-	@Nullable
-	protected final Consumer<FluidAttributes.Builder> buildAttributes;
 	public Block block;
 	protected Item bucket;
+	@Nullable
+	protected final Consumer<FluidAttributes.Builder> buildAttributes;
 	
 	public IPFluid(String name, ResourceLocation stillTexture, ResourceLocation flowingTexture){
 		this(name, stillTexture, flowingTexture, null, true);
@@ -66,55 +66,15 @@ public class IPFluid extends FlowingFluid{
 			setRegistryName(ImmersivePetroleum.MODID, fluidName+"_flowing");
 		}else{
 			source=this;
-			this.block=new FlowingFluidBlock(()->this.source, Block.Properties.create(Material.WATER)){
-				@Override
-				protected void fillStateContainer(Builder<Block, BlockState> builder){
-					super.fillStateContainer(builder);
-					builder.add(IPFluid.this.getStateContainer().getProperties().toArray(new IProperty[0]));
-				}
-				
-				@Override
-				public IFluidState getFluidState(BlockState state){
-					IFluidState baseState=super.getFluidState(state);
-					for(IProperty<?> prop: IPFluid.this.getStateContainer().getProperties())
-						if(prop!=FlowingFluidBlock.LEVEL)
-							baseState = withCopiedValue(prop, baseState, state);
-					return baseState;
-				}
-				
-				private <T extends IStateHolder<T>, S extends Comparable<S>> T withCopiedValue(IProperty<S> prop, T oldState, IStateHolder<?> copyFrom){
-					return oldState.with(prop, copyFrom.get(prop));
-				}
-			};
+			this.block=createBlock();
 			this.block.setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, fluidName+"_fluid_block"));
 			IPContent.registeredIPBlocks.add(this.block);
 			
-			this.bucket=new BucketItem(()->this.source, new Item.Properties().maxStackSize(1).group(ImmersivePetroleum.creativeTab)){
-				@Override
-				public ItemStack getContainerItem(ItemStack itemStack){
-					return new ItemStack(Items.BUCKET);
-				}
-				
-				@Override
-				public boolean hasContainerItem(ItemStack stack){
-					return true;
-				}
-
-				@Override
-				public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt){
-					return new FluidBucketWrapper(stack);
-				}
-			};
+			this.bucket=createBucket();
 			this.bucket.setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, fluidName+"_bucket"));
 			IPContent.registeredIPItems.add(this.bucket);
 			
-			this.flowing=new IPFluid(this.fluidName, this.stillTexture, this.flowingTexture, this.buildAttributes, false){
-				@Override
-				protected void fillStateContainer(Builder<Fluid, IFluidState> builder){
-					super.fillStateContainer(builder);
-					builder.add(LEVEL_1_8);
-				}
-			};
+			this.flowing=createFlowing();
 			this.flowing.source=this;
 			this.flowing.bucket=this.bucket;
 			this.flowing.block=this.block;
@@ -125,69 +85,125 @@ public class IPFluid extends FlowingFluid{
 		}
 	}
 	
-	@Override
-	protected void beforeReplacingBlock(IWorld arg0, BlockPos arg1, BlockState arg2){}
+	protected BucketItem createBucket(){
+		BucketItem bucket=new BucketItem(()->this.source, new Item.Properties().maxStackSize(1).group(ImmersivePetroleum.creativeTab)){
+			@Override
+			public ItemStack getContainerItem(ItemStack itemStack){
+				return new ItemStack(Items.BUCKET);
+			}
+			
+			@Override
+			public boolean hasContainerItem(ItemStack stack){
+				return true;
+			}
 
+			@Override
+			public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt){
+				return new FluidBucketWrapper(stack);
+			}
+		};
+		return bucket;
+	}
+	
+	protected IPFluid createFlowing(){
+		IPFluid flowing=new IPFluid(this.fluidName, this.stillTexture, this.flowingTexture, this.buildAttributes, false){
+			@Override
+			protected void fillStateContainer(Builder<Fluid, IFluidState> builder){
+				super.fillStateContainer(builder);
+				builder.add(LEVEL_1_8);
+			}
+		};
+		return flowing;
+	}
+	
+	protected FlowingFluidBlock createBlock(){
+		FlowingFluidBlock block=new FlowingFluidBlock(()->this.source, Block.Properties.create(Material.WATER)){
+			@Override
+			protected void fillStateContainer(Builder<Block, BlockState> builder){
+				super.fillStateContainer(builder);
+				builder.add(IPFluid.this.getStateContainer().getProperties().toArray(new IProperty[0]));
+			}
+			
+			@Override
+			public IFluidState getFluidState(BlockState state){
+				IFluidState baseState=super.getFluidState(state);
+				for(IProperty<?> prop: IPFluid.this.getStateContainer().getProperties())
+					if(prop!=FlowingFluidBlock.LEVEL)
+						baseState = withCopiedValue(prop, baseState, state);
+				return baseState;
+			}
+			
+			private <T extends IStateHolder<T>, S extends Comparable<S>> T withCopiedValue(IProperty<S> prop, T oldState, IStateHolder<?> copyFrom){
+				return oldState.with(prop, copyFrom.get(prop));
+			}
+		};
+		return block;
+	}
+	
+	@Override
+	protected void beforeReplacingBlock(IWorld arg0, BlockPos arg1, BlockState arg2){
+	}
+	
 	@Override
 	protected boolean canSourcesMultiply(){
 		return false;
 	}
-
+	
 	@Override
 	public Fluid getFlowingFluid(){
 		return this.flowing;
 	}
-
+	
 	@Override
 	public Fluid getStillFluid(){
 		return this.source;
 	}
-
+	
 	@Override
 	public Item getFilledBucket(){
 		return this.bucket;
 	}
-
+	
 	@Override
 	protected int getLevelDecreasePerBlock(IWorldReader arg0){
 		return 1;
 	}
-
+	
 	@Override
 	protected int getSlopeFindDistance(IWorldReader arg0){
 		return 4;
 	}
-
+	
 	@Override
 	public BlockRenderLayer getRenderLayer(){
 		return BlockRenderLayer.TRANSLUCENT;
 	}
-
+	
 	@Override
 	protected boolean func_215665_a(IFluidState p_215665_1_, IBlockReader p_215665_2_, BlockPos p_215665_3_, Fluid p_215665_4_, Direction p_215665_5_){
-		return p_215665_5_==Direction.DOWN && !isEquivalentTo(p_215665_4_);
+		return p_215665_5_ == Direction.DOWN && !isEquivalentTo(p_215665_4_);
 	}
-
+	
 	@Override
 	public int getTickRate(IWorldReader p_205569_1_){
 		return 5;
 	}
-
+	
 	@Override
 	protected float getExplosionResistance(){
 		return 100;
 	}
-
+	
 	@Override
 	protected BlockState getBlockState(IFluidState state){
 		return block.getDefaultState().with(FlowingFluidBlock.LEVEL, getLevelFromState(state));
 	}
-
+	
 	@Override
 	public boolean isSource(IFluidState state){
-		return state.getFluid()==source;
+		return state.getFluid() == source;
 	}
-
+	
 	@Override
 	public int getLevel(IFluidState state){
 		if(isSource(state))
@@ -195,14 +211,21 @@ public class IPFluid extends FlowingFluid{
 		else
 			return state.get(LEVEL_1_8);
 	}
-
+	
 	@Override
 	public boolean isEquivalentTo(Fluid fluidIn){
-		return fluidIn==this.source || fluidIn==this.flowing;
+		return fluidIn == this.source || fluidIn == this.flowing;
 	}
-	
 	
 	public static Consumer<FluidAttributes.Builder> createBuilder(int density, int viscosity){
 		return builder -> builder.viscosity(viscosity).density(density);
+	}
+	
+	@Override
+	protected FluidAttributes createAttributes(){
+		FluidAttributes.Builder builder=FluidAttributes.builder(this.stillTexture, this.flowingTexture);
+		if(this.buildAttributes!=null)
+			this.buildAttributes.accept(builder);
+		return builder.build(this);
 	}
 }

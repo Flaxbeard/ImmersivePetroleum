@@ -5,9 +5,7 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.EventHandler;
-import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -26,13 +24,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidAttributes;
 
 public class BlockNapalm extends IPFluid{
-	
 	public BlockNapalm(String name, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidAttributes.Builder> buildAttributes){
 		super(name, stillTexture, flowingTexture, buildAttributes);
-		
-		// Such a roundabout way of doing this. But i don't see having the main class more flexible yet when it's just this one oddball..
-		IPContent.registeredIPBlocks.remove(this.block);
-		this.block=new FlowingFluidBlock(()->this.source, Block.Properties.create(Material.WATER)){
+	}
+	
+	@Override
+	protected FlowingFluidBlock createBlock(){
+		FlowingFluidBlock block=new FlowingFluidBlock(()->this.source, Block.Properties.create(Material.WATER)){
 			@Override
 			protected void fillStateContainer(Builder<Block, BlockState> builder){
 				super.fillStateContainer(builder);
@@ -76,8 +74,7 @@ public class BlockNapalm extends IPFluid{
 				super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
 			}
 		};
-		this.block.setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, fluidName+"_fluid_block"));
-		IPContent.registeredIPBlocks.add(this.block);
+		return block;
 	}
 	
 	public void processFire(World world, BlockPos pos){

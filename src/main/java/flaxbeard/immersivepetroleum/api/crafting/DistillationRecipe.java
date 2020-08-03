@@ -21,10 +21,10 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class DistillationRecipe extends MultiblockRecipe
 {
-	public static float energyModifier = 1;
-	public static float timeModifier = 1;
+	public static double energyModifier = 1;
+	public static double timeModifier = 1;
 
-	public final float[] chances;
+	public final double[] chances;
 
 	public final FluidStack[] fluidOutput;
 	public final ItemStack[] itemOutput;
@@ -32,7 +32,7 @@ public class DistillationRecipe extends MultiblockRecipe
 
 	public static ArrayList<DistillationRecipe> recipeList = new ArrayList<>();
 
-	public DistillationRecipe(FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidStack input, int energy, int time, float[] chances)
+	public DistillationRecipe(FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidStack input, int energy, int time, double[] chances)
 	{
 		this.fluidOutput = fluidOutput;
 		this.itemOutput = itemOutput;
@@ -58,7 +58,7 @@ public class DistillationRecipe extends MultiblockRecipe
 	 * @param chances      A list of chances of obtaining each solid byproduct
 	 * @return The created/registered recipe matching the input
 	 */
-	public static DistillationRecipe addRecipe(FluidStack[] fluidOutputs, ItemStack[] itemOutputs, FluidStack input, int energy, int time, float[] chances)
+	public static DistillationRecipe addRecipe(FluidStack[] fluidOutputs, ItemStack[] itemOutputs, FluidStack input, int energy, int time, double[] chances)
 	{
 		DistillationRecipe r = new DistillationRecipe(fluidOutputs, itemOutputs, input, energy, time, chances);
 		recipeList.add(r);

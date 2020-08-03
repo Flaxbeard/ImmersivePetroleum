@@ -1,5 +1,8 @@
 package flaxbeard.immersivepetroleum.common;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,19 +16,31 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 
 public class CommonProxy implements IGuiHandler{
+	private static final Logger log=LogManager.getLogger(ImmersivePetroleum.MODID+"/CommonProxy");
+	
 	/** Fired during instantiation of {@link ImmersivePetroleum} */
-	public void construct(){}
+	public void construct(){
+	}
 	
 	/** Fired at {@link FMLCommonSetupEvent} */
-	public void setup(){}
+	public void setup(){
+	}
 	
 	/** Fired at {@link FMLLoadCompleteEvent} */
-	public void completed(){}
+	public void completed(){
+	}
 	
-	public void preInit(){}
-	public void preInitEnd(){}
-	public void init(){}
-	public void postInit(){}
+	public void preInit(){
+	}
+	
+	public void preInitEnd(){
+	}
+	
+	public void init(){
+	}
+	
+	public void postInit(){
+	}
 	
 	/*
 	public static <T extends TileEntity & IGuiTile> void openGuiForTile(@Nonnull EntityPlayer player, @Nonnull T tile){

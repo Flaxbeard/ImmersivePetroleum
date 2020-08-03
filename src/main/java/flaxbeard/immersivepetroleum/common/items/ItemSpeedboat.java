@@ -9,7 +9,7 @@ import blusunrize.immersiveengineering.api.tool.IUpgradeableTool;
 import blusunrize.immersiveengineering.common.gui.IESlot;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
+import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.util.ITooltipFlag;
@@ -87,7 +87,7 @@ public class ItemSpeedboat extends IPItemBase implements IUpgradeableTool{
 			}else{
 				Block block = worldIn.getBlockState(new BlockPos(raytraceresult.getHitVec())).getBlock();
 				boolean flag1 = block == Blocks.WATER;
-				EntitySpeedboat entityboat = new EntitySpeedboat(worldIn, raytraceresult.getHitVec().x, flag1 ? raytraceresult.getHitVec().y - 0.12D : raytraceresult.getHitVec().y, raytraceresult.getHitVec().z);
+				SpeedboatEntity entityboat = new SpeedboatEntity(worldIn, raytraceresult.getHitVec().x, flag1 ? raytraceresult.getHitVec().y - 0.12D : raytraceresult.getHitVec().y, raytraceresult.getHitVec().z);
 				{
 					NonNullList<ItemStack> items=NonNullList.create();
 					items.add(getContainerItem(itemstack));

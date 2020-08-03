@@ -1,5 +1,5 @@
 {
-  "parent": "immersivepetroleum:block/projector",
+  "parent": "immersivepetroleum:item/mb_projector",
   "display": {
     "thirdperson_righthand": {
       "rotation": [

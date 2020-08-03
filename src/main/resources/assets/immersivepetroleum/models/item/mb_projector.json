@@ -1,9 +1,9 @@
 {
   "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
   "textures": {
-    "0": "immersivepetroleum:items/projector_side",
-    "1": "immersivepetroleum:items/projector_top",
-    "2": "immersivepetroleum:items/projector_front"
+    "0": "immersivepetroleum:item/projector_side",
+    "1": "immersivepetroleum:item/projector_top",
+    "2": "immersivepetroleum:item/projector_front"
   },
   "elements": [
     {

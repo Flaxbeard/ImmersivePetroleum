@@ -20,7 +20,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 @Deprecated
-public abstract class BlockIPMultiblock<E extends Enum<E> & BlockIPBase.IBlockEnum> extends BlockIPTileProvider<E>
+public abstract class BlockIPMultiblock<E extends Enum<E> & BlockIPBase.IBlockEnum> extends BlockIPTileProvider
 {
 	public BlockIPMultiblock(String name, Material material, PropertyEnum<E> mainProperty, Class<? extends ItemBlockIPBase> itemBlock, Object... additionalProperties)
 	{

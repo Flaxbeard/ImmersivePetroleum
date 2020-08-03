@@ -18,7 +18,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 @Deprecated
-public class BlockIPMetalDevice extends BlockIPTileProvider<EnumIPMetalDevice>
+public class BlockIPMetalDevice extends BlockIPTileProvider
 {
 	public BlockIPMetalDevice()
 	{

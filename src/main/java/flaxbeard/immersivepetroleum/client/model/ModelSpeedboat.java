@@ -2,7 +2,7 @@ package flaxbeard.immersivepetroleum.client.model;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 
-import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
+import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.IMultipassModel;
 import net.minecraft.client.renderer.GLAllocation;
@@ -248,7 +248,7 @@ public class ModelSpeedboat extends Model implements IMultipassModel
 
 	public void renderPaddles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
 	{
-		EntitySpeedboat BoatEntity = (EntitySpeedboat) entityIn;
+		SpeedboatEntity BoatEntity = (SpeedboatEntity) entityIn;
 		this.renderPaddle(BoatEntity, 0, scale, limbSwing, BoatEntity.isEmergency());
 		this.renderPaddle(BoatEntity, 1, scale, limbSwing, BoatEntity.isEmergency());
 	}
@@ -269,7 +269,7 @@ public class ModelSpeedboat extends Model implements IMultipassModel
 	{
 
 		GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
-		EntitySpeedboat BoatEntity = (EntitySpeedboat) entityIn;
+		SpeedboatEntity BoatEntity = (SpeedboatEntity) entityIn;
 		this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
 
 		for (int i = 0; i < 5; ++i)
@@ -278,7 +278,7 @@ public class ModelSpeedboat extends Model implements IMultipassModel
 		}
 
 
-		float f1 = ((EntitySpeedboat) entityIn).getRowingTime(0, limbSwing) * 100.0F;
+		float f1 = ((SpeedboatEntity) entityIn).getRowingTime(0, limbSwing) * 100.0F;
 		this.propeller.rotateAngleX = BoatEntity.isEmergency() ? 0 : f1;
 		float pr = BoatEntity.isEmergency() ? 0f : BoatEntity.propellerRotation;
 		if (BoatEntity.leftInputDown && pr > -1) pr = pr - 0.1F * Minecraft.getMinecraft().getRenderPartialTicks();
@@ -314,7 +314,7 @@ public class ModelSpeedboat extends Model implements IMultipassModel
 	{
 		this.ruddersBase.render(scale);
 
-		EntitySpeedboat BoatEntity = (EntitySpeedboat) entityIn;
+		SpeedboatEntity BoatEntity = (SpeedboatEntity) entityIn;
 		float pr = BoatEntity.propellerRotation;
 		if (BoatEntity.leftInputDown && pr > -1) pr = pr - 0.1F * Minecraft.getMinecraft().getRenderPartialTicks();
 		if (BoatEntity.rightInputDown && pr < 1) pr = pr + 0.1F * Minecraft.getMinecraft().getRenderPartialTicks();

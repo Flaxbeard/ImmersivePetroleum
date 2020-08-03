@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.client.model.ModelSpeedboat;
-import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
+import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class RenderSpeedboat extends Render<EntitySpeedboat>
+public class RenderSpeedboat extends Render<SpeedboatEntity>
 {
 	private static String texture = "immersivepetroleum:textures/models/boat_motor.png";
 	private static String textureArmor = "immersivepetroleum:textures/models/boat_motor_armor.png";
@@ -31,7 +31,7 @@ public class RenderSpeedboat extends Render<EntitySpeedboat>
 	/**
 	 * Renders the desired {@code T} type Entity.
 	 */
-	public void doRender(EntitySpeedboat entity, double x, double y, double z, float entityYaw, float partialTicks)
+	public void doRender(SpeedboatEntity entity, double x, double y, double z, float entityYaw, float partialTicks)
 	{
 
 		GlStateManager.pushMatrix();
@@ -40,7 +40,7 @@ public class RenderSpeedboat extends Render<EntitySpeedboat>
 
 		this.setupRotation(entity, entityYaw, partialTicks);
 		ClientUtils.bindTexture(entity.isFireproof ? textureArmor : texture);
-		if (entity.inLava)
+		if (entity.isInLava())
 		{
 			GlStateManager.translate(0, -3.9F / 16F, 0);
 		}
@@ -92,7 +92,7 @@ public class RenderSpeedboat extends Render<EntitySpeedboat>
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}
 
-	public void setupRotation(EntitySpeedboat boat, float p_188311_2_, float p_188311_3_)
+	public void setupRotation(SpeedboatEntity boat, float p_188311_2_, float p_188311_3_)
 	{
 		GlStateManager.rotate(180.0F - p_188311_2_, 0.0F, 1.0F, 0.0F);
 		float f = (float) boat.getTimeSinceHit() - p_188311_3_;
@@ -130,7 +130,7 @@ public class RenderSpeedboat extends Render<EntitySpeedboat>
 		return true;
 	}
 
-	public void renderMultipass(EntitySpeedboat p_188300_1_, double p_188300_2_, double p_188300_4_, double p_188300_6_, float p_188300_8_, float p_188300_9_)
+	public void renderMultipass(SpeedboatEntity p_188300_1_, double p_188300_2_, double p_188300_4_, double p_188300_6_, float p_188300_8_, float p_188300_9_)
 	{
 		GlStateManager.pushMatrix();
 		this.setupTranslation(p_188300_2_, p_188300_4_, p_188300_6_);
@@ -143,7 +143,7 @@ public class RenderSpeedboat extends Render<EntitySpeedboat>
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntitySpeedboat entity)
+	protected ResourceLocation getEntityTexture(SpeedboatEntity entity)
 	{
 		return new ResourceLocation(texture);
 	}

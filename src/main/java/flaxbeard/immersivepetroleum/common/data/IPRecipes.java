@@ -15,7 +15,5 @@ public class IPRecipes extends RecipeProvider{
 	@Override
 	protected void registerRecipes(Consumer<IFinishedRecipe> consumer){
 		this.out=consumer;
-		
-		
 	}
 }

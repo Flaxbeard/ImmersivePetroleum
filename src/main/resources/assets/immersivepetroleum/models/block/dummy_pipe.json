@@ -1,6 +1,6 @@
 {
   "textures": {
-    "0": "immersivepetroleum:blocks/dummy_pipe"
+    "0": "immersivepetroleum:block/dummy_pipe"
   },
   "elements": [
     {

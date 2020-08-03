@@ -1,19 +1,19 @@
 {
   "textures": {
-    "0": "immersivepetroleum:blocks/gen_back",
-    "1": "immersivepetroleum:blocks/gen_side_1_layer_3",
-    "2": "immersivepetroleum:blocks/gen_front",
-    "3": "immersivepetroleum:blocks/gen_side_2",
-    "4": "immersivepetroleum:blocks/gen_top_layer_2",
-    "5": "immersivepetroleum:blocks/gen_side_1_layer_2",
-    "6": "immersivepetroleum:blocks/gen_top_layer_3",
-    "7": "immersivepetroleum:blocks/gen_side_1",
-    "8": "immersivepetroleum:blocks/gen_top",
-    "9": "immersivepetroleum:blocks/gen_side_2_layer_3",
-    "10": "immersivepetroleum:blocks/gen_bottom",
-    "11": "immersivepetroleum:blocks/gen_side_2_layer_2",
-    "12": "immersivepetroleum:blocks/gen_plug",
-    "13": "immersivepetroleum:blocks/gen_bottom_layer_2"
+    "0": "immersivepetroleum:block/gen_back",
+    "1": "immersivepetroleum:block/gen_side_1_layer_3",
+    "2": "immersivepetroleum:block/gen_front",
+    "3": "immersivepetroleum:block/gen_side_2",
+    "4": "immersivepetroleum:block/gen_top_layer_2",
+    "5": "immersivepetroleum:block/gen_side_1_layer_2",
+    "6": "immersivepetroleum:block/gen_top_layer_3",
+    "7": "immersivepetroleum:block/gen_side_1",
+    "8": "immersivepetroleum:block/gen_top",
+    "9": "immersivepetroleum:block/gen_side_2_layer_3",
+    "10": "immersivepetroleum:block/gen_bottom",
+    "11": "immersivepetroleum:block/gen_side_2_layer_2",
+    "12": "immersivepetroleum:block/gen_plug",
+    "13": "immersivepetroleum:block/gen_bottom_layer_2"
   },
   "elements": [
     {

@@ -3,7 +3,7 @@ package flaxbeard.immersivepetroleum.common.network;
 import java.util.function.Supplier;
 
 import blusunrize.immersiveengineering.common.network.IMessage;
-import flaxbeard.immersivepetroleum.common.entity.EntitySpeedboat;
+import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
@@ -34,13 +34,13 @@ public class ConsumeBoatFuelPacket implements IMessage{
 			if(con.getDirection().getReceptionSide()==LogicalSide.SERVER && con.getSender()!=null){
 				Entity entity = con.getSender().getRidingEntity();
 				
-				if(entity instanceof EntitySpeedboat){
-					EntitySpeedboat boat = (EntitySpeedboat) entity;
+				if(entity instanceof SpeedboatEntity){
+					SpeedboatEntity boat = (SpeedboatEntity) entity;
 					FluidStack fluid = boat.getContainedFluid();
 					if(fluid != null)
 						fluid.setAmount(Math.max(0, fluid.getAmount() - amount));
 					
-					boat.setContainedFluid(fluid);
+					boat.setFluid(fluid);
 				}
 			}
 		});
@@ -71,8 +71,8 @@ public class ConsumeBoatFuelPacket implements IMessage{
 			if(p != null){
 				Entity entity = p.getRidingEntity();
 				
-				if(entity instanceof EntitySpeedboat){
-					EntitySpeedboat boat = (EntitySpeedboat) entity;
+				if(entity instanceof SpeedboatEntity){
+					SpeedboatEntity boat = (SpeedboatEntity) entity;
 					FluidStack fluid = boat.getContainedFluid();
 					if(fluid != null) fluid.amount = Math.max(0, fluid.amount - amount);
 					boat.setContainedFluid(fluid);

@@ -16,10 +16,19 @@ public class IPDataGenerator{
 	
 	@SubscribeEvent
 	public static void generate(GatherDataEvent event){
-		DataGenerator generator=event.getGenerator();
-		
-		generator.addProvider(new IPBlockTags(generator));
-		generator.addProvider(new IPItemTags(generator));
-		generator.addProvider(new IPRecipes(generator));
+		if(event.includeServer()){
+			DataGenerator generator=event.getGenerator();
+			
+			generator.addProvider(new IPBlockTags(generator));
+			generator.addProvider(new IPItemTags(generator));
+			generator.addProvider(new IPRecipes(generator));
+			
+			IPLoadedModels loadedModels=new IPLoadedModels(generator, event.getExistingFileHelper());
+			IPBlockStates blockstates=new IPBlockStates(generator, event.getExistingFileHelper(), loadedModels);
+			
+			generator.addProvider(blockstates);
+			generator.addProvider(loadedModels);
+			generator.addProvider(new IPItemModels(generator, event.getExistingFileHelper(), blockstates));
+		}
 	}
 }

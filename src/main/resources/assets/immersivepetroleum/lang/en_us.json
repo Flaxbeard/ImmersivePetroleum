@@ -27,7 +27,8 @@
 	
 	"_comment": "################## Items ##################",
 	
-	"item.immersivepetroleum.schematic": "%s Projector",
+	"item.immersivepetroleum.projector": "Projector",
+	"item.immersivepetroleum.projector.specific": "%s Projector",
 	"item.immersivepetroleum.speedboat": "Motorboat",
 	"item.immersivepetroleum.oil_can": "Lubricant Can",
 	
@@ -41,11 +42,9 @@
 	
 	"_comment": "################## Descriptions ##################",
 	
-	"desc.immersiveengineering.info.multiblock.IP:DistillationTower": "Distillation Tower",
-	"desc.immersiveengineering.info.multiblock.IP:Pumpjack": "Pumpjack",
-	
-	"desc.immersiveengineering.info.multiblock.IE:AutoWorkbench": "Automated Workbench",
-	"desc.immersiveengineering.info.multiblock.IE:AlloySmelter": "Alloy Smelter",
+	"_comment":"Replaced the IP with IE to save me from headaches. ~TwistedGate",
+	"desc.immersiveengineering.info.multiblock.IE:DistillationTower": "Distillation Tower",
+	"desc.immersiveengineering.info.multiblock.IE:Pumpjack": "Pumpjack",
 	
 	"desc.immersivepetroleum.info.reservoir.oil": "Oil Reservoir",
 	"desc.immersivepetroleum.info.reservoir.aquifer": "Aquifer",
@@ -140,19 +139,25 @@
 	"chat.immersivepetroleum.command.reservoir.setCapacity.help": "§6Usage: /ip reservoir setCapacity <number>§r<br> Set the maximum amount of mB of fluid in the chunk.",
 	"chat.immersivepetroleum.command.reservoir.get": "Chunk contains: %1$s <br>Override: %2$s <br>Amount: %3$s",
 	"chat.immersivepetroleum.command.reservoir.set.invalidReservoir": "§cInvalid reservoir, '%1$s' is not a valid identifier. Use '/ip reservoir list' for a list of all identifiers.§r",
-	"chat.immersivepetroleum.command.reservoir.set.sucess": "Reservoir override set to '%1$s'",
-	"chat.immersivepetroleum.command.reservoir.set.clear": "Reservoir override (%1$s) cleared.",
+	"chat.immersivepetroleum.command.reservoir.set.sucess": "Reservoir override set to: %1$s",
+	"chat.immersivepetroleum.command.reservoir.set.clear": "Reservoir override cleared. (%1$s)",
+	"chat.immersivepetroleum.command.reservoir.setAmount.sucess": "Reservoir amount set to: %1$s",
 	"chat.immersivepetroleum.command.reservoir.setAmount.NFE": "Error, '%1$s' is not a valid number",
-	"chat.immersivepetroleum.command.reservoir.setAmount.sucess": "Reservoir amount set to '%1$s'",
+	"chat.immersivepetroleum.command.reservoir.setCapacity.sucess": "Reservoir capacity set to: %1$s",
 	"chat.immersivepetroleum.command.reservoir.setCapacity.NFE": "Error, '%1$s' is not a valid number",
-	"chat.immersivepetroleum.command.reservoir.setCapacity.sucess": "Reservoir capacity set to '%1$s'"
 	
 	"chat.immersivepetroleum.info.coresample.oil": "%s mB %s",
 	"chat.immersivepetroleum.info.coresample.noOil": "No Fluid Reservoir",
 	"chat.immersivepetroleum.info.coresample.oilRep": "Up to %d mB/tick of trace %s",
+	
 	"chat.immersivepetroleum.info.schematic.noMultiblock": "Craft with Engineer's Manual",
 	"chat.immersivepetroleum.info.schematic.build0": "Displays instructions",
 	"chat.immersivepetroleum.info.schematic.build1": "for making a %s",
 	"chat.immersivepetroleum.info.schematic.center": "Centered at (%d, %d, %d)",
-	"chat.immersivepetroleum.info.schematic.controls": "%s to rotate, %s + %s to mirror",
+	"chat.immersivepetroleum.info.schematic.controls1": "Shift + Scroll-UP to rotate",
+	"chat.immersivepetroleum.info.schematic.controls2": "Shift + Scroll-DOWN to flip",
+	
+	"chat.immersivepetroleum.info.projector.flipped": "Flipped: %s",
+	"chat.immersivepetroleum.info.projector.flipped.yes": "Yes.",
+	"chat.immersivepetroleum.info.projector.flipped.no": "No."
 }

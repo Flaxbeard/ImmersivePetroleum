@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.vecmath.Vector2f;
 
 import com.google.common.collect.Lists;
@@ -30,6 +31,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
@@ -49,21 +51,10 @@ public class ModelCoresampleExtended extends ModelCoresample
 	static List<BakedQuad> emptyQuads = Lists.newArrayList();
 	MineralMix mineral;
 
-	public ModelCoresampleExtended(MineralMix mineral, Fluid fluid)
-	{
-		super(mineral);
+	public ModelCoresampleExtended(@Nullable MineralMix mineral, VertexFormat format, Fluid fluid){
+		super(mineral, format);
 		this.mineral = mineral;
 		this.fluid = fluid;
-	}
-
-	public ModelCoresampleExtended(MineralMix mineral)
-	{
-		this(mineral, null);
-	}
-
-	public ModelCoresampleExtended()
-	{
-		this(null);
 	}
 	
 	@Override
@@ -85,10 +76,10 @@ public class ModelCoresampleExtended extends ModelCoresample
 				
 				HashMap<TextureAtlasSprite, Integer> textureOre = new HashMap<>();
 				if(mineral != null && mineral.outputs != null){
-					for(int i = 0;i < mineral.outputs.size();i++){
-						if(mineral.outputs.get(i)!=null){
+					for(int i = 0;i < mineral.outputs.length;i++){
+						if(mineral.outputs[i]!=null){
 							int weight = Math.max(2, Math.round(16 * mineral.failChance));
-							Block b = Block.getBlockFromItem(mineral.outputs.get(i).stack.getItem());
+							Block b = Block.getBlockFromItem(mineral.outputs[i].getStack().getItem());
 							BlockState state = b != null ? b.getDefaultState() : Blocks.STONE.getDefaultState();
 							
 							IForgeBakedModel model =  (IForgeBakedModel)Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModel(state);
@@ -214,8 +205,8 @@ public class ModelCoresampleExtended extends ModelCoresample
 				if(name != null && !name.isEmpty()){
 					if(!modelCache.containsKey(indexName)){
 						outer:
-						for(MineralMix mix:ExcavatorHandler.mineralList.keySet()){
-							if(name.equals(mix.name)){
+						for(MineralMix mix:ExcavatorHandler.mineralList.values()){
+							if(name.equals(mix.getPlainName())){
 								if(resName != null){
 									for(ReservoirType type:PumpjackHandler.reservoirList.keySet()){
 										if(resName.equals(type.name)){
@@ -225,7 +216,6 @@ public class ModelCoresampleExtended extends ModelCoresample
 //											mix2.recalculateChances();
 //											mix2.outputs.set(mix2.outputs.size() - 1, new ItemStack(IPContent.blockDummy, 1));
 											
-											mix.recalculateChances();
 											Fluid fluid = type.getFluid();
 											modelCache.put(indexName, new ModelCoresampleExtended(mix, fluid));
 											break outer;

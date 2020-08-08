@@ -10,13 +10,10 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import blusunrize.immersiveengineering.api.IETags;
-import blusunrize.immersiveengineering.api.crafting.MixerRecipe;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect_Potion;
 import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.EnumMetals;
 import blusunrize.immersiveengineering.common.blocks.metal.CrusherTileEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.ExcavatorTileEntity;
 import blusunrize.immersiveengineering.common.util.IEPotions;
@@ -24,12 +21,13 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
-import flaxbeard.immersivepetroleum.common.blocks.BlockAsphalt;
 import flaxbeard.immersivepetroleum.common.blocks.BlockDummy;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
+import flaxbeard.immersivepetroleum.common.blocks.IPMetalMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity.CrusherLubricationHandler;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity.ExcavatorLubricationHandler;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity.PumpjackLubricationHandler;
+import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
@@ -40,6 +38,7 @@ import flaxbeard.immersivepetroleum.common.items.ItemProjector;
 import flaxbeard.immersivepetroleum.common.items.ItemSpeedboat;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -47,7 +46,6 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
@@ -58,7 +56,12 @@ public class IPContent{
 	public static final List<Block> registeredIPBlocks = new ArrayList<>();
 	public static final List<Item> registeredIPItems = new ArrayList<>();
 	public static final List<Fluid> registeredIPFluids = new ArrayList<>();
-
+	
+	public static final class Multiblock{
+		public static Block distillationtower;
+		public static Block pumpjack;
+	}
+	
 	@Deprecated
 	public static IPBlockBase blockStoneDecoration;
 	public static IPBlockBase blockAsphalt;
@@ -109,10 +112,9 @@ public class IPContent{
 				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/napalm_flow"), IPFluid.createBuilder(1000, 4000));
 
 		//blockMetalMultiblock = new BlockIPMetalMultiblocks();
-
 		//blockMetalDevice = new BlockIPMetalDevice();
 		
-		blockAsphalt=new BlockAsphalt();
+		blockAsphalt=new IPBlockBase("asphalt", Block.Properties.create(Material.ROCK).hardnessAndResistance(2.0F, 10.0F));
 		
 		dummyBlockOilOre=new BlockDummy("dummy_oil_ore");
 		dummyBlockPipe=new BlockDummy("dummy_pipe");
@@ -130,6 +132,9 @@ public class IPContent{
 		itemUpgradePaddles = new IPUpgradeItem("paddles", "BOAT");
 
 		itemOilCan = new ItemOilCan("oil_can");
+		
+		Multiblock.distillationtower=new IPMetalMultiblock("distillationtower", ()->DistillationTowerTileEntity.TYPE);
+		Multiblock.pumpjack=new IPMetalMultiblock("pumpjack", ()->PumpjackTileEntity.TYPE);
 	}
 	
 	public static void preInit(){
@@ -163,11 +168,11 @@ public class IPContent{
 		IPConfig.addFuel(IPConfig.GENERATION.fuels.get());
 		IPConfig.addBoatFuel(IPConfig.MISCELLANEOUS.boat_fuels.get());
 		IPConfig.addDistillationRecipes(IPConfig.REFINING.towerRecipes.get(), IPConfig.REFINING.towerByproduct.get());
-
-		ResourceLocation aluDust=IETags.getTagsFor(EnumMetals.ALUMINUM).dust.getId();
-		MixerRecipe.addRecipe(
-				new FluidStack(fluidNapalm, 500),
-				new FluidStack(fluidGasoline, 500), new Object[]{aluDust, aluDust, aluDust}, 3200);
+		
+//		ResourceLocation aluDust=IETags.getTagsFor(EnumMetals.ALUMINUM).dust.getId();
+//		MixerRecipe.addRecipe(
+//				new FluidStack(fluidNapalm, 500),
+//				new FluidStack(fluidGasoline, 500), new Object[]{aluDust, aluDust, aluDust}, 3200);
 
 		LubricantHandler.registerLubricant(fluidLubricant, 3);
 		LubricantHandler.registerLubricant(IEContent.fluidPlantoil, 12);
@@ -179,6 +184,8 @@ public class IPContent{
 
 	@SubscribeEvent
 	public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event){
+		registerTile(event, DistillationTowerTileEntity.class);
+		
 		//registerTile(event, DistillationTowerTileEntity.class);
 		//registerTile(event, DistillationTowerTileEntity.TileEntityDistillationTowerParent.class);
 		//registerTile(event, PumpjackTileEntity.class);
@@ -221,7 +228,6 @@ public class IPContent{
 				log.error("Failed to register a block. ({})", block);
 				throw e;
 			}
-//			event.getRegistry().register(block.setRegistryName(createRegistryName(block.getTranslationKey())));
 		}
 	}
 	
@@ -234,14 +240,6 @@ public class IPContent{
 				log.error("Failed to register an item. ({}, {})", item, item.getRegistryName());
 				throw e;
 			}
-//			event.getRegistry().register(item.setRegistryName(createRegistryName(item.getTranslationKey())));
 		}
-	}
-	
-	@SuppressWarnings("unused")
-	private static ResourceLocation createRegistryName(String unlocalized){
-		unlocalized = unlocalized.substring(unlocalized.indexOf("immersive"));
-		unlocalized = unlocalized.replaceFirst("\\.", ":");
-		return new ResourceLocation(unlocalized);
 	}
 }

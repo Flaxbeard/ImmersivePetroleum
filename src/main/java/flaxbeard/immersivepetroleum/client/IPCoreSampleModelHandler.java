@@ -14,7 +14,7 @@ public class IPCoreSampleModelHandler{
 	public void onModelBakeEvent(ModelBakeEvent event){
 		
 		ModelResourceLocation mLoc = new ModelResourceLocation(IEBlocks.MetalDevices.sampleDrill.getRegistryName(), "inventory");
-		event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
+		//event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
 		
 	}
 }

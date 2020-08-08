@@ -86,7 +86,7 @@ minecraft {
 
 dependencies {
 	minecraft "net.minecraftforge:forge:1.14.4-28.2.3"
-	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:0.14-95-190fba3c")
+	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:0.14-102-fd1b904ab")
 	runtimeOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.11")
 }
 
@@ -106,6 +106,7 @@ jar {
 
 def reobfFile = file("$buildDir/reobfJar/output.jar")
 def reobfArtifact = artifacts.add('default', reobfFile) { type 'jar'; builtBy 'reobfJar'; }
+
 publishing {
 	publications { mavenJava(MavenPublication) { artifact reobfArtifact } }
 	repositories { maven { url "file:///${project.projectDir}/mcmodsrepo" } }

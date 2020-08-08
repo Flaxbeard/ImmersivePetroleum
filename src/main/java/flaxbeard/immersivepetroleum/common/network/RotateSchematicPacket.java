@@ -53,47 +53,4 @@ public class RotateSchematicPacket implements IMessage{
 			}
 		});
 	}
-	
-	/*
-	public static class Handler implements IMessageHandler<RotateSchematicPacket, IMessage>{
-		@Override
-		public IMessage onMessage(RotateSchematicPacket message, MessageContext ctx){
-			EntityPlayerMP player = ctx.getServerHandler().player;
-			DimensionManager.getWorld(player.world.provider.getDimension()).addScheduledTask(new DoSync(player, message.rotate, message.flip));
-			
-			return null;
-		}
-	}
-	
-	private static class DoSync implements Runnable{
-		private EntityPlayer p;
-		private boolean flip;
-		private int rotate;
-		
-		public DoSync(EntityPlayer p, int rotate, boolean flip){
-			this.p = p;
-			this.rotate = rotate;
-			this.flip = flip;
-		}
-		
-		@Override
-		public void run(){
-			if(p != null){
-				ItemStack mainItem = p.getHeldItemMainhand();
-				ItemStack secondItem = p.getHeldItemOffhand();
-				
-				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
-				boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
-				
-				ItemStack target = main ? mainItem : secondItem;
-				
-				if(main || off){
-					ItemProjector.setFlipped(target, flip);
-					ItemProjector.setRotate(target, rotate);
-				}
-			}
-		}
-	}
-
-	*/
 }

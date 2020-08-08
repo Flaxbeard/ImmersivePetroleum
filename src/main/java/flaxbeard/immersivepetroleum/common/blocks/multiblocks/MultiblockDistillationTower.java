@@ -2,10 +2,10 @@ package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
 import java.util.List;
 
-import blusunrize.immersiveengineering.api.crafting.IngredientStack;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -38,7 +38,7 @@ public class MultiblockDistillationTower implements IMultiblock{
 	}
 
 	@Override
-	public IngredientStack[] getTotalMaterials(){
+	public ItemStack[] getTotalMaterials(){
 		return null;
 	}
 

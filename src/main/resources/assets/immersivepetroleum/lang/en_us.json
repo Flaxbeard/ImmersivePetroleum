@@ -34,6 +34,11 @@
 	
 	"item.immersivepetroleum.bitumen": "Bitumen",
 	"item.immersivepetroleum.petcoke": "Petcoke",
+	"item.immersivepetroleum.diesel_bucket": "Bucket of Diesel",
+	"item.immersivepetroleum.oil_bucket": "Bucket of Crude Oil",
+	"item.immersivepetroleum.lubricant_bucket": "Bucket of Lubricant",
+	"item.immersivepetroleum.gasoline_bucket": "Bucket of Gasoline",
+	"item.immersivepetroleum.napalm_bucket": "Bucket of Napalm",
 	"item.immersivepetroleum.upgrades.reinforced_hull": "Reinforced Hull",
 	"item.immersivepetroleum.upgrades.icebreaker": "Icebreaker Bow",
 	"item.immersivepetroleum.upgrades.tank": "Expanded Fuel Tank",

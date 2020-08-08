@@ -13,7 +13,7 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 	public static final PumpjackMultiblock INSTANCE = new PumpjackMultiblock();
 	
 	private PumpjackMultiblock(){
-		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/pumpjack"), new BlockPos(0, 0, 0), new BlockPos(0, 0, 0), () -> null);
+		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/pumpjack"), new BlockPos(0, 0, 0), new BlockPos(1, 1, 1), () -> null);
 	}
 	
 	@Override
@@ -27,7 +27,7 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 		return true;
 	}
 	
-	Object te;
+	TileEntity te;
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void renderFormedStructure(){
@@ -35,6 +35,6 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 			te = new PumpjackTileEntity.TileEntityPumpjackParent();
 		}
 		
-		ImmersivePetroleum.proxy.renderTile((TileEntity) te);
+		ImmersivePetroleum.proxy.renderTile(te);
 	}
 }

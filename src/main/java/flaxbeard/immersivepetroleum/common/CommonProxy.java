@@ -16,6 +16,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 
 public class CommonProxy implements IGuiHandler{
+	@SuppressWarnings("unused")
 	private static final Logger log=LogManager.getLogger(ImmersivePetroleum.MODID+"/CommonProxy");
 	
 	/** Fired during instantiation of {@link ImmersivePetroleum} */

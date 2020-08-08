@@ -1,19 +1,24 @@
 package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+
+import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import flaxbeard.immersivepetroleum.common.IPContent.Multiblock;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+@SuppressWarnings("deprecation")
 public class DistillationTowerMultiblock extends IETemplateMultiblock{
 	public static final DistillationTowerMultiblock INSTANCE = new DistillationTowerMultiblock();
 	
 	private DistillationTowerMultiblock(){
-		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/distillationtower"), new BlockPos(0, 0, 0), new BlockPos(0, 0, 0), () -> null);
+		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/distillationtower"), new BlockPos(0, 0, 0), new BlockPos(0, 1, 0), () -> null);
 	}
 	
 	@Override
@@ -27,14 +32,17 @@ public class DistillationTowerMultiblock extends IETemplateMultiblock{
 		return true;
 	}
 	
-	Object te;
+	@OnlyIn(Dist.CLIENT)
+	private static ItemStack renderStack;
+	
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void renderFormedStructure(){
-		if(te == null){
-			te = new DistillationTowerTileEntity.TileEntityDistillationTowerParent();
-		}
+		if(renderStack==null)
+			renderStack=new ItemStack(Multiblock.distillationtower);
 		
-		ImmersivePetroleum.proxy.renderTile((TileEntity) te);
+		GlStateManager.disableCull();
+		ClientUtils.mc().getItemRenderer().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
+		GlStateManager.enableCull();
 	}
 }

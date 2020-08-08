@@ -287,7 +287,7 @@ public class ClientProxy extends CommonProxy{
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void onModelBakeEvent(ModelBakeEvent event){
 		ModelResourceLocation mLoc = new ModelResourceLocation(IEBlocks.StoneDecoration.coresample.getRegistryName(), "inventory");
-		event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
+		//event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
 	}
 	
 	/*

@@ -96,7 +96,7 @@ public class IPFluid extends FlowingFluid{
 			public boolean hasContainerItem(ItemStack stack){
 				return true;
 			}
-
+			
 			@Override
 			public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt){
 				return new FluidBucketWrapper(stack);
@@ -180,7 +180,7 @@ public class IPFluid extends FlowingFluid{
 	}
 	
 	@Override
-	protected boolean func_215665_a(IFluidState p_215665_1_, IBlockReader p_215665_2_, BlockPos p_215665_3_, Fluid p_215665_4_, Direction p_215665_5_){
+	protected boolean canDisplace(IFluidState p_215665_1_, IBlockReader p_215665_2_, BlockPos p_215665_3_, Fluid p_215665_4_, Direction p_215665_5_){
 		return p_215665_5_ == Direction.DOWN && !isEquivalentTo(p_215665_4_);
 	}
 	

@@ -26,9 +26,9 @@ public class ShaderUtil{
 		
 		ARBShaderObjects.glUseProgramObjectARB(alpha);
 		int a = ARBShaderObjects.glGetUniformLocationARB(alpha, "alpha");
+		int b = ARBShaderObjects.glGetUniformLocationARB(alpha, "time");
 		ARBShaderObjects.glUniform1fARB(a, av);
-		a = ARBShaderObjects.glGetUniformLocationARB(alpha, "time");
-		ARBShaderObjects.glUniform1fARB(a, ticks);
+		ARBShaderObjects.glUniform1fARB(b, ticks);
 	}
 	
 	public static void releaseShader(){

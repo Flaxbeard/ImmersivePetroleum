@@ -2,10 +2,9 @@ package flaxbeard.immersivepetroleum.common.blocks.metal;
 
 import java.util.Locale;
 
-import flaxbeard.immersivepetroleum.common.blocks.BlockIPBase;
 import net.minecraft.util.IStringSerializable;
 
-public enum EnumIPMetalMultiblockType implements IStringSerializable, BlockIPBase.IBlockEnum{
+public enum EnumIPMetalMultiblockType implements IStringSerializable{
 	DISTILLATION_TOWER(false),
 	DISTILLATION_TOWER_PARENT(false),
 	PUMPJACK(false),
@@ -20,16 +19,6 @@ public enum EnumIPMetalMultiblockType implements IStringSerializable, BlockIPBas
 	@Override
 	public String getName(){
 		return this.toString().toLowerCase(Locale.ENGLISH);
-	}
-	
-	@Override
-	public int getMeta(){
-		return ordinal();
-	}
-	
-	@Override
-	public boolean listForCreative(){
-		return false;
 	}
 	
 	public boolean needsCustomState(){

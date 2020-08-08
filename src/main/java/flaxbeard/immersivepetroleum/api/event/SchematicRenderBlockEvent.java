@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultib
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -13,41 +13,42 @@ import net.minecraftforge.eventbus.api.Event;
 @Cancelable
 public class SchematicRenderBlockEvent extends Event{
 	private World world;
-	private Direction rotate;
+	private Rotation rotation;
 	private IMultiblock multiblock;
-	private BlockPos pos;
+	private BlockPos worldPos;
+	private BlockPos templatePos;
 	private BlockState state;
 	private CompoundNBT nbt;
 	
-	public SchematicRenderBlockEvent(IMultiblock multiblock, World world, BlockPos pos, BlockState state, CompoundNBT nbt, Direction rotate){
+	public SchematicRenderBlockEvent(IMultiblock multiblock, World world, BlockPos worldPos, BlockPos templatePos, BlockState state, CompoundNBT nbt, Rotation rotation){
 		super();
 		this.world = world;
 		this.multiblock = multiblock;
-		this.pos=pos;
+		this.worldPos=worldPos;
 		this.state=state;
 		this.nbt=nbt;
-		
-		if(Direction.Plane.HORIZONTAL.test(rotate)){
-			this.rotate = rotate;
-		}else{
-			this.rotate = Direction.NORTH;
-		}
+		this.templatePos=templatePos;
+		this.rotation=rotation;
 	}
 	
 	public World getWorld(){
-		return world;
+		return this.world;
 	}
 	
 	public IMultiblock getMultiblock(){
-		return multiblock;
+		return this.multiblock;
 	}
 	
-	public Direction getRotate(){
-		return this.rotate;
+	public Rotation getRotate(){
+		return this.rotation;
 	}
 	
-	public BlockPos getPos(){
-		return this.pos;
+	public BlockPos getWorldPos(){
+		return this.worldPos;
+	}
+	
+	public BlockPos getTemplatePos(){
+		return this.templatePos;
 	}
 	
 	public BlockState getState(){

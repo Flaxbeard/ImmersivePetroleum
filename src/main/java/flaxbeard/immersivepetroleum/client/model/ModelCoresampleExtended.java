@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.client.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import javax.vecmath.Vector2f;
 
 import com.google.common.collect.Lists;
 
+import blusunrize.immersiveengineering.api.crafting.StackWithChance;
 import blusunrize.immersiveengineering.api.tool.ExcavatorHandler;
 import blusunrize.immersiveengineering.api.tool.ExcavatorHandler.MineralMix;
 import blusunrize.immersiveengineering.client.ClientUtils;
@@ -38,6 +40,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.client.extensions.IForgeBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.pipeline.LightUtil;
@@ -210,25 +213,33 @@ public class ModelCoresampleExtended extends ModelCoresample
 								if(resName != null){
 									for(ReservoirType type:PumpjackHandler.reservoirList.keySet()){
 										if(resName.equals(type.name)){
-											mix.outputs.add(new ExcavatorHandler.OreOutput(IPContent.dummyBlockOilOre.getRegistryName(), 0.4F));
+											List<StackWithChance> outputs=new ArrayList<>(Arrays.asList(mix.outputs));
+											outputs.add(new StackWithChance(new ItemStack(IPContent.dummyBlockOilOre), 0.04F));
+											StackWithChance[] outputNew=outputs.toArray(new StackWithChance[0]);
+											DimensionType[] copy=mix.dimensions.toArray(new DimensionType[0]);
+											MineralMix mix2=new MineralMix(mix.getId(), outputNew, mix.weight, mix.failChance, copy, mix.background);
+											modelCache.put(indexName, new ModelCoresampleExtended(mix2, new VertexFormat(), type.getFluid()));
+											
+//											mix.outputs.add(new ExcavatorHandler.OreOutput(IPContent.dummyBlockOilOre.getRegistryName(), 0.4F));
 											
 //											MineralMix mix2 = new MineralMix(mix.name, mix.failChance, newOres, newChances);
 //											mix2.recalculateChances();
 //											mix2.outputs.set(mix2.outputs.size() - 1, new ItemStack(IPContent.blockDummy, 1));
 											
-											Fluid fluid = type.getFluid();
-											modelCache.put(indexName, new ModelCoresampleExtended(mix, fluid));
+//											Fluid fluid = type.getFluid();
+//											modelCache.put(indexName, new ModelCoresampleExtended(mix, fluid));
 											break outer;
 										}
 									}
 									
-									modelCache.put(indexName, new ModelCoresample(mix));
+//									modelCache.put(indexName, new ModelCoresample(mix));
 								}else{
-									modelCache.put(indexName, new ModelCoresample(mix));
+//									modelCache.put(indexName, new ModelCoresample(mix));
 								}
 							}
 						}
 					}
+					
 					IBakedModel model = modelCache.get(indexName);
 					if(model != null) return model;
 				}
@@ -238,18 +249,16 @@ public class ModelCoresampleExtended extends ModelCoresample
 				if(!modelCache.containsKey("_" + resName)){
 					for(ReservoirType type:PumpjackHandler.reservoirList.keySet()){
 						if(resName.equals(type.name)){
-							
-							MineralMix mix = new MineralMix(resName, 1, Arrays.asList(new ExcavatorHandler.OreOutput(IPContent.dummyBlockOilOre.getRegistryName(), 1F)));
-							mix.recalculateChances();
-							//mix.outputs.set(0, new ItemStack(IPContent.blockDummy, 1, EnumDummyType.OIL_DEPOSIT.getMeta()));
-							Fluid fluid = type.getFluid();
-							modelCache.put("_" + resName, new ModelCoresampleExtended(mix, fluid));
+//							MineralMix mix = new MineralMix(resName, 1, Arrays.asList(new ExcavatorHandler.OreOutput(IPContent.dummyBlockOilOre.getRegistryName(), 1F)));
+//							mix.outputs.set(0, new ItemStack(IPContent.blockDummy, 1, EnumDummyType.OIL_DEPOSIT.getMeta()));
+//							Fluid fluid = type.getFluid();
+//							modelCache.put("_" + resName, new ModelCoresampleExtended(mix, null, fluid));
 						}
 					}
 				}
 				
-				IBakedModel model = modelCache.get("_" + resName);
-				if(model != null) return model;
+				//IBakedModel model = modelCache.get("_" + resName);
+				//if(model != null) return model;
 			}
 			
 			return originalModel;

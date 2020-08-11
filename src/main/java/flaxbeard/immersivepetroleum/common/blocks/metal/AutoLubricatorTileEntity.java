@@ -15,6 +15,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBaseTileEntity;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGeneralMultiblock;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHasDummyBlocks;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
@@ -52,6 +53,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraftforge.api.distmarker.Dist;
@@ -695,13 +699,19 @@ public class AutoLubricatorTileEntity extends IEBaseTileEntity implements IDirec
 	public boolean useNixieFont(PlayerEntity player, RayTraceResult mop){
 		return false;
 	}
-	
+
 	@Override
-	public float[] getBlockBounds(){
-		if(dummy == 1)
-			return new float[]{.1875F, 0, .1875F, .8125f, 1, .8125f};
-		else
-			return new float[]{.0625f, 0, .0625f, .9375f, 1, .9375f};
+	public IGeneralMultiblock master(){
+		return master();
+	}
+
+	@Override
+	public VoxelShape getBlockBounds(ISelectionContext ctx){
+		if(dummy==1){
+			return VoxelShapes.create(.1875F, 0, .1875F, .8125f, 1, .8125f);
+		}else{
+			return VoxelShapes.create(.0625f, 0, .0625f, .9375f, 1, .9375f);
+		}
 	}
 	
 	public void readTank(CompoundNBT nbt){

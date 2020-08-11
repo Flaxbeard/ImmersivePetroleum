@@ -68,7 +68,11 @@ public class EntitySpeedboat extends BoatEntity{
 		TYPE = Builder.<EntitySpeedboat> create(EntitySpeedboat::new, EntityClassification.MISC).size(1.375F, 0.5625F).build(ImmersivePetroleum.MODID + ":speedboat");
 	}
 	
-	private static final DataParameter<Boolean>[] DATA_ID_PADDLE = new DataParameter[]{EntityDataManager.createKey(BoatEntity.class, DataSerializers.BOOLEAN), EntityDataManager.createKey(BoatEntity.class, DataSerializers.BOOLEAN)};
+	@SuppressWarnings("unchecked")
+	private static final DataParameter<Boolean>[] DATA_ID_PADDLE = new DataParameter[]{
+			EntityDataManager.createKey(BoatEntity.class, DataSerializers.BOOLEAN),
+			EntityDataManager.createKey(BoatEntity.class, DataSerializers.BOOLEAN)
+	};
 	private static final DataParameter<String> TANK_FLUID = EntityDataManager.createKey(EntitySpeedboat.class, DataSerializers.STRING);
 	private static final DataParameter<Integer> TANK_AMOUNT = EntityDataManager.createKey(EntitySpeedboat.class, DataSerializers.VARINT);
 	

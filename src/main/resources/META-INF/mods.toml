@@ -16,7 +16,7 @@ description="Adds oil and oil processing features to Immersive Engineering."
 [[dependencies.immersiveengineering]]
 	modId="immersiveengineering"
 	mandatory=true
-	versionRange="[0.14-95,)"
+	versionRange="[0.14-102,)"
 	ordering="BEFOR"
 	side="BOTH"
 

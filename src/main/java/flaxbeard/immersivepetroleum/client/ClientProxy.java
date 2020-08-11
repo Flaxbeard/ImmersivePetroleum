@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum.client;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -10,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
+import blusunrize.immersiveengineering.client.models.ModelCoresample;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalScaffoldingType;
 import blusunrize.lib.manual.ManualElementCrafting;
@@ -22,10 +24,13 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
-import flaxbeard.immersivepetroleum.client.model.ModelCoresampleExtended;
 import flaxbeard.immersivepetroleum.client.page.ManualElementSchematicCrafting;
+import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
+import flaxbeard.immersivepetroleum.client.render.TileAutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -47,10 +52,12 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID)
 public class ClientProxy extends CommonProxy{
+	@SuppressWarnings("unused")
 	private static final Logger log=LogManager.getLogger(ImmersivePetroleum.MODID+"/ClientProxy");
 	public static final String CAT_IP = "ip";
 	
@@ -77,7 +84,7 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void init(){
-		//ShaderUtil.init(); // Get's initialized when actualy needed.
+		//ShaderUtil.init(); // Get's initialized befor the first time it's actualy used.
 	}
 	
 	/** ImmersivePetroleum's Manual Category */
@@ -116,7 +123,7 @@ public class ClientProxy extends CommonProxy{
 	private static void distillation(ResourceLocation location, int priority){
 		ManualInstance man=ManualHelper.getManual();
 		
-		ArrayList<DistillationRecipe> recipeList = DistillationRecipe.recipeList;
+		Collection<DistillationRecipe> recipeList = DistillationRecipe.recipes.values();
 		List<String[]> l = new ArrayList<String[]>();
 		for(DistillationRecipe recipe:recipeList){
 			boolean first = true;
@@ -236,6 +243,14 @@ public class ClientProxy extends CommonProxy{
 	}
 	@Override
 	public void postInit(){
+		// TODO TileEntityRenderer Registration
+		ClientRegistry.bindTileEntitySpecialRenderer(DistillationTowerTileEntity.DistillationTowerParentTileEntity.class, new MultiblockDistillationTowerRenderer());
+		//ClientRegistry.bindTileEntitySpecialRenderer(PumpjackTileEntity.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorTileEntity.class, new TileAutoLubricatorRenderer());
+		
+		// Don't think this is needed anymore
+		//ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice), 0, AutoLubricatorTileEntity.class);
+		
 		/*
 		ManualHelper.addEntry("schematics", CAT_IP,
 				new ManualPages.Crafting(ManualHelper.getManual(), "schematics0", new ItemStack(IPContent.itemProjector, 1, 0)),
@@ -276,18 +291,15 @@ public class ClientProxy extends CommonProxy{
 				new ManualPages.Crafting(ManualHelper.getManual(), "automaticLubricator0", new ItemStack(IPContent.blockMetalDevice, 1, 0)),
 				new ManualPages.Text(ManualHelper.getManual(), "automaticLubricator1"));
 		*/
-		
-		// FIXME TileEntity Registration
-		//ClientRegistry.bindTileEntitySpecialRenderer(DistillationTowerTileEntity.TileEntityDistillationTowerParent.class, new MultiblockDistillationTowerRenderer());
-		//ClientRegistry.bindTileEntitySpecialRenderer(PumpjackTileEntity.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
-		//ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorTileEntity.class, new TileAutoLubricatorRenderer());
-		//ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice), 0, AutoLubricatorTileEntity.class);
 	}
-
+	
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void onModelBakeEvent(ModelBakeEvent event){
 		ModelResourceLocation mLoc = new ModelResourceLocation(IEBlocks.StoneDecoration.coresample.getRegistryName(), "inventory");
-		//event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
+		IBakedModel model=event.getModelRegistry().get(mLoc);
+		if(model instanceof ModelCoresample){
+			//event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
+		}
 	}
 	
 	/*
@@ -357,7 +369,7 @@ public class ClientProxy extends CommonProxy{
 		GlStateManager.popMatrix();
 	}
 	
-	/* Data Generators are responsible for dealing with this now
+	/*// Data Generators are responsible for dealing with this now
 	public static void registerModels(ModelRegistryEvent evt)
 	{
 		//Going through registered stuff at the end of preInit, because of compat modules possibly adding items

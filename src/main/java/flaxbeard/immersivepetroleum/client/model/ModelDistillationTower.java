@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.client.model;
 
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
-import net.minecraft.entity.Entity;
 
 public class ModelDistillationTower extends Model{
 	public RendererModel base;
@@ -192,11 +191,11 @@ public class ModelDistillationTower extends Model{
 		this.base.addChild(pipe);
 	}
 	
-	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5){
+	public void renderMain(float f5){
 		this.base.render(f5);
 	}
 	
-	public void renderFurnace(Entity entity, float f, float f1, float f2, float f3, float f4, float f5){
+	public void renderFurnace(float f5){
 		this.boil.render(f5);
 	}
 }

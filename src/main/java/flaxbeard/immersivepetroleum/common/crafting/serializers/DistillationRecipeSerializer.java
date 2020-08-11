@@ -16,15 +16,13 @@ import net.minecraftforge.fluids.FluidStack;
 public class DistillationRecipeSerializer extends IERecipeSerializer<DistillationRecipe>{
 	@Override
 	public DistillationRecipe readFromJson(ResourceLocation recipeId, JsonObject json){
-		if(!json.has("input"))   throw new com.google.gson.JsonSyntaxException("Missing input fluid.");
-		if(!json.has("result0")) throw new com.google.gson.JsonSyntaxException("Missing result0 array.");
-		if(!json.has("result1")) throw new com.google.gson.JsonSyntaxException("Missing result1 array.");
-		if(!json.has("chances")) throw new com.google.gson.JsonSyntaxException("Missing chances array.");
-		if(!json.has("time"))    throw new com.google.gson.JsonSyntaxException("Missing time.");
-		if(!json.has("energy"))  throw new com.google.gson.JsonSyntaxException("Missing energy.");
+		if(!json.has("input"))
+			throw new com.google.gson.JsonSyntaxException("Missing \"input\" fluid in a distillation recipe.");
+		if(!json.has("results"))
+			throw new com.google.gson.JsonSyntaxException("Missing \"results\" array in a distillation recipe.");
 		
 		FluidStack input=ApiUtils.jsonDeserializeFluidStack(JSONUtils.getJsonObject(json, "input"));
-		JsonArray fluidResults=JSONUtils.getJsonArray(json, "result0");
+		JsonArray fluidResults=JSONUtils.getJsonArray(json, "results");
 		JsonArray itemResults=JSONUtils.getJsonArray(json, "byproducts");
 		JsonArray chancesResults=JSONUtils.getJsonArray(json, "chances");
 		
@@ -40,8 +38,14 @@ public class DistillationRecipeSerializer extends IERecipeSerializer<Distillatio
 		for(int i=0;i<chances.length;i++)
 			chances[i]=chancesResults.getAsDouble();
 		
-		int energy=JSONUtils.getInt(json, "energy");
-		int time=JSONUtils.getInt(json, "time");
+		int energy=2048;
+		if(json.has("energy"))
+			energy=JSONUtils.getInt(json, "energy");
+		
+		int time=1;
+		if(json.has("time")){
+			time=JSONUtils.getInt(json, "time");
+		}
 		
 		return new DistillationRecipe(recipeId, fluidOutput, byproducts, input, energy, time, chances);
 	}

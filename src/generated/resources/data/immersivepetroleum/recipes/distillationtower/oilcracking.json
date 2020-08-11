@@ -1,0 +1,29 @@
+{
+  "type": "immersivepetroleum:distillation",
+  "results": [
+    {
+      "fluid": "immersivepetroleum:lubricant",
+      "amount": 9
+    },
+    {
+      "fluid": "immersivepetroleum:diesel",
+      "amount": 27
+    },
+    {
+      "fluid": "immersivepetroleum:gasoline",
+      "amount": 39
+    }
+  ],
+  "input": {
+    "fluid": "immersivepetroleum:oil",
+    "amount": 75
+  },
+  "energy": 2048,
+  "time": 10,
+  "byproducts": [
+    {
+      "item": "immersivepetroleum:bitumen",
+      "chance": "0.07"
+    }
+  ]
+}

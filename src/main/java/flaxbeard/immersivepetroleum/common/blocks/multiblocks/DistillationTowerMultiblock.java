@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Multiblock;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.item.ItemStack;
@@ -18,7 +19,8 @@ public class DistillationTowerMultiblock extends IETemplateMultiblock{
 	public static final DistillationTowerMultiblock INSTANCE = new DistillationTowerMultiblock();
 	
 	private DistillationTowerMultiblock(){
-		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/distillationtower"), new BlockPos(0, 0, 0), new BlockPos(0, 1, 0), () -> null);
+		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/distillationtower"),
+				new BlockPos(0, 0, 0), new BlockPos(0, 1, 3), () -> IPContent.Multiblock.distillationtower.getDefaultState());
 	}
 	
 	@Override

@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
 import blusunrize.immersiveengineering.common.IEConfig;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
@@ -40,10 +39,15 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTileEntity, IMultiblockRecipe> implements IAdvancedSelectionBounds, IAdvancedCollisionBounds, IInteractionObjectIE{
-	public static TileEntityType<PumpjackTileEntity> TYPE;
-	
-	public static class TileEntityPumpjackParent extends PumpjackTileEntity{
+public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTileEntity, IMultiblockRecipe>  implements IInteractionObjectIE{
+	public static class PumpjackParentTileEntity extends PumpjackTileEntity{
+		public static TileEntityType<PumpjackParentTileEntity> TYPE;
+		
+		@Override
+		public TileEntityType<?> getType(){
+			return super.getType();
+		}
+		
 		@OnlyIn(Dist.CLIENT)
 		@Override
 		public AxisAlignedBB getRenderBoundingBox(){
@@ -63,9 +67,10 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		}
 	}
 	
+	public static TileEntityType<PumpjackTileEntity> TYPE;
+	
 	public PumpjackTileEntity(){
-		// super(MultiblockPumpjack.instance, new int[]{4, 6, 3}, 16000, true);
-		super(PumpjackMultiblock.INSTANCE, 16000, true, TYPE);
+		super(PumpjackMultiblock.INSTANCE, 16000, true, null);
 	}
 	
 	public FluidTank fakeTank = new FluidTank(0);
@@ -218,20 +223,21 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		
 	}
 	
-	@Override
-	public float[] getBlockBounds(){
-		/*
-		 * if(pos==19) return new
-		 * float[]{getFacing()==Direction.WEST?.5f:0,0,getFacing()==Direction.
-		 * NORTH?.5f:0,
-		 * getFacing()==Direction.EAST?.5f:1,1,getFacing()==Direction.SOUTH?.5f:
-		 * 1}; if(pos==17) return new float[]{.0625f,0,.0625f, .9375f,1,.9375f};
-		 */
-		
-		return new float[]{0, 0, 0, 0, 0, 0};
-	}
 	
-	@Override
+//	public float[] getBlockBounds(){
+//		if(pos == 19)
+//			return new float[]{
+//					getFacing() == Direction.WEST ? .5f : 0, 0,
+//					getFacing() == Direction.NORTH ? .5f : 0,
+//					getFacing() == Direction.EAST ? .5f : 1, 1,
+//					getFacing() == Direction.SOUTH ? .5f : 1};
+//		if(pos == 17)
+//			return new float[]{.0625f, 0, .0625f, .9375f, 1, .9375f};
+//		
+//		return new float[]{0, 0, 0, 0, 0, 0};
+//	}
+	
+	
 	public List<AxisAlignedBB> getAdvancedSelectionBounds(){
 		Direction fl = getFacing();
 		Direction fw = getFacing().rotateY();
@@ -378,14 +384,12 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	
 	@Override
 	public Set<BlockPos> getEnergyPos(){
-		return null; // TODO TBD
-		// return new int[]{20};
+		return ImmutableSet.of(new BlockPos(2,1,0));
 	}
 	
 	@Override
 	public Set<BlockPos> getRedstonePos(){
-		return null; // TODO TBD
-		// return new int[]{18};
+		return ImmutableSet.of(new BlockPos(0,1,0));
 	}
 	
 	@Override

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SCS",
+    "GBG",
+    "SCS"
+  ],
+  "key": {
+    "C": {
+      "item": "immersivepetroleum:bitumen"
+    },
+    "S": {
+      "item": "immersiveengineering:slag"
+    },
+    "G": {
+      "tag": "forge:gravel"
+    },
+    "B": {
+      "item": "minecraft:water_bucket"
+    }
+  },
+  "result": {
+    "item": "immersivepetroleum:asphalt",
+    "count": 12
+  }
+}

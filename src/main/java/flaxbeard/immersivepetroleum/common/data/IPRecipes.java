@@ -34,8 +34,9 @@ public class IPRecipes extends RecipeProvider{
 	@Override
 	protected void registerRecipes(Consumer<IFinishedRecipe> out){
 		this.out=out;
-		blockRecipes();
+		
 		itemRecipes();
+		blockRecipes();
 		speedboatUpgradeRecipes();
 		multiblockRecipes();
 	}
@@ -47,13 +48,16 @@ public class IPRecipes extends RecipeProvider{
 		// item_name, stack_size, percent_chance
 		// immersivepetroleum:bitumen, 1, 7
 		
+		// setEnergy and setTime are 2048 and 1 by default. But still allows to be customized.
+		
 		DistillationRecipeBuilder.builder(new FluidStack[]{
 				new FluidStack(IPContent.fluidLubricant, 9),
 				new FluidStack(IPContent.fluidDiesel, 27),
 				new FluidStack(IPContent.fluidGasoline, 39)})
 			.addByproduct(new ItemStack(IPContent.itemBitumen), 0.07)
 			.addInput(IPContent.fluidCrudeOil, 75)
-			.setEnergy(2048)
+			//.setEnergy(2048) // See method description.
+			//.setTime(1) // See method description.
 			.build(this.out, rl("distillationtower/oilcracking"));
 	}
 	
@@ -116,7 +120,7 @@ public class IPRecipes extends RecipeProvider{
 			.patternLine("GBG")
 			.patternLine("SCS")
 			.addCriterion("has_bitumen", hasItem(IPContent.itemBitumen))
-			.build(out, rl("asphalt"));
+			.build(this.out, rl("asphalt"));
 		
 		ShapedRecipeBuilder.shapedRecipe(IPContent.blockAsphalt, 12)
 			.key('C', IPContent.itemBitumen)
@@ -128,7 +132,7 @@ public class IPRecipes extends RecipeProvider{
 			.patternLine("SCS")
 			.addCriterion("has_bitumen", hasItem(IPContent.itemBitumen))
 			.addCriterion("has_slag", hasItem(IEItems.Ingredients.slag))
-			.build(out, rl("asphalt"));
+			.build(this.out, rl("asphalt"));
 	}
 	
 	private void itemRecipes(){

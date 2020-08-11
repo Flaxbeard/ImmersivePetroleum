@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " P ",
+    "PTP",
+    " P "
+  ],
+  "key": {
+    "P": {
+      "tag": "forge:plates/iron"
+    },
+    "T": {
+      "item": "immersiveengineering:metal_barrel"
+    }
+  },
+  "result": {
+    "item": "immersivepetroleum:tank"
+  }
+}

@@ -1,15 +1,23 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.google.common.collect.ImmutableSet;
+
 import blusunrize.immersiveengineering.api.DirectionalBlockPos;
+import blusunrize.immersiveengineering.common.IEConfig;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import blusunrize.immersiveengineering.common.util.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
+import blusunrize.immersiveengineering.common.util.shapes.CachedShapesWithTransform;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,7 +30,12 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -32,8 +45,36 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 
-public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<DistillationTowerTileEntity, DistillationRecipe> implements IInteractionObjectIE{
+public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<DistillationTowerTileEntity, DistillationRecipe> implements IInteractionObjectIE, IBlockBounds{
+	public static class DistillationTowerParentTileEntity extends DistillationTowerTileEntity{
+		public static TileEntityType<DistillationTowerParentTileEntity> TYPE;
+		
+		@Override
+		public TileEntityType<?> getType(){
+			return TYPE;
+		}
+		
+		@Override
+		@OnlyIn(Dist.CLIENT)
+		public net.minecraft.util.math.AxisAlignedBB getRenderBoundingBox(){
+			BlockPos pos = getPos();
+			return new AxisAlignedBB(pos.add(-4, -16, -4), pos.add(4, 16, 4));
+		}
+		
+		@Override
+		public boolean isDummy(){
+			return false;
+		}
+		
+		@Override
+		@OnlyIn(Dist.CLIENT)
+		public double getMaxRenderDistanceSquared(){
+			return super.getMaxRenderDistanceSquared() * IEConfig.GENERAL.increasedTileRenderdistance.get();
+		}
+	}
+	
 	public static TileEntityType<DistillationTowerTileEntity> TYPE;
 	
 	protected static final int TANK_INPUT=0;
@@ -50,11 +91,13 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	private boolean operated = false;
 	private boolean wasActive = false;
 	
-	/** Output Capability Reference */
-	private CapabilityReference<IItemHandler> output_capref = CapabilityReference.forTileEntity(this, () -> new DirectionalBlockPos(pos, getFacing()), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+	public DistillationTowerTileEntity(){
+		super(DistillationTowerMultiblock.INSTANCE, 16000, true, null);
+	}
 	
-	public DistillationTowerTileEntity(IETemplateMultiblock multiblockInstance, int energyCapacity, boolean redstoneControl, TileEntityType<? extends DistillationTowerTileEntity> type){
-		super(DistillationTowerMultiblock.INSTANCE, 16000, true, TYPE);
+	@Override
+	public TileEntityType<?> getType(){
+		return TYPE;
 	}
 	
 	@Override
@@ -67,7 +110,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		
 		String lastFluidName = nbt.getString("lastFluidOut");
 		if(lastFluidName.length() > 0){
-			// lastFluidOut = FluidRegistry.getFluid(lastFluidName);
+			lastFluidOut = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(lastFluidName));
 		}else{
 			lastFluidOut = null;
 		}
@@ -93,6 +136,12 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	protected NonNullList<ItemStack> readInventory(CompoundNBT nbt){
 		NonNullList<ItemStack> list=NonNullList.create();
 		ItemStackHelper.loadAllItems(nbt, list);
+		
+		if(list.size()==0) // Incase it loaded none
+			list=NonNullList.withSize(4, ItemStack.EMPTY);
+		else if(list.size()<4) // Padding incase it loaded less than 4
+			while(list.size()<4)
+				list.add(ItemStack.EMPTY);
 		return list;
 	}
 	
@@ -148,6 +197,8 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			
 			LazyOptional<IFluidHandler> lazy;
 			if(getIsMirrored()){ // TODO When multiblocks have been completed.
+//				BlockPos pos=getBlockPosForPos(new BlockPos(0,0,0)); // Perhaps with this?
+				
 				BlockPos outPos=getPos().offset(getFacing().getOpposite());
 				lazy=FluidUtil.getFluidHandler(this.world, BlockPos.ZERO, getFacing().getOpposite());
 			}else{
@@ -204,7 +255,9 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			}).orElse(false);
 		}
 		
-		ItemStack emptyContainer=Utils.fillFluidContainer(this.tanks[TANK_OUTPUT], this.inventory.get(INV_2), this.inventory.get(INV_3), null);
+		ItemStack emptyContainer=Utils.fillFluidContainer(this.tanks[TANK_OUTPUT],
+				this.inventory.get(INV_2),
+				this.inventory.get(INV_3), null);
 		if(!emptyContainer.isEmpty()){
 			if (!inventory.get(INV_3).isEmpty())
 				inventory.get(INV_3).grow(emptyContainer.getCount());
@@ -229,9 +282,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	
 	@Override
 	public boolean isStackValid(int slot, ItemStack stack){
-		if(stack.getItem() instanceof BucketItem)
-			return true;
-		return false;
+		return stack==ItemStack.EMPTY || stack.getItem() instanceof BucketItem;
 	}
 	
 	@Override
@@ -257,17 +308,17 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	
 	@Override
 	protected DistillationRecipe getRecipeForId(ResourceLocation id){
-		return null;
+		return DistillationRecipe.recipes.get(id);
 	}
 	
 	@Override
 	public Set<BlockPos> getEnergyPos(){
-		return null; // TODO TBD
+		return ImmutableSet.of(new BlockPos(3,1,3));
 	}
 	
 	@Override
 	public Set<BlockPos> getRedstonePos(){
-		return null; // TODO TBD
+		return ImmutableSet.of(new BlockPos(0, 1, 3));
 	}
 	
 	@Override
@@ -295,8 +346,16 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		return true;
 	}
 	
+	/** Output Capability Reference */
+	private CapabilityReference<IItemHandler> output_capref = CapabilityReference.forTileEntity(this, () -> new DirectionalBlockPos(pos, getFacing()), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+	
 	@Override
 	public void doProcessOutput(ItemStack output){
+		this.output_capref=CapabilityReference.forTileEntity(this, () -> new DirectionalBlockPos(getPos(), getFacing().getOpposite()), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+		
+		//output = Utils.insertStackIntoInventory(this.output_capref, output, false);
+		if(!output.isEmpty())
+			Utils.dropStackAtPos(this.world, getPos(), output, getFacing().getOpposite());
 	}
 	
 	@Override
@@ -314,7 +373,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	
 	@Override
 	public int getProcessQueueMaxLength(){
-		return 0;
+		return 1;
 	}
 	
 	@Override
@@ -329,11 +388,33 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(Direction side){
+		DistillationTowerTileEntity master=master();
+		if(master!=null){
+			if(this.posInMultiblock.equals(new BlockPos(1,0,3)) && (side==null || side==getFacing().getOpposite())){ // OUTPUT
+				return new IFluidTank[]{master.tanks[TANK_OUTPUT]};
+			}
+			if(this.posInMultiblock.equals(new BlockPos(3,0,3)) && (side==null || side==getFacing().rotateYCCW().getOpposite())){ // INPUT
+				return new IFluidTank[]{master.tanks[TANK_INPUT]};
+			}
+		}
 		return new FluidTank[0];
 	}
 	
 	@Override
 	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource){
+		if(this.posInMultiblock.equals(new BlockPos(1,0,3)) && (side==null || side==getFacing().getOpposite())){
+			DistillationTowerTileEntity master=master();
+			if(iTank!=TANK_INPUT || master==null || master.tanks[TANK_INPUT].getFluidAmount()>=master.tanks[TANK_INPUT].getCapacity())
+				return false;
+			
+			if(master!=null){
+				if(master.tanks[iTank].getFluid().isEmpty()){
+					return DistillationRecipe.findRecipe(resource)!=null;
+				}else{
+					return master.tanks[iTank].getFluid().equals(resource);
+				}
+			}
+		}
 		return false;
 	}
 	
@@ -342,4 +423,15 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		return false;
 	}
 	
+	
+	private static final CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES =
+			CachedShapesWithTransform.createForMultiblock(DistillationTowerTileEntity::getShape);
+	@Override
+	public VoxelShape getBlockBounds(ISelectionContext ctx){
+		return SHAPES.get(this.posInMultiblock, Pair.of(getFacing(), getIsMirrored()));
+	}
+	
+	private static List<AxisAlignedBB> getShape(BlockPos posInMultiblock){
+		return Arrays.asList(new AxisAlignedBB(0, 0, 0, 1, 1, 1));
+	}
 }

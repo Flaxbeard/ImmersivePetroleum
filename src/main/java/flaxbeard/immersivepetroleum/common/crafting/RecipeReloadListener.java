@@ -28,7 +28,6 @@ public class RecipeReloadListener implements IResourceManagerReloadListener{
 	@SubscribeEvent
 	public void recipesUpdated(RecipesUpdatedEvent event){
 		lists(event.getRecipeManager());
-		
 	}
 	
 	static void lists(RecipeManager recipeManager){

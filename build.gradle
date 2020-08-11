@@ -69,7 +69,7 @@ minecraft {
 			property 'forge.logging.console.level', 'info'
 			property 'fml.earlyprogresswindow', 'false'
 			
-			args '--mod', 'immersivepetroleum', '--all', '--output', file('src/generated/resources/'), '--validate', '--existing', sourceSets.main.resources.srcDirs[0], '--existing', 'C:/Users/TwistedGate/.gradle/caches/forge_gradle/deobf_dependencies/blusunrize/immersiveengineering/ImmersiveEngineering/0.14-95-190fba3c_mapped_snapshot_20190719-1.14.3/ImmersiveEngineering-0.14-95-190fba3c_mapped_snapshot_20190719-1.14.3.jar'
+			args '--mod', 'immersivepetroleum', '--all', '--output', file('src/generated/resources/'), '--validate', '--existing', sourceSets.main.resources.srcDirs[0], '--existing', 'C:/Users/TwistedGate/.gradle/caches/forge_gradle/deobf_dependencies/blusunrize/immersiveengineering/ImmersiveEngineering/0.14-102-fd1b904ab_mapped_snapshot_20200119-1.14.3/ImmersiveEngineering-0.14-102-fd1b904ab_mapped_snapshot_20200119-1.14.3.jar'
 			// The end on the line above is required for data generation, the location should only require a "nickname" change
 			
 			// V Check if the locations match by just pasting it (minus the jar) into explorer V
@@ -85,7 +85,7 @@ minecraft {
 }
 
 dependencies {
-	minecraft "net.minecraftforge:forge:1.14.4-28.2.3"
+	minecraft "net.minecraftforge:forge:1.14.4-28.2.16"
 	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:0.14-102-fd1b904ab")
 	runtimeOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.11")
 }

@@ -16,7 +16,7 @@ public class ShaderUtil{
 	
 	public static int alpha = -1;
 	
-	public static void init(){
+	private static void init(){
 		alpha = createShader(null, "/assets/immersivepetroleum/shaders/alpha.frag");
 	}
 	

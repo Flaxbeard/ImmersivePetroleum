@@ -1,13 +1,14 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.nbt.CompoundNBT;
@@ -25,6 +26,7 @@ import net.minecraftforge.fml.RegistryObject;
  */
 public class DistillationRecipe extends MultiblockRecipe{
 	public static IRecipeType<DistillationRecipe> TYPE=IRecipeType.register(ImmersivePetroleum.MODID+":distillationtower");
+	/** Initialized in {@link Serializers} */
 	public static RegistryObject<IERecipeSerializer<DistillationRecipe>> SERIALIZER;
 	
 	public static double energyModifier = 1;
@@ -36,8 +38,7 @@ public class DistillationRecipe extends MultiblockRecipe{
 	public final ItemStack[] itemOutput;
 	public final FluidStack input;
 	
-	public static ArrayList<DistillationRecipe> recipeList = new ArrayList<>();
-	public static Map<ResourceLocation, DistillationRecipe> recipes;
+	public static Map<ResourceLocation, DistillationRecipe> recipes=new HashMap<>();
 	
 	public DistillationRecipe(ResourceLocation id, FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidStack input, int energy, int time, double[] chances){
 		super(ItemStack.EMPTY, TYPE, id);
@@ -54,6 +55,7 @@ public class DistillationRecipe extends MultiblockRecipe{
 		this.outputList = NonNullList.from(ItemStack.EMPTY, itemOutput);
 	}
 	
+	/** @deprecated <pre>in favour of JSON Recipes. See {@link DistillationRecipeBuilder}</pre> */
 	@Deprecated
 	public DistillationRecipe(FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidStack input, int energy, int time, double[] chances){
 		super(ItemStack.EMPTY, TYPE, null);
@@ -71,6 +73,8 @@ public class DistillationRecipe extends MultiblockRecipe{
 	}
 	
 	/**
+	 * @deprecated <pre>in favour of JSON Recipes. See {@link DistillationRecipeBuilder}</pre>
+	 * 
 	 * Add a Distillation Tower recipe
 	 *
 	 * @param fluidOutputs A list of FluidStacks, each an output from the recipe
@@ -83,16 +87,14 @@ public class DistillationRecipe extends MultiblockRecipe{
 	 */
 	@Deprecated
 	public static DistillationRecipe addRecipe(FluidStack[] fluidOutputs, ItemStack[] itemOutputs, FluidStack input, int energy, int time, double[] chances){
-		DistillationRecipe r = new DistillationRecipe(fluidOutputs, itemOutputs, input, energy, time, chances);
-		recipeList.add(r);
-		return r;
+		return null;
 	}
 	
 	public static DistillationRecipe findRecipe(FluidStack input){
-		for(DistillationRecipe recipe:recipeList){
-			if(input != null){
-				if(recipe.input != null && (input.containsFluid(recipe.input))){
-					return recipe;
+		if(!recipes.isEmpty()){
+			for(DistillationRecipe r:recipes.values()){
+				if(r.input!=null && r.input.containsFluid(input)){
+					return r;
 				}
 			}
 		}

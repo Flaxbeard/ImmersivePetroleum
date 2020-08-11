@@ -1,0 +1,31 @@
+{
+  "variants": {
+    "facing=north,mirrored=false,multiblockslave=false": {
+      "model": "immersiveengineering:block/ie_empty"
+    },
+    "facing=south,mirrored=false,multiblockslave=false": {
+      "model": "immersiveengineering:block/ie_empty"
+    },
+    "facing=west,mirrored=false,multiblockslave=false": {
+      "model": "immersiveengineering:block/ie_empty"
+    },
+    "facing=east,mirrored=false,multiblockslave=false": {
+      "model": "immersiveengineering:block/ie_empty"
+    },
+    "facing=north,mirrored=true,multiblockslave=false": {
+      "model": "immersiveengineering:block/ie_empty"
+    },
+    "facing=south,mirrored=true,multiblockslave=false": {
+      "model": "immersiveengineering:block/ie_empty"
+    },
+    "facing=west,mirrored=true,multiblockslave=false": {
+      "model": "immersiveengineering:block/ie_empty"
+    },
+    "facing=east,mirrored=true,multiblockslave=false": {
+      "model": "immersiveengineering:block/ie_empty"
+    },
+    "multiblockslave=true": {
+      "model": "immersivepetroleum:block/distillationtower_empty"
+    }
+  }
+}

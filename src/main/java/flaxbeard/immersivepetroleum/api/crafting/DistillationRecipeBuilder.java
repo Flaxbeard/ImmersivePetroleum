@@ -18,11 +18,12 @@ import net.minecraft.util.Tuple;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
- * Not yet 100% done.
+ * Distillation Recipe creation using DataGeneration
  * 
  * @author TwistedGate
  */
 public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationRecipeBuilder>{
+	// TODO Refine this whole thing if nessesary
 	
 	/** Temporary storage for byproducts */
 	private List<Tuple<ItemStack, Double>> byproducts=new ArrayList<>();
@@ -31,13 +32,13 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 		super(DistillationRecipe.SERIALIZER.get());
 	}
 	
-	public static DistillationRecipeBuilder builder(FluidStack[] fluidOutput){
+	public static DistillationRecipeBuilder builder(FluidStack... fluidOutput){
 		if(fluidOutput==null || ((fluidOutput!=null && fluidOutput.length==0)))
 			throw new IllegalArgumentException("Missing required fluid output.");
 		
 		DistillationRecipeBuilder b=new DistillationRecipeBuilder();
 		if(fluidOutput!=null && fluidOutput.length>0)
-			b.addFluids("result0", fluidOutput);
+			b.addFluids("results", fluidOutput);
 		return b;
 	}
 	
@@ -60,15 +61,24 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 	 * @return self for chaining
 	 */
 	public DistillationRecipeBuilder addByproduct(ItemStack byproduct, double chance){
-		if(chance<0.0) chance=0.0;
-		if(chance>1.0) chance=1.0;
-		
-		this.byproducts.add(new Tuple<ItemStack, Double>(byproduct, chance));
+		this.byproducts.add(new Tuple<ItemStack, Double>(byproduct, Math.max(Math.min(chance, 1.0), 0.0)));
 		return this;
 	}
 	
+	/** Defaults to 1 when loading the recipe in-game (including reload) */
+	@Override
+	public DistillationRecipeBuilder setTime(int time){
+		return super.setTime(time);
+	}
+	
+	/** Defaults to 2048 when loading the recipe in-game (including reload) */
+	@Override
+	public DistillationRecipeBuilder setEnergy(int energy){
+		return super.setEnergy(energy);
+	}
+	
 	public DistillationRecipeBuilder addInput(Fluid fluid, int amount){
-		return addFluid(new FluidStack(fluid, amount));
+		return addInput(new FluidStack(fluid, amount));
 	}
 	
 	public DistillationRecipeBuilder addInput(FluidStack fluidStack){
@@ -112,8 +122,6 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 			double chance=jsonObject.get("chance").getAsDouble();
 			jsonObject.remove("chance");
 			ItemStack stack=ShapedRecipe.deserializeItem(jsonObject);
-			// TODO Should this be here since im not sure if the jsonObject gets reused elsewhere or would be reused
-			//jsonObject.addProperty("chance", chance); //
 			return new Tuple<ItemStack, Double>(stack, chance);
 		}
 		

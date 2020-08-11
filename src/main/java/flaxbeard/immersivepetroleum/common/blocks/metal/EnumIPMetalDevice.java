@@ -5,7 +5,8 @@ import java.util.Locale;
 import net.minecraft.util.IStringSerializable;
 
 public enum EnumIPMetalDevice implements IStringSerializable{
-	AUTOMATIC_LUBRICATOR, GAS_GENERATOR;
+	GAS_GENERATOR,
+	AUTOMATIC_LUBRICATOR;
 	
 	@Override
 	public String getName(){

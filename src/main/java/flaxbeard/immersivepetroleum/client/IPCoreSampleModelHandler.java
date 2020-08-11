@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.client;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
-import flaxbeard.immersivepetroleum.client.model.ModelCoresampleExtended;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.eventbus.api.EventPriority;

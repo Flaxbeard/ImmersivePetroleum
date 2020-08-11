@@ -8,11 +8,14 @@ import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.RegistryObject;
 
 public class SchematicCraftingHandler implements ICraftingRecipe{
+	public static RegistryObject<SpecialRecipeSerializer<SchematicCraftingHandler>> SERIALIZER;
 	
 	private final ResourceLocation id;
 	public SchematicCraftingHandler(ResourceLocation id){
@@ -21,7 +24,7 @@ public class SchematicCraftingHandler implements ICraftingRecipe{
 	
 	@Override
 	public IRecipeSerializer<?> getSerializer(){
-		return Serializers.SERIALIZER.get();
+		return SERIALIZER.get();
 	}
 	
 	@Override
@@ -75,7 +78,7 @@ public class SchematicCraftingHandler implements ICraftingRecipe{
 				output = op;
 			}else{
 				remaining = NonNullList.withSize(9, ItemStack.EMPTY);
-				output = ItemStack.EMPTY;;
+				output = ItemStack.EMPTY;
 			}
 		}
 		

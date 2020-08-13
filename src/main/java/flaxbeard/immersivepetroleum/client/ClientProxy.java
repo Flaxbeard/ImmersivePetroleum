@@ -14,6 +14,7 @@ import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.client.models.ModelCoresample;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalScaffoldingType;
+import blusunrize.immersiveengineering.common.gui.GuiHandler;
 import blusunrize.lib.manual.ManualElementCrafting;
 import blusunrize.lib.manual.ManualElementTable;
 import blusunrize.lib.manual.ManualEntry;
@@ -24,6 +25,7 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
 import flaxbeard.immersivepetroleum.client.page.ManualElementSchematicCrafting;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.TileAutoLubricatorRenderer;
@@ -34,6 +36,10 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEnt
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.IHasContainer;
+import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.ScreenManager.IScreenFactory;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -43,6 +49,8 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -62,11 +70,22 @@ public class ClientProxy extends CommonProxy{
 	public static final String CAT_IP = "ip";
 	
 	@Override
-	public void construct(){
-	}
+	public void construct(){}
 	
 	@Override
-	public void setup(){
+	public void setup(){}
+	
+	@Override
+	public void registerContainersAndScreens(){
+		super.registerContainersAndScreens();
+		
+		registerScreen(new ResourceLocation(ImmersivePetroleum.MODID, "distillationtower"), DistillationTowerScreen::new);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <C extends Container, S extends Screen & IHasContainer<C>> void registerScreen(ResourceLocation name, IScreenFactory<C, S> factory){
+		ContainerType<C> type=(ContainerType<C>)GuiHandler.getContainerType(name);
+		ScreenManager.registerFactory(type, factory);
 	}
 	
 	@Override
@@ -245,52 +264,11 @@ public class ClientProxy extends CommonProxy{
 	public void postInit(){
 		// TODO TileEntityRenderer Registration
 		ClientRegistry.bindTileEntitySpecialRenderer(DistillationTowerTileEntity.DistillationTowerParentTileEntity.class, new MultiblockDistillationTowerRenderer());
-		//ClientRegistry.bindTileEntitySpecialRenderer(PumpjackTileEntity.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorTileEntity.class, new TileAutoLubricatorRenderer());
+		//ClientRegistry.bindTileEntitySpecialRenderer(PumpjackTileEntity.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
 		
 		// Don't think this is needed anymore
 		//ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice), 0, AutoLubricatorTileEntity.class);
-		
-		/*
-		ManualHelper.addEntry("schematics", CAT_IP,
-				new ManualPages.Crafting(ManualHelper.getManual(), "schematics0", new ItemStack(IPContent.itemProjector, 1, 0)),
-				new ManualElementSchematicCrafting(ManualHelper.getManual(), "schematics1", new ItemStack(IPContent.itemProjector, 1, 0)),
-				new ManualPages.Text(ManualHelper.getManual(), "schematics2"));
-		
-		ManualHelper.addEntry("pumpjack", CAT_IP,
-				new ManualPageMultiblock(ManualHelper.getManual(), "pumpjack0", MultiblockPumpjack.instance),
-				new ManualPages.Text(ManualHelper.getManual(), "pumpjack1"));
-		
-		// Here lies the Distillation Page. RIP 201?-2020
-		
-		ManualHelper.addEntry("portableGenerator", CAT_IP,
-				new ManualPages.Crafting(ManualHelper.getManual(), "portableGenerator0", new ItemStack(IPContent.blockMetalDevice, 1, 1)),
-				new ManualPages.Text(ManualHelper.getManual(), "portableGenerator1"));
-		
-		ManualHelper.addEntry("speedboat", CAT_IP,
-				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat0", new ItemStack(IPContent.itemSpeedboat, 1, 0)),
-				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat1", new ItemStack(IPContent.itemUpgrades, 1, 2)),
-				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat2", new ItemStack(IPContent.itemUpgrades, 1, 3)),
-				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat3", new ItemStack(IPContent.itemUpgrades, 1, 1)),
-				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat4", new ItemStack(IPContent.itemUpgrades, 1, 0)),
-				new ManualPages.Crafting(ManualHelper.getManual(), "speedboat5", new ItemStack(IPContent.itemUpgrades, 1, 4))
-		);
-		
-		ManualHelper.addEntry("napalm", CAT_IP,
-				new ManualPages.Text(ManualHelper.getManual(), "napalm0"));
-		
-		ManualHelper.addEntry("asphalt", CAT_IP,
-				new ManualPages.Crafting(ManualHelper.getManual(), "asphalt0", new ItemStack(IPContent.blockStoneDecoration, 1, BlockTypes_IPStoneDecoration.ASPHALT.getMeta())));
-		
-		ManualHelper.addEntry("lubricant", CAT_IP,
-				new ManualPages.Text(ManualHelper.getManual(), "lubricant0"),
-				new ManualPages.Crafting(ManualHelper.getManual(), "lubricant1", new ItemStack(IPContent.itemOilCan)),
-				new ManualPages.Text(ManualHelper.getManual(), "lubricant2"));
-		
-		ManualHelper.addEntry("automaticLubricator", CAT_IP,
-				new ManualPages.Crafting(ManualHelper.getManual(), "automaticLubricator0", new ItemStack(IPContent.blockMetalDevice, 1, 0)),
-				new ManualPages.Text(ManualHelper.getManual(), "automaticLubricator1"));
-		*/
 	}
 	
 	@SubscribeEvent(priority = EventPriority.LOWEST)
@@ -318,14 +296,14 @@ public class ClientProxy extends CommonProxy{
 	
 	public void renderTile(TileEntity te){
 		
-		if(te instanceof PumpjackTileEntity.TileEntityPumpjackParent){
+		if(te instanceof PumpjackTileEntity.PumpjackParentTileEntity){
 			GlStateManager.pushMatrix();
 			GlStateManager.rotatef(-90, 0, 1, 0);
 			GlStateManager.translatef(1, 1, -2);
 			
 			float pt = 0;
 			if(Minecraft.getInstance().player != null){
-				((PumpjackTileEntity.TileEntityPumpjackParent) te).activeTicks = Minecraft.getInstance().player.ticksExisted;
+				((PumpjackTileEntity.PumpjackParentTileEntity) te).activeTicks = Minecraft.getInstance().player.ticksExisted;
 				pt = Minecraft.getInstance().getRenderPartialTicks();
 			}
 			

@@ -53,7 +53,8 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 					GlStateManager.translated(0, 0, -4);
 					break;
 				}
-				default:break;
+				default:
+					break;
 			}
 			
 			if(te.getIsMirrored()){
@@ -62,8 +63,6 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 			}
 			
 			GlStateManager.translatef(-3, 0, 0);
-			
-			//float ticks = Minecraft.getInstance().player.ticksExisted + partialTicks;
 			
 			if(te.getIsMirrored()){
 				ClientUtils.bindTexture(textureM);

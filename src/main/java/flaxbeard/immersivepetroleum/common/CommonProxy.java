@@ -3,7 +3,10 @@ package flaxbeard.immersivepetroleum.common;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import blusunrize.immersiveengineering.common.gui.GuiHandler;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.DistillationTowerParentTileEntity;
+import flaxbeard.immersivepetroleum.common.gui.DistillationTowerContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -11,20 +14,26 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 
-public class CommonProxy implements IGuiHandler{
+public class CommonProxy{
 	@SuppressWarnings("unused")
 	private static final Logger log=LogManager.getLogger(ImmersivePetroleum.MODID+"/CommonProxy");
 	
 	/** Fired during instantiation of {@link ImmersivePetroleum} */
-	public void construct(){
-	}
+	public void construct(){}
 	
 	/** Fired at {@link FMLCommonSetupEvent} */
-	public void setup(){
+	public void setup(){}
+	
+	public void registerContainersAndScreens(){
+		// ContainerDistillationTower
+		// DistillationTowerTileEntity
+		// new ResourceLocation(ImmersivePetroleum.MODID, "distillationtower")
+		
+		GuiHandler.register(DistillationTowerParentTileEntity.class, new ResourceLocation(ImmersivePetroleum.MODID, "distillationtower"), DistillationTowerContainer::new);
+		//GuiHandler.useSameContainerTile(DistillationTowerParentTileEntity.class, DistillationTowerTileEntity.class);
 	}
 	
 	/** Fired at {@link FMLLoadCompleteEvent} */
@@ -43,51 +52,23 @@ public class CommonProxy implements IGuiHandler{
 	public void postInit(){
 	}
 	
-	/*
-	public static <T extends TileEntity & IGuiTile> void openGuiForTile(@Nonnull EntityPlayer player, @Nonnull T tile){
-		player.openGui(ImmersivePetroleum.INSTANCE, tile.getGuiID(), tile.getWorld(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ());
-	}
-	*/
-	
-	@Override
-	public Object getServerGuiElement(int ID, PlayerEntity player, World world, int x, int y, int z){
-		/*
-		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
-		if(te instanceof IGuiTile){
-			Object gui = null;
-			if(ID == 0 && te instanceof DistillationTowerTileEntity){
-				gui = new ContainerDistillationTower(player.inventory, (DistillationTowerTileEntity) te);
-			}
-			
-			if(gui != null) ((IGuiTile) te).onGuiOpened(player, false);
-			return gui;
-		}
-		*/
-		return null;
+	public void serverAboutToStart(){
 	}
 	
-	@Override
-	public Object getClientGuiElement(int ID, PlayerEntity player, World world, int x, int y, int z){
-		/*
-		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
-		if(te instanceof IGuiTile){
-			Object gui = null;
-			if(ID == 0 && te instanceof DistillationTowerTileEntity){
-				gui = new GuiDistillationTower(player.inventory, (DistillationTowerTileEntity) te);
-			}
-			
-			return gui;
-		}
-		*/
-		return null;
+	public void serverStarting(){
 	}
 	
+	public void serverStarted(){
+	}
 	
-	public void renderTile(TileEntity te){}
+	public void renderTile(TileEntity te){
+	}
 	
-	public void handleEntitySound(SoundEvent soundEvent, Entity e, boolean active, float volume, float pitch){}
+	public void handleEntitySound(SoundEvent soundEvent, Entity e, boolean active, float volume, float pitch){
+	}
 	
-	public void drawUpperHalfSlab(ItemStack stack){}
+	public void drawUpperHalfSlab(ItemStack stack){
+	}
 	
 	public World getClientWorld(){
 		return null;

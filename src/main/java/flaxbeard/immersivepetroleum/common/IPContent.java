@@ -31,7 +31,7 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.DistillationTowerParentTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.metal.PumjackBlock;
+import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
@@ -145,7 +145,7 @@ public class IPContent{
 		itemOilCan = new ItemOilCan("oil_can");
 		
 		Multiblock.distillationtower=new DistillationTowerBlock();
-		Multiblock.pumpjack=new PumjackBlock();
+		Multiblock.pumpjack=new PumpjackBlock();
 	}
 	
 	public static void preInit(){

@@ -18,8 +18,6 @@
     "fluid": "immersivepetroleum:oil",
     "amount": 75
   },
-  "energy": 2048,
-  "time": 10,
   "byproducts": [
     {
       "item": "immersivepetroleum:bitumen",

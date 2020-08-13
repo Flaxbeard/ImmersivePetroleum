@@ -11,7 +11,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class Serializers{
 	public static final DeferredRegister<IRecipeSerializer<?>> RECIPE_SERIALIZERS = new DeferredRegister<>(ForgeRegistries.RECIPE_SERIALIZERS, ImmersivePetroleum.MODID);
 	
-	static{
+	public static void construct(){
 		DistillationRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("distillation", DistillationRecipeSerializer::new);
 		SchematicCraftingHandler.SERIALIZER = RECIPE_SERIALIZERS.register("schematic_crafting", () -> new SpecialRecipeSerializer<>(SchematicCraftingHandler::new));
 	}

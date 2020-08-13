@@ -1,16 +1,20 @@
 package flaxbeard.immersivepetroleum.common.crafting.serializers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipeBuilder;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.ShapedRecipe;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.fluids.FluidStack;
 
 public class DistillationRecipeSerializer extends IERecipeSerializer<DistillationRecipe>{
@@ -24,19 +28,29 @@ public class DistillationRecipeSerializer extends IERecipeSerializer<Distillatio
 		FluidStack input=ApiUtils.jsonDeserializeFluidStack(JSONUtils.getJsonObject(json, "input"));
 		JsonArray fluidResults=JSONUtils.getJsonArray(json, "results");
 		JsonArray itemResults=JSONUtils.getJsonArray(json, "byproducts");
-		JsonArray chancesResults=JSONUtils.getJsonArray(json, "chances");
 		
 		FluidStack[] fluidOutput=new FluidStack[fluidResults.size()];
 		for(int i=0;i<fluidOutput.length;i++)
 			fluidOutput[i]=ApiUtils.jsonDeserializeFluidStack(fluidResults.get(i).getAsJsonObject());
 		
-		ItemStack[] byproducts=new ItemStack[itemResults.size()];
-		for(int i=0;i<byproducts.length;i++)
-			byproducts[i]=ShapedRecipe.deserializeItem(itemResults.get(i).getAsJsonObject());
+		List<ItemStack> byproducts=new ArrayList<>(0);
+		List<Double> chances=new ArrayList<>(0);
+		for(int i=0;i<itemResults.size();i++){
+			Tuple<ItemStack, Double> chancedStack=DistillationRecipeBuilder.deserializeItemStackWithChance(itemResults.get(i).getAsJsonObject());
+			
+			byproducts.add(chancedStack.getA());
+			chances.add(chancedStack.getB());
+		}
 		
-		double[] chances=new double[chancesResults.size()];
-		for(int i=0;i<chances.length;i++)
-			chances[i]=chancesResults.getAsDouble();
+		if(byproducts.size()!=chances.size()){
+			int d=Math.abs(chances.size()-byproducts.size());
+			throw new com.google.gson.JsonSyntaxException(d+" byproduct"+(d>1?"s have":" has")+" a missing value or too many.");
+		}
+		
+		ItemStack[] array0=byproducts.toArray(new ItemStack[0]);
+		double[] array1=new double[chances.size()];
+		for(int i=0;i<chances.size();i++)
+			array1[i]=chances.get(i);
 		
 		int energy=2048;
 		if(json.has("energy"))
@@ -47,7 +61,7 @@ public class DistillationRecipeSerializer extends IERecipeSerializer<Distillatio
 			time=JSONUtils.getInt(json, "time");
 		}
 		
-		return new DistillationRecipe(recipeId, fluidOutput, byproducts, input, energy, time, chances);
+		return new DistillationRecipe(recipeId, fluidOutput, array0, input, energy, time, array1);
 	}
 	
 	@Override

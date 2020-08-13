@@ -54,7 +54,7 @@ public class IPConfig{
 		public final ConfigValue<Integer> pumpjack_consumption;
 		public final ConfigValue<Integer> pumpjack_speed;
 		public final ConfigValue<Integer> pipe_check_ticks;
-		public final BooleanValue req_pipes;
+		public final BooleanValue required_pipes;
 		Extraction(ForgeConfigSpec.Builder builder){
 			builder.push("Extraction");
 			builder.comment("List of reservoir types. Format: name, fluid_name, min_mb_fluid, max_mb_fluid, mb_per_tick_replenish, weight, [dim_blacklist], [dim_whitelist], [biome_dict_blacklist], [biome_dict_whitelist]");
@@ -74,7 +74,7 @@ public class IPConfig{
 			pumpjack_speed=builder.define("pumpjack_speed", Integer.valueOf(15));
 			
 			builder.comment("Require a pumpjack to have pipes built down to Bedrock, default=false");
-			req_pipes=builder.define("req_pipes", false);
+			required_pipes=builder.define("req_pipes", false);
 			
 			builder.comment("Number of ticks between checking for pipes below pumpjack if required, default=100 (5 secs)");
 			pipe_check_ticks=builder.define("pipe_check_ticks", Integer.valueOf(100));

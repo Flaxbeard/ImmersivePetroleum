@@ -3,27 +3,25 @@
 	
 	"_comment": "################## Blocks ##################",
 	
-	"tile.immersivepetroleum.fluid_diesel": "Diesel",
-	"tile.immersivepetroleum.fluid_crude_oil": "Crude Oil",
-	"tile.immersivepetroleum.fluid_lubricant": "Lubricant",
-	"tile.immersivepetroleum.fluid_gasoline": "Gasoline",
-	"tile.immersivepetroleum.fluid_napalm": "Napalm",
+	"block.immersivepetroleum.fluid_diesel": "Diesel",
+	"block.immersivepetroleum.fluid_crude_oil": "Crude Oil",
+	"block.immersivepetroleum.fluid_lubricant": "Lubricant",
+	"block.immersivepetroleum.fluid_gasoline": "Gasoline",
+	"block.immersivepetroleum.fluid_napalm": "Napalm",
 	
-	"tile.immersivepetroleum.stone_decoration.asphalt": "Asphalt Concrete",
+	"block.immersivepetroleum.asphalt": "Asphalt Concrete",
 	
-	"tile.immersivepetroleum.metal_device.automatic_lubricator": "Automatic Lubricator",
-	"tile.immersivepetroleum.metal_device.gas_generator": "Portable Generator",
+	"block.immersivepetroleum.automatic_lubricator": "Automatic Lubricator",
+	"block.immersivepetroleum.gas_generator": "Portable Generator",
 	
-	"tile.immersivepetroleum.metal_multiblock.pumpjack": "Pumpjack",
-	"tile.immersivepetroleum.metal_multiblock.distillation_tower": "Distillation Tower",
-	"tile.immersivepetroleum.metal_multiblock.pumpjack_parent": "Pumpjack",
-	"tile.immersivepetroleum.metal_multiblock.distillation_tower_parent": "Distillation Tower",
+	"block.immersivepetroleum.pumpjack": "Pumpjack",
+	"block.immersivepetroleum.distillationtower": "Distillation Tower",
 	
-	"fluid.diesel": "Diesel",
-	"fluid.oil": "Crude Oil",
-	"fluid.lubricant": "Lubricant",
-	"fluid.gasoline": "Gasoline",
-	"fluid.napalm": "Napalm",
+	"fluid.immersivepetroleum.diesel": "Diesel",
+	"fluid.immersivepetroleum.oil": "Crude Oil",
+	"fluid.immersivepetroleum.lubricant": "Lubricant",
+	"fluid.immersivepetroleum.gasoline": "Gasoline",
+	"fluid.immersivepetroleum.napalm": "Napalm",
 	
 	"_comment": "################## Items ##################",
 	

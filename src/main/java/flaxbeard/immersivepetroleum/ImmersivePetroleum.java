@@ -55,12 +55,16 @@ public class ImmersivePetroleum{
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::loadComplete);
 		
 		MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
+		MinecraftForge.EVENT_BUS.addListener(this::serverAboutToStart);
 		MinecraftForge.EVENT_BUS.addListener(this::serverStarted);
+		
 		Serializers.RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
 		
 		IPContent.populate();
+		Serializers.construct();
 		
 		proxy.construct();
+		proxy.registerContainersAndScreens();
 	}
 	
 	public void setup(FMLCommonSetupEvent event){
@@ -125,14 +129,20 @@ public class ImmersivePetroleum{
 	}
 	
 	public void serverAboutToStart(FMLServerAboutToStartEvent event){
+		proxy.serverAboutToStart();
+		
 		event.getServer().getResourceManager().addReloadListener(new RecipeReloadListener());
 	}
 
 	public void serverStarting(FMLServerStartingEvent event){
+		proxy.serverStarting();
+		
 		CommandHandler.registerServer(event.getCommandDispatcher());
 	}
 	
 	public void serverStarted(FMLServerStartedEvent event){
+		proxy.serverStarted();
+		
 		ServerWorld world = event.getServer().getWorld(DimensionType.OVERWORLD);
 		if(!world.isRemote){
 			IPSaveData worldData = world.getSavedData().getOrCreate(IPSaveData::new, IPSaveData.dataName);

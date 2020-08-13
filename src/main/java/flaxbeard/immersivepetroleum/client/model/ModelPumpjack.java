@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.client.model;
 
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
-import net.minecraft.entity.Entity;
 
 public class ModelPumpjack extends Model{
 	public RendererModel base;
@@ -151,7 +150,7 @@ public class ModelPumpjack extends Model{
 		this.base.addChild(wellConnector2);
 	}
 	
-	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5){
+	public void render(float f5){
 		arm.rotateAngleZ = (float) Math.toRadians(15 * Math.sin(ticks / 25D));
 		swingy.rotateAngleZ = (float) (2 * (Math.PI / 4) + (ticks / 25D));
 		

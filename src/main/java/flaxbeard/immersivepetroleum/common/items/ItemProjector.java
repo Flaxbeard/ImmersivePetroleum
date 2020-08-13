@@ -199,7 +199,7 @@ public class ItemProjector extends IPItemBase{
 			}
 			
 			nameCache.put(multiblock.getClass(), name);
-			System.out.println(multiblock.getClass().getSimpleName()+" -> "+name);
+			//System.out.println(multiblock.getClass().getSimpleName()+" -> "+name);
 		}
 		
 		return nameCache.get(multiblock.getClass());

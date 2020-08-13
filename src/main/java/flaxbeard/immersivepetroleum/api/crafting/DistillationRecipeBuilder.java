@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import javax.annotation.Nonnull;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -46,7 +48,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 	 * Can be called multiple times to add more byproducts to the recipe
 	 * 
 	 * @param byproduct
-	 * @param chance 0 to 100
+	 * @param chance 0 to 100 (clamped)
 	 * @return self for chaining
 	 */
 	public DistillationRecipeBuilder addByproduct(ItemStack byproduct, int chance){
@@ -57,7 +59,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 	 * Can be called multiple times to add more byproducts to the recipe.
 	 * 
 	 * @param byproduct
-	 * @param chance 0.0 to 1.0
+	 * @param chance 0.0 to 1.0 (clamped)
 	 * @return self for chaining
 	 */
 	public DistillationRecipeBuilder addByproduct(ItemStack byproduct, double chance){
@@ -129,7 +131,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 	}
 	
 	private static final DistillationRecipeBuilder dummy=new DistillationRecipeBuilder();
-	public static JsonObject serializerItemStackWithChance(Tuple<ItemStack, Double> tuple){
+	public static JsonObject serializerItemStackWithChance(@Nonnull Tuple<ItemStack, Double> tuple){
 		JsonObject itemJson=dummy.serializeItemStack(tuple.getA());
 		itemJson.addProperty("chance", tuple.getB().toString());
 		return itemJson;

@@ -1248,7 +1248,7 @@ public class ItemProjector extends IPItemBase{
 		}
 
 	@SubscribeEvent
-	public void handleConveyorTest(SchematicTestEvent event){ // TODO
+	public void handleConveyorTest(SchematicTestEvent event){
 		IMultiblock mb = event.getMultiblock();
 		
 		BlockState state = event.getMultiblock().getBlockstateFromStack(event.getIndex(), event.getItemStack());

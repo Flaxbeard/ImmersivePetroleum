@@ -431,7 +431,7 @@ public class IPConfig{
 				res.biomeWhitelist = (String[]) biomeWhitelist.toArray(new String[0]);
 				res.biomeBlacklist = (String[]) biomeBlacklist.toArray(new String[0]);
 				
-				log.info("Added resevoir type " + name);
+				log.info("Added reservoir type " + name);
 			}
 		}
 

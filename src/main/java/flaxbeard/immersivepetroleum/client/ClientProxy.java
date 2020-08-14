@@ -28,12 +28,14 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
 import flaxbeard.immersivepetroleum.client.page.ManualElementSchematicCrafting;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
+import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.client.render.TileAutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.DistillationTowerParentTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity.PumpjackParentTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
@@ -262,10 +264,9 @@ public class ClientProxy extends CommonProxy{
 	}
 	@Override
 	public void postInit(){
-		// TODO TileEntityRenderer Registration
-		ClientRegistry.bindTileEntitySpecialRenderer(DistillationTowerTileEntity.DistillationTowerParentTileEntity.class, new MultiblockDistillationTowerRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(DistillationTowerParentTileEntity.class, new MultiblockDistillationTowerRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(PumpjackParentTileEntity.class, new MultiblockPumpjackRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorTileEntity.class, new TileAutoLubricatorRenderer());
-		//ClientRegistry.bindTileEntitySpecialRenderer(PumpjackTileEntity.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
 		
 		// Don't think this is needed anymore
 		//ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice), 0, AutoLubricatorTileEntity.class);
@@ -279,20 +280,6 @@ public class ClientProxy extends CommonProxy{
 			//event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
 		}
 	}
-	
-	/*
-	private static void mapFluidState(Block block, Fluid fluid){
-		Item item = Item.getItemFromBlock(block);
-		FluidStateMapper mapper = new FluidStateMapper(fluid);
-		if(item != null){
-			ModelLoader.registerItemVariants(item);
-			ModelLoader.setCustomMeshDefinition(item, mapper);
-		}
-		ModelLoader.setCustomStateMapper(block, mapper);
-	}
-	*/
-	
-	static ManualEntry resEntry;
 	
 	public void renderTile(TileEntity te){
 		
@@ -454,26 +441,4 @@ public class ClientProxy extends CommonProxy{
 	public PlayerEntity getClientPlayer(){
 		return Minecraft.getInstance().player;
 	}
-	
-	/*
-	static class FluidStateMapper extends StateMapperBase implements ItemMeshDefinition{
-		public final ModelResourceLocation location;
-		
-		public FluidStateMapper(Fluid fluid){
-			this.location = new ModelResourceLocation(ImmersivePetroleum.MODID + ":fluid_block", fluid.getName());
-		}
-		
-		@Nonnull
-		@Override
-		protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state){
-			return location;
-		}
-		
-		@Nonnull
-		@Override
-		public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack){
-			return location;
-		}
-	}
-	*/
 }

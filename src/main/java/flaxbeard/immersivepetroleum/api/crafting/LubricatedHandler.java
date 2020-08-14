@@ -3,7 +3,7 @@ package flaxbeard.immersivepetroleum.api.crafting;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect;
 import blusunrize.immersiveengineering.common.IEConfig;
@@ -48,20 +48,24 @@ public class LubricatedHandler{
 		Vec3i getStructureDimensions();
 	}
 	
-	static final HashMap<Class<? extends TileEntity>, ILubricationHandler<?>> lubricationHandlers = new HashMap<>();
+	static final Map<Class<? extends TileEntity>, ILubricationHandler<?>> lubricationHandlers = new HashMap<>();
 	
 	public static void registerLubricatedTile(Class<? extends TileEntity> tileClass, ILubricationHandler<?> handler){
 		lubricationHandlers.put(tileClass, handler);
 	}
 	
 	public static ILubricationHandler<?> getHandlerForTile(TileEntity tile){
-		if(tile == null) return null;
-		
-		for(Entry<Class<? extends TileEntity>, ILubricationHandler<?>> e:lubricationHandlers.entrySet()){
-			if(e.getKey().isInstance(tile)){
-				return e.getValue();
-			}
+		if(tile != null){
+			Class<? extends TileEntity> teClass = tile.getClass();
+			if(lubricationHandlers.containsKey(teClass))
+				return lubricationHandlers.get(teClass);
 		}
+		
+//		for(Entry<Class<? extends TileEntity>, ILubricationHandler<?>> e:lubricationHandlers.entrySet()){
+//			if(e.getKey().isInstance(tile)){
+//				return e.getValue();
+//			}
+//		}
 		return null;
 	}
 	

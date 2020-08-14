@@ -40,6 +40,11 @@ public class IPItemModels extends LoadedModelProvider{
 		getBuilder(IPContent.itemProjector)
 			.parent(getExistingFile(modLoc("item/schematic")));
 		
+		getBuilder(IPContent.blockGasGenerator)
+			.parent(getExistingFile(modLoc("block/generator")));
+		
+		cubeAll("asphalt", modLoc("block/asphalt"));
+		
 		for(IPFluid f:IPFluid.LIST)
 			createBucket(f);
 	}
@@ -53,8 +58,8 @@ public class IPItemModels extends LoadedModelProvider{
 		String name=name(item);
 		
 		getBuilder(name)
-		.parent(getExistingFile(mcLoc("item/generated")))
-		.texture("layer0", modLoc("item/"+name));
+			.parent(getExistingFile(mcLoc("item/generated")))
+			.texture("layer0", modLoc("item/"+name));
 	}
 	
 	private void createBucket(Fluid f){

@@ -60,6 +60,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
@@ -192,25 +193,24 @@ public class EventHandler{
 				
 				boolean chunkBorders = false;
 				for(Hand hand:Hand.values()){
-					if(player.getHeldItem(hand).getItem().equals(IEItems.Misc.coresample)){
+					if(player.getHeldItem(hand).getItem().equals(IEBlocks.MetalDevices.sampleDrill.asItem())){
 						chunkBorders = true;
 						break;
 					}
 				}
-				if(!chunkBorders && ClientUtils.mc().objectMouseOver != null && ClientUtils.mc().objectMouseOver.getType() == Type.BLOCK && mc.world.getTileEntity(new BlockPos(mc.objectMouseOver.getHitVec())) instanceof SampleDrillTileEntity) chunkBorders = true;
+				
+				if(!chunkBorders && ClientUtils.mc().objectMouseOver != null && ClientUtils.mc().objectMouseOver.getType() == Type.BLOCK && mc.world.getTileEntity(new BlockPos(mc.objectMouseOver.getHitVec())) instanceof SampleDrillTileEntity)
+					chunkBorders = true;
 				
 				ItemStack target = main ? mainItem : secondItem;
 				
 				if(!chunkBorders && (main || off)){
+					CompoundNBT nbt=ItemNBTHelper.getTagCompound(target, "coords");
 					
-					int[] coords = ItemNBTHelper.getIntArray(target, "coords");
+					int x=nbt.getInt("x");
+					int z=nbt.getInt("z");
 					
-					// World world = DimensionManager.getWorld(coords[0]);
-					// if (world.provider.getDimension() ==
-					// mc.player.worldObj.provider.getDimension())
-					// {
-					renderChunkBorder(coords[1] << 4, coords[2] << 4);
-					// }
+					renderChunkBorder(x << 4, z << 4);
 				}
 			}
 			GlStateManager.popMatrix();
@@ -282,15 +282,23 @@ public class EventHandler{
 				}
 				if(!drill.sample.isEmpty()){
 					if(ItemNBTHelper.hasKey(drill.sample, "coords")){
-						int[] coords = ItemNBTHelper.getIntArray(drill.sample, "coords");
-						World world = event.getWorld();// DimensionManager.getWorld(coords[0]);
-						
-						OilWorldInfo info = PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]);
-						if(info.getType() != null){
-							ItemNBTHelper.putString(drill.sample, "resType", PumpjackHandler.getOilWorldInfo(world, coords[1], coords[2]).getType().name);
-							ItemNBTHelper.putInt(drill.sample, "oil", info.current);
-						}else{
-							ItemNBTHelper.putInt(drill.sample, "oil", 0);
+						try{
+							CompoundNBT nbt=ItemNBTHelper.getTagCompound(drill.sample, "coords");
+							
+							int x=nbt.getInt("x");
+							int z=nbt.getInt("z");
+							
+							World world = event.getWorld();
+							
+							OilWorldInfo info = PumpjackHandler.getOilWorldInfo(world, x, z);
+							if(info.getType() != null){
+								ItemNBTHelper.putString(drill.sample, "resType", PumpjackHandler.getOilWorldInfo(world, x, z).getType().name);
+								ItemNBTHelper.putInt(drill.sample, "oil", info.current);
+							}else{
+								ItemNBTHelper.putInt(drill.sample, "oil", 0);
+							}
+						}catch(Exception e){
+							ImmersivePetroleum.log.warn(e);
 						}
 					}
 				}
@@ -313,7 +321,7 @@ public class EventHandler{
 				
 				ReservoirType res = null;
 				for(ReservoirType type:PumpjackHandler.reservoirList.keySet()){
-					if(resName.equals(type.name)){
+					if(resName.equalsIgnoreCase(type.name)){
 						res = type;
 					}
 				}
@@ -384,11 +392,11 @@ public class EventHandler{
 							String s = I18n.format("chat.immersivepetroleum.info.coresample.noOil");
 							if(res != null && amnt > 0){
 								int est = (amnt / 1000) * 1000; // Why?
-								String fluidName = new FluidStack(res.getFluid(), 0).getDisplayName().getUnformattedComponentText();
+								String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
 								
 								s = I18n.format("chat.immersivepetroleum.info.coresample.oil", FORMATTER.format(est), fluidName);
 							}else if(res != null && res.replenishRate > 0){
-								String fluidName = new FluidStack(res.getFluid(), 0).getDisplayName().getUnformattedComponentText();
+								String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
 								s = I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName);
 							}
 							

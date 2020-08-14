@@ -21,7 +21,9 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import blusunrize.immersiveengineering.common.util.shapes.CachedShapesWithTransform;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.ItemStackHelper;
@@ -38,6 +40,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
@@ -50,6 +53,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<DistillationTowerTileEntity, DistillationRecipe> implements IInteractionObjectIE, IBlockBounds{
 	public static class DistillationTowerParentTileEntity extends DistillationTowerTileEntity{
+		/** Do not Touch! Taken care of by {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)} */
 		public static TileEntityType<DistillationTowerParentTileEntity> TYPE;
 		
 		@Override
@@ -76,6 +80,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		}
 	}
 	
+	/** Do not Touch! Taken care of by {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)} */
 	public static TileEntityType<DistillationTowerTileEntity> TYPE;
 	
 	/** Input Tank ID */
@@ -108,7 +113,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	/** Template-Location of the Energy Input Port. (3 1 3) */
 	public static final Set<BlockPos> Energy_IN=ImmutableSet.of(new BlockPos(3, 1, 3));
 	
-	/** Template-Location of the Redstone Input Port. 0 1 3 */
+	/** Template-Location of the Redstone Input Port. (0 1 3) */
 	public static final Set<BlockPos> Redstone_IN=ImmutableSet.of(new BlockPos(0, 1, 3));
 	
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);

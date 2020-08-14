@@ -25,8 +25,6 @@ import net.minecraftforge.fluids.FluidStack;
  * @author TwistedGate
  */
 public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationRecipeBuilder>{
-	// TODO Refine this whole thing if nessesary
-	
 	/** Temporary storage for byproducts */
 	private List<Tuple<ItemStack, Double>> byproducts=new ArrayList<>();
 	

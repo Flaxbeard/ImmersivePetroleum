@@ -20,7 +20,7 @@ import net.minecraftforge.fml.RegistryObject;
 
 public class DistillationRecipe extends MultiblockRecipe{
 	public static final IRecipeType<DistillationRecipe> TYPE=IRecipeType.register(ImmersivePetroleum.MODID+":distillationtower");
-	public static Map<ResourceLocation, DistillationRecipe> recipes=new HashMap<>(); // FIXME For some reason has no content. Fire up MC and see.
+	public static Map<ResourceLocation, DistillationRecipe> recipes=new HashMap<>();
 	
 	/** Initialized in {@link Serializers} */
 	public static RegistryObject<IERecipeSerializer<DistillationRecipe>> SERIALIZER;

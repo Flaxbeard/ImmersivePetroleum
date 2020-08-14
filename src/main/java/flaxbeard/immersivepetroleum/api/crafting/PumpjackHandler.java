@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
@@ -24,10 +25,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class PumpjackHandler
 {
 	public static LinkedHashMap<ReservoirType, Integer> reservoirList = new LinkedHashMap<>();
-	private static Map<Integer, HashMap<ResourceLocation, Integer>> totalWeightMap = new HashMap<>();
+	private static Map<Integer, Map<ResourceLocation, Integer>> totalWeightMap = new HashMap<>();
 
-	public static HashMap<DimensionChunkCoords, Long> timeCache = new HashMap<>();
-	public static HashMap<DimensionChunkCoords, OilWorldInfo> oilCache = new HashMap<>();
+	public static Map<DimensionChunkCoords, Long> timeCache = new HashMap<>();
+	public static Map<DimensionChunkCoords, OilWorldInfo> oilCache = new HashMap<>();
 	public static double oilChance = 100;
 
 	private static int depositSize = 1;
@@ -175,7 +176,7 @@ public class PumpjackHandler
 	public static void depleteFluid(World world, int chunkX, int chunkZ, int amount)
 	{
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
-		info.current = Math.max(0, info.current - amount);
+		info.current = Math.max(info.current - amount, 0);
 		IPSaveData.setDirty();
 	}
 
@@ -222,6 +223,7 @@ public class PumpjackHandler
 	 * @param weight        The weight for this reservoir to spawn
 	 * @return The created ReservoirType
 	 */
+	@Deprecated
 	public static ReservoirType addReservoir(String name, String fluid, int minSize, int maxSize, int replenishRate, int weight)
 	{
 		ReservoirType mix = new ReservoirType(name, fluid, minSize, maxSize, replenishRate);
@@ -300,6 +302,22 @@ public class PumpjackHandler
 		
 		@Deprecated
 		public ReservoirType(String name, String fluidName, int minSize, int maxSize, int replenishRate){
+			this.name = name;
+			this.replenishRate = replenishRate;
+			this.minSize = minSize;
+			this.maxSize = maxSize;
+			
+			for(ResourceLocation loc:ForgeRegistries.FLUIDS.getKeys()){
+				if(loc.getPath().contains(fluidName)){
+					this.fluidLocation=loc;
+					break;
+				}
+			}
+			
+			if(this.fluidLocation==null)
+				throw new IllegalArgumentException("Unable to find \""+fluidName+"\"");
+			
+			ImmersivePetroleum.log.info("Using \"{}\" for {} reservoir. (This is deprecated and will be removed soon)", this.fluidLocation, name);
 		}
 		
 		public ReservoirType(String name, ResourceLocation fluidLocation, int minSize, int maxSize, int replenishRate){
@@ -354,9 +372,7 @@ public class PumpjackHandler
 			return fluid;
 		}
 		
-		// ForgeRegistries.MOD_DIMENSIONS.getValue(resourceIn);
-		
-		// TODO Use ResourceLocation for dimension
+		// TODO Use ForgeRegistries.MOD_DIMENSIONS.getValue(resourceIn) for dimensions
 		public boolean validDimension(int dim){
 			if(dimensionWhitelist != null && dimensionWhitelist.length > 0){
 				for(int white:dimensionWhitelist){
@@ -421,11 +437,6 @@ public class PumpjackHandler
 			tag.put("biomeBlacklist", bl);
 			
 			return tag;
-		}
-		
-		@Deprecated
-		public static ReservoirType readFromNBT(CompoundNBT nbt){
-			return new ReservoirType(nbt);
 		}
 	}
 	

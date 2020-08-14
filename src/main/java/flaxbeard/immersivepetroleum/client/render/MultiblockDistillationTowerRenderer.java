@@ -44,7 +44,6 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 					break;
 				}
 				case SOUTH:{
-					GlStateManager.rotatef(0F, 0, 1, 0);
 					GlStateManager.translated(0, 0, -3);
 					break;
 				}

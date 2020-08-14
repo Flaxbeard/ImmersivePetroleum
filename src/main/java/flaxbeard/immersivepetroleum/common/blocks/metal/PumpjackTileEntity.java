@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
 
+import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.common.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
@@ -17,6 +18,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.shapes.CachedShapesWithTransform;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.common.IPConfig;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -35,6 +37,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
@@ -44,6 +47,7 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTileEntity, MultiblockRecipe>  implements IBlockBounds{
 	public static class PumpjackParentTileEntity extends PumpjackTileEntity{
+		/** Do not Touch! Taken care of by {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)} */
 		public static TileEntityType<PumpjackParentTileEntity> TYPE;
 		
 		@Override
@@ -53,11 +57,10 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		
 		@OnlyIn(Dist.CLIENT)
 		@Override
-		public AxisAlignedBB getRenderBoundingBox(){ // TODO Needs rewrite
+		public AxisAlignedBB getRenderBoundingBox(){ // TODO Needs rewrite probably
 			BlockPos nullPos = this.getPos();
 			
 			BlockPos a=nullPos.offset(getFacing(), -2).offset(getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY(), -1).down(1);
-			
 			BlockPos b=nullPos.offset(getFacing(), 5).offset(getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY(), 2).up(3);
 			
 			return new AxisAlignedBB(a, b);
@@ -75,7 +78,24 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		}
 	}
 	
+	/** Do not Touch! Taken care of by {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)} */
 	public static TileEntityType<PumpjackTileEntity> TYPE;
+	
+	/** Template-Location of the Energy Input Port. (0, 1, 5) */
+	public static final Set<BlockPos> Redstone_IN=ImmutableSet.of(new BlockPos(0, 1, 5));
+	
+	/** Template-Location of the Redstone Input Port. (2, 1, 5) */
+	public static final Set<BlockPos> Energy_IN=ImmutableSet.of(new BlockPos(2, 1, 5));
+	
+	/** Template-Location of the Eastern Fluid Output Port. (2, 0, 2) */
+	public static final BlockPos East_Port=new BlockPos(2, 0, 2);
+	
+	/** Template-Location of the Western Fluid Output Port. (0, 0, 2) */
+	public static final BlockPos West_Port=new BlockPos(0, 0, 2);
+	
+	/** Template-Location of the Bottom Fluid Output Port. (1, 0, 0) <b>(Also Master Block)</b> */
+	public static final BlockPos Down_Port=new BlockPos(1, 0, 0);
+	
 	
 	public FluidTank fakeTank = new FluidTank(0);
 	public boolean wasActive = false;
@@ -92,37 +112,39 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		return TYPE;
 	}
 	
-	public boolean canExtract(){ // Debug method? Awesome, time to enable it.
-		return false;
+	public boolean canExtract(){
+		return true;
 	}
 	
 	public int availableOil(){
-		return PumpjackHandler.getFluidAmount(world, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return PumpjackHandler.getFluidAmount(this.world, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
 	public Fluid availableFluid(){
-		return PumpjackHandler.getFluid(world, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return PumpjackHandler.getFluid(this.world, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
 	public int getResidualOil(){
-		return PumpjackHandler.getResidualFluid(world, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return PumpjackHandler.getResidualFluid(this.world, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
 	public void extractOil(int amount){
-		PumpjackHandler.depleteFluid(world, getPos().getX() >> 4, getPos().getZ() >> 4, amount);
+		PumpjackHandler.depleteFluid(this.world, getPos().getX() >> 4, getPos().getZ() >> 4, amount);
 	}
 	
 	private boolean hasPipes(){
 		if(!IPConfig.EXTRACTION.required_pipes.get()) return true;
 		
-		BlockPos basePos = getPos().offset(this.getFacing(), 4);
+		BlockPos basePos = getBlockPosForPos(Down_Port);
 		for(int y = basePos.getY() - 2;y > 0;y--){
 			BlockPos pos = new BlockPos(basePos.getX(), y, basePos.getZ());
-			BlockState state = world.getBlockState(pos);
-			if(state.getBlock() == Blocks.BEDROCK) return true;
-			if(!Utils.isBlockAt(world, pos, IEBlocks.MetalDevices.fluidPipe)){
+			BlockState state = this.world.getBlockState(pos);
+			
+			if(state.getBlock() == Blocks.BEDROCK)
+				return true;
+			
+			if(!Utils.isBlockAt(this.world, pos, IEBlocks.MetalDevices.fluidPipe))
 				return false;
-			}
 		}
 		return true;
 	}
@@ -130,19 +152,19 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	@Override
 	public void readCustomNBT(CompoundNBT nbt, boolean descPacket){
 		super.readCustomNBT(nbt, descPacket);
-		boolean lastActive = wasActive;
+		boolean lastActive = this.wasActive;
 		this.wasActive = nbt.getBoolean("wasActive");
 		this.lastHadPipes = nbt.getBoolean("lastHadPipes");
 		if(!wasActive && lastActive){
 			this.activeTicks++;
 		}
-		state = null;
+		this.state = null;
 		if(nbt.hasUniqueId("comp")){
 			ItemStack stack = ItemStack.read(nbt.getCompound("comp"));
 			
 			if(!stack.isEmpty()){
 				Block block = Block.getBlockFromItem(stack.getItem());
-				state = block.getDefaultState();
+				this.state = block.getDefaultState();
 			}
 		}
 	}
@@ -150,8 +172,8 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	@Override
 	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket){
 		super.writeCustomNBT(nbt, descPacket);
-		nbt.putBoolean("wasActive", wasActive);
-		nbt.putBoolean("lastHadPipes", lastHadPipes);
+		nbt.putBoolean("wasActive", this.wasActive);
+		nbt.putBoolean("lastHadPipes", this.lastHadPipes);
 		if(availableFluid() != null){
 			FluidStack stack = new FluidStack(availableFluid(), 0);
 			CompoundNBT comp = new CompoundNBT();
@@ -161,66 +183,46 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	}
 	
 	@Override
-	public void updateMasterBlock(BlockState state, boolean blockUpdate){
-		update(true);
-		super.updateMasterBlock(state, blockUpdate);
-	}
-	
-	@Override
 	public void tick(){
 		super.tick();
 		
-		if(world.isRemote || isDummy()){
-			if(world.isRemote && !isDummy() && state != null && wasActive){
-				BlockPos particlePos = this.getPos().offset(getFacing(), 4);
-				float r1 = (world.rand.nextFloat() - .5F) * 2F;
-				float r2 = (world.rand.nextFloat() - .5F) * 2F;
+		// What is this whole thing even for? I've never seen the pumpjack spawning particles anywhere.
+		if(this.world.isRemote || isDummy()){
+			if(this.world.isRemote && !isDummy() && this.state != null && this.wasActive){
+				BlockPos particlePos = getPos();
+				float r1 = (this.world.rand.nextFloat() - .5F) * 2F;
+				float r2 = (this.world.rand.nextFloat() - .5F) * 2F;
 				
-				world.addParticle(ParticleTypes.SMOKE, particlePos.getX() + 0.5D, particlePos.getY(), particlePos.getZ() + 0.5D, r1 * 0.04D, 0.25D, r2 * 0.025D);
+				this.world.addParticle(ParticleTypes.SMOKE, particlePos.getX() + 0.5D, particlePos.getY(), particlePos.getZ() + 0.5D, r1 * 0.04D, 0.25D, r2 * 0.025D);
 			}
-			if(wasActive){
-				activeTicks++;
-			}
-			return;
-		}
-	}
-	
-	// TODO Remake for Tick()
-	public void update(boolean consumePower){
-		// System.out.println("TEST");
-		if(world.isRemote || isDummy()){
-			if(world.isRemote && !isDummy() && state != null && wasActive){
-				BlockPos particlePos = this.getPos().offset(getFacing(), 4);
-				float r1 = (world.rand.nextFloat() - .5F) * 2F;
-				float r2 = (world.rand.nextFloat() - .5F) * 2F;
-				
-				world.addParticle(ParticleTypes.SMOKE, particlePos.getX() + 0.5D, particlePos.getY(), particlePos.getZ() + 0.5D, r1 * 0.04D, 0.25D, r2 * 0.025D);
-			}
-			if(wasActive && consumePower){
-				activeTicks++;
+			if(this.wasActive){
+				this.activeTicks++;
 			}
 			return;
 		}
 		
-		boolean active = false;
+		boolean active=false;
 		
-		int consumed = IPConfig.EXTRACTION.pumpjack_consumption.get();
-		int extracted = consumePower ? energyStorage.extractEnergy(consumed, true) : consumed;
+		int consumption=IPConfig.EXTRACTION.pumpjack_consumption.get();
+		int extracted=this.energyStorage.extractEnergy(IPConfig.EXTRACTION.pumpjack_consumption.get(), true);
 		
-		if(extracted >= consumed && canExtract() && !this.isRSDisabled()){
-			if((getPos().getX() + getPos().getZ()) % IPConfig.EXTRACTION.pipe_check_ticks.get() == pipeTicks){
-				lastHadPipes = hasPipes();
+		if(extracted>=consumption && canExtract() && !isRSDisabled()){
+			// Not quite sure how this is supposed to work, but i guess it does? Likely won't touch it.
+			if((getPos().getX() + getPos().getZ()) % IPConfig.EXTRACTION.pipe_check_ticks.get() == this.pipeTicks){
+				this.lastHadPipes = hasPipes();
 			}
-			if(lastHadPipes){
+			
+			if(this.lastHadPipes){
+				int available = availableOil();
 				int residual = getResidualOil();
-				if(availableOil() > 0 || residual > 0){
+				if(available > 0 || residual > 0){
 					int oilAmnt = availableOil() <= 0 ? residual : availableOil();
 					
-					energyStorage.extractEnergy(consumed, false);
+					this.energyStorage.extractEnergy(consumption, false);
 					active = true;
 					FluidStack out = new FluidStack(availableFluid(), Math.min(IPConfig.EXTRACTION.pumpjack_speed.get(), oilAmnt));
-					BlockPos outputPos = this.getPos().offset(getFacing(), 2).offset(getFacing().rotateY().getOpposite(), 2).offset(Direction.DOWN, 1);
-					IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, getFacing().rotateY()).orElse(null);
+					BlockPos outputPos = master().getBlockPosForPos(East_Port).offset(getFacing().rotateY()); // this.getPos().offset(getFacing(), 2).offset(getFacing().rotateY().getOpposite(), 2).offset(Direction.DOWN, 1);
+					IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, getFacing().rotateY()).orElse(null);
 					if(output != null){
 						int accepted = output.fill(out, FluidAction.SIMULATE);
 						if(accepted > 0){
@@ -230,8 +232,8 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 						}
 					}
 					
-					outputPos = this.getPos().offset(getFacing(), 2).offset(getFacing().rotateY(), 2).offset(Direction.DOWN, 1);
-					output = FluidUtil.getFluidHandler(world, outputPos, getFacing().rotateYCCW()).orElse(null);
+					outputPos = master().getBlockPosForPos(West_Port).offset(getFacing().rotateYCCW()); // this.getPos().offset(getFacing(), 2).offset(getFacing().rotateY(), 2).offset(Direction.DOWN, 1);
+					output = FluidUtil.getFluidHandler(this.world, outputPos, getFacing().rotateYCCW()).orElse(null);
 					if(output != null){
 						int accepted = output.fill(out, FluidAction.SIMULATE);
 						if(accepted > 0){
@@ -240,29 +242,36 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 						}
 					}
 					
-					activeTicks++;
+					this.activeTicks++;
 				}
 			}
-			pipeTicks = (pipeTicks + 1) % IPConfig.EXTRACTION.pipe_check_ticks.get();
+			this.pipeTicks = (this.pipeTicks + 1) % IPConfig.EXTRACTION.pipe_check_ticks.get();
 		}
 		
-		if(active != wasActive){
+		if(active != this.wasActive){
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);
 		}
 		
-		wasActive = active;
-		
+		this.wasActive = active;
 	}
 	
 	@Override
 	public Set<BlockPos> getEnergyPos(){
-		return ImmutableSet.of(new BlockPos(2,1,0));
+		return Energy_IN;
+	}
+	
+	@Override
+	public IOSideConfig getEnergySideConfig(Direction facing){
+		if(this.formed && this.isEnergyPos() && (facing==null || facing==Direction.UP))
+			return IOSideConfig.INPUT;
+		
+		return IOSideConfig.NONE;
 	}
 	
 	@Override
 	public Set<BlockPos> getRedstonePos(){
-		return ImmutableSet.of(new BlockPos(0,1,0));
+		return Redstone_IN;
 	}
 	
 	@Override
@@ -350,17 +359,23 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(Direction side){
-		PumpjackTileEntity master = this.master(); // TODO Don't even know where the master would be exactly.
-//		int pos = 0;
-//		if(master != null){
-//			if(pos == 9 && (side == null || side == getFacing().rotateY() || side == getFacing().getOpposite().rotateY())){
-//				return new FluidTank[]{fakeTank};
-//			}else if(pos == 11 && (side == null || side == getFacing().rotateY() || side == getFacing().getOpposite().rotateY())){
-//				return new FluidTank[]{fakeTank};
-//			}else if(pos == 16 && IPConfig.EXTRACTION.req_pipes.get() && (side == null || side == Direction.DOWN)){
-//				return new FluidTank[]{fakeTank};
-//			}
-//		}
+		PumpjackTileEntity master = master();
+		
+		// East Port
+		if(this.posInMultiblock.equals(East_Port) && (side==null || side==getFacing().rotateY())){
+			return new FluidTank[]{master.fakeTank};
+		}
+		
+		// West Port
+		if(this.posInMultiblock.equals(West_Port) && (side==null || side==getFacing().rotateYCCW())){
+			return new FluidTank[]{master.fakeTank};
+		}
+		
+		// Below Head
+		if(IPConfig.EXTRACTION.required_pipes.get() && this.posInMultiblock.equals(Down_Port) && (side==null || side==Direction.DOWN)){
+			return new FluidTank[]{master.fakeTank};
+		}
+		
 		return new FluidTank[0];
 	}
 	
@@ -380,6 +395,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		return SHAPES.get(this.posInMultiblock, Pair.of(getFacing(), getIsMirrored()));
 	}
 	
+	@SuppressWarnings("unused")
 	private static List<AxisAlignedBB> getShape(BlockPos posInMultiblock){
 		final int bX=posInMultiblock.getX();
 		final int bY=posInMultiblock.getY();

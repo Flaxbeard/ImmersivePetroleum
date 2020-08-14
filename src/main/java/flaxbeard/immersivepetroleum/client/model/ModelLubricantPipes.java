@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.client.model;
 
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
-import net.minecraft.entity.Entity;
 
 public class ModelLubricantPipes{
 	
@@ -117,16 +116,16 @@ public class ModelLubricantPipes{
 			plunger.addBox(3.5F, 27, 3.5F, 9, 2, 9);
 		}
 		
-		public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5){
-			this.base.render(f5);
+		public void render(float f){
+			this.base.render(f);
 		}
 		
-		public void renderTank(Entity entity, float f, float f1, float f2, float f3, float f4, float f5){
-			this.tank.render(f5);
+		public void renderTank(float f){
+			this.tank.render(f);
 		}
 		
-		public void renderPlunger(Entity entity, float f, float f1, float f2, float f3, float f4, float f5){
-			this.plunger.render(f5);
+		public void renderPlunger(float f){
+			this.plunger.render(f);
 		}
 	}
 	
@@ -183,8 +182,8 @@ public class ModelLubricantPipes{
 			this.base.addChild(p9);
 		}
 		
-		public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5){
-			this.base.render(f5);
+		public void render(float f){
+			this.base.render(f);
 		}
 	}
 	
@@ -338,8 +337,8 @@ public class ModelLubricantPipes{
 			
 		}
 		
-		public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5){
-			this.base.render(f5);
+		public void render(float f){
+			this.base.render(f);
 		}
 		
 	}
@@ -485,8 +484,8 @@ public class ModelLubricantPipes{
 			}
 		}
 		
-		public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5){
-			this.base.render(f5);
+		public void render(float f){
+			this.base.render(f);
 		}
 	}
 }

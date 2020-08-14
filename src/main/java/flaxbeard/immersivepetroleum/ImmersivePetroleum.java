@@ -13,7 +13,8 @@ import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
-import flaxbeard.immersivepetroleum.common.util.commands.CommandHandler;
+import flaxbeard.immersivepetroleum.common.util.commands.ReservoirCommand;
+import net.minecraft.command.Commands;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.dimension.DimensionType;
@@ -85,7 +86,8 @@ public class ImmersivePetroleum{
 		DistillationRecipe.timeModifier = IPConfig.REFINING.distillationTower_timeModifier.get();
 		
 		PumpjackHandler.oilChance = IPConfig.EXTRACTION.reservoir_chance.get();
-
+		
+		// TODO Re-implement this somehow
 		/*
 		IEConfig.manual_int.put("distillationTower_operationCost", (int) (2048 * IPConfig.REFINING.distillationTower_energyModifier.get()));
 		IEConfig.manual_int.put("pumpjack_consumption", IPConfig.EXTRACTION.pumpjack_consumption.get());
@@ -137,7 +139,7 @@ public class ImmersivePetroleum{
 	public void serverStarting(FMLServerStartingEvent event){
 		proxy.serverStarting();
 		
-		CommandHandler.registerServer(event.getCommandDispatcher());
+		event.getCommandDispatcher().register(Commands.literal("ip").then(ReservoirCommand.create()));
 	}
 	
 	public void serverStarted(FMLServerStartedEvent event){

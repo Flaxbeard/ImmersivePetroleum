@@ -2,8 +2,8 @@ package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity.PumpjackParentTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
@@ -13,7 +13,8 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 	public static final PumpjackMultiblock INSTANCE = new PumpjackMultiblock();
 	
 	private PumpjackMultiblock(){
-		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/pumpjack"), new BlockPos(0, 0, 0), new BlockPos(1, 1, 1), () -> null);
+		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/pumpjack"),
+				new BlockPos(1, 0, 0), new BlockPos(1, 1, 4), () -> IPContent.Multiblock.pumpjack.getDefaultState());
 	}
 	
 	@Override
@@ -27,12 +28,14 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 		return true;
 	}
 	
-	TileEntity te;
+	@OnlyIn(Dist.CLIENT)
+	private PumpjackParentTileEntity te;
+	
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void renderFormedStructure(){
 		if(te == null){
-			te = new PumpjackTileEntity.TileEntityPumpjackParent();
+			te = new PumpjackParentTileEntity();
 		}
 		
 		ImmersivePetroleum.proxy.renderTile(te);

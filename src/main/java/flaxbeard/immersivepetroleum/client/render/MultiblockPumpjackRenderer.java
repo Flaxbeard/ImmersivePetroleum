@@ -21,35 +21,34 @@ public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackParen
 	public void render(PumpjackParentTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
 		if(te != null){
 			GlStateManager.pushMatrix();
-			GlStateManager.translated(x, y - 1, z);
+			GlStateManager.translated(x, y, z);
 			
 			Direction rotation = te.getFacing();
 			switch(rotation){
 				case NORTH:
 					GlStateManager.rotated(90F, 0, 1, 0);
-					GlStateManager.translated(-1, 0, 0);
+					GlStateManager.translated(-6, 0, -1);
 					break;
 				case EAST:
+					GlStateManager.translated(-5, 0, -1);
 					break;
 				case SOUTH:
 					GlStateManager.rotated(270F, 0, 1, 0);
-					GlStateManager.translated(0, 0, -1);
+					GlStateManager.translated(-5, 0, -2);
 					break;
 				case WEST:
 					GlStateManager.rotated(180F, 0, 1, 0);
-					GlStateManager.translated(-1, 0, -1);
+					GlStateManager.translated(-6, 0, -2);
 					break;
 				default:
 					break;
 				
 			}
-			GlStateManager.translated(-1, 0, -1);
 			
-			ClientUtils.bindTexture(texture);
-			
-			float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);;
+			float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);
 			model.ticks = modelM.ticks = 1.5F * ticks;
 			
+			ClientUtils.bindTexture(texture);
 			if(te.getIsMirrored()){
 				modelM.render(0.0625F);
 			}else{

@@ -33,6 +33,7 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEnt
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity.PumpjackParentTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
@@ -97,9 +98,11 @@ public class IPContent{
 	public static IPUpgradeItem itemUpgradeRudders;
 	public static IPUpgradeItem itemUpgradePaddles;
 	
+	public static DebugItem debugItem;
+	
 	/** block/item/fluid population */
 	public static void populate(){
-		new DebugItem();
+		debugItem=new DebugItem();
 		
 		fluidCrudeOil = new IPFluid("oil",
 				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/oil_still"),
@@ -196,13 +199,13 @@ public class IPContent{
 	public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event){
 		registerTile(event, DistillationTowerTileEntity.class, Multiblock.distillationtower);
 		registerTile(event, DistillationTowerParentTileEntity.class, Multiblock.distillationtower);
+		
+		registerTile(event, PumpjackTileEntity.class, Multiblock.pumpjack);
+		registerTile(event, PumpjackParentTileEntity.class, Multiblock.pumpjack);
+		
 		registerTile(event, GasGeneratorTileEntity.class, blockGasGenerator);
 		
-		// FIXME Causing problems
-		//registerTile(event, PumpjackTileEntity.class);
-		//registerTile(event, PumpjackTileEntity.TileEntityPumpjackParent.class);
-		
-		//registerTile(event, AutoLubricatorTileEntity.class);
+		//registerTile(event, AutoLubricatorTileEntity.class, blockhere);
 	}
 	
 	/**

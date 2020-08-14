@@ -108,13 +108,5 @@ public class CommandHandler extends CommandBase
 
 		public abstract int getPermissionLevel();
 	}
-	
-	// FIXME ! REMOVE LATER !
-	@Deprecated
-	public static interface ICommandSender{
-		void sendMessage(ITextComponent translationTextComponent);
-		boolean canUseCommand(int permissionLevel, String name);
-	}
-
 }
 */

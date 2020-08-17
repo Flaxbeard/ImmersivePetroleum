@@ -12,7 +12,8 @@ import blusunrize.immersiveengineering.common.util.IESounds;
 import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
-import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
+import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.items.ItemSpeedboat;
 import flaxbeard.immersivepetroleum.common.network.ConsumeBoatFuelPacket;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
@@ -252,7 +253,7 @@ public class EntitySpeedboat extends BoatEntity{
 	
 	@Override
 	public Item getItemBoat(){
-		return IPContent.itemSpeedboat;
+		return Items.itemSpeedboat;
 	}
 	
 	/**
@@ -417,16 +418,16 @@ public class EntitySpeedboat extends BoatEntity{
 		
 		if(hasIcebreaker && !isEmergency()){
 			AxisAlignedBB axisalignedbb = this.getBoundingBox().grow(0.1f);
-			BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain(axisalignedbb.minX + 0.001D, axisalignedbb.minY + 0.001D, axisalignedbb.minZ + 0.001D);
-			BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos1 = BlockPos.PooledMutableBlockPos.retain(axisalignedbb.maxX - 0.001D, axisalignedbb.maxY - 0.001D, axisalignedbb.maxZ - 0.001D);
-			BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos2 = BlockPos.PooledMutableBlockPos.retain();
+			BlockPos.PooledMutableBlockPos mutableBlockPos0 = BlockPos.PooledMutableBlockPos.retain(axisalignedbb.minX + 0.001D, axisalignedbb.minY + 0.001D, axisalignedbb.minZ + 0.001D);
+			BlockPos.PooledMutableBlockPos mutableBlockPos1 = BlockPos.PooledMutableBlockPos.retain(axisalignedbb.maxX - 0.001D, axisalignedbb.maxY - 0.001D, axisalignedbb.maxZ - 0.001D);
+			BlockPos.PooledMutableBlockPos mutableBlockPos2 = BlockPos.PooledMutableBlockPos.retain();
 			
-			if(this.world.isAreaLoaded(blockpos$pooledmutableblockpos, blockpos$pooledmutableblockpos1)){
-				for(int i = blockpos$pooledmutableblockpos.getX();i <= blockpos$pooledmutableblockpos1.getX();++i){
-					for(int j = blockpos$pooledmutableblockpos.getY();j <= blockpos$pooledmutableblockpos1.getY();++j){
-						for(int k = blockpos$pooledmutableblockpos.getZ();k <= blockpos$pooledmutableblockpos1.getZ();++k){
-							blockpos$pooledmutableblockpos2.setPos(i, j, k);
-							BlockState BlockState = this.world.getBlockState(blockpos$pooledmutableblockpos2);
+			if(this.world.isAreaLoaded(mutableBlockPos0, mutableBlockPos1)){
+				for(int i = mutableBlockPos0.getX();i <= mutableBlockPos1.getX();++i){
+					for(int j = mutableBlockPos0.getY();j <= mutableBlockPos1.getY();++j){
+						for(int k = mutableBlockPos0.getZ();k <= mutableBlockPos1.getZ();++k){
+							mutableBlockPos2.setPos(i, j, k);
+							BlockState BlockState = this.world.getBlockState(mutableBlockPos2);
 							
 							Vector2f vec2 = new Vector2f((float) (i + 0.5f - posX), (float) (k + 0.5f - posZ));
 							vec2.normalize();
@@ -434,8 +435,8 @@ public class EntitySpeedboat extends BoatEntity{
 							float sim = vec2.dot(vec);
 							
 							if(BlockState.getBlock() == Blocks.ICE && sim > .3f){
-								this.world.destroyBlock(blockpos$pooledmutableblockpos2, false);
-								this.world.setBlockState(blockpos$pooledmutableblockpos2, Blocks.WATER.getDefaultState());
+								this.world.destroyBlock(mutableBlockPos2, false);
+								this.world.setBlockState(mutableBlockPos2, Blocks.WATER.getDefaultState());
 							}
 						}
 					}
@@ -1139,18 +1140,18 @@ public class EntitySpeedboat extends BoatEntity{
 			isImmuneToFire = false;
 			for(ItemStack upgrade:upgrades){
 				if(upgrade != null){
-					if(upgrade.getItem() == IPContent.itemUpgradeHull){
+					if(upgrade.getItem() == BoatUpgrades.itemUpgradeHull){
 						isFireproof = true;
 						isImmuneToFire = true;
-					}else if(upgrade.getItem() == IPContent.itemUpgradeBreaker){
+					}else if(upgrade.getItem() == BoatUpgrades.itemUpgradeBreaker){
 						hasIcebreaker = true;
-					}else if(upgrade.getItem() == IPContent.itemUpgradeTank){
+					}else if(upgrade.getItem() == BoatUpgrades.itemUpgradeTank){
 						hasTank = true;
-					}else if(upgrade.getItem() == IPContent.itemUpgradeRudders){
+					}else if(upgrade.getItem() == BoatUpgrades.itemUpgradeRudders){
 						hasRudders = true;
-					}else if(upgrade.getItem() == IPContent.itemUpgradePaddles){
+					}/*else if(upgrade.getItem() == BoatUpgrades.itemUpgradePaddles){
 						hasPaddles = true;
-					}
+					}*/
 				}
 			}
 		}

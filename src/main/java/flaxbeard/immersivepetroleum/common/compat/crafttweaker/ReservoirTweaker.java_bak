@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.liquid.ILiquidStack;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -41,7 +40,7 @@ public class ReservoirTweaker
 
 		String rFluid = fluid.getName();
 
-		PumpjackHandler.ReservoirType res = PumpjackHandler.addReservoir(name, rFluid, minSize, maxSize, replenishRate, weight);
+		//PumpjackHandler.ReservoirType res = PumpjackHandler.addReservoir(name, rFluid, minSize, maxSize, replenishRate, weight);
 
 		for (int x = 0; x < biomeBlacklist.length; x++)
 		{
@@ -69,11 +68,11 @@ public class ReservoirTweaker
 			}
 		}
 
-		res.dimensionBlacklist = dimBlacklist;
+		/*res.dimensionBlacklist = dimBlacklist;
 		res.dimensionWhitelist = dimWhitelist;
 		res.biomeBlacklist = biomeBlacklistList.toArray(new String[0]);
 		res.biomeWhitelist = biomeWhitelistList.toArray(new String[0]);
 
-		CraftTweakerAPI.logInfo("Added Reservoir Type: " + name);
+		CraftTweakerAPI.logInfo("Added Reservoir Type: " + name);*/
 	}
 }

@@ -1,10 +1,13 @@
 package flaxbeard.immersivepetroleum.common.crafting;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.RecipeManager;
@@ -34,6 +37,8 @@ public class RecipeReloadListener implements IResourceManagerReloadListener{
 		Collection<IRecipe<?>> recipes=recipeManager.getRecipes();
 		
 		DistillationRecipe.recipes=filterRecipes(recipes, DistillationRecipe.class, DistillationRecipe.TYPE);
+		
+		PumpjackHandler.reservoirs=new LinkedHashMap<>(filterRecipes(recipes, ReservoirType.class, ReservoirType.TYPE));
 	}
 	
 	static <R extends IRecipe<?>> Map<ResourceLocation, R> filterRecipes(Collection<IRecipe<?>> recipes, Class<R> recipeClass, IRecipeType<R> recipeType){

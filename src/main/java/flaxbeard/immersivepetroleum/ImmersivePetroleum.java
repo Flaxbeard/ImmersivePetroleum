@@ -78,6 +78,8 @@ public class ImmersivePetroleum{
 		IPContent.preInit();
 		IPPacketHandler.preInit();
 		
+		DieselHandler.registerFuel(Fluids.fluidDiesel, 150);
+		
 		proxy.preInitEnd();
 		
 		// ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -87,7 +89,7 @@ public class ImmersivePetroleum{
 		
 		PumpjackHandler.oilChance = IPConfig.EXTRACTION.reservoir_chance.get();
 		
-		// TODO Re-implement this somehow
+		// TODO See issue #4215 in the ImmersiveEngineering GitHub
 		/*
 		IEConfig.manual_int.put("distillationTower_operationCost", (int) (2048 * IPConfig.REFINING.distillationTower_energyModifier.get()));
 		IEConfig.manual_int.put("pumpjack_consumption", IPConfig.EXTRACTION.pumpjack_consumption.get());

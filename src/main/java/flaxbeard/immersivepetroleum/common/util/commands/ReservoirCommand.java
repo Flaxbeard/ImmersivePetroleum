@@ -54,7 +54,7 @@ public class ReservoirCommand{
 	static int list(ServerPlayerEntity playerEntity){
 		String s = "";
 		int i = 0;
-		for(ReservoirType res:PumpjackHandler.reservoirList.keySet()){
+		for(ReservoirType res:PumpjackHandler.reservoirs.values()){
 			s += ((i++) > 0 ? ", " : "") + res.name;
 		}
 		
@@ -80,7 +80,7 @@ public class ReservoirCommand{
 	static LiteralArgumentBuilder<CommandSource> setReservoir(){
 		RequiredArgumentBuilder<CommandSource, String> nameArg=Commands.argument("name", StringArgumentType.string());
 		nameArg.suggests((context, builder)->{
-			return ISuggestionProvider.suggest(PumpjackHandler.reservoirList.keySet().stream().map(type->type.name), builder);
+			return ISuggestionProvider.suggest(PumpjackHandler.reservoirs.values().stream().map(type->type.name), builder);
 		}).executes(command->{
 			ServerPlayerEntity player=command.getSource().asPlayer();
 			setReservoir(command, player.getPosition().getX()>>4, player.getPosition().getZ()>>4);
@@ -104,7 +104,7 @@ public class ReservoirCommand{
 		
 		String name=context.getArgument("name", String.class);
 		ReservoirType reservoir = null;
-		for(ReservoirType res:PumpjackHandler.reservoirList.keySet())
+		for(ReservoirType res:PumpjackHandler.reservoirs.values())
 			if(res.name.equalsIgnoreCase(name))
 				reservoir = res;
 		
@@ -122,7 +122,7 @@ public class ReservoirCommand{
 		OilWorldInfo info = getOilWorldInfo(playerEntity);
 		
 		ReservoirType reservoir = null;
-		for(ReservoirType res:PumpjackHandler.reservoirList.keySet())
+		for(ReservoirType res:PumpjackHandler.reservoirs.values())
 			if(res.name.equalsIgnoreCase(name))
 				reservoir = res;
 		

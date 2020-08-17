@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.api.crafting;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
@@ -11,11 +10,9 @@ import com.google.gson.JsonObject;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
-import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -25,21 +22,31 @@ import net.minecraftforge.fluids.FluidStack;
  * @author TwistedGate
  */
 public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationRecipeBuilder>{
-	/** Temporary storage for byproducts */
-	private List<Tuple<ItemStack, Double>> byproducts=new ArrayList<>();
-	
-	private DistillationRecipeBuilder(){
-		super(DistillationRecipe.SERIALIZER.get());
-	}
 	
 	public static DistillationRecipeBuilder builder(FluidStack... fluidOutput){
 		if(fluidOutput==null || ((fluidOutput!=null && fluidOutput.length==0)))
-			throw new IllegalArgumentException("Missing required fluid output.");
+			throw new IllegalArgumentException("Fluid output missing. It's required.");
 		
 		DistillationRecipeBuilder b=new DistillationRecipeBuilder();
 		if(fluidOutput!=null && fluidOutput.length>0)
 			b.addFluids("results", fluidOutput);
 		return b;
+	}
+	
+	
+	/** Temporary storage for byproducts */
+	private List<Tuple<ItemStack, Double>> byproducts=new ArrayList<>();
+	
+	private DistillationRecipeBuilder(){
+		super(DistillationRecipe.SERIALIZER.get());
+		addWriter(jsonObject->{
+			if(this.byproducts.size()>0){
+				final JsonArray main=new JsonArray();
+				this.byproducts.forEach(by->main.add(serializerItemStackWithChance(by)));
+				jsonObject.add("byproducts", main);
+				this.byproducts.clear();
+			}
+		});
 	}
 	
 	/**
@@ -104,18 +111,6 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 		});
 	}
 	
-	@Override
-	public void build(Consumer<IFinishedRecipe> out, ResourceLocation id){
-		if(this.byproducts.size()>0){
-			addWriter(jsonObject->{
-				final JsonArray main=new JsonArray();
-				this.byproducts.forEach(by->main.add(serializerItemStackWithChance(by)));
-				jsonObject.add("byproducts", main);
-				this.byproducts.clear();
-			});
-		}
-		super.build(out, id);
-	}
 	
 	public static Tuple<ItemStack, Double> deserializeItemStackWithChance(JsonObject jsonObject){
 		if(jsonObject.has("chance") && jsonObject.has("item")){

@@ -1,38 +1,47 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
+import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
+import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
+import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.common.ModDimension;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.ForgeRegistries;
 
-
-public class PumpjackHandler
-{
-	public static LinkedHashMap<ReservoirType, Integer> reservoirList = new LinkedHashMap<>();
-	private static Map<Integer, Map<ResourceLocation, Integer>> totalWeightMap = new HashMap<>();
-
+public class PumpjackHandler{
+	public static LinkedHashMap<ResourceLocation, ReservoirType> reservoirs=new LinkedHashMap<>();
+	
+	private static Map<ResourceLocation, Map<ResourceLocation, Integer>> totalWeightMap = new HashMap<>();
+	
 	public static Map<DimensionChunkCoords, Long> timeCache = new HashMap<>();
 	public static Map<DimensionChunkCoords, OilWorldInfo> oilCache = new HashMap<>();
 	public static double oilChance = 100;
-
+	
 	private static int depositSize = 1;
-
+	
 	/**
 	 * Gets amount of fluid in a specific chunk's reservoir in mB
 	 *
@@ -41,8 +50,7 @@ public class PumpjackHandler
 	 * @param chunkZ Z coordinate of desired chunk
 	 * @return mB of fluid in the given reservoir
 	 */
-	public static int getFluidAmount(World world, int chunkX, int chunkZ)
-	{
+	public static int getFluidAmount(World world, int chunkX, int chunkZ){
 		if (world.isRemote)
 			return 0;
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
@@ -60,19 +68,15 @@ public class PumpjackHandler
 	 * @param chunkZ Z coordinate of desired chunk
 	 * @return Fluid in given reservoir (or null if none)
 	 */
-	public static Fluid getFluid(World world, int chunkX, int chunkZ)
-	{
-		if (world.isRemote)
+	public static Fluid getFluid(World world, int chunkX, int chunkZ){
+		if(world.isRemote)
 			return null;
-
+		
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
-
-		if (info == null || info.getType() == null)
-		{
+		
+		if(info == null || info.getType() == null){
 			return null;
-		}
-		else
-		{
+		}else{
 			return info.getType().getFluid();
 		}
 	}
@@ -85,18 +89,16 @@ public class PumpjackHandler
 	 * @param chunkZ Z coordinate of desired chunk
 	 * @return mB of fluid that can be extracted "residually"
 	 */
-	public static int getResidualFluid(World world, int chunkX, int chunkZ)
-	{
+	public static int getResidualFluid(World world, int chunkX, int chunkZ){
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
-
-		if (info == null || info.getType() == null || info.getType().fluidLocation == null || (info.capacity == 0) || (info.current == 0 && info.getType().replenishRate == 0))
+		
+		if(info == null || info.getType() == null || info.getType().fluidLocation == null || (info.capacity == 0) || (info.current == 0 && info.getType().replenishRate == 0))
 			return 0;
-
+		
 		DimensionChunkCoords coords = new DimensionChunkCoords(world.getDimension().getType(), chunkX / depositSize, chunkZ / depositSize);
-
+		
 		Long l = timeCache.get(coords);
-		if (l == null)
-		{
+		if(l == null){
 			timeCache.put(coords, world.getGameTime());
 			return info.getType().replenishRate;
 		}
@@ -105,43 +107,53 @@ public class PumpjackHandler
 		timeCache.put(coords, world.getGameTime());
 		return lastTime != l ? info.getType().replenishRate : 0;
 	}
-
+	
 	/**
 	 * Gets the OilWorldInfo object associated with the given chunk
-	 *
+	 * 
 	 * @param world  The world to retrieve
 	 * @param chunkX X coordinate of desired chunk
 	 * @param chunkZ Z coordinate of desired chunk
 	 * @return The OilWorldInfo corresponding w/ given chunk
 	 */
 	public static OilWorldInfo getOilWorldInfo(World world, int chunkX, int chunkZ){
-		if(world.isRemote) return null;
-		
-		int dim = world.getDimension().getType().getId();
-		DimensionChunkCoords coords = new DimensionChunkCoords(world.getDimension().getType(), chunkX / depositSize, chunkZ / depositSize);
+		return getOilWorldInfo(world, new DimensionChunkCoords(world.getDimension().getType(), chunkX / depositSize, chunkZ / depositSize), false);
+	}
+	
+	/**
+	 * Gets the OilWorldInfo object associated with the given chunk
+	 *
+	 * @param world  The world to retrieve
+	 * @param coords Coordinates of desired chunk
+	 * @param force  Force creation on an empty chunk
+	 * @return The OilWorldInfo corresponding w/ given chunk
+	 */
+	public static OilWorldInfo getOilWorldInfo(World world, DimensionChunkCoords coords, boolean force){
+		if(world.isRemote)
+			return null;
 		
 		OilWorldInfo worldInfo = oilCache.get(coords);
 		if(worldInfo == null){
 			ReservoirType res = null;
 			
-			// TODO Don't think you can access the random generator of a chunk anymore?
-			// Random(coords.asLong()+90210L) Is temporary until i figure shit out
-			Random r = new Random(coords.asLong()*90210L); //world.getChunk(chunkX / depositSize, chunkZ / depositSize).getRandomWithSeed(90210); // Antidote
+			Random r = SharedSeedRandom.seedSlimeChunk(coords.x, coords.z, world.getSeed(), 90210L);
 			double dd = r.nextDouble();
 			boolean empty = dd > oilChance;
 			double size = r.nextDouble();
 			int query = r.nextInt();
 			
-			if(!empty){
-				Biome biome = world.getBiomeBody(new BlockPos(chunkX << 4, 64, chunkZ << 4));
-				int totalWeight = getTotalWeight(dim, biome);
+			if(!empty || force){
+				ResourceLocation biome = world.getBiomeBody(new BlockPos(coords.x << 4, 64, coords.z << 4)).getRegistryName();
+				ResourceLocation dimension=world.getDimension().getType().getRegistryName();
+				
+				int totalWeight = getTotalWeight(dimension, biome);
 				if(totalWeight > 0){
 					int weight = Math.abs(query % totalWeight);
-					for(Map.Entry<ReservoirType, Integer> e:reservoirList.entrySet()){
-						if(e.getKey().validDimension(dim) && e.getKey().validBiome(biome)){
-							weight -= e.getValue();
+					for(ReservoirType type:reservoirs.values()){
+						if(type.isValidDimension(dimension) && type.isValidBiome(biome)){
+							weight -= type.weight;
 							if(weight < 0){
-								res = e.getKey();
+								res = type;
 								break;
 							}
 						}
@@ -173,118 +185,72 @@ public class PumpjackHandler
 	 * @param chunkZ Chunk z
 	 * @param amount Amount of fluid in mB to drain
 	 */
-	public static void depleteFluid(World world, int chunkX, int chunkZ, int amount)
-	{
+	public static void depleteFluid(World world, int chunkX, int chunkZ, int amount){
 		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
 		info.current = Math.max(info.current - amount, 0);
 		IPSaveData.setDirty();
 	}
-
+	
 	/**
 	 * Gets the total weight of reservoir types for the given dimension ID and biome type
 	 *
-	 * @param dim   The dimension id to check
-	 * @param biome The biome type to check
+	 * @param dimension The dimension to check
+	 * @param biome     The biome to check
 	 * @return The total weight associated with the dimension/biome pair
 	 */
-	public static int getTotalWeight(int dim, Biome biome)
-	{
-		if (!totalWeightMap.containsKey(dim))
-		{
-			totalWeightMap.put(dim, new HashMap<>());
+	public static int getTotalWeight(ResourceLocation dimension, ResourceLocation biome){
+		if(!totalWeightMap.containsKey(dimension)){
+			totalWeightMap.put(dimension, new HashMap<>());
 		}
-
-		Map<ResourceLocation, Integer> dimMap = totalWeightMap.get(dim);
-		ResourceLocation biomeName = getBiomeName(biome);
-
-		if (dimMap.containsKey(biomeName))
-		{
-			return dimMap.get(biomeName);
+		
+		Map<ResourceLocation, Integer> dimMap=totalWeightMap.get(dimension);
+		
+		if(dimMap.containsKey(biome))
+			return dimMap.get(biome);
+		
+		int totalWeight=0;
+		for(ReservoirType type:reservoirs.values()){
+			if(type.isValidDimension(dimension) && type.isValidBiome(biome))
+				totalWeight+=type.weight;
 		}
-
-		int totalWeight = 0;
-		for (Map.Entry<ReservoirType, Integer> e : reservoirList.entrySet())
-		{
-			if (e.getKey().validDimension(dim) && e.getKey().validBiome(biome))
-				totalWeight += e.getValue();
-		}
-		dimMap.put(biomeName, totalWeight);
 		return totalWeight;
 	}
-
+	
 	/**
 	 * Adds a reservoir type to the pool of valid reservoirs
-	 *
-	 * @param name          The name of the reservoir type
-	 * @param fluid         The String fluidid of the fluid for this reservoir
-	 * @param minSize       The minimum reservoir size, in mB
-	 * @param maxSize       The maximum reservoir size, in mB
-	 * @param replenishRate The rate at which fluid can be drained from this reservoir when empty, in mB/tick
-	 * @param weight        The weight for this reservoir to spawn
-	 * @return The created ReservoirType
+	 * 
+	 * @param id        The "recipeId" of the reservoir type
+	 * @param reservoir The reservoir type to add
+	 * @return
 	 */
-	@Deprecated
-	public static ReservoirType addReservoir(String name, String fluid, int minSize, int maxSize, int replenishRate, int weight)
-	{
-		ReservoirType mix = new ReservoirType(name, fluid, minSize, maxSize, replenishRate);
-		reservoirList.put(mix, weight);
-		return mix;
+	public static ReservoirType addReservoir(ResourceLocation id, ReservoirType reservoir){
+		reservoirs.put(id, reservoir);
+		return reservoir;
 	}
 
 	public static void recalculateChances(boolean mutePackets){
+		mutePackets=true; // See MessageReservoirListSync being deprecated? Look at it to see why.
+		
 		totalWeightMap.clear();
+		
 		if(!mutePackets){
-			HashMap<ReservoirType, Integer> packetMap = new HashMap<>();
-
-			for(Entry<ReservoirType, Integer> e:PumpjackHandler.reservoirList.entrySet())
-				if(e.getKey() != null && e.getValue() != null)
-					packetMap.put(e.getKey(), e.getValue());
-			// TODO Figure out how to send to All
-			//IPPacketHandler.INSTANCE.sendToAll(new MessageReservoirListSync(packetMap));
+//			HashMap<ReservoirType, Integer> packetMap = new HashMap<>();
+//
+//			for(ReservoirType e:PumpjackHandler.reservoirs.values())
+//				if(e.getKey() != null && e.getValue() != null)
+//					packetMap.put(e.getKey(), e.getValue());
+//			
+			// Figured it out, but there's no point to it anymore.
+			//IPPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new MessageReservoirListSync(packetMap));
 		}
 	}
-
-	private static HashMap<Biome, ResourceLocation> biomeNames = new HashMap<>();
-
-	/**
-	 * Get the biome name associated with a given biome
-	 *
-	 * @param biome The biome to get the name
-	 * @return The biome's name
-	 */
-	public static ResourceLocation getBiomeName(Biome biome)
-	{
-		if (!biomeNames.containsKey(biome))
-		{
-			biomeNames.put(biome, biome.getRegistryName());
-		}
-		return biomeNames.get(biome);
-	}
-
-	public static String convertConfigName(String str)
-	{
-		return str.replace(" ", "").toUpperCase();
-	}
-
-	public static String getTagDisplayName(String tag)
-	{
-		return tag.charAt(0) + tag.substring(1).toLowerCase();
-	}
-
-	public static String getBiomeDisplayName(String str){
-		String ret = "";
-		for(int i = 0;i < str.length();i++){
-			char c = str.charAt(i);
-			if(Character.isUpperCase(c) && i != 0 && str.charAt(i - 1) != ' '){
-				ret = ret + " " + c;
-			}else{
-				ret = ret + c;
-			}
-		}
-		return ret;
-	}
-
-	public static class ReservoirType{
+	
+	public static class ReservoirType extends IESerializableRecipe{
+		public static final IRecipeType<ReservoirType> TYPE=IRecipeType.register(ImmersivePetroleum.MODID+":reservoirtype");
+		
+		/** Initialized in {@link Serializers} */
+		public static RegistryObject<IERecipeSerializer<ReservoirType>> SERIALIZER;
+		
 		public String name;
 		public ResourceLocation fluidLocation;
 		
@@ -292,151 +258,175 @@ public class PumpjackHandler
 		public int maxSize;
 		public int replenishRate;
 		
-		public int[] dimensionWhitelist = new int[0];
-		public int[] dimensionBlacklist = new int[0];
+		public int weight;
 		
-		public String[] biomeWhitelist = new String[0];
-		public String[] biomeBlacklist = new String[0];
+		// ForgeRegistries.MOD_DIMENSIONS.getValue(resourceIn)
+		public List<ResourceLocation> dimWhitelist=new ArrayList<>();
+		public List<ResourceLocation> dimBlacklist=new ArrayList<>();
+		
+		// ForgeRegistries.BIOMES.getValue(resourceIn)
+		public List<ResourceLocation> bioWhitelist=new ArrayList<>();
+		public List<ResourceLocation> bioBlacklist=new ArrayList<>();
 		
 		private Fluid fluid;
 		
-		@Deprecated
-		public ReservoirType(String name, String fluidName, int minSize, int maxSize, int replenishRate){
-			this.name = name;
-			this.replenishRate = replenishRate;
-			this.minSize = minSize;
-			this.maxSize = maxSize;
-			
-			for(ResourceLocation loc:ForgeRegistries.FLUIDS.getKeys()){
-				if(loc.getPath().contains(fluidName)){
-					this.fluidLocation=loc;
-					break;
-				}
-			}
-			
-			if(this.fluidLocation==null)
-				throw new IllegalArgumentException("Unable to find \""+fluidName+"\"");
-			
-			ImmersivePetroleum.log.info("Using \"{}\" for {} reservoir. (This is deprecated and will be removed soon)", this.fluidLocation, name);
-		}
-		
-		public ReservoirType(String name, ResourceLocation fluidLocation, int minSize, int maxSize, int replenishRate){
+		/**
+		 * <pre>This constructor should not be called manualy! ReservoirTypeSerializer does that.</pre>
+		 * Creates a new reservoir.
+		 * 
+		 * @param name          The name of this reservoir type
+		 * @param id            The "recipeId" of this reservoir
+		 * @param fluidLocation The registry name of the fluid this reservoir is containing
+		 * @param minSize       Minimum amount of fluid in this reservoir
+		 * @param maxSize       Maximum amount of fluid in this reservoir
+		 * @param traceAmount   Leftover fluid amount after depletion
+		 * @param weight        The weight for this reservoir
+		 */
+		public ReservoirType(String name, ResourceLocation id, ResourceLocation fluidLocation, int minSize, int maxSize, int traceAmount, int weight){
+			super(ItemStack.EMPTY, TYPE, id);
 			this.name = name;
 			this.fluidLocation = fluidLocation;
-			this.replenishRate = replenishRate;
+			this.replenishRate = traceAmount;
 			this.minSize = minSize;
 			this.maxSize = maxSize;
+			this.weight = weight;
+			
+			this.fluid=ForgeRegistries.FLUIDS.getValue(fluidLocation);
 		}
 		
 		public ReservoirType(CompoundNBT nbt){
+			super(ItemStack.EMPTY, TYPE, new ResourceLocation(nbt.getString("id")));
+			
 			this.name = nbt.getString("name");
+			
 			this.fluidLocation = new ResourceLocation(nbt.getString("fluidname"));
+			this.fluid=ForgeRegistries.FLUIDS.getValue(this.fluidLocation);
 			
 			this.minSize = nbt.getInt("minSize");
 			this.maxSize = nbt.getInt("maxSize");
 			this.replenishRate = nbt.getInt("replenishRate");
 			
-			this.dimensionWhitelist = nbt.getIntArray("dimensionWhitelist");
-			this.dimensionBlacklist = nbt.getIntArray("dimensionBlacklist");
+			this.dimWhitelist = toList((ListNBT)nbt.get("dimensionWhitelist"));
+			this.dimBlacklist = toList((ListNBT)nbt.get("dimensionBlacklist"));
 			
-			ListNBT wl = (ListNBT) nbt.get("biomeWhitelist");
-			this.biomeWhitelist = new String[wl.size()];
-			for(int i = 0;i < wl.size();i++){
-				this.biomeWhitelist[i] = wl.getString(i);
+			this.bioWhitelist = toList((ListNBT)nbt.get("biomeWhitelist"));
+			this.bioBlacklist = toList((ListNBT)nbt.get("biomeBlacklist"));
+		}
+		
+		public boolean addDimension(boolean blacklist, ResourceLocation...names){
+			return addDimension(blacklist, Arrays.asList(names));
+		}
+		
+		public boolean addDimension(boolean blacklist, List<ResourceLocation> names){
+			if(blacklist){
+				return this.dimBlacklist.addAll(names);
+			}else{
+				return this.dimWhitelist.addAll(names);
 			}
+		}
+		
+		public boolean addBiome(boolean blacklist, ResourceLocation...names){
+			return addBiome(blacklist, Arrays.asList(names));
+		}
+		
+		public boolean addBiome(boolean blacklist, List<ResourceLocation> names){
+			if(blacklist){
+				return this.bioBlacklist.addAll(names);
+			}else{
+				return this.bioWhitelist.addAll(names);
+			}
+		}
+		
+		public boolean isValidDimension(DimensionType dim){
+			if(dim==null) return false;
 			
-			ListNBT bl = (ListNBT) nbt.get("biomeBlacklist");
-			this.biomeBlacklist = new String[bl.size()];
-			for(int i = 0;i < bl.size();i++){
-				this.biomeBlacklist[i] = bl.getString(i);
-			}
+			return isValidDimension(dim.getRegistryName());
+		}
+		
+		public boolean isValidDimension(ModDimension dim){
+			if(dim==null) return false;
+			
+			return isValidDimension(dim.getRegistryName());
+		}
+		
+		public boolean isValidDimension(ResourceLocation rl){
+			if(rl!=null && this.dimWhitelist.size()>0 && this.dimWhitelist.contains(rl))
+				return true;
+			
+			else if(rl!=null && this.dimBlacklist.size()>0 && this.dimBlacklist.contains(rl))
+				return false;
+			
+			return false;
+		}
+		
+		public boolean isValidBiome(Biome biome){
+			if(biome==null) return false;
+			
+			return isValidBiome(biome.getRegistryName());
+		}
+		
+		public boolean isValidBiome(ResourceLocation rl){
+			if(this.bioWhitelist.size()>0 && this.bioWhitelist.contains(rl))
+				return true;
+			
+			else if(this.bioBlacklist.size()>0 && this.bioBlacklist.contains(rl))
+				return false;
+			
+			return false;
+		}
+		
+		@Override
+		protected IERecipeSerializer<ReservoirType> getIESerializer(){
+			return SERIALIZER.get();
+		}
+		
+		@Override
+		public ItemStack getRecipeOutput(){
+			return ItemStack.EMPTY;
 		}
 		
 		public Fluid getFluid(){
-			if(fluidLocation == null) return null;
-			
-			if(fluid == null){
-				if((this.fluid = ForgeRegistries.FLUIDS.getValue(this.fluidLocation)) == null){
-					// Backup if the above fails to get anything.
-					// If even the backup fails then there's something wrong.
-					Collection<Entry<ResourceLocation, Fluid>> fluids = ForgeRegistries.FLUIDS.getEntries();
-					fluids.forEach(fluid -> {
-						if(fluid.getKey().toString().contains(ReservoirType.this.fluidLocation.toString())){
-							ReservoirType.this.fluid = fluid.getValue();
-							return; // Kill this if we found something
-						}
-					});
-				}
-			}
-			
-			return fluid;
-		}
-		
-		// TODO Use ForgeRegistries.MOD_DIMENSIONS.getValue(resourceIn) for dimensions
-		public boolean validDimension(int dim){
-			if(dimensionWhitelist != null && dimensionWhitelist.length > 0){
-				for(int white:dimensionWhitelist){
-					if(dim == white) return true;
-				}
-				return false;
-				
-			}else if(dimensionBlacklist != null && dimensionBlacklist.length > 0){
-				for(int black:dimensionBlacklist){
-					if(dim == black) return false;
-				}
-				return true;
-			}
-			return true;
-		}
-		
-		public boolean validBiome(Biome biome){
-			if(biome == null) return false;
-			
-			if(biomeWhitelist != null && biomeWhitelist.length > 0){
-				for(String white:biomeWhitelist){
-					for(BiomeDictionary.Type biomeType:BiomeDictionary.getTypes(biome)){
-						if(convertConfigName(white).equals(biomeType.getName())) return true;
-					}
-				}
-				return false;
-				
-			}else if(biomeBlacklist != null && biomeBlacklist.length > 0){
-				for(String black:biomeBlacklist){
-					for(BiomeDictionary.Type biomeType:BiomeDictionary.getTypes(biome)){
-						if(convertConfigName(black).equals(biomeType.getName())) return false;
-					}
-				}
-				return true;
-			}
-			return true;
+			return this.fluid;
 		}
 		
 		public CompoundNBT writeToNBT(){
-			CompoundNBT tag = new CompoundNBT();
-			tag.putString("name", this.name);
+			return writeToNBT(new CompoundNBT());
+		}
+		
+		public CompoundNBT writeToNBT(CompoundNBT nbt){
+			nbt.putString("name", this.name);
+			nbt.putString("id", this.id.toString());
+			nbt.putString("fluid", this.fluidLocation.toString());
 			
-			tag.putString("fluid", this.fluidLocation.toString());
+			nbt.putInt("minSize", this.minSize);
+			nbt.putInt("maxSize", this.maxSize);
+			nbt.putInt("replenishRate", this.replenishRate);
 			
-			tag.putInt("minSize", this.minSize);
-			tag.putInt("maxSize", this.maxSize);
-			tag.putInt("replenishRate", this.replenishRate);
+			nbt.put("dimensionWhitelist", toNbt(this.dimWhitelist));
+			nbt.put("dimensionBlacklist", toNbt(this.dimBlacklist));
 			
-			tag.putIntArray("dimensionWhitelist", this.dimensionWhitelist);
-			tag.putIntArray("dimensionBlacklist", this.dimensionBlacklist);
+			nbt.put("biomeWhitelist", toNbt(this.bioWhitelist));
+			nbt.put("biomeBlacklist", toNbt(this.bioBlacklist));
 			
-			ListNBT wl = new ListNBT();
-			for(String s:this.biomeWhitelist){
-				wl.add(new StringNBT(s));
+			return nbt;
+		}
+		
+		private List<ResourceLocation> toList(ListNBT nbtList){
+			List<ResourceLocation> list=new ArrayList<>();
+			if(nbtList.size()>0){
+				for(INBT tag:nbtList)
+					if(tag instanceof StringNBT)
+						list.add(new ResourceLocation(((StringNBT)tag).getString()));
 			}
-			tag.put("biomeWhitelist", wl);
-			
-			ListNBT bl = new ListNBT();
-			for(String s:this.biomeBlacklist){
-				bl.add(new StringNBT(s));
+			return list;
+		}
+		
+		private ListNBT toNbt(List<ResourceLocation> list){
+			ListNBT nbtList = new ListNBT();
+			for(ResourceLocation rl:list){
+				nbtList.add(new StringNBT(rl.toString()));
 			}
-			tag.put("biomeBlacklist", bl);
-			
-			return tag;
+			return nbtList;
 		}
 	}
 	
@@ -470,11 +460,11 @@ public class PumpjackHandler
 			
 			if(tag.contains("type")){
 				String s = tag.getString("type");
-				for(ReservoirType res:reservoirList.keySet()){
+				for(ReservoirType res:reservoirs.values()){
 					if(s.equalsIgnoreCase(res.name)) info.type = res;
 				}
 			}else if(info.current > 0){
-				for(ReservoirType res:reservoirList.keySet()){
+				for(ReservoirType res:reservoirs.values()){
 					if(res.name.equalsIgnoreCase("oil")) info.type = res;
 				}
 				
@@ -485,7 +475,7 @@ public class PumpjackHandler
 			
 			if(tag.contains("overrideType")){
 				String s = tag.getString("overrideType");
-				for(ReservoirType res:reservoirList.keySet()){
+				for(ReservoirType res:reservoirs.values()){
 					if(s.equalsIgnoreCase(res.name)) info.overrideType = res;
 				}
 			}

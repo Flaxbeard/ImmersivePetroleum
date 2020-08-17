@@ -193,7 +193,9 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 				float r1 = (this.world.rand.nextFloat() - .5F) * 2F;
 				float r2 = (this.world.rand.nextFloat() - .5F) * 2F;
 				
-				this.world.addParticle(ParticleTypes.SMOKE, particlePos.getX() + 0.5D, particlePos.getY(), particlePos.getZ() + 0.5D, r1 * 0.04D, 0.25D, r2 * 0.025D);
+				this.world.addParticle(ParticleTypes.SMOKE,
+						particlePos.getX() + 0.5D, particlePos.getY(), particlePos.getZ() + 0.5D,
+						r1 * 0.04D, 0.25D, r2 * 0.025D);
 			}
 			if(this.wasActive){
 				this.activeTicks++;
@@ -207,7 +209,6 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		int extracted=this.energyStorage.extractEnergy(IPConfig.EXTRACTION.pumpjack_consumption.get(), true);
 		
 		if(extracted>=consumption && canExtract() && !isRSDisabled()){
-			// Not quite sure how this is supposed to work, but i guess it does? Likely won't touch it.
 			if((getPos().getX() + getPos().getZ()) % IPConfig.EXTRACTION.pipe_check_ticks.get() == this.pipeTicks){
 				this.lastHadPipes = hasPipes();
 			}
@@ -221,7 +222,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 					this.energyStorage.extractEnergy(consumption, false);
 					active = true;
 					FluidStack out = new FluidStack(availableFluid(), Math.min(IPConfig.EXTRACTION.pumpjack_speed.get(), oilAmnt));
-					BlockPos outputPos = master().getBlockPosForPos(East_Port).offset(getFacing().rotateY()); // this.getPos().offset(getFacing(), 2).offset(getFacing().rotateY().getOpposite(), 2).offset(Direction.DOWN, 1);
+					BlockPos outputPos = master().getBlockPosForPos(East_Port).offset(getFacing().rotateY());
 					IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, getFacing().rotateY()).orElse(null);
 					if(output != null){
 						int accepted = output.fill(out, FluidAction.SIMULATE);
@@ -232,7 +233,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 						}
 					}
 					
-					outputPos = master().getBlockPosForPos(West_Port).offset(getFacing().rotateYCCW()); // this.getPos().offset(getFacing(), 2).offset(getFacing().rotateY(), 2).offset(Direction.DOWN, 1);
+					outputPos = master().getBlockPosForPos(West_Port).offset(getFacing().rotateYCCW());
 					output = FluidUtil.getFluidHandler(this.world, outputPos, getFacing().rotateYCCW()).orElse(null);
 					if(output != null){
 						int accepted = output.fill(out, FluidAction.SIMULATE);

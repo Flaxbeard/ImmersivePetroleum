@@ -40,7 +40,7 @@ public class ConsumeBoatFuelPacket implements IMessage{
 					if(fluid != null)
 						fluid.setAmount(Math.max(0, fluid.getAmount() - amount));
 					
-					boat.setFluid(fluid);
+					boat.setContainedFluid(fluid);
 				}
 			}
 		});

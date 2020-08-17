@@ -7,8 +7,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
@@ -19,9 +19,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.multiblocks.ManualElementMultiblock;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
-import blusunrize.immersiveengineering.client.ClientProxy;
 import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
@@ -42,6 +40,7 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTil
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.BlockNapalm;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.network.CloseBookPacket;
@@ -70,8 +69,10 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -93,7 +94,6 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -113,42 +113,49 @@ public class EventHandler{
 		IPSaveData.setDirty();
 	}
 	
+	@OnlyIn(Dist.CLIENT)
 	private static Object lastGui = null;
 	
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void guiOpen(GuiOpenEvent event){
-		if(event.getGui() == null && lastGui instanceof ManualScreen){
+		if(event.getGui() == null && lastGui instanceof ManualScreen){  // FIXME The whole thing doesnt work?
 			ManualScreen gui = (ManualScreen) lastGui;
 			ResourceLocation name = null;
 			
 			ManualEntry entry = gui.getCurrentPage();
 			if(entry != null){
+				List<?> pages=null;
 				try{
 					Field field_pages = entry.getClass().getDeclaredField("pages");
-					List<?> pages = (List<?>) field_pages.get(entry);
-					
-					if(pages != null){
-						for(int i = 0;i < pages.size();i++){
-							Object page = pages.get(i);
+					field_pages.setAccessible(true);
+					pages = (List<?>) field_pages.get(entry);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+				
+				if(pages != null){
+					for(int i = 0;i < pages.size();i++){
+						Object page = pages.get(i);
+						
+						if(page instanceof ManualElementMultiblock){
+							ManualElementMultiblock mbPage = (ManualElementMultiblock) page;
 							
-							if(page instanceof ManualElementMultiblock){
-								ManualElementMultiblock mbPage = (ManualElementMultiblock) page;
-								
+							IMultiblock mb = null;
+							try{
 								Field field_multiblock = mbPage.getClass().getDeclaredField("multiblock");
-								IMultiblock mb = (IMultiblock) field_multiblock.get(mbPage);
-								if(mb != null){
-									if(name == null || i == gui.page){
-										name = mb.getUniqueName();
-									}
+								field_multiblock.setAccessible(true);
+								mb = (IMultiblock) field_multiblock.get(mbPage);
+							}catch(Exception e){
+								e.printStackTrace();
+							}
+							if(mb != null){
+								if(name == null || i == gui.page){
+									name = mb.getUniqueName();
 								}
 							}
 						}
 					}
-				}catch(NoSuchFieldException e){
-					e.printStackTrace();
-				}catch(Exception e){
-					e.printStackTrace();
 				}
 			}
 			
@@ -166,8 +173,10 @@ public class EventHandler{
 				
 				if(name == null && ItemNBTHelper.hasKey(target, "lastMultiblock")){
 					ItemNBTHelper.remove(target, "lastMultiblock");
+					System.out.println("Removed Multiblock-NBT to "+target.getDisplayName().getUnformattedComponentText());
 				}else if(name != null){
 					ItemNBTHelper.putString(target, "lastMultiblock", name.toString());
+					System.out.println("Added Multiblock-NBT to "+target.getDisplayName().getUnformattedComponentText()+" -> "+name.toString());
 				}
 			}
 		}
@@ -320,7 +329,7 @@ public class EventHandler{
 				}
 				
 				ReservoirType res = null;
-				for(ReservoirType type:PumpjackHandler.reservoirList.keySet()){
+				for(ReservoirType type:PumpjackHandler.reservoirs.values()){
 					if(resName.equalsIgnoreCase(type.name)){
 						res = type;
 					}
@@ -345,84 +354,171 @@ public class EventHandler{
 		}
 	}
 	
-	@SubscribeEvent(priority = EventPriority.HIGH)
-	public static void onLogin(PlayerLoggedInEvent event){
+//	@SubscribeEvent(priority = EventPriority.HIGH)
+//	public static void onLogin(PlayerLoggedInEvent event){
 		// ExcavatorHandler.allowPacketsToPlayer = true;
-		if(!event.getPlayer().world.isRemote){
-			HashMap<ReservoirType, Integer> packetMap = new HashMap<ReservoirType, Integer>();
-			for(Entry<ReservoirType, Integer> e:PumpjackHandler.reservoirList.entrySet()){
-				if(e.getKey() != null && e.getValue() != null) packetMap.put(e.getKey(), e.getValue());
-			}
-			
-			//IPPacketHandler.sendToPlayer(event.getPlayer(), new MessageReservoirListSync(packetMap));
-		}
-	}
+//		if(!event.getPlayer().world.isRemote){
+//			HashMap<ReservoirType, Integer> packetMap = new HashMap<ReservoirType, Integer>();
+//			for(Entry<ReservoirType, Integer> e:PumpjackHandler.reservoirList.entrySet()){
+//				if(e.getKey() != null && e.getValue() != null)
+//					packetMap.put(e.getKey(), e.getValue());
+//			}
+//			
+//			//IPPacketHandler.sendToPlayer(event.getPlayer(), new MessageReservoirListSync(packetMap));
+//		}
+//	}
 	
-	@SuppressWarnings("resource")
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent()
-	public static void renderCoresampleInfo(RenderGameOverlayEvent.Post event){
+	public static void renderInfoOverlays(RenderGameOverlayEvent.Post event){
 		if(ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
 			PlayerEntity player = ClientUtils.mc().player;
 			
 			if(ClientUtils.mc().objectMouseOver != null){
 				boolean hammer = player.getHeldItem(Hand.MAIN_HAND) != null && Utils.isHammer(player.getHeldItem(Hand.MAIN_HAND));
 				RayTraceResult mop = ClientUtils.mc().objectMouseOver;
-				if(mop != null && mop.getHitVec() != null){
-					TileEntity tileEntity = player.world.getTileEntity(new BlockPos(mop.getHitVec()));
-					if(tileEntity instanceof CoresampleTileEntity){
-						IBlockOverlayText overlayBlock = (IBlockOverlayText) tileEntity;
-						String[] text = overlayBlock.getOverlayText(player, mop, hammer);
-						boolean useNixie = overlayBlock.useNixieFont(player, mop);
-						ItemStack coresample = ((CoresampleTileEntity) tileEntity).coresample;
-						if(ItemNBTHelper.hasKey(coresample, "oil") && text != null && text.length > 0){
-							String resName = ItemNBTHelper.hasKey(coresample, "resType") ? ItemNBTHelper.getString(coresample, "resType") : "";
-							int amnt = ItemNBTHelper.getInt(coresample, "oil");
-							FontRenderer font = useNixie ? ClientProxy.nixieFont : ClientUtils.font();
-							int col = (useNixie && IEConfig.GENERAL.nixietubeFont.get()) ? Lib.colour_nixieTubeText : 0xffffff;
-							int i = text.length;
-							
-							ReservoirType res = null;
-							for(ReservoirType type:PumpjackHandler.reservoirList.keySet()){
-								if(resName.equals(type.name)){
-									res = type;
+				
+				if(mop != null){
+					switch(mop.getType()){
+						case BLOCK:{
+							if(mop.getHitVec() != null){
+								TileEntity tileEntity = player.world.getTileEntity(new BlockPos(mop.getHitVec()));
+								
+								if(tileEntity instanceof CoresampleTileEntity){
+									IBlockOverlayText overlayBlock = (IBlockOverlayText) tileEntity;
+									String[] text = overlayBlock.getOverlayText(player, mop, hammer);
+									ItemStack coresample = ((CoresampleTileEntity) tileEntity).coresample;
+									
+									if(ItemNBTHelper.hasKey(coresample, "oil") && text != null && text.length > 0){
+										String resName = ItemNBTHelper.hasKey(coresample, "resType") ? ItemNBTHelper.getString(coresample, "resType") : "";
+										int amnt = ItemNBTHelper.getInt(coresample, "oil");
+										int i = text.length;
+										
+										ReservoirType res = null;
+										for(ReservoirType type:PumpjackHandler.reservoirs.values()){
+											if(resName.equals(type.name)){
+												res = type;
+											}
+										}
+										
+										String s = I18n.format("chat.immersivepetroleum.info.coresample.noOil");
+										if(res != null && amnt > 0){
+											int est = (amnt / 1000) * 1000; // Why?
+											String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
+											
+											s = I18n.format("chat.immersivepetroleum.info.coresample.oil", FORMATTER.format(est), fluidName);
+										}else if(res != null && res.replenishRate > 0){
+											String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
+											s = I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName);
+										}
+										
+										int fx = event.getWindow().getScaledWidth() / 2 + 8;
+										int fy = event.getWindow().getScaledHeight() / 2 + 8 + i * ClientUtils.font().FONT_HEIGHT;
+										ClientUtils.font().drawStringWithShadow(s, fx, fy, 0xffffff);
+									}
 								}
 							}
-							
-							String s = I18n.format("chat.immersivepetroleum.info.coresample.noOil");
-							if(res != null && amnt > 0){
-								int est = (amnt / 1000) * 1000; // Why?
-								String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
+							break;
+						}
+						case ENTITY:{
+							EntityRayTraceResult rtr=(EntityRayTraceResult)mop;
+							if(rtr.getEntity() instanceof SpeedboatEntity){
+								String[] text = ((SpeedboatEntity) rtr.getEntity()).getOverlayText(player, mop);
 								
-								s = I18n.format("chat.immersivepetroleum.info.coresample.oil", FORMATTER.format(est), fluidName);
-							}else if(res != null && res.replenishRate > 0){
-								String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
-								s = I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName);
+								if(text != null && text.length > 0){
+									FontRenderer font = ClientUtils.font();
+									int col = 0xffffff;
+									for(int i = 0;i < text.length; i++){
+										if(text[i] != null){
+											int fx = event.getWindow().getScaledWidth() / 2 + 8;
+											int fy = event.getWindow().getScaledHeight() / 2 + 8 + i * font.FONT_HEIGHT;
+											font.drawStringWithShadow(text[i], fx, fy, col);
+										}
+									}
+								}
 							}
-							
-							int fx = event.getWindow().getScaledWidth() / 2 + 8;
-							int fy = event.getWindow().getScaledHeight() / 2 + 8 + i * font.FONT_HEIGHT;
-							font.drawStringWithShadow(s, fx, fy, col);
+							break;
 						}
-					}
-				}else if(mop != null && mop.getType() != Type.ENTITY && mop.hitInfo instanceof SpeedboatEntity){
-					String[] text = ((SpeedboatEntity) mop.hitInfo).getOverlayText(player, mop);
-					if(text != null && text.length > 0){
-						FontRenderer font = ClientUtils.font();
-						int col = 0xffffff;
-						for(int i = 0;i < text.length;i++){
-							if(text[i] != null){
-								int fx = event.getWindow().getScaledWidth() / 2 + 8;
-								int fy = event.getWindow().getScaledHeight() / 2 + 8 + (i++) * font.FONT_HEIGHT;
-								font.drawStringWithShadow(text[i], fx, fy, col);
-							}
-						}
+						default:
+							break;
 					}
 				}
 			}
 		}
 	}
 	
+	@OnlyIn(Dist.CLIENT)
+	@SubscribeEvent()
+	public static void onRenderOverlayPost(RenderGameOverlayEvent.Post event){
+		if(ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
+			PlayerEntity player = ClientUtils.mc().player;
+			
+			if(player.getRidingEntity() instanceof SpeedboatEntity){
+				int offset = 0;
+				for(Hand hand:Hand.values()){
+					if(!player.getHeldItem(hand).isEmpty()){
+						ItemStack equipped = player.getHeldItem(hand);
+						if((equipped.getItem() instanceof DrillItem) || equipped.getItem() instanceof ChemthrowerItem){
+							offset -= 85;
+						}
+					}
+				}
+				
+				GlStateManager.pushMatrix();
+				{
+					float dx = 48;
+					float dy = event.getWindow().getScaledHeight()-2;
+					int w = 31;
+					int h = 62;
+					
+					double uMin = 179 / 256f;
+					double uMax = 210 / 256f;
+					double vMin = 9 / 256f;
+					double vMax = 71 / 256f;
+					
+					ClientUtils.bindTexture("immersivepetroleum:textures/gui/hud_elements.png");
+					GlStateManager.color4f(1, 1, 1, 1);
+					GlStateManager.translated(dx, dy + offset, 0);
+					ClientUtils.drawTexturedRect(-24, -68, w, h, uMin, uMax, vMin, vMax);
+					
+					GL11.glTranslated(-23, -37, 0);
+					SpeedboatEntity boat = (SpeedboatEntity) player.getRidingEntity();
+					int capacity = boat.getMaxFuel();
+					
+					FluidStack fs = boat.getContainedFluid();
+					int amount = fs == FluidStack.EMPTY || fs.getFluid() == null ? 0 : fs.getAmount();
+					
+					float cap = (float) capacity;
+					float angle = 83 - (166 * amount / cap);
+					GlStateManager.rotatef(angle, 0, 0, 1);
+					ClientUtils.drawTexturedRect(6, -2, 24, 4, 91 / 256f, 123 / 256f, 80 / 256f, 87 / 256f);
+					GlStateManager.rotatef(-angle, 0, 0, 1);
+					
+					GlStateManager.translated(23, 37, 0);
+					ClientUtils.drawTexturedRect(-41, -73, 53, 72, 8 / 256f, 61 / 256f, 4 / 256f, 76 / 256f);
+					
+					// DEBUG
+					GlStateManager.pushMatrix();
+					{
+						FontRenderer font=Minecraft.getInstance().fontRenderer;
+						if(font!=null){
+							Vec3d vec=boat.getMotion();
+							
+							float speed=(float)(100*Math.sqrt(vec.x*vec.x + vec.z*vec.z));
+							
+							String out0=String.format(Locale.US, "Fuel: %s/%sMB", amount,capacity);
+							String out1=String.format(Locale.US, "Speed: %.2f", speed);
+							font.drawStringWithShadow(out0, -25, -94, 0xFFFFFFFF);
+							font.drawStringWithShadow(out1, -25, -85, 0xFFFFFFFF);
+						}
+					}
+					GlStateManager.popMatrix();
+				}
+				GlStateManager.popMatrix();
+			}
+		}
+	}
+
 	@SubscribeEvent
 	public static void handleBoatImmunity(LivingAttackEvent event){
 		if(event.getSource() == DamageSource.LAVA || event.getSource() == DamageSource.ON_FIRE || event.getSource() == DamageSource.IN_FIRE){
@@ -471,7 +567,6 @@ public class EventHandler{
 			SpeedboatEntity boat = (SpeedboatEntity) entity.getRidingEntity();
 			if(boat.isFireproof){
 				entity.extinguish();
-				
 			}
 		}
 	}
@@ -508,7 +603,7 @@ public class EventHandler{
 					if(world.isRemote){
 						if(te instanceof MultiblockPartTileEntity){
 							MultiblockPartTileEntity<?> part = (MultiblockPartTileEntity<?>) te;
-							BlockState n = IPContent.fluidLubricant.block.getDefaultState();
+							BlockState n = Fluids.fluidLubricant.block.getDefaultState();
 							Vec3i size=lubeHandler.getStructureDimensions();
 							
 							int numBlocks = (int)(size.getX()*size.getY()*size.getZ()*0.25F);
@@ -578,62 +673,6 @@ public class EventHandler{
 		}
 	}
 	
-	@OnlyIn(Dist.CLIENT)
-	@SubscribeEvent()
-	public static void onRenderOverlayPost(RenderGameOverlayEvent.Post event){
-		if(ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
-			PlayerEntity player = ClientUtils.mc().player;
-			
-			if(player.getRidingEntity() instanceof SpeedboatEntity){
-				int offset = 0;
-				for(Hand hand:Hand.values()){
-					if(!player.getHeldItem(hand).isEmpty()){
-						ItemStack equipped = player.getHeldItem(hand);
-						if((equipped.getItem() instanceof DrillItem) || equipped.getItem() instanceof ChemthrowerItem){
-							offset -= 85;
-						}
-					}
-				}
-				
-				ClientUtils.bindTexture("immersivepetroleum:textures/gui/hud_elements.png");
-				GL11.glColor4f(1, 1, 1, 1);
-				float dx = event.getWindow().getScaledWidth() - 16;
-				float dy = event.getWindow().getScaledHeight();
-				GL11.glPushMatrix();
-				GL11.glTranslated(dx, dy + offset, 0);
-				int w = 31;
-				int h = 62;
-				double uMin = 179 / 256f;
-				double uMax = 210 / 256f;
-				double vMin = 9 / 256f;
-				double vMax = 71 / 256f;
-				ClientUtils.drawTexturedRect(-24, -68, w, h, uMin, uMax, vMin, vMax);
-				
-				GL11.glTranslated(-23, -37, 0);
-				SpeedboatEntity boat = (SpeedboatEntity) player.getRidingEntity();
-				int capacity = boat.getMaxFuel();
-				
-				FluidStack fs = boat.getContainedFluid();
-				int amount = fs == null || fs.getFluid() == null ? 0 : fs.getAmount();
-				
-				float cap = (float) capacity;
-				float angle = 83 - (166 * amount / cap);
-				GL11.glRotatef(angle, 0, 0, 1);
-				ClientUtils.drawTexturedRect(6, -2, 24, 4, 91 / 256f, 123 / 256f, 80 / 256f, 87 / 256f);
-				GL11.glRotatef(-angle, 0, 0, 1);
-				
-				GL11.glTranslated(23, 37, 0);
-				ClientUtils.drawTexturedRect(-41, -73, 53, 72, 8 / 256f, 61 / 256f, 4 / 256f, 76 / 256f);
-				
-				// ClientUtils.drawTexturedRect(-32, -43, 12, 12, 66 / 256f, 78
-				// / 256f, 9 / 256f, 21 / 256f);
-				
-				GL11.glPopMatrix();
-			}
-			
-		}
-	}
-	
 	public static Map<Integer, List<BlockPos>> napalmPositions = new HashMap<>();
 	public static Map<Integer, List<BlockPos>> toRemove = new HashMap<>();
 	
@@ -647,8 +686,8 @@ public class EventHandler{
 				List<BlockPos> iterate = new ArrayList<>(napalmPositions.get(d));
 				for(BlockPos position:iterate){
 					BlockState state = event.world.getBlockState(position);
-					if(state.getBlock() instanceof FlowingFluidBlock && state.getBlock() == IPContent.fluidNapalm.block){
-						((BlockNapalm) IPContent.fluidNapalm).processFire(event.world, position);
+					if(state.getBlock() instanceof FlowingFluidBlock && state.getBlock() == Fluids.fluidNapalm.block){
+						((BlockNapalm) Fluids.fluidNapalm).processFire(event.world, position);
 					}
 					toRemove.get(d).add(position);
 				}

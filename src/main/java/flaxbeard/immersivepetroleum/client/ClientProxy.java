@@ -29,13 +29,15 @@ import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
 import flaxbeard.immersivepetroleum.client.page.ManualElementSchematicCrafting;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
+import flaxbeard.immersivepetroleum.client.render.SpeedboatRenderer;
 import flaxbeard.immersivepetroleum.client.render.TileAutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
-import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.DistillationTowerParentTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity.PumpjackParentTileEntity;
+import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
@@ -57,13 +59,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID)
 public class ClientProxy extends CommonProxy{
@@ -75,7 +80,9 @@ public class ClientProxy extends CommonProxy{
 	public void construct(){}
 	
 	@Override
-	public void setup(){}
+	public void setup(){
+		RenderingRegistry.registerEntityRenderingHandler(SpeedboatEntity.class, SpeedboatRenderer::new);
+	}
 	
 	@Override
 	public void registerContainersAndScreens(){
@@ -96,7 +103,6 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void preInit(){
-		// RenderingRegistry.registerEntityRenderingHandler(EntitySpeedboat.class, RenderSpeedboat::new);
 	}
 	
 	@Override
@@ -135,8 +141,8 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man=ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("schematics0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.itemProjector, 1)));
-		builder.addSpecialElement("schematics1", 0, new ManualElementSchematicCrafting(man, "schematics1", new ItemStack(IPContent.itemProjector, 1)));
+		builder.addSpecialElement("schematics0", 0, new ManualElementCrafting(man, new ItemStack(Items.itemProjector, 1)));
+		builder.addSpecialElement("schematics1", 0, new ManualElementSchematicCrafting(man, "schematics1", new ItemStack(Items.itemProjector, 1)));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -179,7 +185,7 @@ public class ClientProxy extends CommonProxy{
 	static ManualEntry entry;
 	private static String[] createContent(TextSplitter splitter){
 		ArrayList<ItemStack> list = new ArrayList<>();
-		final ReservoirType[] minerals = PumpjackHandler.reservoirList.keySet().toArray(new ReservoirType[0]);
+		final ReservoirType[] minerals = PumpjackHandler.reservoirs.values().toArray(new ReservoirType[0]);
 		
 		StringBuilder content=new StringBuilder();
 		content.append(I18n.format("ie.manual.entry.reservoirs.oil0"));
@@ -195,16 +201,16 @@ public class ClientProxy extends CommonProxy{
 			String aOrAn = I18n.format(isVowel ? "ie.manual.entry.reservoirs.vowel" : "ie.manual.entry.reservoirs.consonant");
 			
 			String dimBLWL = "";
-			if(type.dimensionWhitelist != null && type.dimensionWhitelist.length > 0){
+			if(type.dimWhitelist != null && type.dimWhitelist.size() > 0){
 				String validDims = "";
-				for(int dim:type.dimensionWhitelist){
-					validDims += (!validDims.isEmpty() ? ", " : "") + "<dim;" + dim + ">";
+				for(ResourceLocation rl:type.dimWhitelist){
+					validDims += (!validDims.isEmpty() ? ", " : "") + "<dim;" + rl + ">";
 				}
 				dimBLWL = I18n.format("ie.manual.entry.reservoirs.dim.valid", localizedName, validDims, aOrAn);
-			}else if(type.dimensionBlacklist != null && type.dimensionBlacklist.length > 0){
+			}else if(type.dimBlacklist != null && type.dimBlacklist.size() > 0){
 				String invalidDims = "";
-				for(int dim:type.dimensionBlacklist){
-					invalidDims += (!invalidDims.isEmpty() ? ", " : "") + "<dim;" + dim + ">";
+				for(ResourceLocation rl:type.dimBlacklist){
+					invalidDims += (!invalidDims.isEmpty() ? ", " : "") + "<dim;" + rl + ">";
 				}
 				dimBLWL = I18n.format("ie.manual.entry.reservoirs.dim.invalid", localizedName, invalidDims, aOrAn);
 			}else{
@@ -213,16 +219,18 @@ public class ClientProxy extends CommonProxy{
 			content.append(dimBLWL);
 			
 			String bioBLWL = "";
-			if(type.biomeWhitelist != null && type.biomeWhitelist.length > 0){
+			if(type.bioWhitelist != null && type.bioWhitelist.size() > 0){
 				String validBiomes = "";
-				for(String biome:type.biomeWhitelist){
-					validBiomes += (!validBiomes.isEmpty() ? ", " : "") + PumpjackHandler.getTagDisplayName(biome);
+				for(ResourceLocation rl:type.bioWhitelist){
+					Biome bio=ForgeRegistries.BIOMES.getValue(rl);
+					validBiomes += (!validBiomes.isEmpty() ? ", " : "") + (bio != null ? bio.getDisplayName().getFormattedText() : rl);
 				}
 				bioBLWL = I18n.format("ie.manual.entry.reservoirs.bio.valid", validBiomes);
-			}else if(type.biomeBlacklist != null && type.biomeBlacklist.length > 0){
+			}else if(type.bioBlacklist != null && type.bioBlacklist.size() > 0){
 				String invalidBiomes = "";
-				for(String biome:type.biomeBlacklist){
-					invalidBiomes += (!invalidBiomes.isEmpty() ? ", " : "") + PumpjackHandler.getTagDisplayName(biome);
+				for(ResourceLocation rl:type.bioBlacklist){
+					Biome bio=ForgeRegistries.BIOMES.getValue(rl);
+					invalidBiomes += (!invalidBiomes.isEmpty() ? ", " : "") + (bio != null ? bio.getDisplayName().getFormattedText() : rl);
 				}
 				bioBLWL = I18n.format("ie.manual.entry.reservoirs.bio.invalid", invalidBiomes);
 			}else{

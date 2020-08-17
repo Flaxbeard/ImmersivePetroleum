@@ -34,7 +34,7 @@ import flaxbeard.immersivepetroleum.api.event.SchematicPlaceBlockPostEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicRenderBlockEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicTestEvent;
 import flaxbeard.immersivepetroleum.client.ShaderUtil;
-import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.RotateSchematicPacket;
 import net.minecraft.block.BlockState;
@@ -464,8 +464,8 @@ public class ItemProjector extends IPItemBase{
 			ItemStack mainItem = player.getHeldItemMainhand();
 			ItemStack secondItem = player.getHeldItemOffhand();
 			
-			boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
-			boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
+			boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
+			boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
 			ItemStack target = main ? mainItem : secondItem;
 			
 			if(main || off){
@@ -516,11 +516,11 @@ public class ItemProjector extends IPItemBase{
 			if(preview && mc.player != null){ // TODO BookMark: renderSchematic
 				ItemStack secondItem = mc.player.getHeldItemOffhand();
 				
-				boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
+				boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
 				
 				for(int i = 0;i <= 10;i++){
 					ItemStack stack = (i == 10 ? secondItem : mc.player.inventory.getStackInSlot(i));
-					if(!stack.isEmpty() && stack.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(stack, "multiblock")){
+					if(!stack.isEmpty() && stack.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(stack, "multiblock")){
 						GlStateManager.pushMatrix();
 						{
 							renderSchematic(stack, mc.player, mc.player.world, event.getPartialTicks(), i == mc.player.inventory.currentItem || (i == 10 && off));
@@ -538,8 +538,8 @@ public class ItemProjector extends IPItemBase{
 				ItemStack mainItem = mc.player.getHeldItemMainhand();
 				ItemStack secondItem = mc.player.getHeldItemOffhand();
 				
-				boolean main = (mainItem != null && !mainItem.isEmpty()) && mainItem.getItem() == IPContent.blockMetalDevice.asItem();
-				boolean off = (secondItem != null && !secondItem.isEmpty()) && secondItem.getItem() == IPContent.blockMetalDevice.asItem();
+				boolean main = (mainItem != null && !mainItem.isEmpty()) && mainItem.getItem() == flaxbeard.immersivepetroleum.common.IPContent.Blocks.blockMetalDevice.asItem();
+				boolean off = (secondItem != null && !secondItem.isEmpty()) && secondItem.getItem() == flaxbeard.immersivepetroleum.common.IPContent.Blocks.blockMetalDevice.asItem();
 				
 				if(main || off){
 					ItemRenderer itemRenderer=ClientUtils.mc().getItemRenderer();
@@ -591,7 +591,7 @@ public class ItemProjector extends IPItemBase{
 													GlStateManager.scaled(1 / 0.65F, 1 / 0.65F, 1 / 0.65F);
 													GlStateManager.scaled(2, 2, 2);
 													
-													ItemStack toRender = new ItemStack(IPContent.blockMetalDevice);
+													ItemStack toRender = new ItemStack(flaxbeard.immersivepetroleum.common.IPContent.Blocks.blockMetalDevice);
 													itemRenderer.renderItem(toRender, itemRenderer.getModelWithOverrides(toRender));
 													
 													ShaderUtil.releaseShader();

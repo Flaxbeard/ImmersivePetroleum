@@ -8,7 +8,6 @@ package flaxbeard.immersivepetroleum.common.util;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import flaxbeard.immersivepetroleum.common.items.ItemIPInternalStorage;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -22,14 +21,15 @@ import net.minecraftforge.items.ItemStackHandler;
 
 public class IPItemStackHandler extends ItemStackHandler implements ICapabilityProvider{
 	private boolean first = true;
-	private ItemStack stack;
 	@Nonnull
-	private Runnable onChange = () -> {
-	};
+	private Runnable onChange = () -> {};
 	
-	public IPItemStackHandler(ItemStack stack){
-		this.stack = stack;
+	@Override
+	public int getSlots(){
+		return 4;
 	}
+	
+	public IPItemStackHandler(){}
 	
 	public void setTile(TileEntity tile){
 		if(tile != null){
@@ -60,30 +60,24 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 	}
 	
-	private LazyOptional<Object> dum;
 	@Nullable
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing){
 		if(this.first){
-			int idealSize = ((ItemIPInternalStorage) this.stack.getItem()).getSlotCount(this.stack);
-			NonNullList<ItemStack> newList = NonNullList.withSize(idealSize, ItemStack.EMPTY);
-			
+			int idealSize = getSlots();
+			NonNullList<ItemStack> list = NonNullList.withSize(idealSize, ItemStack.EMPTY);
 			for(int i = 0;i < Math.min(this.stacks.size(), idealSize);++i){
-				newList.set(i, this.stacks.get(i));
+				list.set(i, this.stacks.get(i));
 			}
 			
-			this.stacks = newList;
-			this.stack = ItemStack.EMPTY;
+			this.stacks = list;
 			this.first = false;
 		}
 		
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			if(this.dum==null)
-				this.dum=LazyOptional.of(()->this);
-			
-			return this.dum.cast();
-		}else{
-			return null;
+			return LazyOptional.of(()->this).cast();
 		}
+		
+		return LazyOptional.empty();
 	}
 	
 	public NonNullList<ItemStack> getContainedItems(){

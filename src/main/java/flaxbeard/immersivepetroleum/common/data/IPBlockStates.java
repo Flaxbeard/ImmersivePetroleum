@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.IEProperties;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.IPContent.Blocks;
 import flaxbeard.immersivepetroleum.common.blocks.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.block.Block;
@@ -12,12 +13,12 @@ import net.minecraft.state.EnumProperty;
 import net.minecraft.state.IProperty;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.ExistingModelFile;
-import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
 
@@ -30,12 +31,23 @@ public class IPBlockStates extends BlockStateProvider{
 	
 	@Override
 	protected void registerStatesAndModels(){
-		simpleBlock(IPContent.blockAsphalt); // FIXME Item not showing up properly.
+		// Dummies
+		getVariantBuilder(Blocks.dummyBlockOilOre).partialState()
+			.setModels(new ConfiguredModel(cubeAll(Blocks.dummyBlockOilOre)));
+		getVariantBuilder(Blocks.dummyBlockPipe).partialState()
+			.setModels(new ConfiguredModel(getExistingFile(modLoc("block/dummy_pipe"))));
+		getVariantBuilder(Blocks.dummyBlockConveyor).partialState()
+			.setModels(new ConfiguredModel(getExistingFile(modLoc("block/dummy_conveyor"))));
 		
+		// Multiblocks
 		createMultiblock(IPContent.Multiblock.distillationtower, new ResourceLocation(ImmersivePetroleum.MODID, "models/distillation_tower"));
+		createMultiblock(IPContent.Multiblock.pumpjack, new ResourceLocation(ImmersivePetroleum.MODID, "models/pumpjack"));
 		
+		// "Normal" Blocks
+		simpleBlockWithItem(Blocks.blockAsphalt);
 		gasGeneratorState();
 		
+		// Fluids
 		for(IPFluid f:IPFluid.LIST){
 			ResourceLocation still=f.getAttributes().getStillTexture();
 			ModelFile model = getBuilder("block/fluid/"+f.getRegistryName().getPath()).texture("particle", still);
@@ -45,19 +57,31 @@ public class IPBlockStates extends BlockStateProvider{
 		
 		loadedModels.backupModels();
 	}
-
-	private void gasGeneratorState(){
-		ExistingModelFile gasGenModel=getExistingFile(modLoc("block/generator"));
-		MultiPartBlockStateBuilder gasGen=getMultipartBuilder(IPContent.blockGasGenerator);
+	
+	private void simpleBlockWithItem(Block block){
+		ModelFile file=cubeAll(block);
 		
+		getVariantBuilder(block).partialState()
+			.setModels(new ConfiguredModel(file));
+		getBuilder(ImmersivePetroleum.MODID+":item/"+block.getRegistryName().getPath())
+			.parent(file)
+			.texture("particle", modLoc("block/"+block.getRegistryName().getPath()));
+	}
+	
+	private void gasGeneratorState(){
+		BlockModelBuilder model=withExistingParent(Blocks.blockGasGenerator.getRegistryName().toString(), modLoc("block/generator"))
+				.texture("particle", modLoc("block/gen_top"));
+		
+		VariantBlockStateBuilder builder=getVariantBuilder(Blocks.blockGasGenerator);
 		Direction.Plane.HORIZONTAL.forEach(dir->{
 			int rotation=90*dir.getHorizontalIndex();
-			gasGen.part()
-				.modelFile(gasGenModel).rotationY(rotation).addModel()
-				.condition(GasGeneratorBlock.FACING, dir).end();
+			
+			builder.partialState()
+				.with(GasGeneratorBlock.FACING, dir)
+				.addModels(new ConfiguredModel(model, 0, rotation, false));
 		});
 		
-		getBuilder(ImmersivePetroleum.MODID+":item/gas_generator").parent(gasGenModel).gui3d(true); // FIXME Item not showing up properly.
+		getBuilder(ImmersivePetroleum.MODID+":item/gas_generator").parent(getExistingFile(modLoc("block/generator")));
 	}
 	
 	/** Used basicly for every multiblock-block */
@@ -65,7 +89,7 @@ public class IPBlockStates extends BlockStateProvider{
 			new ExistingModelFile(new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty"), existingFileHelper)
 	);
 	
-	// Mostly from blusunrize.immersiveengineering.common.data.BlockStates
+	/** From {@link blusunrize.immersiveengineering.common.data.BlockStates} and altered to only result in empty models */
 	private void createMultiblock(Block block, ResourceLocation particletexture){
 		IProperty<Boolean> isSlave=IEProperties.MULTIBLOCKSLAVE;
 		EnumProperty<Direction> facing=IEProperties.FACING_HORIZONTAL;

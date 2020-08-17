@@ -20,6 +20,6 @@ public class IPBlockBase extends Block{
 	}
 	
 	protected BlockItem createBlockItem(){
-		return new BlockItem(this, new Item.Properties().group(ImmersivePetroleum.creativeTab));
+		return new IPBlockItemBase(this, new Item.Properties().group(ImmersivePetroleum.creativeTab));
 	}
 }

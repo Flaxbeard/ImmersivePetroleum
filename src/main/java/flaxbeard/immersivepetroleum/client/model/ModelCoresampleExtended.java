@@ -22,7 +22,6 @@ import blusunrize.immersiveengineering.client.models.ModelCoresample;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
-import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -86,7 +85,7 @@ public class ModelCoresampleExtended extends ModelCoresample
 							BlockState state = b != null ? b.getDefaultState() : Blocks.STONE.getDefaultState();
 							
 							IForgeBakedModel model =  (IForgeBakedModel)Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModel(state);
-							if(b == IPContent.dummyBlockOilOre){
+							if(b == flaxbeard.immersivepetroleum.common.IPContent.Blocks.dummyBlockOilOre){
 								textureOre.put(null, weight);
 							}else if(model != null && model.getParticleTexture(null) != null){
 								textureOre.put(model.getParticleTexture(null), weight);
@@ -139,7 +138,7 @@ public class ModelCoresampleExtended extends ModelCoresample
 							}
 							
 							// BlockTypes_Dummy.OIL_DEPOSIT
-							BlockState state = IPContent.dummyBlockOilOre.getDefaultState();
+							BlockState state = flaxbeard.immersivepetroleum.common.IPContent.Blocks.dummyBlockOilOre.getDefaultState();
 							IForgeBakedModel model = (IForgeBakedModel)Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModel(state);
 							sprite = model.getParticleTexture(null);
 							
@@ -211,10 +210,10 @@ public class ModelCoresampleExtended extends ModelCoresample
 						for(MineralMix mix:ExcavatorHandler.mineralList.values()){
 							if(name.equals(mix.getPlainName())){
 								if(resName != null){
-									for(ReservoirType type:PumpjackHandler.reservoirList.keySet()){
+									for(ReservoirType type:PumpjackHandler.reservoirs.values()){
 										if(resName.equals(type.name)){
 											List<StackWithChance> outputs=new ArrayList<>(Arrays.asList(mix.outputs));
-											outputs.add(new StackWithChance(new ItemStack(IPContent.dummyBlockOilOre), 0.04F));
+											outputs.add(new StackWithChance(new ItemStack(flaxbeard.immersivepetroleum.common.IPContent.Blocks.dummyBlockOilOre), 0.04F));
 											StackWithChance[] outputNew=outputs.toArray(new StackWithChance[0]);
 											DimensionType[] copy=mix.dimensions.toArray(new DimensionType[0]);
 											MineralMix mix2=new MineralMix(mix.getId(), outputNew, mix.weight, mix.failChance, copy, mix.background);
@@ -247,7 +246,7 @@ public class ModelCoresampleExtended extends ModelCoresample
 			
 			if(resName != null){
 				if(!modelCache.containsKey("_" + resName)){
-					for(ReservoirType type:PumpjackHandler.reservoirList.keySet()){
+					for(ReservoirType type:PumpjackHandler.reservoirs.values()){
 						if(resName.equals(type.name)){
 //							MineralMix mix = new MineralMix(resName, 1, Arrays.asList(new ExcavatorHandler.OreOutput(IPContent.dummyBlockOilOre.getRegistryName(), 1F)));
 //							mix.outputs.set(0, new ItemStack(IPContent.blockDummy, 1, EnumDummyType.OIL_DEPOSIT.getMeta()));

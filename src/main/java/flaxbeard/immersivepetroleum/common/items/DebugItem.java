@@ -1,16 +1,18 @@
 package flaxbeard.immersivepetroleum.common.items;
 
+import java.util.Set;
+
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorageAdvanced;
+import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.DistillationTowerParentTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity.PumpjackParentTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -27,31 +29,54 @@ public class DebugItem extends IPItemBase{
 	public ActionResultType onItemUse(ItemUseContext context){
 		if(!context.getWorld().isRemote){
 			TileEntity te=context.getWorld().getTileEntity(context.getPos());
-			if(te instanceof DistillationTowerTileEntity || te instanceof DistillationTowerParentTileEntity){
-				DistillationTowerTileEntity master=((DistillationTowerTileEntity)te);
-				
-				Vec3i loc=master.offsetToMaster;
-				
-				String strOut="At: "+loc.getX()+" "+loc.getY()+" "+loc.getZ()+" "+context.getFace();
-				
-				if(DistillationTowerTileEntity.Energy_IN.contains(loc)){
-					strOut="Matching DistillationTowerTileEntity.Energy_IN";
+			if(!context.getPlayer().isSneaking()){
+				if(te instanceof DistillationTowerTileEntity){
+					DistillationTowerTileEntity master=(DistillationTowerTileEntity)te;
+					
+					Vec3i loc=master.posInMultiblock;
+					String strOut="At: "+loc.getX()+" "+loc.getY()+" "+loc.getZ()+" "+context.getFace();
+					
+					context.getPlayer().sendStatusMessage(new StringTextComponent(strOut), true);
+					
+					return ActionResultType.PASS;
+					
+				}else if(te instanceof PumpjackTileEntity){
+					PumpjackTileEntity master=(PumpjackTileEntity)te;
+					
+					Vec3i loc=master.posInMultiblock;
+					String strOut="At: "+loc.getX()+" "+loc.getY()+" "+loc.getZ()+" "+context.getFace();
+					
+					context.getPlayer().sendStatusMessage(new StringTextComponent(strOut), true);
+					
+					return ActionResultType.PASS;
+					
 				}
-				
-				context.getPlayer().sendStatusMessage(new StringTextComponent(strOut), true);
-				
-				return ActionResultType.PASS;
 			}
 			
-			if(te instanceof PumpjackTileEntity || te instanceof PumpjackParentTileEntity){
-				PumpjackTileEntity master=(PumpjackTileEntity)te;
+			if(te instanceof PoweredMultiblockTileEntity){ // Generic
+				PoweredMultiblockTileEntity<?,?> master=(PoweredMultiblockTileEntity<?,?>)te;
 				
-				Vec3i loc=master.offsetToMaster;
+				Vec3i loc=master.posInMultiblock;
+				
+				Set<BlockPos> energyInputs=master.getEnergyPos();
+				Set<BlockPos> redstoneInputs=master.getRedstonePos();
+				
+				for(BlockPos pos:energyInputs){
+					if(pos.equals(loc)){
+						context.getPlayer().sendStatusMessage(new StringTextComponent("Energy Port").applyTextStyle(TextFormatting.AQUA), true);
+						return ActionResultType.PASS;
+					}
+				}
+				
+				for(BlockPos pos:redstoneInputs){
+					if(pos.equals(loc)){
+						context.getPlayer().sendStatusMessage(new StringTextComponent("Redstone Port").applyTextStyle(TextFormatting.RED), true);
+						return ActionResultType.PASS;
+					}
+				}
 				
 				String strOut="At: "+loc.getX()+" "+loc.getY()+" "+loc.getZ()+" "+context.getFace();
-				
 				context.getPlayer().sendStatusMessage(new StringTextComponent(strOut), true);
-				
 				return ActionResultType.PASS;
 			}
 		}

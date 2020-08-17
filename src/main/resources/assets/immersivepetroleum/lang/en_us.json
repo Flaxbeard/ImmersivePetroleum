@@ -37,11 +37,12 @@
 	"item.immersivepetroleum.lubricant_bucket": "Bucket of Lubricant",
 	"item.immersivepetroleum.gasoline_bucket": "Bucket of Gasoline",
 	"item.immersivepetroleum.napalm_bucket": "Bucket of Napalm",
-	"item.immersivepetroleum.upgrades.reinforced_hull": "Reinforced Hull",
-	"item.immersivepetroleum.upgrades.icebreaker": "Icebreaker Bow",
-	"item.immersivepetroleum.upgrades.tank": "Expanded Fuel Tank",
-	"item.immersivepetroleum.upgrades.rudders": "Maneuvering Rudders",
-	"item.immersivepetroleum.upgrades.paddles": "Emergency Paddles",
+	
+	"item.immersivepetroleum.reinforced_hull": "Reinforced Hull",
+	"item.immersivepetroleum.icebreaker": "Icebreaker Bow",
+	"item.immersivepetroleum.tank": "Expanded Fuel Tank",
+	"item.immersivepetroleum.rudders": "Maneuvering Rudders",
+	"item.immersivepetroleum.paddles": "Emergency Paddles",
 	
 	"_comment": "################## Descriptions ##################",
 	

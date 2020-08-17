@@ -62,8 +62,10 @@ public class CloseBookPacket implements IMessage{
 				if(main || off){
 					if(this.name == null && ItemNBTHelper.hasKey(target, "lastMultiblock")){
 						ItemNBTHelper.remove(target, "lastMultiblock");
+						System.out.println("Removed Multiblock-NBT to "+target.getDisplayName().getUnformattedComponentText());
 					}else if(this.name != null){
 						ItemNBTHelper.putString(target, "lastMultiblock", this.name.toString());
+						System.out.println("Added Multiblock-NBT to "+target.getDisplayName().getUnformattedComponentText()+" -> "+this.name.toString());
 					}
 				}
 			}

@@ -1,5 +1,11 @@
 {
   "type": "immersivepetroleum:distillation",
+  "byproducts": [
+    {
+      "item": "immersivepetroleum:bitumen",
+      "chance": "0.07"
+    }
+  ],
   "results": [
     {
       "fluid": "immersivepetroleum:lubricant",
@@ -18,10 +24,6 @@
     "fluid": "immersivepetroleum:oil",
     "amount": 75
   },
-  "byproducts": [
-    {
-      "item": "immersivepetroleum:bitumen",
-      "chance": "0.07"
-    }
-  ]
+  "energy": 2048,
+  "time": 1
 }

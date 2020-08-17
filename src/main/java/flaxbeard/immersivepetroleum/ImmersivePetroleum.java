@@ -3,12 +3,14 @@ package flaxbeard.immersivepetroleum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import blusunrize.immersiveengineering.api.energy.DieselHandler;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
@@ -34,14 +36,13 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod(ImmersivePetroleum.MODID)
 public class ImmersivePetroleum{
 	public static final String MODID = "immersivepetroleum";
-	public static final String VERSION = "@VERSION@";
 
 	public static final Logger log=LogManager.getLogger(MODID);
 	
 	public static final ItemGroup creativeTab = new ItemGroup(MODID){
 		@Override
 		public ItemStack createIcon(){
-			return new ItemStack(IPContent.fluidCrudeOil.getFilledBucket());
+			return new ItemStack(Fluids.fluidCrudeOil.getFilledBucket());
 		}
 	};
 

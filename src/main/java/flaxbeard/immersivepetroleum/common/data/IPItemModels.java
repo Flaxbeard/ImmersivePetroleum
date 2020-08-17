@@ -4,7 +4,9 @@ import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.data.models.LoadedModelBuilder;
 import blusunrize.immersiveengineering.common.data.models.LoadedModelProvider;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.IPContent.Blocks;
+import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
+import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.fluid.Fluid;
@@ -28,22 +30,21 @@ public class IPItemModels extends LoadedModelProvider{
 	
 	@Override
 	protected void registerModels(){
-		genericItem(IPContent.itemBitumen);
-		genericItem(IPContent.itemOilCan);
-		genericItem(IPContent.itemSpeedboat);
-		genericItem(IPContent.itemUpgradeBreaker);
-		genericItem(IPContent.itemUpgradeHull);
-		genericItem(IPContent.itemUpgradePaddles);
-		genericItem(IPContent.itemUpgradeRudders);
-		genericItem(IPContent.itemUpgradeTank);
+		genericItem(Items.itemBitumen);
+		genericItem(Items.itemOilCan);
+		genericItem(Items.itemSpeedboat);
 		
-		getBuilder(IPContent.itemProjector)
-			.parent(getExistingFile(modLoc("item/schematic")));
+		genericItem(BoatUpgrades.itemUpgradeBreaker);
+		genericItem(BoatUpgrades.itemUpgradeHull);
+		genericItem(BoatUpgrades.itemUpgradePaddles);
+		genericItem(BoatUpgrades.itemUpgradeRudders);
+		genericItem(BoatUpgrades.itemUpgradeTank);
 		
-		getBuilder(IPContent.blockGasGenerator)
+		getBuilder(Items.itemProjector)
+			.parent(getExistingFile(modLoc("item/mb_projector")));
+		
+		getBuilder(Blocks.blockGasGenerator)
 			.parent(getExistingFile(modLoc("block/generator")));
-		
-		cubeAll("asphalt", modLoc("block/asphalt"));
 		
 		for(IPFluid f:IPFluid.LIST)
 			createBucket(f);

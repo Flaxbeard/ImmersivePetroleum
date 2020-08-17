@@ -18,17 +18,15 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class IPUpgradeItem extends IPItemBase implements IUpgrade{
 	private Set<String> set;
-	private String type;
 	public IPUpgradeItem(String name, String type){
 		super(name, new Item.Properties().maxStackSize(1));
-		this.type=type;
 		this.set=ImmutableSet.of(type);
 	}
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		tooltip.add(new TranslationTextComponent("desc.immersivepetroleum.flavour.upgrades." + this.type));
+		tooltip.add(new TranslationTextComponent("desc.immersivepetroleum.flavour.upgrades." + getRegistryName().getPath()));
 	}
 
 	@Override

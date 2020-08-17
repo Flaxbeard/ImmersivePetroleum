@@ -1,8 +1,8 @@
 {
   "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
   "textures": {
-    "0": "immersiveengineering:block/conveyor",
-    "1": "immersiveengineering:block/conveyor_casing_side"
+    "0": "immersiveengineering:block/conveyor/conveyor",
+    "1": "immersiveengineering:block/conveyor/casing_side"
   },
   "elements": [
     {

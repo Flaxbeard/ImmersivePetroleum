@@ -4,8 +4,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.IMultipassModel;
-import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.entity.Entity;
@@ -15,14 +13,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class ModelSpeedboat extends Model implements IMultipassModel
-{
+public class ModelSpeedboat extends Model{
 	public RendererModel[] boatSides = new RendererModel[5];
-	/**
-	 * Part of the model rendered to make it seem like there's no water in the boat
-	 */
+	/** Part of the model rendered to make it seem like there's no water in the boat */
 	public RendererModel noWater;
-	private final int patchList = GLAllocation.generateDisplayLists(1);
 	public RendererModel motor;
 	public RendererModel propeller;
 	public RendererModel propellerAssembly;
@@ -42,11 +36,6 @@ public class ModelSpeedboat extends Model implements IMultipassModel
 		this.boatSides[2] = (new RendererModel(this, 0, 27)).setTextureSize(128, 64);
 		this.boatSides[3] = (new RendererModel(this, 0, 35)).setTextureSize(128, 64);
 		this.boatSides[4] = (new RendererModel(this, 0, 43)).setTextureSize(128, 64);
-		int i = 32;
-		int j = 6;
-		int k = 20;
-		int l = 4;
-		int i1 = 28;
 		this.boatSides[0].addBox(-14.0F, -9.0F, -3.0F, 28, 16, 3, 0.0F);
 		this.boatSides[0].setRotationPoint(0.0F, 3.0F, 1.0F);
 		this.boatSides[1].addBox(-13.0F, -7.0F, -1.0F, 18, 6, 2, 0.0F);
@@ -202,152 +191,130 @@ public class ModelSpeedboat extends Model implements IMultipassModel
 		iS2T.rotateAngleX = (float) Math.toRadians(180 + 23);
 		iS2.addChild(iS2T);
 	}
-
+	
 	/**
 	 * Sets the models various rotation angles then renders the model.
 	 */
-
-	public void renderPaddle(BoatEntity boat, int paddle, float scale, float limbSwing, boolean rowing)
-	{
-		if (rowing)
-		{
-			float f = 40.0F;
-			float f1 = boat.getRowingTime(paddle, limbSwing) * 40.0F;
-			RendererModel RendererModel = this.paddles[paddle];
-			RendererModel.rotateAngleX = (float) MathHelper.clampedLerp(-1.0471975803375244D, -0.2617993950843811D, (double) ((MathHelper.sin(-f1) + 1.0F) / 2.0F));
-			RendererModel.rotateAngleY = (float) MathHelper.clampedLerp(-(Math.PI / 4D), (Math.PI / 4D), (double) ((MathHelper.sin(-f1 + 1.0F) + 1.0F) / 2.0F));
-
-			RendererModel.setRotationPoint(3.0F, -5.0F, 9.0F);
-
-
-			if (paddle == 1)
-			{
-				RendererModel.setRotationPoint(3.0F, -5.0F, -9.0F);
-				RendererModel.rotateAngleY = (float) Math.PI - RendererModel.rotateAngleY;
+	public void renderPaddle(BoatEntity boat, int paddle, float scale, float limbSwing, boolean rowing){
+		if(rowing){
+			float f = boat.getRowingTime(paddle, limbSwing);// * 40.0F;
+			RendererModel rendererModel = this.paddles[paddle];
+			rendererModel.rotateAngleX = (float) MathHelper.clampedLerp((double)(-(float)Math.PI / 3F), (double)-0.2617994F, (double)((MathHelper.sin(-f) + 1.0F) / 2.0F));
+			rendererModel.rotateAngleY = (float) MathHelper.clampedLerp((double)(-(float)Math.PI / 4F), (double)((float)Math.PI / 4F), (double)((MathHelper.sin(-f + 1.0F) + 1.0F) / 2.0F));
+			
+			rendererModel.setRotationPoint(3.0F, -5.0F, 9.0F);
+			
+			if(paddle == 1){
+				rendererModel.setRotationPoint(3.0F, -5.0F, -9.0F);
+				rendererModel.rotateAngleY = (float) Math.PI - rendererModel.rotateAngleY;
 			}
-
-			RendererModel.render(scale);
-		}
-		else
-		{
+			
+			rendererModel.render(scale);
+		}else{
 			RendererModel RendererModel = this.paddles[paddle];
 			RendererModel.rotateAngleX = (float) Math.toRadians(-25);
 			RendererModel.rotateAngleY = (float) Math.toRadians(-90);
-
+			
 			RendererModel.setRotationPoint(3.0F, -2.0F, 11.0F);
-
-			if (paddle == 1)
-			{
+			
+			if(paddle == 1){
 				RendererModel.setRotationPoint(3.0F, -2.0F, -11.0F);
 				RendererModel.rotateAngleY = (float) Math.PI - RendererModel.rotateAngleY;
 			}
-
+			
 			RendererModel.render(scale);
 		}
 	}
-
-	public void renderPaddles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
-	{
-		SpeedboatEntity BoatEntity = (SpeedboatEntity) entityIn;
-		this.renderPaddle(BoatEntity, 0, scale, limbSwing, BoatEntity.isEmergency());
-		this.renderPaddle(BoatEntity, 1, scale, limbSwing, BoatEntity.isEmergency());
+	
+	public void renderPaddles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale){
+		SpeedboatEntity boatEntity = (SpeedboatEntity) entityIn;
+		this.renderPaddle(boatEntity, 0, scale, limbSwing, boatEntity.isEmergency());
+		this.renderPaddle(boatEntity, 1, scale, limbSwing, boatEntity.isEmergency());
 	}
-
-	RendererModel makePaddle(boolean p_187056_1_)
-	{
+	
+	RendererModel makePaddle(boolean p_187056_1_){
 		RendererModel RendererModel = (new RendererModel(this, 62, p_187056_1_ ? 2 : 22)).setTextureSize(128, 64);
-		int i = 20;
-		int j = 7;
-		int k = 6;
-		float f = -5.0F;
 		RendererModel.addBox(-1.0F, 0.0F, -5.0F, 2, 2, 18);
 		RendererModel.addBox(p_187056_1_ ? -1.001F : 0.001F, -3.0F, 8.0F, 1, 6, 7);
 		return RendererModel;
 	}
-
-	public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
-	{
-
-		GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
+	
+	public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale){
+		GlStateManager.rotatef(90.0F, 0.0F, 1.0F, 0.0F);
 		SpeedboatEntity BoatEntity = (SpeedboatEntity) entityIn;
-		this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
-
-		for (int i = 0; i < 5; ++i)
-		{
+		
+		for(int i = 0;i < 5;++i){
 			this.boatSides[i].render(scale);
 		}
-
-
+		
 		float f1 = ((SpeedboatEntity) entityIn).getRowingTime(0, limbSwing) * 100.0F;
 		this.propeller.rotateAngleX = BoatEntity.isEmergency() ? 0 : f1;
 		float pr = BoatEntity.isEmergency() ? 0f : BoatEntity.propellerRotation;
-		if (BoatEntity.leftInputDown && pr > -1) pr = pr - 0.1F * Minecraft.getMinecraft().getRenderPartialTicks();
-		if (BoatEntity.rightInputDown && pr < 1) pr = pr + 0.1F * Minecraft.getMinecraft().getRenderPartialTicks();
-		if (!BoatEntity.leftInputDown && !BoatEntity.rightInputDown)
-			pr = (float) (pr * Math.pow(0.7, Minecraft.getMinecraft().getRenderPartialTicks()));
+		
+		if(BoatEntity.leftInputDown && pr > -1)
+			pr = pr - 0.1F * Minecraft.getInstance().getRenderPartialTicks();
+		
+		if(BoatEntity.rightInputDown && pr < 1)
+			pr = pr + 0.1F * Minecraft.getInstance().getRenderPartialTicks();
+		
+		if(!BoatEntity.leftInputDown && !BoatEntity.rightInputDown)
+			pr = (float) (pr * Math.pow(0.7, Minecraft.getInstance().getRenderPartialTicks()));
+		
 		this.propellerAssembly.rotateAngleY = (float) Math.toRadians(pr * 15);
 		this.propellerAssembly.render(scale);
-
+		
 		//this.coreSampleBoat.render(scale);
-
+		
 		GlStateManager.pushMatrix();
-
-		if (BoatEntity.isBeingRidden() && !BoatEntity.isEmergency())
-			GlStateManager.translate((entityIn.world.rand.nextFloat() - 0.5F) * 0.01F, (entityIn.world.rand.nextFloat() - 0.5F) * 0.01F, (entityIn.world.rand.nextFloat() - 0.5F) * 0.01F);
+		
+		if(BoatEntity.isBeingRidden() && !BoatEntity.isEmergency())
+			GlStateManager.translatef((entityIn.world.rand.nextFloat() - 0.5F) * 0.01F, (entityIn.world.rand.nextFloat() - 0.5F) * 0.01F, (entityIn.world.rand.nextFloat() - 0.5F) * 0.01F);
+		
 		this.motor.render(scale);
 		GlStateManager.popMatrix();
-
-
 	}
-
-	public void renderIcebreaker(Entity p_187054_1_, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale)
-	{
+	
+	public void renderIcebreaker(Entity p_187054_1_, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale){
 		this.icebreak.render(scale);
 	}
-
-	public void renderTank(Entity p_187054_1_, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale)
-	{
+	
+	public void renderTank(Entity p_187054_1_, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale){
 		this.tank.render(scale);
 	}
-
-	public void renderRudders(Entity entityIn, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale)
-	{
+	
+	public void renderRudders(Entity entityIn, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale){
 		this.ruddersBase.render(scale);
-
+		
 		SpeedboatEntity BoatEntity = (SpeedboatEntity) entityIn;
 		float pr = BoatEntity.propellerRotation;
-		if (BoatEntity.leftInputDown && pr > -1) pr = pr - 0.1F * Minecraft.getMinecraft().getRenderPartialTicks();
-		if (BoatEntity.rightInputDown && pr < 1) pr = pr + 0.1F * Minecraft.getMinecraft().getRenderPartialTicks();
-		if (!BoatEntity.leftInputDown && !BoatEntity.rightInputDown)
-			pr = (float) (pr * Math.pow(0.7, Minecraft.getMinecraft().getRenderPartialTicks()));
+		
+		if(BoatEntity.leftInputDown && pr > -1)
+			pr = pr - 0.1F * Minecraft.getInstance().getRenderPartialTicks();
+		
+		if(BoatEntity.rightInputDown && pr < 1)
+			pr = pr + 0.1F * Minecraft.getInstance().getRenderPartialTicks();
+		
+		if(!BoatEntity.leftInputDown && !BoatEntity.rightInputDown)
+			pr = (float) (pr * Math.pow(0.7F, Minecraft.getInstance().getRenderPartialTicks()));
+		
 		this.rudder2.rotateAngleY = (float) Math.toRadians(pr * 20f);
 		this.rudder1.rotateAngleY = (float) Math.toRadians(pr * 20f);
-
+		
 		this.rudder1.render(scale);
 		this.rudder2.render(scale);
 	}
-
-	public void renderBoatDrill(Entity p_187054_1_, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale)
-	{
+	
+	public void renderBoatDrill(Entity p_187054_1_, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale){
 		this.coreSampleBoatDrill.render(scale);
 	}
-
-	public void renderMultipass(Entity p_187054_1_, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale)
-	{
-		GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
+	
+	public void renderMultipass(Entity p_187054_1_, float p_187054_2_, float p_187054_3_, float p_187054_4_, float p_187054_5_, float p_187054_6_, float scale){
+		GlStateManager.rotatef(90.0F, 0.0F, 1.0F, 0.0F);
 		GlStateManager.colorMask(false, false, false, false);
 		this.noWater.render(scale);
 		GlStateManager.colorMask(true, true, true, true);
 	}
-
-	/**
-	 * Sets the model's various rotation angles. For bipeds, par1 and par2 are used for animating the movement of arms
-	 * and legs, where par1 represents the time(so that arms and legs swing back and forth) and par2 represents how
-	 * "far" arms and legs can swing at most.
-	 */
-	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn)
-	{
+	
+	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn){
 	}
-
-
 }

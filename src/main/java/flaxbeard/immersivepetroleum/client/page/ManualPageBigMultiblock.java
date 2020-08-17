@@ -7,7 +7,6 @@ import blusunrize.immersiveengineering.api.multiblocks.ManualElementMultiblock;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.gui.ManualScreen;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 
 public class ManualPageBigMultiblock extends ManualElementMultiblock{
@@ -32,7 +31,7 @@ public class ManualPageBigMultiblock extends ManualElementMultiblock{
 	}
 	
 	@Override
-	public void mouseDragged(int x, int y, double clickX, double clickY, double mouseX, double mouseY, double lastX, double lastY, Widget button){
+	public void mouseDragged(int x, int y, double clickX, double clickY, double mouseX, double mouseY, double lastX, double lastY, int mouseButton){
 		if((clickX >= 40 && clickX < 144 && mouseX >= 20 && mouseX < 164) && (clickY >= 30 && clickY < 175 && mouseY >= 30 && mouseY < 225)){
 			if(clickY >= 130 || mouseY >= 180){
 				clickY -= 50;
@@ -40,7 +39,7 @@ public class ManualPageBigMultiblock extends ManualElementMultiblock{
 				mouseY -= 50;
 			}
 			
-			super.mouseDragged(x, y, clickX, clickY, mouseX, mouseY, lastX, lastY, button);
+			super.mouseDragged(x, y, clickX, clickY, mouseX, mouseY, lastX, lastY, mouseButton);
 		}
 	}
 }

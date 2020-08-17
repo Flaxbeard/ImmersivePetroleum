@@ -1,39 +1,19 @@
 {
-  "multipart": [
-    {
-      "when": {
-        "facing": "north"
-      },
-      "apply": {
-        "model": "immersivepetroleum:block/generator",
-        "y": 180
-      }
+  "variants": {
+    "facing=north": {
+      "model": "immersivepetroleum:block/gas_generator",
+      "y": 180
     },
-    {
-      "when": {
-        "facing": "east"
-      },
-      "apply": {
-        "model": "immersivepetroleum:block/generator",
-        "y": 270
-      }
+    "facing=south": {
+      "model": "immersivepetroleum:block/gas_generator"
     },
-    {
-      "when": {
-        "facing": "south"
-      },
-      "apply": {
-        "model": "immersivepetroleum:block/generator"
-      }
+    "facing=west": {
+      "model": "immersivepetroleum:block/gas_generator",
+      "y": 90
     },
-    {
-      "when": {
-        "facing": "west"
-      },
-      "apply": {
-        "model": "immersivepetroleum:block/generator",
-        "y": 90
-      }
+    "facing=east": {
+      "model": "immersivepetroleum:block/gas_generator",
+      "y": 270
     }
-  ]
+  }
 }

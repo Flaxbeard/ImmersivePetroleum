@@ -29,7 +29,7 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
-import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.texture.ITickable;
@@ -135,7 +135,7 @@ public class AutoLubricatorTileEntity extends IEBaseTileEntity implements IDirec
 				float r1 = (world.rand.nextFloat() - .5F) * 2F;
 				float r2 = (world.rand.nextFloat() - .5F) * 2F;
 				float r3 = world.rand.nextFloat();
-				BlockState n = IPContent.fluidLubricant.block.getDefaultState();
+				BlockState n = Fluids.fluidLubricant.block.getDefaultState();
 				world.addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, n), x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
 			}
 		}
@@ -280,7 +280,7 @@ public class AutoLubricatorTileEntity extends IEBaseTileEntity implements IDirec
 				float r1 = (world.rand.nextFloat() - .5F) * 2F;
 				float r2 = (world.rand.nextFloat() - .5F) * 2F;
 				float r3 = world.rand.nextFloat();
-				BlockState n = IPContent.fluidLubricant.block.getDefaultState();
+				BlockState n = Fluids.fluidLubricant.block.getDefaultState();
 				world.addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, n), x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
 			}
 		}
@@ -423,7 +423,7 @@ public class AutoLubricatorTileEntity extends IEBaseTileEntity implements IDirec
 				float r1 = (world.rand.nextFloat() - .5F) * 2F;
 				float r2 = (world.rand.nextFloat() - .5F) * 2F;
 				float r3 = world.rand.nextFloat();
-				BlockState n = IPContent.fluidLubricant.block.getDefaultState();
+				BlockState n = Fluids.fluidLubricant.block.getDefaultState();
 				world.addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, n), x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
 			}
 		}

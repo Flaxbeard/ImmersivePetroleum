@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import blusunrize.immersiveengineering.common.network.IMessage;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.items.ItemProjector;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -41,8 +41,8 @@ public class RotateSchematicPacket implements IMessage{
 				ItemStack mainItem = p.getHeldItemMainhand();
 				ItemStack secondItem = p.getHeldItemOffhand();
 				
-				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
-				boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
+				boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
+				boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
 				
 				ItemStack target = main ? mainItem : secondItem;
 				

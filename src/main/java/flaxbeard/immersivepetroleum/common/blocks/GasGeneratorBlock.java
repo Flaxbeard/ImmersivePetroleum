@@ -4,19 +4,54 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
+import net.minecraft.block.material.PushReaction;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 
 public class GasGeneratorBlock extends IPBlockBase{
 	public static final DirectionProperty FACING=DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
 	
+	private static final Material material=new Material(MaterialColor.IRON, false, true, false, false, false, false, false, PushReaction.BLOCK);
+	
 	public GasGeneratorBlock(){
-		super("gas_generator", Block.Properties.create(Material.IRON).hardnessAndResistance(3.0F, 15.0F));
+		super("gas_generator", Block.Properties.create(material).hardnessAndResistance(3.0F, 15.0F));
 		
 		setDefaultState(getStateContainer().getBaseState().with(FACING, Direction.NORTH));
+	}
+	
+	@Override
+	public BlockRenderLayer getRenderLayer(){
+		return BlockRenderLayer.CUTOUT;
+	}
+	
+	@Override
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
+		TileEntity tmp=worldIn.getTileEntity(pos);
+		
+		worldIn.setBlockState(pos, state.with(GasGeneratorBlock.FACING, placer.getHorizontalFacing().rotateYCCW()), 2);
+		worldIn.removeTileEntity(pos);
+		
+		worldIn.setTileEntity(pos, tmp);
+	}
+	
+	@Override
+	public BlockState getStateForPlacement(BlockItemUseContext context){
+		return super.getStateForPlacement(context);
+	}
+	
+	@Override
+	public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos){
+		return true;
 	}
 	
 	@Override

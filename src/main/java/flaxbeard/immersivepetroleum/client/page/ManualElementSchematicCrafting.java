@@ -8,7 +8,7 @@ import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualElementCrafting;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.PositionedItemStack;
-import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import net.minecraft.item.ItemStack;
 
 public class ManualElementSchematicCrafting extends ManualElementCrafting{
@@ -20,7 +20,7 @@ public class ManualElementSchematicCrafting extends ManualElementCrafting{
 		
 		int xBase = (120 - (5) * 18) / 2;
 		
-		ItemStack schematic = new ItemStack(IPContent.itemProjector);
+		ItemStack schematic = new ItemStack(Items.itemProjector);
 		ItemNBTHelper.putString(schematic, "multiblock", IEMultiblocks.ARC_FURNACE.getUniqueName().toString());
 		
 		// Init crafting slots with "air"
@@ -32,7 +32,7 @@ public class ManualElementSchematicCrafting extends ManualElementCrafting{
 		}
 		
 		pIngredients[0] = new PositionedItemStack(new ItemStack(IEItems.Tools.manual, 1), xBase, 0);
-		pIngredients[1] = new PositionedItemStack(new ItemStack(IPContent.itemProjector, 1), xBase + 18, 0);
+		pIngredients[1] = new PositionedItemStack(new ItemStack(Items.itemProjector, 1), xBase + 18, 0);
 		pIngredients[9] = new PositionedItemStack(schematic, xBase + 3 * 18 + 18, (int) (3 / 2f * 18) - 8);
 		//recipes.put(stack, pIngredients);
 		

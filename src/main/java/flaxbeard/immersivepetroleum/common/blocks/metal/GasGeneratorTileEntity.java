@@ -210,7 +210,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 		if(Utils.isFluidRelatedItemStack(player.getHeldItem(Hand.MAIN_HAND))){
 			String s = null;
 			if(tank.getFluid() != null)
-				s = tank.getFluid().getDisplayName() + ": " + tank.getFluidAmount() + "mB";
+				s = tank.getFluid().getDisplayName().getFormattedText() + ": " + tank.getFluidAmount() + "mB";
 			else
 				s = I18n.format(Lib.GUI + "empty");
 			return new String[]{s};

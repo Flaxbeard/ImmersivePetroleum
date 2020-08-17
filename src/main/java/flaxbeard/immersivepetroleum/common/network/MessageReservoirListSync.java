@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import blusunrize.immersiveengineering.common.network.IMessage;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -47,10 +46,10 @@ public class MessageReservoirListSync implements IMessage{
 			Context con=context.get();
 			
 			if(con.getDirection().getReceptionSide()==LogicalSide.CLIENT){
-				PumpjackHandler.reservoirList.clear();
-				for(ReservoirType min:this.map.keySet()){
-					PumpjackHandler.reservoirList.put(min, this.map.get(min));
-				}
+//				PumpjackHandler.reservoirList.clear();
+//				for(ReservoirType min:this.map.keySet()){
+//					PumpjackHandler.reservoirList.put(min, this.map.get(min));
+//				}
 				
 				//ClientProxy.handleReservoirManual();
 			}

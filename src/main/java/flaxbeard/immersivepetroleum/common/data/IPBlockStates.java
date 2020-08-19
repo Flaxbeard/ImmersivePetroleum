@@ -48,18 +48,12 @@ public class IPBlockStates extends BlockStateProvider{
 		gasGeneratorState();
 		
 		// AutoLubricator
-		ExistingModelFile lubeModel = getExistingFile(modLoc("block/lubricator_full"));
-		BlockModelBuilder modelBuilder=getBuilder(IPContent.Blocks.blockAutolubricator.getRegistryName().getPath())
-			.parent(lubeModel)
-			.texture("particle", modLoc("block/auto_lubricator_top"));
 		VariantBlockStateBuilder lubeBuilder = getVariantBuilder(IPContent.Blocks.blockAutolubricator);
 		for(Direction dir:AutoLubricatorBlock.FACING.getAllowedValues()){
-			int rotation=90*dir.getHorizontalIndex()+180%360;
-			
 			lubeBuilder.partialState()
 				.with(AutoLubricatorBlock.SLAVE, false)
 				.with(AutoLubricatorBlock.FACING, dir)
-				.setModels(new ConfiguredModel(modelBuilder, 0, rotation, false));
+				.setModels(EMPTY_MODEL);
 			
 			lubeBuilder.partialState()
 				.with(AutoLubricatorBlock.SLAVE, true)
@@ -67,7 +61,7 @@ public class IPBlockStates extends BlockStateProvider{
 				.setModels(EMPTY_MODEL);
 		}
 		getBuilder(ImmersivePetroleum.MODID+":/item/"+IPContent.Blocks.blockAutolubricator.getRegistryName().getPath())
-			.parent(lubeModel);
+			.parent(getExistingFile(modLoc("block/lubricator_full")));
 		
 		// Fluids
 		for(IPFluid f:IPFluid.LIST){

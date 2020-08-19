@@ -25,7 +25,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackTileEntity>{
 	@Override
 	public TileEntity isPlacedCorrectly(World world, AutoLubricatorNewTileEntity lubricator, Direction facing){
-		BlockPos target = lubricator.getPos().offset(facing, 2).up();
+		BlockPos target = lubricator.getPos().offset(facing);
 		TileEntity te = world.getTileEntity(target);
 		
 		if(te instanceof PumpjackTileEntity){
@@ -107,15 +107,17 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 		Direction rotation = mbte.getFacing();
 		if(rotation == Direction.NORTH){
 			GlStateManager.rotatef(90F, 0, 1, 0);
-			GlStateManager.translatef(-1, 0, 0);
+			GlStateManager.translatef(-6, 1, -1);
 		}else if(rotation == Direction.WEST){
 			GlStateManager.rotatef(180F, 0, 1, 0);
-			GlStateManager.translatef(-1, 0, -1);
+			GlStateManager.translatef(-6, 1, -2);
 		}else if(rotation == Direction.SOUTH){
 			GlStateManager.rotatef(270F, 0, 1, 0);
-			GlStateManager.translatef(0, 0, -1);
+			GlStateManager.translatef(-5, 1, -2);
+		}else{
+			GlStateManager.rotatef(0F, 0, 1, 0);
+			GlStateManager.translatef(-5, 1, -1);
 		}
-		GlStateManager.translatef(-1, 0, -1);
 		
 		ClientUtils.bindTexture("immersivepetroleum:textures/block/lube_pipe12.png");
 		if(mbte.getIsMirrored()){

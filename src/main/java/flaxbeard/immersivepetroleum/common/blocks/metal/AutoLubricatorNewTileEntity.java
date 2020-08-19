@@ -153,8 +153,8 @@ public class AutoLubricatorNewTileEntity extends TileEntity implements ITickable
 			if(master != null && master instanceof AutoLubricatorNewTileEntity){
 				AutoLubricatorNewTileEntity lube = (AutoLubricatorNewTileEntity) master;
 				String s = null;
-				if(lube.tank.getFluid() != null && lube.tank.getFluid() != FluidStack.EMPTY){
-					s = lube.tank.getFluid().getDisplayName() + ": " + lube.tank.getFluidAmount() + "mB";
+				if(!lube.tank.isEmpty()){
+					s = lube.tank.getFluid().getDisplayName().getFormattedText() + ": " + lube.tank.getFluidAmount() + "mB";
 				}else{
 					s = I18n.format(Lib.GUI + "empty");
 				}

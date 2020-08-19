@@ -17,6 +17,7 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 	
 	private static String texture = "immersivepetroleum:textures/models/distillation_tower.png";
 	private static String textureOn = "immersivepetroleum:textures/models/furnace_hot.png";
+	
 	private static String textureM = "immersivepetroleum:textures/models/distillation_tower_m.png";
 	private static String textureOnM = "immersivepetroleum:textures/models/furnace_hot_m.png";
 	

@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.blocks.metal;
+package flaxbeard.immersivepetroleum.common.util.enums;
 
 import java.util.Locale;
 

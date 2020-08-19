@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.IEProperties;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.IPContent.Blocks;
+import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.block.Block;
@@ -32,11 +32,11 @@ public class IPBlockStates extends BlockStateProvider{
 	@Override
 	protected void registerStatesAndModels(){
 		// Dummies
-		getVariantBuilder(Blocks.dummyBlockOilOre).partialState()
-			.setModels(new ConfiguredModel(cubeAll(Blocks.dummyBlockOilOre)));
-		getVariantBuilder(Blocks.dummyBlockPipe).partialState()
+		getVariantBuilder(IPContent.Blocks.dummyBlockOilOre).partialState()
+			.setModels(new ConfiguredModel(cubeAll(IPContent.Blocks.dummyBlockOilOre)));
+		getVariantBuilder(IPContent.Blocks.dummyBlockPipe).partialState()
 			.setModels(new ConfiguredModel(getExistingFile(modLoc("block/dummy_pipe"))));
-		getVariantBuilder(Blocks.dummyBlockConveyor).partialState()
+		getVariantBuilder(IPContent.Blocks.dummyBlockConveyor).partialState()
 			.setModels(new ConfiguredModel(getExistingFile(modLoc("block/dummy_conveyor"))));
 		
 		// Multiblocks
@@ -44,8 +44,30 @@ public class IPBlockStates extends BlockStateProvider{
 		createMultiblock(IPContent.Multiblock.pumpjack, new ResourceLocation(ImmersivePetroleum.MODID, "models/pumpjack"));
 		
 		// "Normal" Blocks
-		simpleBlockWithItem(Blocks.blockAsphalt);
+		simpleBlockWithItem(IPContent.Blocks.blockAsphalt);
 		gasGeneratorState();
+		
+		// AutoLubricator
+		ExistingModelFile lubeModel = getExistingFile(modLoc("block/lubricator_full"));
+		BlockModelBuilder modelBuilder=getBuilder(IPContent.Blocks.blockAutolubricator.getRegistryName().getPath())
+			.parent(lubeModel)
+			.texture("particle", modLoc("block/auto_lubricator_top"));
+		VariantBlockStateBuilder lubeBuilder = getVariantBuilder(IPContent.Blocks.blockAutolubricator);
+		for(Direction dir:AutoLubricatorBlock.FACING.getAllowedValues()){
+			int rotation=90*dir.getHorizontalIndex()+180%360;
+			
+			lubeBuilder.partialState()
+				.with(AutoLubricatorBlock.SLAVE, false)
+				.with(AutoLubricatorBlock.FACING, dir)
+				.setModels(new ConfiguredModel(modelBuilder, 0, rotation, false));
+			
+			lubeBuilder.partialState()
+				.with(AutoLubricatorBlock.SLAVE, true)
+				.with(AutoLubricatorBlock.FACING, dir)
+				.setModels(EMPTY_MODEL);
+		}
+		getBuilder(ImmersivePetroleum.MODID+":/item/"+IPContent.Blocks.blockAutolubricator.getRegistryName().getPath())
+			.parent(lubeModel);
 		
 		// Fluids
 		for(IPFluid f:IPFluid.LIST){
@@ -69,10 +91,10 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	private void gasGeneratorState(){
-		BlockModelBuilder model=withExistingParent(Blocks.blockGasGenerator.getRegistryName().toString(), modLoc("block/generator"))
+		BlockModelBuilder model=withExistingParent(IPContent.Blocks.blockGasGenerator.getRegistryName().toString(), modLoc("block/generator"))
 				.texture("particle", modLoc("block/gen_top"));
 		
-		VariantBlockStateBuilder builder=getVariantBuilder(Blocks.blockGasGenerator);
+		VariantBlockStateBuilder builder=getVariantBuilder(IPContent.Blocks.blockGasGenerator);
 		Direction.Plane.HORIZONTAL.forEach(dir->{
 			int rotation=90*dir.getHorizontalIndex();
 			

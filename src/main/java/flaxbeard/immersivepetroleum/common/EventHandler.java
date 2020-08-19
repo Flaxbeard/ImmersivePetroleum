@@ -25,6 +25,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.SampleDrillTileEntity;
 import blusunrize.immersiveengineering.common.blocks.stone.CoresampleTileEntity;
+import blusunrize.immersiveengineering.common.items.BuzzsawItem;
 import blusunrize.immersiveengineering.common.items.ChemthrowerItem;
 import blusunrize.immersiveengineering.common.items.CoresampleItem;
 import blusunrize.immersiveengineering.common.items.DrillItem;
@@ -43,7 +44,7 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.BlockNapalm;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
-import flaxbeard.immersivepetroleum.common.network.CloseBookPacket;
+import flaxbeard.immersivepetroleum.common.network.MessageCloseBook;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -169,7 +170,7 @@ public class EventHandler{
 			ItemStack target = main ? mainItem : offItem;
 			
 			if(main || off){
-				IPPacketHandler.INSTANCE.sendToServer(new CloseBookPacket(name));
+				IPPacketHandler.INSTANCE.sendToServer(new MessageCloseBook(name));
 				
 				if(name == null && ItemNBTHelper.hasKey(target, "lastMultiblock")){
 					ItemNBTHelper.remove(target, "lastMultiblock");
@@ -458,7 +459,7 @@ public class EventHandler{
 				for(Hand hand:Hand.values()){
 					if(!player.getHeldItem(hand).isEmpty()){
 						ItemStack equipped = player.getHeldItem(hand);
-						if((equipped.getItem() instanceof DrillItem) || equipped.getItem() instanceof ChemthrowerItem){
+						if((equipped.getItem() instanceof DrillItem) || equipped.getItem() instanceof ChemthrowerItem || equipped.getItem() instanceof BuzzsawItem){
 							offset -= 85;
 						}
 					}
@@ -466,8 +467,8 @@ public class EventHandler{
 				
 				GlStateManager.pushMatrix();
 				{
-					float dx = 48;
-					float dy = event.getWindow().getScaledHeight()-2;
+					float dx = event.getWindow().getScaledWidth()-16;
+					float dy = event.getWindow().getScaledHeight();
 					int w = 31;
 					int h = 62;
 					
@@ -497,7 +498,7 @@ public class EventHandler{
 					GlStateManager.translated(23, 37, 0);
 					ClientUtils.drawTexturedRect(-41, -73, 53, 72, 8 / 256f, 61 / 256f, 4 / 256f, 76 / 256f);
 					
-					// DEBUG
+					// TODO DEBUG Comment out Later
 					GlStateManager.pushMatrix();
 					{
 						FontRenderer font=Minecraft.getInstance().fontRenderer;
@@ -508,8 +509,8 @@ public class EventHandler{
 							
 							String out0=String.format(Locale.US, "Fuel: %s/%sMB", amount,capacity);
 							String out1=String.format(Locale.US, "Speed: %.2f", speed);
-							font.drawStringWithShadow(out0, -25, -94, 0xFFFFFFFF);
-							font.drawStringWithShadow(out1, -25, -85, 0xFFFFFFFF);
+							font.drawStringWithShadow(out0, -65, -94, 0xFFFFFFFF);
+							font.drawStringWithShadow(out1, -65, -85, 0xFFFFFFFF);
 						}
 					}
 					GlStateManager.popMatrix();

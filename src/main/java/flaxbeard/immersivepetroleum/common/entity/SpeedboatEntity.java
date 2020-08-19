@@ -11,9 +11,10 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
-import flaxbeard.immersivepetroleum.common.items.ItemSpeedboat;
-import flaxbeard.immersivepetroleum.common.network.ConsumeBoatFuelPacket;
+import flaxbeard.immersivepetroleum.common.items.DebugItem;
+import flaxbeard.immersivepetroleum.common.items.SpeedboatItem;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
+import flaxbeard.immersivepetroleum.common.network.MessageConsumeBoatFuel;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -55,7 +56,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
 // FIXME Invalid move vehicle packet received. SOMEWHERE!
@@ -76,7 +76,6 @@ public class SpeedboatEntity extends BoatEntity{
 	static final DataParameter<ItemStack> UPGRADE_1 = EntityDataManager.createKey(SpeedboatEntity.class, DataSerializers.ITEMSTACK);
 	static final DataParameter<ItemStack> UPGRADE_2 = EntityDataManager.createKey(SpeedboatEntity.class, DataSerializers.ITEMSTACK);
 	static final DataParameter<ItemStack> UPGRADE_3 = EntityDataManager.createKey(SpeedboatEntity.class, DataSerializers.ITEMSTACK);
-	
 	
 	public boolean isFireproof = false;
 	public boolean hasIcebreaker = false;
@@ -167,14 +166,71 @@ public class SpeedboatEntity extends BoatEntity{
 		String fluidName = this.dataManager.get(TANK_FLUID);
 		int amount = this.dataManager.get(TANK_AMOUNT).intValue();
 		
-		if(fluidName==null || fluidName.isEmpty())
+		if(fluidName==null || fluidName.isEmpty() || amount == 0)
 			return FluidStack.EMPTY;
 		
 		Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluidName));
-		if(fluid == null || amount == 0)
+		if(fluid == null)
 			return FluidStack.EMPTY;
 		
 		return new FluidStack(fluid, amount);
+	}
+	
+	@Override
+	protected void readAdditional(CompoundNBT compound){
+		super.readAdditional(compound);
+		
+		String fluid="";
+		int amount=0;
+		ItemStack stack0=ItemStack.EMPTY;
+		ItemStack stack1=ItemStack.EMPTY;
+		ItemStack stack2=ItemStack.EMPTY;
+		ItemStack stack3=ItemStack.EMPTY;
+		
+		if(compound.contains("tank")){
+			CompoundNBT tank=compound.getCompound("tank");
+			fluid=tank.getString("fluid");
+			amount=tank.getInt("amount");
+		}
+		
+		if(compound.contains("upgrades")){
+			CompoundNBT upgrades=compound.getCompound("upgrades");
+			stack0=ItemStack.read(upgrades.getCompound("0"));
+			stack1=ItemStack.read(upgrades.getCompound("1"));
+			stack2=ItemStack.read(upgrades.getCompound("2"));
+			stack3=ItemStack.read(upgrades.getCompound("3"));
+		}
+		
+		this.dataManager.set(TANK_FLUID, fluid);
+		this.dataManager.set(TANK_AMOUNT, amount);
+		this.dataManager.set(UPGRADE_0, stack0);
+		this.dataManager.set(UPGRADE_1, stack1);
+		this.dataManager.set(UPGRADE_2, stack2);
+		this.dataManager.set(UPGRADE_3, stack3);
+	}
+	
+	@Override
+	protected void writeAdditional(CompoundNBT compound){
+		super.writeAdditional(compound);
+		
+		String fluid=this.dataManager.get(TANK_FLUID);
+		int amount=this.dataManager.get(TANK_AMOUNT);
+		ItemStack stack0=this.dataManager.get(UPGRADE_0);
+		ItemStack stack1=this.dataManager.get(UPGRADE_1);
+		ItemStack stack2=this.dataManager.get(UPGRADE_2);
+		ItemStack stack3=this.dataManager.get(UPGRADE_3);
+		
+		CompoundNBT tank=new CompoundNBT();
+		compound.putString("fluid", fluid);
+		compound.putInt("amount", amount);
+		compound.put("tank", tank);
+		
+		CompoundNBT upgrades=new CompoundNBT();
+		upgrades.put("0", stack0.serializeNBT());
+		upgrades.put("1", stack1.serializeNBT());
+		upgrades.put("2", stack2.serializeNBT());
+		upgrades.put("3", stack3.serializeNBT());
+		compound.put("upgrades", upgrades);
 	}
 	
 	@Override
@@ -198,7 +254,7 @@ public class SpeedboatEntity extends BoatEntity{
 				boolean flag1 = flag0 && ((PlayerEntity) source.getTrueSource()).abilities.isCreativeMode;
 				if(flag1 || (getDamageTaken() > 40.0F && (!this.isFireproof || flag0)) || (getDamageTaken() > 240.0F)){
 					if(!flag1 && this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)){
-						ItemSpeedboat item = (ItemSpeedboat) getItemBoat();
+						SpeedboatItem item = (SpeedboatItem) getItemBoat();
 						ItemStack stack = new ItemStack(item, 1);
 						
 						CompoundNBT data = stack.getOrCreateChildTag("data");
@@ -255,6 +311,12 @@ public class SpeedboatEntity extends BoatEntity{
 	@Override
 	public boolean processInitialInteract(PlayerEntity player, Hand hand){
 		ItemStack stack = player.getHeldItem(hand);
+		
+		if(stack!=ItemStack.EMPTY && stack.getItem() instanceof DebugItem){
+			((DebugItem)stack.getItem()).onSpeedboatClick(this, player);
+			return true;
+		}
+		
 		if(Utils.isFluidRelatedItemStack(stack)){
 			FluidTank tank = new FluidTank(getMaxFuel());
 			
@@ -492,53 +554,57 @@ public class SpeedboatEntity extends BoatEntity{
 				if(fluid != FluidStack.EMPTY && fluid.getAmount() >= consumeAmount && (this.forwardInputDown || this.backInputDown)){
 					int toConsume = consumeAmount;
 					if(this.forwardInputDown){
-						f += 0.05F;
+						f += 0.06F;
 						if(this.isBoosting && fluid.getAmount() >= 3 * consumeAmount){
-							f *= 1.6;
+							f *= 1.4;
 							toConsume *= 3;
 						}
 					}
 					
 					if(this.backInputDown){
-						f -= 0.01F;
+						f -= 0.005F;
 					}
 					
 					fluid.setAmount(Math.max(0, fluid.getAmount() - toConsume));
 					setContainedFluid(fluid);
 					
 					if(this.world.isRemote)
-						IPPacketHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new ConsumeBoatFuelPacket(toConsume));
+						IPPacketHandler.sendToServer(new MessageConsumeBoatFuel(toConsume));
 					
 					setPaddleState(this.forwardInputDown, this.backInputDown);
 				}else{
 					setPaddleState(false, false);
 				}
 				
-				this.setMotion(this.getMotion().add((double) (MathHelper.sin(-this.rotationYaw * ((float) Math.PI / 180F)) * f), 0.0D, (double) (MathHelper.cos(this.rotationYaw * ((float) Math.PI / 180F)) * f)));
-				this.setPaddleState(this.rightInputDown && !this.leftInputDown || this.forwardInputDown, this.leftInputDown && !this.rightInputDown || this.forwardInputDown);
+				Vec3d motion=this.getMotion().add((double) (MathHelper.sin(-this.rotationYaw * ((float) Math.PI / 180F)) * f), 0.0D, (double) (MathHelper.cos(this.rotationYaw * ((float) Math.PI / 180F)) * f));
 				
-				Vec3d motion = getMotion();
-				float speed = (float) Math.sqrt((motion.x * motion.x) + (motion.z + motion.z));
-				
-				if(this.leftInputDown){
-					this.deltaRotation += -1.1F * speed * (this.hasRudders ? 1.5F : 1F) * (this.isBoosting ? 0.5F : 1) * (this.backInputDown && !this.forwardInputDown ? 2F : 1F);
-					if(this.propellerRotation > -1F){
-						this.propellerRotation -= 0.2F;
+				if(this.leftInputDown || this.rightInputDown){
+					// sqrt is expensive, only do this when either of the above is down
+					float speed = (float) Math.sqrt(motion.x * motion.x + motion.z + motion.z);
+					
+					if(this.leftInputDown){
+						this.deltaRotation += -1.1F * speed * (this.hasRudders ? 1.5F : 1F) * (this.isBoosting ? 0.5F : 1) * (this.backInputDown && !this.forwardInputDown ? 2F : 1F);
+						if(this.propellerRotation > -1F){
+							this.propellerRotation -= 0.2F;
+						}
 					}
-				}
-				
-				if(this.rightInputDown){
-					this.deltaRotation += 1.1F * speed * (this.hasRudders ? 1.5F : 1F) * (this.isBoosting ? 0.5F : 1) * (this.backInputDown && !this.forwardInputDown ? 2F : 1F);
-					if(this.propellerRotation < 1F){
-						this.propellerRotation += 0.2F;
+					
+					if(this.rightInputDown){
+						this.deltaRotation += 1.1F * speed * (this.hasRudders ? 1.5F : 1F) * (this.isBoosting ? 0.5F : 1) * (this.backInputDown && !this.forwardInputDown ? 2F : 1F);
+						if(this.propellerRotation < 1F){
+							this.propellerRotation += 0.2F;
+						}
 					}
 				}
 				
 				this.rotationYaw += this.deltaRotation;
 				
-				if(!this.rightInputDown && !this.leftInputDown){
+				if(!this.leftInputDown && !this.rightInputDown){
 					this.propellerRotation *= 0.7F;
 				}
+				
+				this.setMotion(motion);
+				this.setPaddleState(this.rightInputDown && !this.leftInputDown || this.forwardInputDown, this.leftInputDown && !this.rightInputDown || this.forwardInputDown);
 			}
 		}
 	}

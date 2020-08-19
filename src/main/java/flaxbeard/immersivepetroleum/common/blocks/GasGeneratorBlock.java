@@ -19,9 +19,9 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 public class GasGeneratorBlock extends IPBlockBase{
-	public static final DirectionProperty FACING=DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
-	
 	private static final Material material=new Material(MaterialColor.IRON, false, true, false, false, false, false, false, PushReaction.BLOCK);
+	
+	public static final DirectionProperty FACING=DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
 	
 	public GasGeneratorBlock(){
 		super("gas_generator", Block.Properties.create(material).hardnessAndResistance(3.0F, 15.0F));
@@ -36,17 +36,18 @@ public class GasGeneratorBlock extends IPBlockBase{
 	
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
-		TileEntity tmp=worldIn.getTileEntity(pos);
-		
-		worldIn.setBlockState(pos, state.with(GasGeneratorBlock.FACING, placer.getHorizontalFacing().rotateYCCW()), 2);
-		worldIn.removeTileEntity(pos);
-		
-		worldIn.setTileEntity(pos, tmp);
+//		TileEntity tmp=worldIn.getTileEntity(pos);
+//		
+//		worldIn.setBlockState(pos, state.with(FACING, placer.getHorizontalFacing().rotateYCCW()), 2);
+//		worldIn.removeTileEntity(pos);
+//		
+//		worldIn.setTileEntity(pos, tmp);
+		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 	}
 	
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
-		return super.getStateForPlacement(context);
+		return getDefaultState().with(FACING, context.getPlacementHorizontalFacing().rotateYCCW());
 	}
 	
 	@Override

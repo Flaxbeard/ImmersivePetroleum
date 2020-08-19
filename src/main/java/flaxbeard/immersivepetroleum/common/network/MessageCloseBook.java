@@ -13,15 +13,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 
-public class CloseBookPacket implements IMessage{
+public class MessageCloseBook implements IMessage{
 	
 	public ResourceLocation name;
 	
-	public CloseBookPacket(ResourceLocation name){
+	public MessageCloseBook(ResourceLocation name){
 		this.name = name;
 	}
 	
-	public CloseBookPacket(PacketBuffer buf){
+	public MessageCloseBook(PacketBuffer buf){
 		boolean isStrNull = buf.readByte() == 0;
 		if(!isStrNull){
 			int len=((int)buf.readShort())&0xFFFF;

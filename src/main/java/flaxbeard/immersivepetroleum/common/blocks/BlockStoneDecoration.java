@@ -1,6 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
-import flaxbeard.immersivepetroleum.common.blocks.stone.EnumStoneDecorationType;
+import flaxbeard.immersivepetroleum.common.util.enums.EnumStoneDecorationType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;

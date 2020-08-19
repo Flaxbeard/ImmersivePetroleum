@@ -34,9 +34,10 @@ import flaxbeard.immersivepetroleum.api.event.SchematicPlaceBlockPostEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicRenderBlockEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicTestEvent;
 import flaxbeard.immersivepetroleum.client.ShaderUtil;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
-import flaxbeard.immersivepetroleum.common.network.RotateSchematicPacket;
+import flaxbeard.immersivepetroleum.common.network.MessageRotateSchematic;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -82,13 +83,13 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class ItemProjector extends IPItemBase{
-	public ItemProjector(String name){
+public class ProjectorItem extends IPItemBase{
+	public ProjectorItem(String name){
 		super(name, new Item.Properties().maxStackSize(1));
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 	
-	/** Like {@link ItemProjector#getMultiblock(ResourceLocation)} but using the ItemStack directly */
+	/** Like {@link ProjectorItem#getMultiblock(ResourceLocation)} but using the ItemStack directly */
 	protected static IMultiblock getMultiblock(ItemStack stack){
 		return getMultiblock(getMultiblockIdentifierFrom(stack));
 	}
@@ -185,7 +186,7 @@ public class ItemProjector extends IPItemBase{
 		return new TranslationTextComponent(selfKey);
 	}
 	
-	/** Name cache for {@link ItemProjector#getActualMBName(IMultiblock)} */
+	/** Name cache for {@link ProjectorItem#getActualMBName(IMultiblock)} */
 	static final Map<Class<? extends IMultiblock>, String> nameCache=new HashMap<>();
 	/** Gets the name of the class */
 	private static String getActualMBName(IMultiblock multiblock){
@@ -277,7 +278,7 @@ public class ItemProjector extends IPItemBase{
 		}
 		
 		ResourceLocation multiblockId=getMultiblockIdentifierFrom(stack);
-		IMultiblock multiblock = ItemProjector.getMultiblock(multiblockId);
+		IMultiblock multiblock = ProjectorItem.getMultiblock(multiblockId);
 		
 		if(!ItemNBTHelper.hasKey(stack, "pos") && multiblock != null){
 			BlockState state = world.getBlockState(pos);
@@ -410,14 +411,14 @@ public class ItemProjector extends IPItemBase{
 		int newRotate = (getRotation(stack) + 1) % 4;
 		boolean flip = getFlipped(stack);
 		setRotate(stack, newRotate);
-		IPPacketHandler.INSTANCE.sendToServer(new RotateSchematicPacket(newRotate, flip));
+		IPPacketHandler.INSTANCE.sendToServer(new MessageRotateSchematic(newRotate, flip));
 	}
 	
 	public static void flipClient(ItemStack stack){
 		int newRotate = getRotation(stack);
 		boolean flip = !getFlipped(stack);
 		setFlipped(stack, flip);
-		IPPacketHandler.INSTANCE.sendToServer(new RotateSchematicPacket(newRotate, flip));
+		IPPacketHandler.INSTANCE.sendToServer(new MessageRotateSchematic(newRotate, flip));
 	}
 	
 	public static void setRotate(ItemStack stack, int rotate){
@@ -470,14 +471,14 @@ public class ItemProjector extends IPItemBase{
 			
 			if(main || off){
 				if(delta<0){
-					ItemProjector.flipClient(target);
+					ProjectorItem.flipClient(target);
 					
-					boolean flipped=ItemProjector.getFlipped(target);
+					boolean flipped=ProjectorItem.getFlipped(target);
 					String yesno=flipped?I18n.format("chat.immersivepetroleum.info.projector.flipped.yes"):I18n.format("chat.immersivepetroleum.info.projector.flipped.no");
 					player.sendStatusMessage(new TranslationTextComponent("chat.immersivepetroleum.info.projector.flipped", yesno), true);
 				}else if(delta>0){
-					ItemProjector.rotateClient(target);
-					int rot=ItemProjector.getRotation(target);
+					ProjectorItem.rotateClient(target);
+					int rot=ProjectorItem.getRotation(target);
 					player.sendStatusMessage(new StringTextComponent("Rotated "+Rotation.values()[rot]), true);
 				}
 				event.setCanceled(true);
@@ -507,7 +508,7 @@ public class ItemProjector extends IPItemBase{
 	@SubscribeEvent
 	public void renderLast(RenderWorldLastEvent event){
 		boolean preview=true;
-		boolean autolubeRender=false;
+		boolean autolubeRender=true;
 		
 		Minecraft mc = ClientUtils.mc();
 		
@@ -534,12 +535,12 @@ public class ItemProjector extends IPItemBase{
 		
 		GlStateManager.pushMatrix();
 		{
-			if(autolubeRender && mc.player != null){ // Not yet ready for rendering anything!
+			if(autolubeRender && mc.player != null){
 				ItemStack mainItem = mc.player.getHeldItemMainhand();
 				ItemStack secondItem = mc.player.getHeldItemOffhand();
 				
-				boolean main = (mainItem != null && !mainItem.isEmpty()) && mainItem.getItem() == flaxbeard.immersivepetroleum.common.IPContent.Blocks.blockMetalDevice.asItem();
-				boolean off = (secondItem != null && !secondItem.isEmpty()) && secondItem.getItem() == flaxbeard.immersivepetroleum.common.IPContent.Blocks.blockMetalDevice.asItem();
+				boolean main = (mainItem != null && !mainItem.isEmpty()) && mainItem.getItem() == IPContent.Blocks.blockAutolubricator.asItem();
+				boolean off = (secondItem != null && !secondItem.isEmpty()) && secondItem.getItem() == IPContent.Blocks.blockAutolubricator.asItem();
 				
 				if(main || off){
 					ItemRenderer itemRenderer=ClientUtils.mc().getItemRenderer();
@@ -570,7 +571,7 @@ public class ItemProjector extends IPItemBase{
 													double pz = TileEntityRendererDispatcher.staticPlayerZ;
 													
 													GlStateManager.translated(targetPos.getX() - px, targetPos.getY() - py, targetPos.getZ() - pz);
-													GlStateManager.translated(0.5, -.13, .5);
+													GlStateManager.translated(0.5, -.5, .5);
 													
 													switch(targetFacing){
 														case SOUTH:
@@ -588,10 +589,10 @@ public class ItemProjector extends IPItemBase{
 													}
 													GlStateManager.translated(0.02, 0, .019);
 													
-													GlStateManager.scaled(1 / 0.65F, 1 / 0.65F, 1 / 0.65F);
-													GlStateManager.scaled(2, 2, 2);
+													GlStateManager.scaled(1, 1, 1);
+													//GlStateManager.scaled(2, 2, 2);
 													
-													ItemStack toRender = new ItemStack(flaxbeard.immersivepetroleum.common.IPContent.Blocks.blockMetalDevice);
+													ItemStack toRender = new ItemStack(IPContent.Blocks.blockAutolubricator);
 													itemRenderer.renderItem(toRender, itemRenderer.getModelWithOverrides(toRender));
 													
 													ShaderUtil.releaseShader();
@@ -680,7 +681,7 @@ public class ItemProjector extends IPItemBase{
 	@OnlyIn(Dist.CLIENT)
 	public void renderSchematic(ItemStack target, PlayerEntity player, World world, float partialTicks, boolean shouldRenderMoving){
 		Minecraft mc = ClientUtils.mc();
-		IMultiblock multiblock = ItemProjector.getMultiblock(target);
+		IMultiblock multiblock = ProjectorItem.getMultiblock(target);
 		if(multiblock != null){
 			ItemStack heldStack = player.getHeldItemMainhand();
 			
@@ -690,8 +691,8 @@ public class ItemProjector extends IPItemBase{
 			int mHeight = size.getY();
 			int mDepth = size.getZ();
 			
-			int rotate = ItemProjector.getRotation(target);
-			boolean flip = ItemProjector.getFlipped(target);
+			int rotate = ProjectorItem.getRotation(target);
+			boolean flip = ProjectorItem.getFlipped(target);
 			
 			BlockPos hit = null;
 			
@@ -1293,15 +1294,15 @@ public class ItemProjector extends IPItemBase{
 	}
 	
 	public boolean doesIntersect(PlayerEntity player, ItemStack target, BlockPos check){
-		IMultiblock mb = ItemProjector.getMultiblock(target);
+		IMultiblock mb = ProjectorItem.getMultiblock(target);
 		
 		if(mb != null){
 			int mh = mb.getStructureManual().length;
 			int ml = mb.getStructureManual()[0].length;
 			int mw = mb.getStructureManual()[0][0].length;
 			
-			int rotate = ItemProjector.getRotation(target);
-			boolean flip = ItemProjector.getFlipped(target);
+			int rotate = ProjectorItem.getRotation(target);
+			boolean flip = ProjectorItem.getFlipped(target);
 			
 			int xd = (rotate % 2 == 0) ? ml : mw;
 			int zd = (rotate % 2 == 0) ? mw : ml;

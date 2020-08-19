@@ -36,7 +36,7 @@ public class IPSaveData extends WorldSavedData{
 		LubricatedHandler.lubricatedTiles.clear();
 		for(int i = 0;i < lubricatedList.size();i++){
 			CompoundNBT tag = lubricatedList.getCompound(i);
-			LubricatedTileInfo info = new LubricatedTileInfo(tag);//LubricatedTileInfo.readFromNBT(tag);
+			LubricatedTileInfo info = new LubricatedTileInfo(tag);
 			LubricatedHandler.lubricatedTiles.add(info);
 		}
 	}

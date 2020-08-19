@@ -8,7 +8,7 @@ import java.util.Map;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect;
 import blusunrize.immersiveengineering.common.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorNewTileEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,16 +32,16 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class LubricatedHandler{
 	public interface ILubricationHandler<E extends TileEntity> {
-		TileEntity isPlacedCorrectly(World world, AutoLubricatorTileEntity tile, Direction direction);
+		TileEntity isPlacedCorrectly(World world, TileEntity lubricator, Direction direction);
 		
 		boolean isMachineEnabled(World world, E mbte);
 		
 		void lubricate(World world, int ticks, E mbte);
 		
-		void spawnLubricantParticles(World world, AutoLubricatorTileEntity tile, Direction direction, E mbte);
+		void spawnLubricantParticles(World world, TileEntity lubricator, Direction direction, E mbte);
 		
 		@OnlyIn(Dist.CLIENT)
-		void renderPipes(World world, AutoLubricatorTileEntity tile, Direction direction, E mbte);
+		void renderPipes(World world, AutoLubricatorNewTileEntity lubricator, Direction direction, E mbte);
 		
 		Tuple<BlockPos, Direction> getGhostBlockPosition(World world, E mbte);
 		
@@ -60,17 +60,12 @@ public class LubricatedHandler{
 			if(lubricationHandlers.containsKey(teClass))
 				return lubricationHandlers.get(teClass);
 		}
-		
-//		for(Entry<Class<? extends TileEntity>, ILubricationHandler<?>> e:lubricationHandlers.entrySet()){
-//			if(e.getKey().isInstance(tile)){
-//				return e.getValue();
-//			}
-//		}
 		return null;
 	}
 	
 	public static class LubricatedTileInfo{
 		public BlockPos pos;
+		// TODO Use a more general way (ie Combined use of ModDimension and DimensionType)
 		public DimensionType world;
 		public int ticks;
 		
@@ -101,11 +96,6 @@ public class LubricatedHandler{
 			tag.putString("world", world.getRegistryName().toString());
 			
 			return tag;
-		}
-		
-		@Deprecated
-		public static LubricatedTileInfo readFromNBT(CompoundNBT tag){
-			return new LubricatedTileInfo(tag);
 		}
 	}
 	

@@ -39,9 +39,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class ItemSpeedboat extends IPItemBase implements IUpgradeableTool{
+public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 	static final String Upgrade_Type="BOAT";
-	public ItemSpeedboat(String name){
+	public SpeedboatItem(String name){
 		super(name, new Item.Properties().maxStackSize(1).group(ImmersivePetroleum.creativeTab));
 	}
 	
@@ -120,9 +120,7 @@ public class ItemSpeedboat extends IPItemBase implements IUpgradeableTool{
 		Vec3d vec3d1 = vec3d.add((double) f7 * 5.0D, (double) f6 * 5.0D, (double) f8 * 5.0D);
 		RayTraceResult raytraceresult = worldIn.rayTraceBlocks(new RayTraceContext(vec3d, vec3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.ANY, playerIn));
 		
-		if(raytraceresult == null){
-			return new ActionResult<ItemStack>(ActionResultType.PASS, itemstack);
-		}else{
+		if(raytraceresult != null){
 			Vec3d vec3d2 = playerIn.getLook(1.0F);
 			boolean flag = false;
 			AxisAlignedBB bb=playerIn.getCollisionBoundingBox();
@@ -176,6 +174,8 @@ public class ItemSpeedboat extends IPItemBase implements IUpgradeableTool{
 				}
 			}
 		}
+		
+		return new ActionResult<ItemStack>(ActionResultType.PASS, itemstack);
 	}
 	
 	protected NonNullList<ItemStack> getContainedItems(ItemStack stack){

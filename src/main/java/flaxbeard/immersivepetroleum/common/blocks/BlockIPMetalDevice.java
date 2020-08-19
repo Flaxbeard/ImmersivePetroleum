@@ -2,8 +2,8 @@ package flaxbeard.immersivepetroleum.common.blocks;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.metal.EnumIPMetalDevice;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorTileEntity;
+import flaxbeard.immersivepetroleum.common.util.enums.EnumIPMetalDevice;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;

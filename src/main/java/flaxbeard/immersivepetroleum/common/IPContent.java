@@ -21,12 +21,11 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
+import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.BlockDummy;
 import flaxbeard.immersivepetroleum.common.blocks.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity.CrusherLubricationHandler;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity.ExcavatorLubricationHandler;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity.PumpjackLubricationHandler;
+import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorNewTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.DistillationTowerParentTileEntity;
@@ -40,9 +39,12 @@ import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import flaxbeard.immersivepetroleum.common.items.IPItemBase;
 import flaxbeard.immersivepetroleum.common.items.IPUpgradeItem;
-import flaxbeard.immersivepetroleum.common.items.ItemOilCan;
-import flaxbeard.immersivepetroleum.common.items.ItemProjector;
-import flaxbeard.immersivepetroleum.common.items.ItemSpeedboat;
+import flaxbeard.immersivepetroleum.common.items.OilCanItem;
+import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
+import flaxbeard.immersivepetroleum.common.items.SpeedboatItem;
+import flaxbeard.immersivepetroleum.common.lubehandlers.CrusherLubricationHandler;
+import flaxbeard.immersivepetroleum.common.lubehandlers.ExcavatorLubricationHandler;
+import flaxbeard.immersivepetroleum.common.lubehandlers.PumpjackLubricationHandler;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -80,11 +82,9 @@ public class IPContent{
 	
 	public static class Blocks{
 		public static IPBlockBase blockAsphalt;
-		public static IPBlockBase blockGasGenerator;
 		
-		/** This is the AutoLubricator */
-		@Deprecated // TODO blockMetalDevice == AutoLubricator
-		public static IPBlockBase blockMetalDevice;
+		public static IPBlockBase blockGasGenerator;
+		public static IPBlockBase blockAutolubricator;
 		
 		public static BlockDummy dummyBlockOilOre;
 		public static BlockDummy dummyBlockPipe;
@@ -137,14 +137,16 @@ public class IPContent{
 		Blocks.blockAsphalt=new IPBlockBase("asphalt", Block.Properties.create(Material.ROCK).hardnessAndResistance(2.0F, 10.0F));
 		Blocks.blockGasGenerator=new GasGeneratorBlock();
 		
+		Blocks.blockAutolubricator=new AutoLubricatorBlock("auto_lubricator");
+		
 		Blocks.dummyBlockOilOre=new BlockDummy("dummy_oil_ore");
 		Blocks.dummyBlockPipe=new BlockDummy("dummy_pipe");
 		Blocks.dummyBlockConveyor=new BlockDummy("dummy_conveyor");
 		
 		Items.itemBitumen = new IPItemBase("bitumen");
 		
-		Items.itemProjector = new ItemProjector("projector");
-		Items.itemSpeedboat = new ItemSpeedboat("speedboat");
+		Items.itemProjector = new ProjectorItem("projector");
+		Items.itemSpeedboat = new SpeedboatItem("speedboat");
 		
 		BoatUpgrades.itemUpgradeHull = new IPUpgradeItem("reinforced_hull", "BOAT");
 		BoatUpgrades.itemUpgradeBreaker = new IPUpgradeItem("icebreaker", "BOAT");
@@ -152,7 +154,7 @@ public class IPContent{
 		BoatUpgrades.itemUpgradeRudders = new IPUpgradeItem("rudders", "BOAT");
 		BoatUpgrades.itemUpgradePaddles = new IPUpgradeItem("paddles", "BOAT");
 		
-		Items.itemOilCan = new ItemOilCan("oil_can");
+		Items.itemOilCan = new OilCanItem("oil_can");
 		
 		Multiblock.distillationtower=new DistillationTowerBlock();
 		Multiblock.pumpjack=new PumpjackBlock();
@@ -186,7 +188,7 @@ public class IPContent{
 		
 		LubricantHandler.registerLubricant(Fluids.fluidLubricant, 3);
 		LubricantHandler.registerLubricant(IEContent.fluidPlantoil, 12);
-
+		
 		LubricatedHandler.registerLubricatedTile(PumpjackTileEntity.class, new PumpjackLubricationHandler());
 		LubricatedHandler.registerLubricatedTile(ExcavatorTileEntity.class, new ExcavatorLubricationHandler());
 		LubricatedHandler.registerLubricatedTile(CrusherTileEntity.class, new CrusherLubricationHandler());
@@ -203,6 +205,7 @@ public class IPContent{
 		registerTile(event, GasGeneratorTileEntity.class, Blocks.blockGasGenerator);
 		
 		//registerTile(event, AutoLubricatorTileEntity.class, blockhere);
+		registerTile(event, AutoLubricatorNewTileEntity.class, Blocks.blockAutolubricator);
 	}
 	
 	/**

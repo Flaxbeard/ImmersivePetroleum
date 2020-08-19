@@ -24,12 +24,12 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 	@Nonnull
 	private Runnable onChange = () -> {};
 	
+	public IPItemStackHandler(){}
+	
 	@Override
 	public int getSlots(){
 		return 4;
 	}
-	
-	public IPItemStackHandler(){}
 	
 	public void setTile(TileEntity tile){
 		if(tile != null){

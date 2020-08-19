@@ -3,7 +3,7 @@ package flaxbeard.immersivepetroleum.common.crafting;
 import blusunrize.immersiveengineering.common.items.IEItems;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
-import flaxbeard.immersivepetroleum.common.items.ItemProjector;
+import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ICraftingRecipe;
@@ -74,7 +74,7 @@ public class SchematicCraftingHandler implements ICraftingRecipe{
 				String last = ItemNBTHelper.getString(manual, "lastMultiblock");
 				ItemStack op = new ItemStack(Items.itemProjector, 1);
 				ItemNBTHelper.putString(op, "multiblock", last);
-				ItemProjector.setFlipped(op, true);
+				ProjectorItem.setFlipped(op, true);
 				output = op;
 			}else{
 				remaining = NonNullList.withSize(9, ItemStack.EMPTY);

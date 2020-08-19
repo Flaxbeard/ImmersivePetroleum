@@ -45,7 +45,7 @@ public class AutoLubricatorNewTileEntity extends TileEntity implements ITickable
 	public boolean isActive;
 	public boolean predictablyDraining = false;
 	public Direction facing;
-	public FluidTank tank = new FluidTank(8000, fluid -> (fluid != null && FuelHandler.isValidFuel(fluid.getFluid())));
+	public FluidTank tank = new FluidTank(8000, fluid -> (fluid != null && LubricantHandler.isValidLube(fluid.getFluid())));
 	
 	public AutoLubricatorNewTileEntity(){
 		this(TYPE);

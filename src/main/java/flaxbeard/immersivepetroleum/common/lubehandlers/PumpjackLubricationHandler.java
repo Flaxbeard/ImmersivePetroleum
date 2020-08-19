@@ -116,7 +116,8 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 			GlStateManager.translatef(0, 0, -1);
 		}
 		GlStateManager.translatef(-1, 0, -1);
-		ClientUtils.bindTexture("immersivepetroleum:textures/blocks/lube_pipe12");
+		
+		ClientUtils.bindTexture("immersivepetroleum:textures/block/lube_pipe12.png");
 		if(mbte.getIsMirrored()){
 			((ModelLubricantPipes.Pumpjack) pumpjackM).render(0.0625F);
 		}else{

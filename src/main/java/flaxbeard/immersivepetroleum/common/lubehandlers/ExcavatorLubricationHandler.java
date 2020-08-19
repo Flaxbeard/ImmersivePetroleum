@@ -147,7 +147,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		}
 		
 		GlStateManager.translatef(-1, 0, -1);
-		ClientUtils.bindTexture("immersivepetroleum:textures/blocks/lube_pipe12");
+		ClientUtils.bindTexture("immersivepetroleum:textures/block/lube_pipe12.png");
 		if(mbte.getIsMirrored()){
 			((ModelLubricantPipes.Excavator) excavatorM).render(0.0625F);
 		}else{

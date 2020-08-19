@@ -132,7 +132,7 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 			
 		}
 		
-		ClientUtils.bindTexture("immersivepetroleum:textures/blocks/lube_pipe12.png");
+		ClientUtils.bindTexture("immersivepetroleum:textures/block/lube_pipe12.png");
 		crusher.render(0.0625F);
 	}
 	

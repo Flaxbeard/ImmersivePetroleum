@@ -7,7 +7,6 @@ import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorageAdvan
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorNewTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.block.BlockState;
@@ -33,7 +32,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
@@ -44,20 +42,21 @@ public class DebugItem extends IPItemBase{
 	
 	@Override
 	public ActionResultType onItemUse(ItemUseContext context){
-		if(!context.getWorld().isRemote && context.getPlayer().isSneaking()){
+		if(context.getPlayer().isSneaking()){
 			TileEntity te=context.getWorld().getTileEntity(context.getPos());
 			
 			if(te instanceof AutoLubricatorNewTileEntity){
 				AutoLubricatorNewTileEntity lube=(AutoLubricatorNewTileEntity)te;
 				
-				ITextComponent out=new StringTextComponent("");
+				ITextComponent out=new StringTextComponent(context.getWorld().isRemote?"CLIENT: ":"SERVER: ");
 				out.appendText(lube.facing+", ");
 				out.appendText((lube.isActive?"Active":"Inactive")+", ");
 				out.appendText((lube.isSlave?"Slave":"Master")+", ");
 				out.appendText((lube.predictablyDraining?"Predictably Draining, ":""));
-				out.appendSibling(lube.tank.getFluid().getDisplayName());
 				if(lube.tank.getFluid()!=null && lube.tank.getFluid()!=FluidStack.EMPTY){
-					out.appendText(lube.tank.getFluidAmount()+"/"+lube.tank.getCapacity()+"mB");
+					out.appendSibling(lube.tank.getFluid().getDisplayName()).appendText(" "+lube.tank.getFluidAmount()+"/"+lube.tank.getCapacity()+"mB");
+				}else{
+					out.appendText("Empty");
 				}
 				
 				context.getPlayer().sendMessage(out);

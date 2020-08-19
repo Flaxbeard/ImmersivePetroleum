@@ -29,17 +29,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class CrusherLubricationHandler implements ILubricationHandler<CrusherTileEntity>{
 	
 	@Override
-	public TileEntity isPlacedCorrectly(World world, TileEntity tile, Direction facing){
-		
-		BlockPos target = tile.getPos().offset(facing, 2).up();
+	public TileEntity isPlacedCorrectly(World world, AutoLubricatorNewTileEntity lubricator, Direction facing){
+		BlockPos target = lubricator.getPos().offset(facing);
 		TileEntity te = world.getTileEntity(target);
 		
 		if(te instanceof CrusherTileEntity){
 			CrusherTileEntity master = ((CrusherTileEntity) te).master();
 			
-			Direction f = facing;
-			if(master.getFacing().getOpposite() == f){
-				
+			if(master.getFacing().getOpposite() == facing){
 				return master;
 			}
 		}
@@ -76,8 +73,7 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 	}
 	
 	@Override
-	public void spawnLubricantParticles(World world, TileEntity tile, Direction facing, CrusherTileEntity mbte){
-		
+	public void spawnLubricantParticles(World world, AutoLubricatorNewTileEntity lubricator, Direction facing, CrusherTileEntity mbte){
 		Direction f = mbte.getIsMirrored() ? facing : facing.getOpposite();
 		
 		float location = world.rand.nextFloat();
@@ -96,9 +92,9 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 		if(facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
 		if(!flip) zO = -zO + 1;
 		
-		float x = tile.getPos().getX() + (f.getAxis() == Axis.X ? xO : zO);
-		float y = tile.getPos().getY() + yO;
-		float z = tile.getPos().getZ() + (f.getAxis() == Axis.X ? zO : xO);
+		float x = lubricator.getPos().getX() + (f.getAxis() == Axis.X ? xO : zO);
+		float y = lubricator.getPos().getY() + yO;
+		float z = lubricator.getPos().getZ() + (f.getAxis() == Axis.X ? zO : xO);
 		
 		for(int i = 0;i < 3;i++){
 			float r1 = (world.rand.nextFloat() - .5F) * 2F;
@@ -109,17 +105,17 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 		}
 	}
 	
-	private static Object excavator;
+	private static ModelLubricantPipes.Crusher crusher;
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderPipes(World world, AutoLubricatorNewTileEntity tile, Direction facing, CrusherTileEntity mbte){
-		if(excavator == null){
-			excavator = new ModelLubricantPipes.Crusher(false);
+	public void renderPipes(World world, AutoLubricatorNewTileEntity lubricator, Direction facing, CrusherTileEntity mbte){
+		if(crusher == null){
+			crusher = new ModelLubricantPipes.Crusher(false);
 		}
 		
 		GlStateManager.translatef(0, -1, 0);
-		Vec3i offset = mbte.getPos().subtract(tile.getPos());
+		Vec3i offset = mbte.getPos().subtract(lubricator.getPos());
 		GlStateManager.translatef(offset.getX(), offset.getY(), offset.getZ());
 		
 		Direction rotation = mbte.getFacing();
@@ -137,7 +133,7 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 		}
 		
 		ClientUtils.bindTexture("immersivepetroleum:textures/blocks/lube_pipe12.png");
-		((ModelLubricantPipes.Crusher) excavator).render(0.0625F);
+		crusher.render(0.0625F);
 	}
 	
 	@Override

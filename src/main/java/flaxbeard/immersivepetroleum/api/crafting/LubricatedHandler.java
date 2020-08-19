@@ -32,13 +32,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class LubricatedHandler{
 	public interface ILubricationHandler<E extends TileEntity> {
-		TileEntity isPlacedCorrectly(World world, TileEntity lubricator, Direction direction);
+		TileEntity isPlacedCorrectly(World world, AutoLubricatorNewTileEntity lubricator, Direction direction);
 		
 		boolean isMachineEnabled(World world, E mbte);
 		
 		void lubricate(World world, int ticks, E mbte);
 		
-		void spawnLubricantParticles(World world, TileEntity lubricator, Direction direction, E mbte);
+		void spawnLubricantParticles(World world, AutoLubricatorNewTileEntity lubricator, Direction direction, E mbte);
 		
 		@OnlyIn(Dist.CLIENT)
 		void renderPipes(World world, AutoLubricatorNewTileEntity lubricator, Direction direction, E mbte);

@@ -27,7 +27,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class ExcavatorLubricationHandler implements ILubricationHandler<ExcavatorTileEntity>{
 	
 	@Override
-	public TileEntity isPlacedCorrectly(World world, TileEntity lubricator, Direction facing){
+	public TileEntity isPlacedCorrectly(World world, AutoLubricatorNewTileEntity lubricator, Direction facing){
 		BlockPos initialTarget = lubricator.getPos().offset(facing);
 		ExcavatorTileEntity adjacent = (ExcavatorTileEntity) world.getTileEntity(initialTarget);
 		Direction f = adjacent.getIsMirrored() ? facing : facing.getOpposite();
@@ -83,7 +83,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	}
 	
 	@Override
-	public void spawnLubricantParticles(World world, TileEntity lubricator, Direction facing, ExcavatorTileEntity mbte){
+	public void spawnLubricantParticles(World world, AutoLubricatorNewTileEntity lubricator, Direction facing, ExcavatorTileEntity mbte){
 		Direction f = mbte.getIsMirrored() ? facing : facing.getOpposite();
 		
 		float location = world.rand.nextFloat();

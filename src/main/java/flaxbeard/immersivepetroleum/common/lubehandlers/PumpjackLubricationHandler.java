@@ -24,7 +24,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackTileEntity>{
 	@Override
-	public TileEntity isPlacedCorrectly(World world, TileEntity lubricator, Direction facing){
+	public TileEntity isPlacedCorrectly(World world, AutoLubricatorNewTileEntity lubricator, Direction facing){
 		BlockPos target = lubricator.getPos().offset(facing, 2).up();
 		TileEntity te = world.getTileEntity(target);
 		
@@ -57,7 +57,7 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 	}
 	
 	@Override
-	public void spawnLubricantParticles(World world, TileEntity lubricator, Direction facing, PumpjackTileEntity mbte){
+	public void spawnLubricantParticles(World world, AutoLubricatorNewTileEntity lubricator, Direction facing, PumpjackTileEntity mbte){
 		Direction f = mbte.getIsMirrored() ? facing : facing.getOpposite();
 		float location = world.rand.nextFloat();
 		

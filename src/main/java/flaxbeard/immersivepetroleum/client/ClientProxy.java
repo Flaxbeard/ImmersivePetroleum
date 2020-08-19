@@ -30,7 +30,7 @@ import flaxbeard.immersivepetroleum.client.page.ManualElementSchematicCrafting;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.client.render.SpeedboatRenderer;
-import flaxbeard.immersivepetroleum.client.render.TileAutoLubricatorRenderer;
+import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorNewTileEntity;
@@ -275,7 +275,7 @@ public class ClientProxy extends CommonProxy{
 		ClientRegistry.bindTileEntitySpecialRenderer(DistillationTowerParentTileEntity.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(PumpjackParentTileEntity.class, new MultiblockPumpjackRenderer());
 		//ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorTileEntity.class, new TileAutoLubricatorRenderer());
-		ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorNewTileEntity.class, new TileAutoLubricatorRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorNewTileEntity.class, new AutoLubricatorRenderer());
 		
 		// Don't think this is needed anymore
 		//ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice), 0, AutoLubricatorTileEntity.class);

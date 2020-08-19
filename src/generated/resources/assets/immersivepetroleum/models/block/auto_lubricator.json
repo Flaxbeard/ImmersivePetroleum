@@ -1,6 +1,0 @@
-{
-  "parent": "immersivepetroleum:block/lubricator_full",
-  "textures": {
-    "particle": "immersivepetroleum:block/auto_lubricator_top"
-  }
-}

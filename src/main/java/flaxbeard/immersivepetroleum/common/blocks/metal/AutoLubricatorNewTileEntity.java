@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import blusunrize.immersiveengineering.api.Lib;
+import blusunrize.immersiveengineering.common.EventHandler;
 import blusunrize.immersiveengineering.common.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
@@ -12,8 +13,6 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
-import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -63,9 +62,10 @@ public class AutoLubricatorNewTileEntity extends TileEntity implements ITickable
 		this.isActive = compound.getBoolean("active");
 		this.predictablyDraining = compound.getBoolean("predictablyDraining");
 		
-		this.facing = Direction.byName(compound.getString("facing"));
+		Direction facing = Direction.byName(compound.getString("facing"));
 		if(!Direction.Plane.HORIZONTAL.test(this.facing))
-			this.facing = Direction.NORTH;
+			facing = Direction.NORTH;
+		this.facing=facing;
 		
 		this.tank.readFromNBT(compound.getCompound("tank"));
 		
@@ -132,18 +132,29 @@ public class AutoLubricatorNewTileEntity extends TileEntity implements ITickable
 		return Arrays.asList(stack);
 	}
 	
-	private LazyOptional<IFluidHandler> outputHandler = LazyOptional.of(() -> this.tank);
+	private LazyOptional<IFluidHandler> outputHandler = LazyOptional.of(()->this.tank);
 	
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
-		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && this.isSlave && (this.facing == null || this.facing == Direction.UP)){
+		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && this.isSlave && (side == null || side == Direction.UP)){
 			return this.outputHandler.cast();
 		}
+		
 		return super.getCapability(cap, side);
+	}
+	
+	@Override
+	public void remove(){
+		super.remove();
+		this.outputHandler.invalidate();
 	}
 	
 	public Direction getFacing(){
 		return this.facing;
+	}
+	
+	public boolean isMaster(){
+		return !this.isSlave;
 	}
 	
 	@Override
@@ -171,10 +182,14 @@ public class AutoLubricatorNewTileEntity extends TileEntity implements ITickable
 	
 	@Override
 	public boolean interact(Direction side, PlayerEntity player, Hand hand, ItemStack heldItem, float hitX, float hitY, float hitZ){
-		TileEntity master = this.world.getTileEntity(getPos().add(0, this.isSlave ? -1 : 0, 0));
-		if(master != null && master instanceof AutoLubricatorNewTileEntity){
-			if(FluidUtil.interactWithFluidHandler(player, hand, ((AutoLubricatorNewTileEntity) master).tank)){
-				((AutoLubricatorNewTileEntity) master).markForUpdate();
+		TileEntity master=this;
+		if(this.isSlave){
+			master = this.world.getTileEntity(getPos().add(0, -1, 0));
+		}
+		
+		if(master!=null && master instanceof AutoLubricatorNewTileEntity){
+			if(FluidUtil.interactWithFluidHandler(player, hand, ((AutoLubricatorNewTileEntity)master).tank)){
+				markDirty();
 				return true;
 			}
 		}
@@ -192,15 +207,20 @@ public class AutoLubricatorNewTileEntity extends TileEntity implements ITickable
 	int lastTankUpdate = 0;
 	int countClient = 0;
 	
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings("unchecked")
 	@Override
 	public void tick(){
-		if(!this.isSlave){
+		if(this.isSlave){
+			EventHandler.REMOVE_FROM_TICKING.add(this);
+			return;
+		}
+		
+		if(isMaster()){
 			if(this.tank.getFluid() != null && this.tank.getFluid() != FluidStack.EMPTY && this.tank.getFluidAmount() >= LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid()) && LubricantHandler.isValidLube(this.tank.getFluid().getFluid())){
 				BlockPos target = this.pos.offset(this.facing);
 				TileEntity te = this.world.getTileEntity(target);
 				
-				ILubricationHandler handler = LubricatedHandler.getHandlerForTile(te);
+				ILubricationHandler<TileEntity> handler = (ILubricationHandler<TileEntity>)LubricatedHandler.getHandlerForTile(te);
 				if(handler != null){
 					TileEntity master = handler.isPlacedCorrectly(this.world, this, this.facing);
 					if(handler.isMachineEnabled(this.world, master)){
@@ -209,6 +229,7 @@ public class AutoLubricatorNewTileEntity extends TileEntity implements ITickable
 						
 						if(!this.world.isRemote && this.count % 4 == 0){
 							this.tank.drain(LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid()), FluidAction.EXECUTE);
+							markDirty();
 						}
 						
 						if(this.world.isRemote){
@@ -230,18 +251,9 @@ public class AutoLubricatorNewTileEntity extends TileEntity implements ITickable
 				if(Math.abs(this.lastTankUpdate - this.tank.getFluidAmount()) > 25){
 					this.predictablyDraining = (this.tank.getFluid() != null && this.tank.getFluid() != FluidStack.EMPTY) && this.lastTank - this.tank.getFluidAmount() == LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid());
 					this.lastTankUpdate = this.tank.getFluidAmount();
-					markForUpdate();
 				}
+				markDirty();
 			}
 		}
-	}
-	
-	public void markForUpdate(){
-		BlockPos pos = getPos();
-		BlockState state = this.world.getBlockState(pos);
-		this.world.notifyBlockUpdate(pos, state, state, 3);
-		this.world.notifyNeighborsOfStateChange(pos, state.getBlock());
-		
-		markDirty(); // Just incase. As im not sure what the above is trying to accomplish, but including it anyway.
 	}
 }

@@ -19,6 +19,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -82,6 +84,26 @@ public class AutoLubricatorNewTileEntity extends TileEntity implements ITickable
 		compound.put("tank", tank);
 		
 		return super.write(compound);
+	}
+	
+	@Override
+	public SUpdateTileEntityPacket getUpdatePacket(){
+		return new SUpdateTileEntityPacket(this.pos, 3, getUpdateTag());
+	}
+	
+	@Override
+	public void handleUpdateTag(CompoundNBT tag){
+		read(tag);
+	}
+	
+	@Override
+	public CompoundNBT getUpdateTag(){
+		return write(new CompoundNBT());
+	}
+	
+	@Override
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt){
+		read(pkt.getNbtCompound());
 	}
 	
 	public void readTank(CompoundNBT nbt){

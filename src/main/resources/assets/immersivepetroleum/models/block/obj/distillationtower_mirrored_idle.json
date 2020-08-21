@@ -1,0 +1,11 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "texture": "immersivepetroleum:block/obj/distillation_tower",
+    "particle": "immersivepetroleum:block/obj/distillation_tower"
+  },
+  "flip-v":true,
+  "loader": "forge:obj",
+  "detectCullableFaces": false,
+  "model": "immersivepetroleum:models/block/obj/distillationtower_mirrored.obj"
+}

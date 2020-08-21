@@ -43,36 +43,38 @@ public class ModelPumpjack extends Model{
 		barBack.addBox(-35F, 3F, -11F, 4, 4, 22);
 		this.arm.addChild(barBack);
 		
+		// "ZYX Euler" In blender
+		
 		RendererModel leg1 = new RendererModel(this, 176, 56);
 		leg1.addBox(-2F, -2F, -2F, 4, 43, 4);
 		leg1.setRotationPoint(56 - 13.6F, 8F, 12F);
-		leg1.rotateAngleZ = (float) Math.toRadians(-15);
 		leg1.rotateAngleX = (float) Math.toRadians(10);
 		leg1.rotateAngleY = (float) Math.toRadians(20);
+		leg1.rotateAngleZ = (float) Math.toRadians(-15);
 		this.base.addChild(leg1);
 		
 		RendererModel leg2 = new RendererModel(this, 176, 56);
 		leg2.addBox(-2F, -2F, -2F, 4, 43, 4);
 		leg2.setRotationPoint(56 + 13.6F, 8F, 12F);
-		leg2.rotateAngleZ = (float) Math.toRadians(15);
 		leg2.rotateAngleX = (float) Math.toRadians(10);
 		leg2.rotateAngleY = (float) Math.toRadians(-20);
+		leg2.rotateAngleZ = (float) Math.toRadians(15);
 		this.base.addChild(leg2);
 		
 		RendererModel leg3 = new RendererModel(this, 176, 56);
 		leg3.addBox(-2F, -2F, -1F, 4, 43, 4);
 		leg3.setRotationPoint(56 - 13.6F, 8F, 36F);
-		leg3.rotateAngleZ = (float) Math.toRadians(-15);
 		leg3.rotateAngleX = (float) Math.toRadians(-10);
 		leg3.rotateAngleY = (float) Math.toRadians(-20);
+		leg3.rotateAngleZ = (float) Math.toRadians(-15);
 		this.base.addChild(leg3);
 		
 		RendererModel leg4 = new RendererModel(this, 176, 56);
 		leg4.addBox(-2F, -2F, -2F, 4, 43, 4);
 		leg4.setRotationPoint(56 + 13.6F, 8F, 36F);
-		leg4.rotateAngleZ = (float) Math.toRadians(15);
 		leg4.rotateAngleX = (float) Math.toRadians(-10);
 		leg4.rotateAngleY = (float) Math.toRadians(20);
+		leg4.rotateAngleZ = (float) Math.toRadians(15);
 		this.base.addChild(leg4);
 		
 		RendererModel bar = new RendererModel(this, 238, 40);

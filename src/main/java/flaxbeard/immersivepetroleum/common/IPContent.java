@@ -25,7 +25,7 @@ import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.BlockDummy;
 import flaxbeard.immersivepetroleum.common.blocks.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorNewTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorTileEntity;

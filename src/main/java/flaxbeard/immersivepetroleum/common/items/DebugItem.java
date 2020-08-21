@@ -5,8 +5,7 @@ import java.util.Set;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorageAdvanced;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorNewTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.block.BlockState;
@@ -45,8 +44,8 @@ public class DebugItem extends IPItemBase{
 		if(context.getPlayer().isSneaking()){
 			TileEntity te=context.getWorld().getTileEntity(context.getPos());
 			
-			if(te instanceof AutoLubricatorNewTileEntity){
-				AutoLubricatorNewTileEntity lube=(AutoLubricatorNewTileEntity)te;
+			if(te instanceof AutoLubricatorTileEntity){
+				AutoLubricatorTileEntity lube=(AutoLubricatorTileEntity)te;
 				
 				ITextComponent out=new StringTextComponent(context.getWorld().isRemote?"CLIENT: ":"SERVER: ");
 				out.appendText(lube.facing+", ");

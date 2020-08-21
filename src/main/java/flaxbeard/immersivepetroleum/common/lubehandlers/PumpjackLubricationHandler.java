@@ -6,7 +6,7 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorNewTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.particles.BlockParticleData;
@@ -23,8 +23,20 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackTileEntity>{
+	private static Vec3i size=new Vec3i(4, 6, 3);
+	
 	@Override
-	public TileEntity isPlacedCorrectly(World world, AutoLubricatorNewTileEntity lubricator, Direction facing){
+	public Vec3i getStructureDimensions(){
+		return size;
+	}
+	
+	@Override
+	public boolean isMachineEnabled(World world, PumpjackTileEntity mbte){
+		return mbte.wasActive;
+	}
+	
+	@Override
+	public TileEntity isPlacedCorrectly(World world, AutoLubricatorTileEntity lubricator, Direction facing){
 		BlockPos target = lubricator.getPos().offset(facing);
 		TileEntity te = world.getTileEntity(target);
 		
@@ -41,11 +53,6 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 	}
 	
 	@Override
-	public boolean isMachineEnabled(World world, PumpjackTileEntity mbte){
-		return mbte.wasActive;
-	}
-	
-	@Override
 	public void lubricate(World world, int ticks, PumpjackTileEntity mbte){
 		if(!world.isRemote){
 			if(ticks % 4 == 0){
@@ -57,7 +64,7 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 	}
 	
 	@Override
-	public void spawnLubricantParticles(World world, AutoLubricatorNewTileEntity lubricator, Direction facing, PumpjackTileEntity mbte){
+	public void spawnLubricantParticles(World world, AutoLubricatorTileEntity lubricator, Direction facing, PumpjackTileEntity mbte){
 		Direction f = mbte.getIsMirrored() ? facing : facing.getOpposite();
 		float location = world.rand.nextFloat();
 		
@@ -89,12 +96,12 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 		}
 	}
 	
-	private static Object pumpjackM;
-	private static Object pumpjack;
+	private static ModelLubricantPipes.Pumpjack pumpjackM;
+	private static ModelLubricantPipes.Pumpjack pumpjack;
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderPipes(World world, AutoLubricatorNewTileEntity lubricator, Direction facing, PumpjackTileEntity mbte){
+	public void renderPipes(World world, AutoLubricatorTileEntity lubricator, Direction facing, PumpjackTileEntity mbte){
 		if(pumpjackM == null){
 			pumpjackM = new ModelLubricantPipes.Pumpjack(true);
 			pumpjack = new ModelLubricantPipes.Pumpjack(false);
@@ -105,43 +112,50 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 		GlStateManager.translatef(offset.getX(), offset.getY(), offset.getZ());
 		
 		Direction rotation = mbte.getFacing();
-		if(rotation == Direction.NORTH){
-			GlStateManager.rotatef(90F, 0, 1, 0);
-			GlStateManager.translatef(-6, 1, -1);
-		}else if(rotation == Direction.WEST){
-			GlStateManager.rotatef(180F, 0, 1, 0);
-			GlStateManager.translatef(-6, 1, -2);
-		}else if(rotation == Direction.SOUTH){
-			GlStateManager.rotatef(270F, 0, 1, 0);
-			GlStateManager.translatef(-5, 1, -2);
-		}else{
-			GlStateManager.rotatef(0F, 0, 1, 0);
-			GlStateManager.translatef(-5, 1, -1);
+		switch(rotation){
+			case NORTH:{
+				GlStateManager.rotatef(90F, 0, 1, 0);
+				GlStateManager.translatef(-6, 1, -1);
+				break;
+			}
+			case SOUTH:{
+				GlStateManager.rotatef(270F, 0, 1, 0);
+				GlStateManager.translatef(-5, 1, -2);
+				break;
+			}
+			case EAST:{
+				GlStateManager.rotatef(0F, 0, 1, 0);
+				GlStateManager.translatef(-5, 1, -1);
+				break;
+			}
+			case WEST:{
+				GlStateManager.rotatef(180F, 0, 1, 0);
+				GlStateManager.translatef(-6, 1, -2);
+				break;
+			}
+			default: break;
 		}
 		
 		ClientUtils.bindTexture("immersivepetroleum:textures/block/lube_pipe12.png");
 		if(mbte.getIsMirrored()){
-			((ModelLubricantPipes.Pumpjack) pumpjackM).render(0.0625F);
+			pumpjackM.render(0.0625F);
 		}else{
-			((ModelLubricantPipes.Pumpjack) pumpjack).render(0.0625F);
+			pumpjack.render(0.0625F);
 		}
 	}
 	
 	@Override
 	public Tuple<BlockPos, Direction> getGhostBlockPosition(World world, PumpjackTileEntity mbte){
 		if(!mbte.isDummy()){
-			BlockPos pos = mbte.getPos().offset(mbte.getIsMirrored() ? mbte.getFacing().rotateYCCW() : mbte.getFacing().rotateY(), 2);
-			Direction f = mbte.getIsMirrored() ? mbte.getFacing().rotateY() : mbte.getFacing().rotateYCCW();
+			Direction mbFacing=mbte.getFacing().getOpposite();
+			BlockPos pos = mbte.getPos()
+					.offset(Direction.UP)
+					.offset(mbFacing, 4)
+					.offset(mbte.getIsMirrored() ? mbFacing.rotateY() : mbFacing.rotateYCCW(), 2);
+			
+			Direction f = mbte.getIsMirrored() ? mbte.getFacing().getOpposite() : mbte.getFacing();
 			return new Tuple<BlockPos, Direction>(pos, f);
 		}
 		return null;
-	}
-	
-	private static Vec3i size;
-	@Override
-	public Vec3i getStructureDimensions(){
-		if(size==null)
-			size=new Vec3i(4, 6, 3);
-		return size;
 	}
 }

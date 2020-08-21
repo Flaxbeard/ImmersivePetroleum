@@ -8,9 +8,8 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.ShaderUtil;
-import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
-import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes.Base;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorNewTileEntity;
+import flaxbeard.immersivepetroleum.client.model.ModelAutoLubricator;
+import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -18,21 +17,21 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
 
-public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorNewTileEntity>{
+public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTileEntity>{
 	
 	private static String lubeTexture = "immersivepetroleum:textures/models/lubricator.png";
 	
-	private static Base base = new ModelLubricantPipes.Base();
+	private static ModelAutoLubricator base = new ModelAutoLubricator();
 	
 	@Override
-	public boolean isGlobalRenderer(AutoLubricatorNewTileEntity te){
+	public boolean isGlobalRenderer(AutoLubricatorTileEntity te){
 		return true;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void render(AutoLubricatorNewTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
+	public void render(AutoLubricatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
 		if(te == null){
 			GlStateManager.pushMatrix();
 			{
@@ -82,7 +81,7 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorNew
 				{
 					ShaderUtil.alpha_static(0.25f, 1);
 					
-					GlStateManager.translated(-4F / 16F, 6 / 16F, -4F / 16F);
+					GlStateManager.translated(-0.25F, 0.375F, -0.25F);
 					GlStateManager.scaled(scale, scale, scale);
 					
 					float h = level * height;

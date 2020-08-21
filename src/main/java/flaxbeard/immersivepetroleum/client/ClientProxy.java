@@ -274,7 +274,7 @@ public class ClientProxy extends CommonProxy{
 		ClientRegistry.bindTileEntitySpecialRenderer(DistillationTowerTileEntity.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(PumpjackTileEntity.class, new MultiblockPumpjackRenderer());
 		//ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorTileEntity.class, new TileAutoLubricatorRenderer());
-		ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorNewTileEntity.class, new AutoLubricatorRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorTileEntity.class, new AutoLubricatorRenderer());
 		
 		// Don't think this is needed anymore
 		//ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice), 0, AutoLubricatorTileEntity.class);

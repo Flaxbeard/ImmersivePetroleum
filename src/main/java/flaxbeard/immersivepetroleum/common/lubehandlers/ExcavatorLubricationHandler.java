@@ -9,7 +9,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.ExcavatorTileEntity;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorNewTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
@@ -25,9 +25,28 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ExcavatorLubricationHandler implements ILubricationHandler<ExcavatorTileEntity>{
+	private static Vec3i size=new Vec3i(3, 6, 3);
 	
 	@Override
-	public TileEntity isPlacedCorrectly(World world, AutoLubricatorNewTileEntity lubricator, Direction facing){
+	public Vec3i getStructureDimensions(){
+		return size;
+	}
+	
+	@Override
+	public boolean isMachineEnabled(World world, ExcavatorTileEntity mbte){
+		BlockPos wheelPos = mbte.master().getOrigin();
+		TileEntity center = world.getTileEntity(wheelPos);
+		
+		if(center instanceof BucketWheelTileEntity){
+			BucketWheelTileEntity wheel = (BucketWheelTileEntity) center;
+			
+			return wheel.active;
+		}
+		return false;
+	}
+	
+	@Override
+	public TileEntity isPlacedCorrectly(World world, AutoLubricatorTileEntity lubricator, Direction facing){
 		BlockPos initialTarget = lubricator.getPos().offset(facing);
 		ExcavatorTileEntity adjacent = (ExcavatorTileEntity) world.getTileEntity(initialTarget);
 		Direction f = adjacent.getIsMirrored() ? facing : facing.getOpposite();
@@ -48,21 +67,8 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	}
 	
 	@Override
-	public boolean isMachineEnabled(World world, ExcavatorTileEntity mbte){
-		BlockPos wheelPos = mbte.master().getOrigin();
-		TileEntity center = world.getTileEntity(wheelPos);
-		
-		if(center instanceof BucketWheelTileEntity){
-			BucketWheelTileEntity wheel = (BucketWheelTileEntity) center;
-			
-			return wheel.active;
-		}
-		return false;
-	}
-	
-	@Override
 	public void lubricate(World world, int ticks, ExcavatorTileEntity mbte){
-		BlockPos wheelPos = mbte.master().getOrigin();// getOrigin();//BlockPosForPos(31);
+		BlockPos wheelPos = mbte.master().getOrigin();
 		TileEntity center = world.getTileEntity(wheelPos);
 		
 		if(center instanceof BucketWheelTileEntity){
@@ -83,7 +89,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	}
 	
 	@Override
-	public void spawnLubricantParticles(World world, AutoLubricatorNewTileEntity lubricator, Direction facing, ExcavatorTileEntity mbte){
+	public void spawnLubricantParticles(World world, AutoLubricatorTileEntity lubricator, Direction facing, ExcavatorTileEntity mbte){
 		Direction f = mbte.getIsMirrored() ? facing : facing.getOpposite();
 		
 		float location = world.rand.nextFloat();
@@ -115,12 +121,12 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		}
 	}
 	
-	private static Object excavator;
-	private static Object excavatorM;
+	private static ModelLubricantPipes.Excavator excavator;
+	private static ModelLubricantPipes.Excavator excavatorM;
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderPipes(World world, AutoLubricatorNewTileEntity lubricator, Direction facing, ExcavatorTileEntity mbte){
+	public void renderPipes(World world, AutoLubricatorTileEntity lubricator, Direction facing, ExcavatorTileEntity mbte){
 		if(excavator == null){
 			excavatorM = new ModelLubricantPipes.Excavator(true);
 			excavator = new ModelLubricantPipes.Excavator(false);
@@ -131,45 +137,47 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		GlStateManager.translatef(offset.getX(), offset.getY(), offset.getZ());
 		
 		Direction rotation = mbte.getFacing();
-		if(rotation == Direction.NORTH){
-			GlStateManager.rotatef(90F, 0, 1, 0);
-			
-		}else if(rotation == Direction.WEST){
-			GlStateManager.rotatef(180F, 0, 1, 0);
-			GlStateManager.translatef(0, 0, -1);
-			
-		}else if(rotation == Direction.SOUTH){
-			GlStateManager.rotatef(270F, 0, 1, 0);
-			GlStateManager.translatef(1, 0, -1);
-		}else if(rotation == Direction.EAST){
-			GlStateManager.translatef(1, 0, 0);
-			
+		switch(rotation){
+			case NORTH:{
+				GlStateManager.rotatef(90F, 0, 1, 0);
+				GlStateManager.translatef(-1, 0, -1);
+				break;
+			}
+			case SOUTH:{
+				GlStateManager.rotatef(270F, 0, 1, 0);
+				GlStateManager.translatef(0, 0, -2);
+				break;
+			}
+			case EAST:{
+				GlStateManager.rotatef(0F, 0, 1, 0);
+				GlStateManager.translatef(0, 0, -1);
+				break;
+			}
+			case WEST:{
+				GlStateManager.rotatef(180F, 0, 1, 0);
+				GlStateManager.translatef(-1, 0, -2);
+				break;
+			}
+			default: break;
 		}
 		
-		GlStateManager.translatef(-1, 0, -1);
 		ClientUtils.bindTexture("immersivepetroleum:textures/block/lube_pipe12.png");
 		if(mbte.getIsMirrored()){
-			((ModelLubricantPipes.Excavator) excavatorM).render(0.0625F);
+			excavatorM.render(0.0625F);
 		}else{
-			((ModelLubricantPipes.Excavator) excavator).render(0.0625F);
+			excavator.render(0.0625F);
 		}
 	}
 	
 	@Override
 	public Tuple<BlockPos, Direction> getGhostBlockPosition(World world, ExcavatorTileEntity mbte){
 		if(!mbte.isDummy()){
-			BlockPos pos = mbte.getPos().offset(mbte.getFacing(), 4).offset(mbte.getIsMirrored() ? mbte.getFacing().rotateYCCW() : mbte.getFacing().rotateY(), 2);
+			BlockPos pos = mbte.getPos()
+					.offset(mbte.getFacing(), 4)
+					.offset(mbte.getIsMirrored() ? mbte.getFacing().rotateYCCW() : mbte.getFacing().rotateY(), 2);
 			Direction f = mbte.getIsMirrored() ? mbte.getFacing().rotateY() : mbte.getFacing().rotateYCCW();
 			return new Tuple<BlockPos, Direction>(pos, f);
 		}
 		return null;
-	}
-	
-	private static Vec3i size;
-	@Override
-	public Vec3i getStructureDimensions(){
-		if(size==null)
-			size=new Vec3i(3, 6, 3);
-		return size;
 	}
 }

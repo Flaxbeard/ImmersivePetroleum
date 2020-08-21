@@ -1,7 +1,7 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorNewTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -65,7 +65,7 @@ public class AutoLubricatorBlock extends IPBlockBase{
 	
 	@Override
 	public TileEntity createTileEntity(BlockState state, IBlockReader world){
-		AutoLubricatorNewTileEntity te=new AutoLubricatorNewTileEntity();
+		AutoLubricatorTileEntity te=new AutoLubricatorTileEntity();
 		te.isSlave=state.get(SLAVE);
 		te.facing=state.get(FACING);
 		return te;
@@ -95,8 +95,8 @@ public class AutoLubricatorBlock extends IPBlockBase{
 	@Override
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit){
 		TileEntity te=worldIn.getTileEntity(pos);
-		if(te instanceof AutoLubricatorNewTileEntity){
-			return ((AutoLubricatorNewTileEntity)te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), 0.0F, 0.0F, 0.0F);
+		if(te instanceof AutoLubricatorTileEntity){
+			return ((AutoLubricatorTileEntity)te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), 0.0F, 0.0F, 0.0F);
 		}
 		
 		return false;

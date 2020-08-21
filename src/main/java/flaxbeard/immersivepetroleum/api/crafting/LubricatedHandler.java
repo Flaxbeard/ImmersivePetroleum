@@ -8,7 +8,7 @@ import java.util.Map;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect;
 import blusunrize.immersiveengineering.common.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorNewTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,16 +32,16 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class LubricatedHandler{
 	public interface ILubricationHandler<E extends TileEntity> {
-		TileEntity isPlacedCorrectly(World world, AutoLubricatorNewTileEntity lubricator, Direction direction);
+		TileEntity isPlacedCorrectly(World world, AutoLubricatorTileEntity lubricator, Direction direction);
 		
 		boolean isMachineEnabled(World world, E mbte);
 		
 		void lubricate(World world, int ticks, E mbte);
 		
-		void spawnLubricantParticles(World world, AutoLubricatorNewTileEntity lubricator, Direction direction, E mbte);
+		void spawnLubricantParticles(World world, AutoLubricatorTileEntity lubricator, Direction direction, E mbte);
 		
 		@OnlyIn(Dist.CLIENT)
-		void renderPipes(World world, AutoLubricatorNewTileEntity lubricator, Direction direction, E mbte);
+		void renderPipes(World world, AutoLubricatorTileEntity lubricator, Direction direction, E mbte);
 		
 		Tuple<BlockPos, Direction> getGhostBlockPosition(World world, E mbte);
 		

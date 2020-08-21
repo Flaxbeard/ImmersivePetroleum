@@ -11,7 +11,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.CrusherTileEntity;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorNewTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
@@ -27,9 +27,20 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class CrusherLubricationHandler implements ILubricationHandler<CrusherTileEntity>{
+	private static Vec3i size=new Vec3i(3,3,5);
 	
 	@Override
-	public TileEntity isPlacedCorrectly(World world, AutoLubricatorNewTileEntity lubricator, Direction facing){
+	public Vec3i getStructureDimensions(){
+		return size;
+	}
+	
+	@Override
+	public boolean isMachineEnabled(World world, CrusherTileEntity mbte){
+		return mbte.shouldRenderAsActive();
+	}
+	
+	@Override
+	public TileEntity isPlacedCorrectly(World world, AutoLubricatorTileEntity lubricator, Direction facing){
 		BlockPos target = lubricator.getPos().offset(facing);
 		TileEntity te = world.getTileEntity(target);
 		
@@ -42,11 +53,6 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 		}
 		
 		return null;
-	}
-	
-	@Override
-	public boolean isMachineEnabled(World world, CrusherTileEntity mbte){
-		return mbte.shouldRenderAsActive();
 	}
 	
 	@Override
@@ -73,7 +79,7 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 	}
 	
 	@Override
-	public void spawnLubricantParticles(World world, AutoLubricatorNewTileEntity lubricator, Direction facing, CrusherTileEntity mbte){
+	public void spawnLubricantParticles(World world, AutoLubricatorTileEntity lubricator, Direction facing, CrusherTileEntity mbte){
 		Direction f = mbte.getIsMirrored() ? facing : facing.getOpposite();
 		
 		float location = world.rand.nextFloat();
@@ -109,7 +115,7 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderPipes(World world, AutoLubricatorNewTileEntity lubricator, Direction facing, CrusherTileEntity mbte){
+	public void renderPipes(World world, AutoLubricatorTileEntity lubricator, Direction facing, CrusherTileEntity mbte){
 		if(crusher == null){
 			crusher = new ModelLubricantPipes.Crusher(false);
 		}
@@ -119,17 +125,28 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 		GlStateManager.translatef(offset.getX(), offset.getY(), offset.getZ());
 		
 		Direction rotation = mbte.getFacing();
-		if(rotation == Direction.NORTH){
-			GlStateManager.rotatef(90F, 0, 1, 0);
-			GlStateManager.translatef(-1, 0, 0);
-		}else if(rotation == Direction.WEST){
-			GlStateManager.rotatef(180F, 0, 1, 0);
-			GlStateManager.translatef(-1, 0, -1);
-			
-		}else if(rotation == Direction.SOUTH){
-			GlStateManager.rotatef(270F, 0, 1, 0);
-			GlStateManager.translatef(0, 0, -1);
-			
+		switch(rotation){
+			case NORTH:{
+				GlStateManager.rotatef(90F, 0, 1, 0);
+				GlStateManager.translatef(-1, 0, 0);
+				break;
+			}
+			case SOUTH:{
+				GlStateManager.rotatef(270F, 0, 1, 0);
+				GlStateManager.translatef(0, 0, -1);
+				break;
+			}
+			case EAST:{
+				GlStateManager.rotatef(0F, 0, 1, 0);
+				GlStateManager.translatef(0, 0, 0);
+				break;
+			}
+			case WEST:{
+				GlStateManager.rotatef(180F, 0, 1, 0);
+				GlStateManager.translatef(-1, 0, -1);
+				break;
+			}
+			default: break;
 		}
 		
 		ClientUtils.bindTexture("immersivepetroleum:textures/block/lube_pipe12.png");
@@ -144,13 +161,5 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 			return new Tuple<BlockPos, Direction>(pos, f);
 		}
 		return null;
-	}
-	
-	private static Vec3i size;
-	@Override
-	public Vec3i getStructureDimensions(){
-		if(size==null)
-			size=new Vec3i(3,3,5);
-		return size;
 	}
 }

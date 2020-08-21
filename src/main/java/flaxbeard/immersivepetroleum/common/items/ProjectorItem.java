@@ -27,14 +27,11 @@ import blusunrize.immersiveengineering.common.blocks.metal.ConveyorBeltTileEntit
 import blusunrize.immersiveengineering.common.blocks.metal.MetalScaffoldingType;
 import blusunrize.immersiveengineering.common.blocks.metal.conveyors.BasicConveyor;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
-import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.api.event.SchematicPlaceBlockEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicPlaceBlockPostEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicRenderBlockEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicTestEvent;
 import flaxbeard.immersivepetroleum.client.ShaderUtil;
-import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageRotateSchematic;
@@ -63,7 +60,6 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
@@ -527,83 +523,6 @@ public class ProjectorItem extends IPItemBase{
 							renderSchematic(stack, mc.player, mc.player.world, event.getPartialTicks(), i == mc.player.inventory.currentItem || (i == 10 && off));
 						}
 						GlStateManager.popMatrix();
-					}
-				}
-			}
-		}
-		GlStateManager.popMatrix();
-		
-		GlStateManager.pushMatrix();
-		{
-			if(autolubeRender && mc.player != null){
-				ItemStack mainItem = mc.player.getHeldItemMainhand();
-				ItemStack secondItem = mc.player.getHeldItemOffhand();
-				
-				boolean main = (mainItem != null && !mainItem.isEmpty()) && mainItem.getItem() == IPContent.Blocks.blockAutolubricator.asItem();
-				boolean off = (secondItem != null && !secondItem.isEmpty()) && secondItem.getItem() == IPContent.Blocks.blockAutolubricator.asItem();
-				
-				if(main || off){
-					ItemRenderer itemRenderer=ClientUtils.mc().getItemRenderer();
-					
-					BlockPos base = mc.player.getPosition();
-					for(int x = -16;x <= 16;x++){
-						for(int z = -16;z <= 16;z++){
-							for(int y = -16;y <= 16;y++){
-								BlockPos pos = base.add(x, y, z);
-								TileEntity te = mc.player.world.getTileEntity(pos);
-								
-								if(te != null){
-									ILubricationHandler handler = LubricatedHandler.getHandlerForTile(te);
-									if(handler != null){
-										Tuple<BlockPos, Direction> target = handler.getGhostBlockPosition(mc.player.world, te);
-										if(target != null){
-											BlockPos targetPos = target.getA();
-											Direction targetFacing = target.getB();
-											BlockState targetState=mc.player.world.getBlockState(targetPos);
-											BlockState targetStateUp=mc.player.world.getBlockState(targetPos.up());
-											if(targetState.getMaterial().isReplaceable() && targetStateUp.getMaterial().isReplaceable()){
-												GlStateManager.pushMatrix();
-												{
-													float alpha = .5f;
-													ShaderUtil.alpha_static(alpha, mc.player.ticksExisted);
-													double px = TileEntityRendererDispatcher.staticPlayerX;
-													double py = TileEntityRendererDispatcher.staticPlayerY;
-													double pz = TileEntityRendererDispatcher.staticPlayerZ;
-													
-													GlStateManager.translated(targetPos.getX() - px, targetPos.getY() - py, targetPos.getZ() - pz);
-													GlStateManager.translated(0.5, -.5, .5);
-													
-													switch(targetFacing){
-														case SOUTH:
-															GlStateManager.rotated(270, 0, 1, 0);
-															break;
-														case NORTH:
-															GlStateManager.rotated(90, 0, 1, 0);
-															break;
-														case WEST:
-															GlStateManager.rotated(180, 0, 1, 0);
-															break;
-														case EAST:
-															break;
-														default:
-													}
-													GlStateManager.translated(0.02, 0, .019);
-													
-													GlStateManager.scaled(1, 1, 1);
-													//GlStateManager.scaled(2, 2, 2);
-													
-													ItemStack toRender = new ItemStack(IPContent.Blocks.blockAutolubricator);
-													itemRenderer.renderItem(toRender, itemRenderer.getModelWithOverrides(toRender));
-													
-													ShaderUtil.releaseShader();
-												}
-												GlStateManager.popMatrix();
-											}
-										}
-									}
-								}
-							}
-						}
 					}
 				}
 			}

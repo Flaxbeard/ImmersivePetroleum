@@ -41,17 +41,19 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTil
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.client.ShaderUtil;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.BlockNapalm;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
-import flaxbeard.immersivepetroleum.common.network.MessageCloseBook;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
+import flaxbeard.immersivepetroleum.common.network.MessageCloseBook;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -69,6 +71,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
@@ -185,6 +188,7 @@ public class EventHandler{
 		lastGui = event.getGui();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void renderLast(RenderWorldLastEvent event){
@@ -225,6 +229,83 @@ public class EventHandler{
 			}
 			GlStateManager.popMatrix();
 		}
+		
+		GlStateManager.pushMatrix();
+		{
+			if(mc.player != null){
+				ItemStack mainItem = mc.player.getHeldItemMainhand();
+				ItemStack secondItem = mc.player.getHeldItemOffhand();
+				
+				boolean main = (mainItem != null && !mainItem.isEmpty()) && mainItem.getItem() == IPContent.Blocks.blockAutolubricator.asItem();
+				boolean off = (secondItem != null && !secondItem.isEmpty()) && secondItem.getItem() == IPContent.Blocks.blockAutolubricator.asItem();
+				
+				if(main || off){
+					ItemRenderer itemRenderer=ClientUtils.mc().getItemRenderer();
+					
+					BlockPos base = mc.player.getPosition();
+					for(int x = -16;x <= 16;x++){
+						for(int z = -16;z <= 16;z++){
+							for(int y = -16;y <= 16;y++){
+								BlockPos pos = base.add(x, y, z);
+								TileEntity te = mc.player.world.getTileEntity(pos);
+								
+								if(te != null){
+									ILubricationHandler<TileEntity> handler = (ILubricationHandler<TileEntity>) LubricatedHandler.getHandlerForTile(te);
+									if(handler != null){
+										Tuple<BlockPos, Direction> target = handler.getGhostBlockPosition(mc.player.world, te);
+										if(target != null){
+											BlockPos targetPos = target.getA();
+											Direction targetFacing = target.getB();
+											BlockState targetState=mc.player.world.getBlockState(targetPos);
+											BlockState targetStateUp=mc.player.world.getBlockState(targetPos.up());
+											if(targetState.getMaterial().isReplaceable() && targetStateUp.getMaterial().isReplaceable()){
+												GlStateManager.pushMatrix();
+												{
+													float alpha = .5f;
+													ShaderUtil.alpha_static(alpha, mc.player.ticksExisted);
+													double px = TileEntityRendererDispatcher.staticPlayerX;
+													double py = TileEntityRendererDispatcher.staticPlayerY;
+													double pz = TileEntityRendererDispatcher.staticPlayerZ;
+													
+													GlStateManager.translated(targetPos.getX() - px, targetPos.getY() - py, targetPos.getZ() - pz);
+													GlStateManager.translated(0.5, -.5, .5);
+													
+													switch(targetFacing){
+														case SOUTH:
+															GlStateManager.rotated(270, 0, 1, 0);
+															break;
+														case NORTH:
+															GlStateManager.rotated(90, 0, 1, 0);
+															break;
+														case WEST:
+															GlStateManager.rotated(180, 0, 1, 0);
+															break;
+														case EAST:
+															break;
+														default:
+													}
+													GlStateManager.translated(0.02, 0, .019);
+													
+													GlStateManager.scaled(1, 1, 1);
+													//GlStateManager.scaled(2, 2, 2);
+													
+													ItemStack toRender = new ItemStack(IPContent.Blocks.blockAutolubricator);
+													itemRenderer.renderItem(toRender, itemRenderer.getModelWithOverrides(toRender));
+													
+													ShaderUtil.releaseShader();
+												}
+												GlStateManager.popMatrix();
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		GlStateManager.popMatrix();
 	}
 	
 	@OnlyIn(Dist.CLIENT)

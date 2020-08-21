@@ -28,11 +28,9 @@ import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorNewTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.DistillationTowerParentTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity.PumpjackParentTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
@@ -197,15 +195,10 @@ public class IPContent{
 	@SubscribeEvent
 	public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event){
 		registerTile(event, DistillationTowerTileEntity.class, Multiblock.distillationtower);
-		registerTile(event, DistillationTowerParentTileEntity.class, Multiblock.distillationtower);
-		
 		registerTile(event, PumpjackTileEntity.class, Multiblock.pumpjack);
-		registerTile(event, PumpjackParentTileEntity.class, Multiblock.pumpjack);
+		registerTile(event, AutoLubricatorTileEntity.class, Blocks.blockAutolubricator);
 		
 		registerTile(event, GasGeneratorTileEntity.class, Blocks.blockGasGenerator);
-		
-		//registerTile(event, AutoLubricatorTileEntity.class, blockhere);
-		registerTile(event, AutoLubricatorNewTileEntity.class, Blocks.blockAutolubricator);
 	}
 	
 	/**

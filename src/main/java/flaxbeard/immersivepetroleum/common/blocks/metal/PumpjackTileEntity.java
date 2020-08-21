@@ -46,38 +46,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTileEntity, MultiblockRecipe>  implements IBlockBounds{
-	public static class PumpjackParentTileEntity extends PumpjackTileEntity{
-		/** Do not Touch! Taken care of by {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)} */
-		public static TileEntityType<PumpjackParentTileEntity> TYPE;
-		
-		@Override
-		public TileEntityType<?> getType(){
-			return TYPE;
-		}
-		
-		@OnlyIn(Dist.CLIENT)
-		@Override
-		public AxisAlignedBB getRenderBoundingBox(){ // TODO Needs rewrite probably
-			BlockPos nullPos = this.getPos();
-			
-			BlockPos a=nullPos.offset(getFacing(), -2).offset(getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY(), -1).down(1);
-			BlockPos b=nullPos.offset(getFacing(), 5).offset(getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY(), 2).up(3);
-			
-			return new AxisAlignedBB(a, b);
-		}
-		
-		@Override
-		public boolean isDummy(){
-			return false;
-		}
-		
-		@Override
-		@OnlyIn(Dist.CLIENT)
-		public double getMaxRenderDistanceSquared(){
-			return super.getMaxRenderDistanceSquared() * IEConfig.GENERAL.increasedTileRenderdistance.get();
-		}
-	}
-	
 	/** Do not Touch! Taken care of by {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)} */
 	public static TileEntityType<PumpjackTileEntity> TYPE;
 	
@@ -361,22 +329,22 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(Direction side){
 		PumpjackTileEntity master = master();
-		
-		// East Port
-		if(this.posInMultiblock.equals(East_Port) && (side==null || side==getFacing().rotateY())){
-			return new FluidTank[]{master.fakeTank};
+		if(master!=null){
+			// East Port
+			if(this.posInMultiblock.equals(East_Port) && (side==null || side==getFacing().rotateY())){
+				return new FluidTank[]{master.fakeTank};
+			}
+			
+			// West Port
+			if(this.posInMultiblock.equals(West_Port) && (side==null || side==getFacing().rotateYCCW())){
+				return new FluidTank[]{master.fakeTank};
+			}
+			
+			// Below Head
+			if(IPConfig.EXTRACTION.required_pipes.get() && this.posInMultiblock.equals(Down_Port) && (side==null || side==Direction.DOWN)){
+				return new FluidTank[]{master.fakeTank};
+			}
 		}
-		
-		// West Port
-		if(this.posInMultiblock.equals(West_Port) && (side==null || side==getFacing().rotateYCCW())){
-			return new FluidTank[]{master.fakeTank};
-		}
-		
-		// Below Head
-		if(IPConfig.EXTRACTION.required_pipes.get() && this.posInMultiblock.equals(Down_Port) && (side==null || side==Direction.DOWN)){
-			return new FluidTank[]{master.fakeTank};
-		}
-		
 		return new FluidTank[0];
 	}
 	
@@ -388,6 +356,23 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	@Override
 	protected boolean canDrainTankFrom(int iTank, Direction side){
 		return false;
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public AxisAlignedBB getRenderBoundingBox(){ // TODO Needs rewrite probably
+		BlockPos nullPos = this.getPos();
+		
+		BlockPos a=nullPos.offset(getFacing(), -2).offset(getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY(), -1).down(1);
+		BlockPos b=nullPos.offset(getFacing(), 5).offset(getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY(), 2).up(3);
+		
+		return new AxisAlignedBB(a, b);
+	}
+	
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public double getMaxRenderDistanceSquared(){
+		return super.getMaxRenderDistanceSquared() * IEConfig.GENERAL.increasedTileRenderdistance.get();
 	}
 	
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(PumpjackTileEntity::getShape);

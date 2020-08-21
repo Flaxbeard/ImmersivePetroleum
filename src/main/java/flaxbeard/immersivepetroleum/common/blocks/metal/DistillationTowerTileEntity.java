@@ -12,7 +12,6 @@ import com.google.common.collect.ImmutableSet;
 
 import blusunrize.immersiveengineering.api.DirectionalBlockPos;
 import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
-import blusunrize.immersiveengineering.common.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
@@ -52,34 +51,6 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<DistillationTowerTileEntity, DistillationRecipe> implements IInteractionObjectIE, IBlockBounds{
-	public static class DistillationTowerParentTileEntity extends DistillationTowerTileEntity{
-		/** Do not Touch! Taken care of by {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)} */
-		public static TileEntityType<DistillationTowerParentTileEntity> TYPE;
-		
-		@Override
-		public TileEntityType<?> getType(){
-			return TYPE;
-		}
-		
-		@Override
-		@OnlyIn(Dist.CLIENT)
-		public net.minecraft.util.math.AxisAlignedBB getRenderBoundingBox(){
-			BlockPos pos = getPos();
-			return new AxisAlignedBB(pos.add(-4, -16, -4), pos.add(4, 16, 4));
-		}
-		
-		@Override
-		public boolean isDummy(){
-			return false;
-		}
-		
-		@Override
-		@OnlyIn(Dist.CLIENT)
-		public double getMaxRenderDistanceSquared(){
-			return super.getMaxRenderDistanceSquared() * IEConfig.GENERAL.increasedTileRenderdistance.get();
-		}
-	}
-	
 	/** Do not Touch! Taken care of by {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)} */
 	public static TileEntityType<DistillationTowerTileEntity> TYPE;
 	
@@ -184,10 +155,10 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	@Override
 	public void tick(){
 		super.tick();
-		if(this.cooldownTicks > 0)
-			this.cooldownTicks--;
 		if(this.world.isRemote || isDummy())
 			return;
+		if(this.cooldownTicks > 0)
+			this.cooldownTicks--;
 		
 		boolean update=false;
 		if(!this.operated)
@@ -490,11 +461,14 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	}
 	
 	@Override
-	public boolean isDummy(){
-		return true;
+	@OnlyIn(Dist.CLIENT)
+	public AxisAlignedBB getRenderBoundingBox(){
+		BlockPos pos = getPos();
+		return new AxisAlignedBB(pos.add(-4, -16, -4), pos.add(4, 16, 4));
 	}
 	
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(DistillationTowerTileEntity::getShape);
+	
 	@Override
 	public VoxelShape getBlockBounds(ISelectionContext ctx){
 		return SHAPES.get(this.posInMultiblock, Pair.of(getFacing(), getIsMirrored()));

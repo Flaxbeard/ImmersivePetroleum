@@ -27,16 +27,15 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
 import flaxbeard.immersivepetroleum.client.page.ManualElementSchematicCrafting;
+import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.client.render.SpeedboatRenderer;
-import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorNewTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.DistillationTowerParentTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity.PumpjackParentTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -272,8 +271,8 @@ public class ClientProxy extends CommonProxy{
 	}
 	@Override
 	public void postInit(){
-		ClientRegistry.bindTileEntitySpecialRenderer(DistillationTowerParentTileEntity.class, new MultiblockDistillationTowerRenderer());
-		ClientRegistry.bindTileEntitySpecialRenderer(PumpjackParentTileEntity.class, new MultiblockPumpjackRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(DistillationTowerTileEntity.class, new MultiblockDistillationTowerRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(PumpjackTileEntity.class, new MultiblockPumpjackRenderer());
 		//ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorTileEntity.class, new TileAutoLubricatorRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorNewTileEntity.class, new AutoLubricatorRenderer());
 		
@@ -292,14 +291,14 @@ public class ClientProxy extends CommonProxy{
 	
 	public void renderTile(TileEntity te){
 		
-		if(te instanceof PumpjackTileEntity.PumpjackParentTileEntity){
+		if(te instanceof PumpjackTileEntity){
 			GlStateManager.pushMatrix();
 			GlStateManager.rotatef(-90, 0, 1, 0);
 			GlStateManager.translatef(1, 1, -2);
 			
 			float pt = 0;
 			if(Minecraft.getInstance().player != null){
-				((PumpjackTileEntity.PumpjackParentTileEntity) te).activeTicks = Minecraft.getInstance().player.ticksExisted;
+				((PumpjackTileEntity) te).activeTicks = Minecraft.getInstance().player.ticksExisted;
 				pt = Minecraft.getInstance().getRenderPartialTicks();
 			}
 			

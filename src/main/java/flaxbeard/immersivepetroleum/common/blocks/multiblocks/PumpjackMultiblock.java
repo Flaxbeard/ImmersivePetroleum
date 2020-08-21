@@ -3,7 +3,7 @@ package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity.PumpjackParentTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
@@ -29,15 +29,15 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	private PumpjackParentTileEntity te;
+	private PumpjackTileEntity te;
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void renderFormedStructure(){
-		if(te == null){
-			te = new PumpjackParentTileEntity();
+		if(this.te == null){
+			this.te = new PumpjackTileEntity();
 		}
 		
-		ImmersivePetroleum.proxy.renderTile(te);
+		ImmersivePetroleum.proxy.renderTile(this.te);
 	}
 }

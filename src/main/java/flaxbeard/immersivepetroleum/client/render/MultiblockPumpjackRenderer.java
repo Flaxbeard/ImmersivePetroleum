@@ -4,22 +4,22 @@ import com.mojang.blaze3d.platform.GlStateManager;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.client.model.ModelPumpjack;
-import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity.PumpjackParentTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackParentTileEntity>{
+public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileEntity>{
 	private static ModelPumpjack model = new ModelPumpjack(false);
 	private static ModelPumpjack modelM = new ModelPumpjack(true);
 	
 	private static String texture = "immersivepetroleum:textures/models/pumpjack.png";
 	
 	@Override
-	public void render(PumpjackParentTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
-		if(te != null){
+	public void render(PumpjackTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
+		if(te != null && !te.isDummy()){
 			GlStateManager.pushMatrix();
 			GlStateManager.translated(x, y, z);
 			

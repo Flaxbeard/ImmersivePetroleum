@@ -9,15 +9,15 @@ import static flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTower
 import blusunrize.immersiveengineering.common.gui.IEBaseContainer;
 import blusunrize.immersiveengineering.common.gui.IESlot;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.DistillationTowerParentTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class DistillationTowerContainer extends IEBaseContainer<DistillationTowerParentTileEntity>{
-	public DistillationTowerContainer(int windowId, PlayerInventory inventoryPlayer, final DistillationTowerParentTileEntity tile){
+public class DistillationTowerContainer extends IEBaseContainer<DistillationTowerTileEntity>{
+	public DistillationTowerContainer(int windowId, PlayerInventory inventoryPlayer, final DistillationTowerTileEntity tile){
 		super(inventoryPlayer, tile, windowId);
 
 		this.addSlot(new IESlot.FluidContainer(this, this.inv, INV_0, 12, 17, 2){

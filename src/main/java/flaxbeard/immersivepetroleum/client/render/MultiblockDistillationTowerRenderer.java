@@ -3,15 +3,13 @@ package flaxbeard.immersivepetroleum.client.render;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
-import flaxbeard.immersivepetroleum.client.model.ModelDistillationTower;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.DistillationTowerParentTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<DistillationTowerParentTileEntity>{
 	private static ModelDistillationTower model = new ModelDistillationTower(false);
 	private static ModelDistillationTower modelM = new ModelDistillationTower(true);
 	
@@ -20,6 +18,7 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 	
 	private static String textureM = "immersivepetroleum:textures/models/distillation_tower_m.png";
 	private static String textureOnM = "immersivepetroleum:textures/models/furnace_hot_m.png";
+public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<DistillationTowerTileEntity>{
 	
 	@Override
 	public boolean isGlobalRenderer(DistillationTowerParentTileEntity te){
@@ -27,8 +26,8 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 	}
 	
 	@Override
-	public void render(DistillationTowerParentTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
 		if(te != null){
+	public void render(DistillationTowerTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
 			GlStateManager.pushMatrix();
 			GlStateManager.translated(x, y, z);
 			

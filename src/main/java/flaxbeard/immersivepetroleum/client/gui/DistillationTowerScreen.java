@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.DistillationTowerParentTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.DistillationTowerContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.PlayerInventory;
@@ -18,7 +18,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class DistillationTowerScreen extends IEContainerScreen<DistillationTowerContainer>
 {
-	DistillationTowerParentTileEntity tile;
+	DistillationTowerTileEntity tile;
 
 	public DistillationTowerScreen(DistillationTowerContainer container, PlayerInventory playerInventory, ITextComponent title)
 	{

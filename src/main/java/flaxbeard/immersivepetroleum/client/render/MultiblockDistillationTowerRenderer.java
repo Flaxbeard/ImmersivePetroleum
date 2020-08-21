@@ -103,7 +103,7 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 			Tessellator tes = Tessellator.getInstance();
 			BufferBuilder buf = tes.getBuffer();
 			buf.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-			ClientUtils.renderModelTESRFast(list, buf, te.getWorldNonnull(), te.getPos());
+			ClientUtils.renderModelTESRFast(list, buf, te.getWorldNonnull(), te.getPos(), 0xBABABA);
 			
 			GlStateManager.disableCull();
 			GlStateManager.disableLighting();

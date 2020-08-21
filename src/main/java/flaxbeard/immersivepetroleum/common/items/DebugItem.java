@@ -9,28 +9,18 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
@@ -52,7 +42,7 @@ public class DebugItem extends IPItemBase{
 				out.appendText((lube.isActive?"Active":"Inactive")+", ");
 				out.appendText((lube.isSlave?"Slave":"Master")+", ");
 				out.appendText((lube.predictablyDraining?"Predictably Draining, ":""));
-				if(lube.tank.getFluid()!=null && lube.tank.getFluid()!=FluidStack.EMPTY){
+				if(!lube.tank.isEmpty()){
 					out.appendSibling(lube.tank.getFluid().getDisplayName()).appendText(" "+lube.tank.getFluidAmount()+"/"+lube.tank.getCapacity()+"mB");
 				}else{
 					out.appendText("Empty");
@@ -93,56 +83,6 @@ public class DebugItem extends IPItemBase{
 		}
 		
 		return ActionResultType.PASS;
-	}
-	
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand){
-		ItemStack itemstack = player.getHeldItem(hand);
-		float f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * 1.0F;
-		float f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * 1.0F;
-		double d0 = player.prevPosX + (player.posX - player.prevPosX) * 1.0D;
-		double d1 = player.prevPosY + (player.posY - player.prevPosY) * 1.0D + (double) player.getEyeHeight();
-		double d2 = player.prevPosZ + (player.posZ - player.prevPosZ) * 1.0D;
-		Vec3d vec3d = new Vec3d(d0, d1, d2);
-		float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
-		float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
-		float f5 = -MathHelper.cos(-f1 * 0.017453292F);
-		float f6 = MathHelper.sin(-f1 * 0.017453292F);
-		float f7 = f4 * f5;
-		float f8 = f3 * f5;
-		Vec3d vec3d1 = vec3d.add((double) f7 * 8.0D, (double) f6 * 8.0D, (double) f8 * 8.0D);
-		RayTraceResult raytraceresult = world.rayTraceBlocks(new RayTraceContext(vec3d, vec3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.ANY, player));
-		
-		if(raytraceresult != null){
-			switch(raytraceresult.getType()){
-				case BLOCK:{
-					BlockRayTraceResult hit=(BlockRayTraceResult)raytraceresult;
-					if(!world.isRemote) ImmersivePetroleum.log.info("Block Hit");
-					return onBlockHit(hit, world, player, hand, itemstack, hit.getPos(), hit.getFace());
-				}
-				case ENTITY:{
-					EntityRayTraceResult hit=(EntityRayTraceResult)raytraceresult;
-					if(!world.isRemote) ImmersivePetroleum.log.info("Entity Hit");
-					return onEntityHit(world, player, hand, itemstack, hit.getEntity(), hit.getHitVec());
-				}
-				default:break;
-			}
-			
-			if(!world.isRemote) ImmersivePetroleum.log.info("Missed");
-			return new ActionResult<ItemStack>(ActionResultType.PASS, itemstack);
-		}
-		
-
-		if(!world.isRemote) ImmersivePetroleum.log.info("Null");
-		return new ActionResult<ItemStack>(ActionResultType.PASS, itemstack);
-	}
-	
-	private ActionResult<ItemStack> onBlockHit(BlockRayTraceResult hit, World world, PlayerEntity player, Hand hand, ItemStack heldstack, BlockPos blockPos, Direction direction){
-		return new ActionResult<ItemStack>(ActionResultType.SUCCESS, heldstack);
-	}
-	
-	private ActionResult<ItemStack> onEntityHit(World world, PlayerEntity player, Hand hand, ItemStack heldstack, Entity entity, Vec3d vec3d){
-		return new ActionResult<ItemStack>(ActionResultType.PASS, heldstack);
 	}
 	
 	public void onSpeedboatClick(SpeedboatEntity speedboatEntity, PlayerEntity player){

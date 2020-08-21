@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.common.blocks.metal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -208,52 +207,74 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			}
 			
 			update|=FluidUtil.getFluidHandler(this.world, getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite()), getFacing().getOpposite()).map(output->{
-				FluidStack targetFluidStack=null;
-				if(this.lastFluidOut!=null){
-					for(FluidStack f:this.tanks[TANK_OUTPUT].fluids){
-						if(f.getFluid()==this.lastFluidOut){
-							targetFluidStack=f;
+				boolean ret=false;
+				if(this.tanks[TANK_OUTPUT].fluids.size()>0){
+					List<FluidStack> toDrain=new ArrayList<>();
+					
+					for(FluidStack target:this.tanks[TANK_OUTPUT].fluids){
+						FluidStack outStack=Utils.copyFluidStackWithAmount(target, Math.min(target.getAmount(), 80), false);
+						int accepted=output.fill(outStack, FluidAction.SIMULATE);
+						if(accepted>0){
+							int drained=output.fill(Utils.copyFluidStackWithAmount(outStack, Math.min(outStack.getAmount(), accepted), false), FluidAction.EXECUTE);
+							toDrain.add(new FluidStack(target.getFluid(), drained));
+							ret|=true;
 						}
 					}
+					
+					// If this were to be done in the for-loop it would throw a concurrent exception
+					toDrain.forEach(fluid->this.tanks[TANK_OUTPUT].drain(fluid, FluidAction.EXECUTE));
 				}
 				
-				if(targetFluidStack==null){
-					int max=0;
-					for(FluidStack f:this.tanks[TANK_OUTPUT].fluids){
-						if(f.getAmount()>max){
-							max=f.getAmount();
-							targetFluidStack=f;
-						}
-					}
-				}
-				
-				this.lastFluidOut=null;
-				if(targetFluidStack!=null){
-					FluidStack outStack = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.getAmount(), 80), false);
-					int accepted=output.fill(outStack, FluidAction.SIMULATE);
-					if(accepted>0){
-						this.lastFluidOut=targetFluidStack.getFluid();
-						int drained=output.fill(Utils.copyFluidStackWithAmount(outStack, Math.min(outStack.getAmount(), accepted), false), FluidAction.EXECUTE);
-						this.tanks[TANK_OUTPUT].drain(new FluidStack(targetFluidStack.getFluid(), drained), FluidAction.EXECUTE);
-						return true;
-					}else{
-						Iterator<FluidStack> it=this.tanks[TANK_OUTPUT].fluids.iterator();
-						while(it.hasNext()){
-							targetFluidStack = it.next();
-							outStack = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.getAmount(), 80), false);
-							accepted = output.fill(outStack, FluidAction.SIMULATE);
-							if(accepted>0){
-								this.lastFluidOut=targetFluidStack.getFluid();
-								int drained=output.fill(Utils.copyFluidStackWithAmount(outStack, Math.min(outStack.getAmount(), accepted), false), FluidAction.EXECUTE);
-								this.tanks[TANK_OUTPUT].drain(new FluidStack(targetFluidStack.getFluid(), drained), FluidAction.EXECUTE);
-								return true;
-							}
-						}
-					}
-				}
-				
-				return false;
+				return ret;
 			}).orElse(false);
+			
+//			update|=FluidUtil.getFluidHandler(this.world, getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite()), getFacing().getOpposite()).map(output->{
+//				FluidStack targetFluidStack=null;
+//				if(this.lastFluidOut!=null){
+//					for(FluidStack f:this.tanks[TANK_OUTPUT].fluids){
+//						if(f.getFluid()==this.lastFluidOut){
+//							targetFluidStack=f;
+//						}
+//					}
+//				}
+//				
+//				if(targetFluidStack==null){
+//					int max=0;
+//					for(FluidStack f:this.tanks[TANK_OUTPUT].fluids){
+//						if(f.getAmount()>max){
+//							max=f.getAmount();
+//							targetFluidStack=f;
+//						}
+//					}
+//				}
+//				
+//				this.lastFluidOut=null;
+//				if(targetFluidStack!=null){
+//					FluidStack outStack = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.getAmount(), 80), false);
+//					int accepted=output.fill(outStack, FluidAction.SIMULATE);
+//					if(accepted>0){
+//						this.lastFluidOut=targetFluidStack.getFluid();
+//						int drained=output.fill(Utils.copyFluidStackWithAmount(outStack, Math.min(outStack.getAmount(), accepted), false), FluidAction.EXECUTE);
+//						this.tanks[TANK_OUTPUT].drain(new FluidStack(targetFluidStack.getFluid(), drained), FluidAction.EXECUTE);
+//						return true;
+//					}else{
+//						Iterator<FluidStack> it=this.tanks[TANK_OUTPUT].fluids.iterator();
+//						while(it.hasNext()){
+//							targetFluidStack = it.next();
+//							outStack = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.getAmount(), 80), false);
+//							accepted = output.fill(outStack, FluidAction.SIMULATE);
+//							if(accepted>0){
+//								this.lastFluidOut=targetFluidStack.getFluid();
+//								int drained=output.fill(Utils.copyFluidStackWithAmount(outStack, Math.min(outStack.getAmount(), accepted), false), FluidAction.EXECUTE);
+//								this.tanks[TANK_OUTPUT].drain(new FluidStack(targetFluidStack.getFluid(), drained), FluidAction.EXECUTE);
+//								return true;
+//							}
+//						}
+//					}
+//				}
+//				
+//				return false;
+//			}).orElse(false);
 		}
 		
 		if(this.inventory.get(INV_0)!=ItemStack.EMPTY && this.tanks[TANK_INPUT].getFluidAmount()<this.tanks[TANK_INPUT].getCapacity()){

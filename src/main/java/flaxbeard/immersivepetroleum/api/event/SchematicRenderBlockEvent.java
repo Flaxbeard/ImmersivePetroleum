@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.api.event;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -31,6 +32,14 @@ public class SchematicRenderBlockEvent extends Event{
 		this.rotation=rotation;
 	}
 	
+	public void setState(BlockState state){
+		this.state = state;
+	}
+	
+	public void setBlock(Block block){
+		this.state=block.getDefaultState();
+	}
+	
 	public World getWorld(){
 		return this.world;
 	}
@@ -51,6 +60,10 @@ public class SchematicRenderBlockEvent extends Event{
 		return this.templatePos;
 	}
 	
+	public Block getBlock(){
+		return this.state.getBlock();
+	}
+	
 	public BlockState getState(){
 		return this.state;
 	}
@@ -58,6 +71,12 @@ public class SchematicRenderBlockEvent extends Event{
 	public CompoundNBT getNBT(){
 		return this.nbt;
 	}
+	
+	// TODO Remove these deprecated methods at some point
+	
+	/** Replaced by {@link SchematicRenderBlockEvent#setState(BlockState)}*/
+	@Deprecated
+	public void setItemStack(ItemStack itemStack){}
 	
 	@Deprecated
 	public ItemStack getItemStack(){
@@ -68,9 +87,6 @@ public class SchematicRenderBlockEvent extends Event{
 	public int getIndex(){
 		return 0;
 	}
-	
-	@Deprecated
-	public void setItemStack(ItemStack itemStack){}
 	
 	@Deprecated
 	public int getL(){

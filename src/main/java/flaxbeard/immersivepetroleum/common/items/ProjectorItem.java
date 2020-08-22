@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -24,6 +26,7 @@ import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks.MetalDevices;
 import blusunrize.immersiveengineering.common.blocks.metal.ConveyorBeltTileEntity;
+import blusunrize.immersiveengineering.common.blocks.metal.FluidPumpTileEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalScaffoldingType;
 import blusunrize.immersiveengineering.common.blocks.metal.conveyors.BasicConveyor;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
@@ -32,9 +35,11 @@ import flaxbeard.immersivepetroleum.api.event.SchematicPlaceBlockPostEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicRenderBlockEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicTestEvent;
 import flaxbeard.immersivepetroleum.client.ShaderUtil;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageRotateSchematic;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -63,7 +68,6 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -123,7 +127,7 @@ public class ProjectorItem extends IPItemBase{
 	 * 
 	 * @param stack to store the name to
 	 * @param multiblock to store to the stack
-	 * @return the stack for chaining
+	 * @return the stack
 	 */
 	protected static ItemStack putMultiblockIdentifier(ItemStack stack, IMultiblock multiblock){
 		ItemNBTHelper.putString(stack, "multiblock", 
@@ -131,6 +135,114 @@ public class ProjectorItem extends IPItemBase{
 				.getUniqueName()
 				.toString());
 		return stack; // For convenience
+	}
+	
+	/**
+	 * 
+	 * @param multiblock the current multiblock to be worked on
+	 * @param rotation the rotation to apply to the multiblocks template
+	 * @param flip wether or not to mirror the given multiblocks template
+	 * @param consumer what to do with a template location. (Returning true inside this predicate causes the internal loop to stop)
+	 * @return amount of blocks in the template
+	 */
+	private static int processMultiblock(IMultiblock multiblock, Rotation rotation, boolean flip, Predicate<TestClass> consumer){
+		if(multiblock==null)
+			return 0;
+		
+		Vec3i size=multiblock.getSize();
+		int mWidth = size.getX();
+		int mDepth = size.getZ();
+		
+		// Determine if the dimensions are even (true) or odd (false)
+		boolean evenWidth=((mWidth/2F)-(mWidth/2))==0F; // Divide with float, Divide with int then subtract both and check for 0
+		boolean evenDepth=((mDepth/2F)-(mDepth/2))==0F;
+		
+		// Take even/odd-ness of multiblocks into consideration for rotation
+		int xa=evenWidth?1:0;
+		int za=evenDepth?1:0;
+		int xai=evenWidth?0:1; // xa-"Inverted"
+		
+		PlacementSettings setting=new PlacementSettings();
+		setting.setMirror(flip?Mirror.FRONT_BACK:Mirror.NONE);
+		setting.setRotation(rotation);
+		
+		BlockPos offset;
+		if(flip){
+			offset=new BlockPos(-mWidth/2, 0, mDepth/2);
+			setting.setCenterOffset(offset);
+			
+			switch(rotation){
+				case NONE:{
+					offset=offset.add(xa, 0, 0);
+					break;
+				}
+				case CLOCKWISE_90:{
+					offset=offset.add(xa, 0, za-xai);
+					break;
+				}
+				case CLOCKWISE_180:{
+					offset=offset.add(0, 0, za);
+					break;
+				}
+				case COUNTERCLOCKWISE_90:{
+					offset=offset.add(0, 0, xai);
+					break;
+				}
+				default: break;
+			}
+		}else{
+			offset=new BlockPos(mWidth/2, 0, mDepth/2);
+			setting.setCenterOffset(offset);
+			
+			switch(rotation){
+				case CLOCKWISE_90:{
+					offset=offset.add(xa, 0, 0);
+					break;
+				}
+				case CLOCKWISE_180:{
+					offset=offset.add(xa, 0, za);
+					break;
+				}
+				case COUNTERCLOCKWISE_90:{
+					offset=offset.add(0, 0, za);
+					break;
+				}
+				default: break;
+			}
+		}
+		
+		Template multiblockTemplate=getMultiblockTemplate(multiblock);
+		List<Template.BlockInfo> blocks=multiblockTemplate.blocks.get(0);
+		for(int i=0;i<blocks.size();i++){
+			Template.BlockInfo info=blocks.get(i);
+			BlockPos transformedPos=Template.transformedBlockPos(setting, info.pos).subtract(offset);
+			
+			if(consumer.test(new TestClass(setting, info, multiblock, transformedPos)))
+				break;
+		}
+		
+		return blocks.size();
+	}
+	
+	private static BlockPos alignHit(BlockPos hit, PlayerEntity playerIn, Rotation rotation, Vec3i multiblockSize, boolean flip){
+		int xd = (rotation.ordinal() % 2 == 0) ? multiblockSize.getX() : multiblockSize.getZ();
+		int zd = (rotation.ordinal() % 2 == 0) ? multiblockSize.getZ() : multiblockSize.getX();
+		
+		Direction look = playerIn.getHorizontalFacing();
+		
+//		if(look == Direction.NORTH || look == Direction.SOUTH){
+//			hit = hit.add(-xd / 2, 0, 0);
+//		}else if(look == Direction.EAST || look == Direction.WEST){
+//			hit = hit.add(0, 0, -zd / 2);
+//		}
+//		
+//		if(look == Direction.NORTH){
+//			hit = hit.add(0, 0, -zd + 1);
+//		}else if(look == Direction.WEST){
+//			hit = hit.add(-xd + 1, 0, 0);
+//		}
+		
+		return hit;
 	}
 	
 	@OnlyIn(Dist.CLIENT)
@@ -220,7 +332,7 @@ public class ProjectorItem extends IPItemBase{
 	
 	private static Method METHOD_GETTEMPLATE;
 	/** Get's the template using reflection of {@link TemplateMultiblock#getTemplate()} */
-	private Template getMultiblockTemplate(IMultiblock multiblock){
+	private static Template getMultiblockTemplate(IMultiblock multiblock){
 		if(multiblock instanceof TemplateMultiblock){
 			try{
 				if(METHOD_GETTEMPLATE==null){
@@ -234,28 +346,6 @@ public class ProjectorItem extends IPItemBase{
 			}
 		}
 		return null;
-	}
-	
-	private BlockPos adjustHit(BlockPos hit, PlayerEntity playerIn, int rotate, int width, int depth){
-		int xd = (rotate % 2 == 0) ? width : depth;
-		int zd = (rotate % 2 == 0) ? depth : width;
-		
-		Vec3d vec = playerIn.getLookVec();
-		Direction look = (Math.abs(vec.z) > Math.abs(vec.x)) ? (vec.z > 0 ? Direction.SOUTH : Direction.NORTH) : (vec.x > 0 ? Direction.EAST : Direction.WEST);
-		
-		if(look == Direction.NORTH || look == Direction.SOUTH){
-			hit = hit.add(-xd / 2, 0, 0);
-		}else if(look == Direction.EAST || look == Direction.WEST){
-			hit = hit.add(0, 0, -zd / 2);
-		}
-		
-		if(look == Direction.NORTH){
-			hit = hit.add(0, 0, -zd + 1);
-		}else if(look == Direction.WEST){
-			hit = hit.add(-xd + 1, 0, 0);
-		}
-		
-		return hit;
 	}
 	
 	@SuppressWarnings("unused")
@@ -273,8 +363,7 @@ public class ProjectorItem extends IPItemBase{
 			return ActionResultType.SUCCESS;
 		}
 		
-		ResourceLocation multiblockId=getMultiblockIdentifierFrom(stack);
-		IMultiblock multiblock = ProjectorItem.getMultiblock(multiblockId);
+		IMultiblock multiblock = ProjectorItem.getMultiblock(stack);
 		
 		if(!ItemNBTHelper.hasKey(stack, "pos") && multiblock != null){
 			BlockState state = world.getBlockState(pos);
@@ -289,111 +378,51 @@ public class ProjectorItem extends IPItemBase{
 			int mWidth = size.getX();
 			int mDepth = size.getZ();
 			
-			int rotate = getRotation(stack);
+			Rotation rotation = getRotation(stack);
+			boolean flip = getFlipped(stack);
 			
-			hit=adjustHit(hit, playerIn, rotate, mWidth, mDepth);
+			hit=alignHit(hit, playerIn, rotation, size, flip);
 			
 			if(playerIn.isSneaking() && playerIn.isCreative()){
-				if(multiblock.getUniqueName().getPath().equals("excavator_demo")){
+				if(multiblock.getUniqueName().getPath().contains("excavator_demo")){
 					hit = hit.add(0, -2, 0);
 				}
-				boolean flip = getFlipped(stack);
 				
-				PlacementSettings setting=new PlacementSettings();
-				setting.setMirror(flip?Mirror.LEFT_RIGHT:Mirror.NONE);
-				setting.setRotation(Rotation.values()[rotate]);
-				
-				if(flip){
-					setting.setCenterOffset(new BlockPos(mWidth/2, 0, -mDepth/2));
-				}else{
-					setting.setCenterOffset(new BlockPos(mWidth/2, 0, mDepth/2));
-				}
-					
-				Template multiblockTemplate=getMultiblockTemplate(multiblock);
-				List<Template.BlockInfo> blocks=multiblockTemplate.blocks.get(0);
-				for(int i=0;i<blocks.size();i++){
-					Template.BlockInfo info=blocks.get(i);
-					BlockPos wPos=info.pos;
-					BlockState tState=info.state;
-					
-					wPos=Template.transformedBlockPos(setting, wPos);
-					if(flip)
-						wPos=wPos.offset(Direction.SOUTH, mDepth/2+1);
-					
+				final BlockPos hitCopy=new BlockPos(hit);
+				processMultiblock(multiblock, rotation, flip, test->{
 					// TODO Re-add the event stuff
-					SchematicPlaceBlockEvent event=new SchematicPlaceBlockEvent(multiblock, world, wPos, info.pos, tState, info.nbt, Rotation.values()[rotate]);
+					SchematicPlaceBlockEvent event=new SchematicPlaceBlockEvent(multiblock, world, test.tPos, test.getInfoPos(), test.getInfoState(), test.getInfoNBT(), rotation);
 					if(!MinecraftForge.EVENT_BUS.post(event)){
-						world.setBlockState(hit.add(wPos), tState);
+						world.setBlockState(hitCopy.add(test.tPos), test.getInfoState());
 						
-						SchematicPlaceBlockPostEvent postevent=new SchematicPlaceBlockPostEvent(multiblock, world, wPos, tState, Rotation.values()[rotate]);
+						SchematicPlaceBlockPostEvent postevent=new SchematicPlaceBlockPostEvent(multiblock, world, test.tPos, test.getInfoPos(), test.getInfoState(), test.getInfoNBT(), rotation);
+						//MinecraftForge.EVENT_BUS.post(postevent);
 					}
-				}
+					
+					return false; // Don't ever skip a step.
+				});
 				
-				/*
-				int idx = 0;
-				for(int h = 0;h < mh;h++){
-					for(int l = 0;l < ml;l++){
-						for(int w = 0;w < mw;w++){
-							if(multiblock.getStructureManual()[h][l][w] != null && !multiblock.getStructureManual()[h][l][w].isEmpty()){
-								int xo = l;
-								int zo = w;
-								
-								switch(rotate){
-									case 1:
-										zo = l;
-										xo = (mw - w - 1);
-										break;
-									case 2:
-										xo = (ml - l - 1);
-										zo = (mw - w - 1);
-										break;
-									case 3:
-										zo = (ml - l - 1);
-										xo = w;
-										break;
-								}
-								if(rotate % 2 == 1){
-									xo = flip ? xo : (mw - xo - 1);
-								}else{
-									zo = flip ? zo : (mw - zo - 1);
-								}
-								
-								BlockPos actualPos = hit.add(xo, h, zo);
-								
-								ItemStack toPlace = multiblock.getStructureManual()[h][l][w];
-								BlockState stt = multiblock.getBlockstateFromStack(idx, toPlace);
-								SchematicPlaceBlockEvent placeEvent = new SchematicPlaceBlockEvent(multiblock, idx, stt, world, rotate, l, h, w);
-								if(!MinecraftForge.EVENT_BUS.post(placeEvent)){
-									world.setBlockState(actualPos, placeEvent.getBlockState());
-									
-									SchematicPlaceBlockPostEvent postEvent = new SchematicPlaceBlockPostEvent(multiblock, idx, stt, actualPos, world, rotate, l, h, w);
-									MinecraftForge.EVENT_BUS.post(postEvent);
-								}
-								
-							}
-						}
-					}
-				}
-				*/
+				return ActionResultType.SUCCESS;
+				
+			}else{
+				CompoundNBT posTag = new CompoundNBT();
+				posTag.putInt("x", hit.getX());
+				posTag.putInt("y", hit.getY());
+				posTag.putInt("z", hit.getZ());
+				ItemNBTHelper.setTagCompound(stack, "pos", posTag);
 				
 				return ActionResultType.SUCCESS;
 			}
-			
-			CompoundNBT posTag = new CompoundNBT();
-			posTag.putInt("x", hit.getX());
-			posTag.putInt("y", hit.getY());
-			posTag.putInt("z", hit.getZ());
-			ItemNBTHelper.setTagCompound(stack, "pos", posTag);
-			return ActionResultType.SUCCESS;
 		}
 		return ActionResultType.PASS;
 	}
 	
-	public static int getRotation(ItemStack stack){
+	public static Rotation getRotation(ItemStack stack){
 		if(ItemNBTHelper.hasKey(stack, "rotate")){
-			return ItemNBTHelper.getInt(stack, "rotate");
+			int index = ItemNBTHelper.getInt(stack, "rotate") % 4;
+			return Rotation.values()[index];
 		}
-		return 0;
+		return Rotation.NONE;
 	}
 	
 	public static boolean getFlipped(ItemStack stack){
@@ -404,21 +433,25 @@ public class ProjectorItem extends IPItemBase{
 	}
 	
 	public static void rotateClient(ItemStack stack){
-		int newRotate = (getRotation(stack) + 1) % 4;
+		int newRotate = (getRotation(stack).ordinal() + 1) % 4;
 		boolean flip = getFlipped(stack);
 		setRotate(stack, newRotate);
 		IPPacketHandler.INSTANCE.sendToServer(new MessageRotateSchematic(newRotate, flip));
 	}
 	
 	public static void flipClient(ItemStack stack){
-		int newRotate = getRotation(stack);
+		int newRotate = getRotation(stack).ordinal();
 		boolean flip = !getFlipped(stack);
 		setFlipped(stack, flip);
 		IPPacketHandler.INSTANCE.sendToServer(new MessageRotateSchematic(newRotate, flip));
 	}
 	
-	public static void setRotate(ItemStack stack, int rotate){
-		ItemNBTHelper.putInt(stack, "rotate", rotate);
+	public static void setRotate(ItemStack stack, Rotation rotation){
+		ItemNBTHelper.putInt(stack, "rotate", rotation.ordinal());
+	}
+	
+	public static void setRotate(ItemStack stack, int rotation){
+		ItemNBTHelper.putInt(stack, "rotate", rotation);
 	}
 	
 	public static void setFlipped(ItemStack stack, boolean flip){
@@ -434,8 +467,7 @@ public class ProjectorItem extends IPItemBase{
 		}
 		return ActionResult.newResult(ActionResultType.SUCCESS, stack);
 	}
-
-
+	
 	/** Find the key that is being pressed while minecraft is in focus. Copied from my own project. */
 	@OnlyIn(Dist.CLIENT)
 	private boolean isPressingKey(int key){
@@ -474,8 +506,8 @@ public class ProjectorItem extends IPItemBase{
 					player.sendStatusMessage(new TranslationTextComponent("chat.immersivepetroleum.info.projector.flipped", yesno), true);
 				}else if(delta>0){
 					ProjectorItem.rotateClient(target);
-					int rot=ProjectorItem.getRotation(target);
-					player.sendStatusMessage(new StringTextComponent("Rotated "+Rotation.values()[rot]), true);
+					Rotation rot=ProjectorItem.getRotation(target);
+					player.sendStatusMessage(new StringTextComponent("Rotated "+rot), true); // TODO Translation
 				}
 				event.setCanceled(true);
 			}
@@ -498,19 +530,15 @@ public class ProjectorItem extends IPItemBase{
 			}
 		}
 	}
-
-	@SuppressWarnings({"rawtypes", "unchecked"})
+	
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public void renderLast(RenderWorldLastEvent event){
-		boolean preview=true;
-		boolean autolubeRender=true;
-		
 		Minecraft mc = ClientUtils.mc();
 		
 		GlStateManager.pushMatrix();
 		{
-			if(preview && mc.player != null){ // TODO BookMark: renderSchematic
+			if(mc.player != null){ // TODO Bookmark: renderSchematic
 				ItemStack secondItem = mc.player.getHeldItemOffhand();
 				
 				boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
@@ -583,9 +611,7 @@ public class ProjectorItem extends IPItemBase{
 	private void renderPhantom(IMultiblock multiblock, World world, Template.BlockInfo info, BlockPos wPos, float flicker, float alpha, float partialTicks, boolean flipXZ, Rotation rotation){
 		ItemRenderer itemRenderer=ClientUtils.mc().getItemRenderer();
 		
-		GlStateManager.scaled(1.0, 1.0, 1.0);
-		
-		GlStateManager.translated(wPos.getX()+.5, wPos.getY()+.5, wPos.getZ()+.5); // Finally centers the preview block
+		GlStateManager.translated(wPos.getX()+.5, wPos.getY()+.5, wPos.getZ()+.5); // Centers the preview block
 		
 		ShaderUtil.alpha_static(flicker * alpha, ClientUtils.mc().player.ticksExisted + partialTicks);
 		SchematicRenderBlockEvent renderEvent = new SchematicRenderBlockEvent(multiblock, world, wPos, info.pos, info.state, info.nbt, rotation);
@@ -596,547 +622,235 @@ public class ProjectorItem extends IPItemBase{
 		ShaderUtil.releaseShader();
 	}
 	
-	@SuppressWarnings("unused")
+	@OnlyIn(Dist.CLIENT)
+	private void renderPerfectBox(Vec3i mSize, Rotation rotation){
+		int mWidth = mSize.getX();
+		int mHeight = mSize.getY();
+		int mDepth = mSize.getZ();
+		
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder buffer = tessellator.getBuffer();
+		
+		int xd = (rotation.ordinal() % 2 == 0) ? mWidth : mDepth;
+		int zd = (rotation.ordinal() % 2 == 0) ? mDepth : mWidth;
+		
+		GlStateManager.disableDepthTest();
+		GlStateManager.disableTexture();
+		GlStateManager.enableBlend();
+		GlStateManager.disableCull();
+		GlStateManager.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+		GlStateManager.shadeModel(GL11.GL_SMOOTH);
+		float r = 0;
+		float g = 1;
+		float b = 0;
+		GlStateManager.translated(0, 0, 0);
+		GlStateManager.scaled(xd, mHeight, zd);
+		GlStateManager.lineWidth(2f);
+		buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+		buffer.pos(0, 1, 0).color(r, g, b, .375f).endVertex();
+		buffer.pos(1, 1, 0).color(r, g, b, .375f).endVertex();
+		buffer.pos(1, 1, 0).color(r, g, b, .375f).endVertex();
+		buffer.pos(1, 1, 1).color(r, g, b, .375f).endVertex();
+		buffer.pos(1, 1, 1).color(r, g, b, .375f).endVertex();
+		buffer.pos(0, 1, 1).color(r, g, b, .375f).endVertex();
+		buffer.pos(0, 1, 1).color(r, g, b, .375f).endVertex();
+		buffer.pos(0, 1, 0).color(r, g, b, .375f).endVertex();
+		
+		buffer.pos(0, 1, 0).color(r, g, b, .375f).endVertex();
+		buffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
+		buffer.pos(1, 1, 0).color(r, g, b, .375f).endVertex();
+		buffer.pos(1, 0, 0).color(r, g, b, .375f).endVertex();
+		buffer.pos(0, 1, 1).color(r, g, b, .375f).endVertex();
+		buffer.pos(0, 0, 1).color(r, g, b, .375f).endVertex();
+		buffer.pos(1, 1, 1).color(r, g, b, .375f).endVertex();
+		buffer.pos(1, 0, 1).color(r, g, b, .375f).endVertex();
+		
+		buffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
+		buffer.pos(1, 0, 0).color(r, g, b, .375f).endVertex();
+		buffer.pos(1, 0, 0).color(r, g, b, .375f).endVertex();
+		buffer.pos(1, 0, 1).color(r, g, b, .375f).endVertex();
+		buffer.pos(1, 0, 1).color(r, g, b, .375f).endVertex();
+		buffer.pos(0, 0, 1).color(r, g, b, .375f).endVertex();
+		buffer.pos(0, 0, 1).color(r, g, b, .375f).endVertex();
+		buffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
+		
+		tessellator.draw();
+		GlStateManager.shadeModel(GL11.GL_FLAT);
+		GlStateManager.enableCull();
+		GlStateManager.disableBlend();
+		GlStateManager.enableTexture();
+		GlStateManager.enableDepthTest();
+	}
+	
 	@OnlyIn(Dist.CLIENT)
 	public void renderSchematic(ItemStack target, PlayerEntity player, World world, float partialTicks, boolean shouldRenderMoving){
 		Minecraft mc = ClientUtils.mc();
 		IMultiblock multiblock = ProjectorItem.getMultiblock(target);
-		if(multiblock != null){
-			ItemStack heldStack = player.getHeldItemMainhand();
+		if(multiblock==null)
+			return;
+		
+		BlockPos hit = null;
+		Vec3i size=multiblock.getSize();
+		Rotation rotation = ProjectorItem.getRotation(target);
+		boolean flip = ProjectorItem.getFlipped(target);
+		boolean isPlaced = false;
+		
+		if(ItemNBTHelper.hasKey(target, "pos")){
+			CompoundNBT pos = ItemNBTHelper.getTagCompound(target, "pos");
+			int x = pos.getInt("x");
+			int y = pos.getInt("y");
+			int z = pos.getInt("z");
+			hit = new BlockPos(x, y, z);
+			isPlaced = true;
+		}else if(shouldRenderMoving && ClientUtils.mc().objectMouseOver != null && ClientUtils.mc().objectMouseOver.getType() == Type.BLOCK){
+			BlockRayTraceResult blockRTResult=(BlockRayTraceResult)ClientUtils.mc().objectMouseOver;
 			
-			Vec3i size=multiblock.getSize();
+			BlockPos pos = (BlockPos)blockRTResult.getPos();
 			
-			int mWidth = size.getX();
-			int mHeight = size.getY();
-			int mDepth = size.getZ();
-			
-			int rotate = ProjectorItem.getRotation(target);
-			boolean flip = ProjectorItem.getFlipped(target);
-			
-			BlockPos hit = null;
-			
-			boolean isPlaced = false;
-			
-			if(ItemNBTHelper.hasKey(target, "pos")){
-				CompoundNBT pos = ItemNBTHelper.getTagCompound(target, "pos");
-				int x = pos.getInt("x");
-				int y = pos.getInt("y");
-				int z = pos.getInt("z");
-				hit = new BlockPos(x, y, z);
-				isPlaced = true;
-			}else if(shouldRenderMoving && ClientUtils.mc().objectMouseOver != null && ClientUtils.mc().objectMouseOver.getType() == Type.BLOCK){
-				BlockRayTraceResult blockRTResult=(BlockRayTraceResult)ClientUtils.mc().objectMouseOver;
-				
-				BlockPos pos = (BlockPos)blockRTResult.getPos();
-				
-				BlockState state = world.getBlockState(pos);
-				if(state.getMaterial().isReplaceable() || blockRTResult.getFace() != Direction.UP){
-					hit = pos;
-				}else{
-					hit = pos.add(0, 1, 0);
-				}
-				
-				hit=adjustHit(hit, mc.player, rotate, mWidth, mDepth);
+			BlockState state = world.getBlockState(pos);
+			if(state.getMaterial().isReplaceable() || blockRTResult.getFace() != Direction.UP){
+				hit = pos;
+			}else{
+				hit = pos.add(0, 1, 0);
 			}
 			
-			if(hit != null){
-				if(multiblock.getUniqueName().getPath().contains("excavator_demo")){
-					hit = hit.add(0, -2, 0);
+			hit=alignHit(hit, mc.player, rotation, size, flip);
+		}
+		
+		if(hit != null){
+			if(multiblock.getUniqueName().getPath().contains("excavator_demo")){
+				hit = hit.add(0, -2, 0);
+			}
+
+			final boolean placedCopy=isPlaced;
+			final List<RenderInfo> toRender=new ArrayList<>();
+			final MutableInt currentSlice=new MutableInt();
+			final MutableInt badBlocks=new MutableInt();
+			final MutableInt goodBlocks=new MutableInt();
+			final BlockPos hitCopy=new BlockPos(hit);
+			int blockListSize=processMultiblock(multiblock, rotation, flip, test->{
+				// Slice handling
+				if(badBlocks.getValue()==0 && test.getInfoPos().getY()>currentSlice.getValue()){
+					currentSlice.setValue(test.getInfoPos().getY());
+				}else if(test.getInfoPos().getY()!=currentSlice.getValue()){
+					return true; // breaks the internal loop
 				}
 				
-				//final BlockRendererDispatcher blockRender = Minecraft.getInstance().getBlockRendererDispatcher();
-				
-				boolean perfect = false;
-				
-				// Determine if the dimensions are even (true) or odd (false)
-				boolean evenWidth=(mWidth/2F-(mWidth/2))==0F; // Divide with float, Divide with int then subtract both and check for 0
-				boolean evenDepth=(mDepth/2F-(mDepth/2))==0F;
-				
-				PlacementSettings setting=new PlacementSettings();
-				setting.setMirror(flip?Mirror.FRONT_BACK:Mirror.NONE);
-				setting.setRotation(Rotation.values()[rotate]);
-				
-				if(!flip){
-					setting.setCenterOffset(new BlockPos(mWidth/2, 0, mDepth/2));
-				}else{
-					setting.setCenterOffset(new BlockPos(-mWidth/2, 0, mDepth/2));
+				if(placedCopy){ // Render only slices when placed
+					if(test.getInfoPos().getY()==currentSlice.getValue()){
+						boolean skip=false;
+						BlockState toCompare=world.getBlockState(hitCopy.add(test.tPos));
+						if(test.getInfoState().getBlock()==toCompare.getBlock()){
+							goodBlocks.increment();
+							skip=true;
+						}else{
+							// Making it this far only needs an air check, the other already proved to be false.
+							if(toCompare!=Blocks.AIR.getDefaultState()){
+								toRender.add(new RenderInfo(1, test.info, test.setting, test.tPos));
+								skip=true;
+							}
+							badBlocks.increment();
+						}
+						
+						if(!skip){
+							toRender.add(new RenderInfo(0, test.info, test.setting, test.tPos));
+						}
+					}
+				}else{ // Render all when not placed
+					toRender.add(new RenderInfo(0, test.info, test.setting, test.tPos));
 				}
 				
-				// Take even/odd-ness of multiblocks into consideration for rotation
-				int xa=evenWidth?-1:0;
-				int za=evenDepth?-1:0;
-				BlockPos rotationOffset=BlockPos.ZERO;
-				if(!flip){
-					switch(setting.getRotation()){
-						case CLOCKWISE_90:
-							rotationOffset=new BlockPos(xa, 0, 0);
-							break;
-						case CLOCKWISE_180:
-							rotationOffset=new BlockPos(xa, 0, za);
-							break;
-						case COUNTERCLOCKWISE_90:
-							rotationOffset=new BlockPos(0, 0, za);
-							break;
-						default:
-							break;
-					}
-				}else{
-					switch(setting.getRotation()){
-						case CLOCKWISE_90:
-							rotationOffset=new BlockPos(0, 0, za);
-							break;
-						case CLOCKWISE_180:
-							rotationOffset=new BlockPos(-xa, 0, za);
-							break;
-						case COUNTERCLOCKWISE_90:
-							rotationOffset=new BlockPos(-xa, 0, 0);
-							break;
-						default:
-							break;
-					}
+				return false;
+			});
+			
+			boolean perfect=(goodBlocks.getValue()==blockListSize);
+			
+			toRender.sort((a,b)->{
+				if(a.layer>b.layer){
+					return 1;
+				}else if(a.layer<b.layer){
+					return -1;
 				}
-				
-				// TODO Bookmark: Slicing
-				
-				Template multiblockTemplate=getMultiblockTemplate(multiblock);
-				List<Template.BlockInfo> blocks=multiblockTemplate.blocks.get(0);
-				List<RenderInfo> toRender=new ArrayList<>();
-				
-				int currentSlice=0;
-				int badBlocks=0;
-				int goodBlocks=0;
-				for(int i=0;i<blocks.size();i++){
-					Template.BlockInfo info=blocks.get(i);
-					BlockState tState=info.state;
-					BlockPos tPos=Template.transformedBlockPos(setting, info.pos) // Transformed Position
-							.add(rotationOffset);
-					
-					if(flip){
-//						if(setting.getRotation()==Rotation.CLOCKWISE_90 || setting.getRotation()==Rotation.COUNTERCLOCKWISE_90){
-//							tPos=tPos.offset(Direction.EAST, mDepth/2+1);
-//						}else{
-							int a=2;
-							if(mWidth!=3) a=mWidth/2;
-							if(evenWidth) a+=1;
-							tPos=tPos.offset(Direction.EAST, a);
-//						}
-					}
-					
-					// Slice handling
-					if(badBlocks==0 && info.pos.getY()>currentSlice){
-						currentSlice=info.pos.getY();
-					}else if(info.pos.getY()!=currentSlice){
+				return 0;
+			});
+			
+			// TODO Bookmark: Preview Rendering
+			
+			double px = TileEntityRendererDispatcher.staticPlayerX;
+			double py = TileEntityRendererDispatcher.staticPlayerY;
+			double pz = TileEntityRendererDispatcher.staticPlayerZ;
+			
+			GlStateManager.translated(hit.getX() - px, hit.getY() - py, hit.getZ() - pz);
+			GlStateManager.disableLighting();
+			GlStateManager.shadeModel(Minecraft.isAmbientOcclusionEnabled() ? GL11.GL_SMOOTH : GL11.GL_FLAT);
+			GlStateManager.enableBlend();
+			ClientUtils.bindAtlas();
+			Tessellator tessellator = Tessellator.getInstance();
+			BufferBuilder buffer = tessellator.getBuffer();
+			final float flicker = (world.rand.nextInt(10) == 0) ? 0.75F : (world.rand.nextInt(20) == 0 ? 0.5F : 1F);
+			ItemStack heldStack = player.getHeldItemMainhand();
+			toRender.forEach(rInfo->{
+				Template.BlockInfo info=rInfo.blockInfo;
+				float alpha = heldStack.getItem()==info.state.getBlock().asItem() ? 1.0F : .5F;
+				switch(rInfo.layer){
+					case 0:{ // All / Slice
+						GlStateManager.pushMatrix();
+						{
+							renderPhantom(multiblock, world, info, rInfo.worldPos, flicker, alpha, partialTicks, flip, rInfo.settings.getRotation());
+						}
+						GlStateManager.popMatrix();
 						break;
 					}
-					
-					if(isPlaced){ // Render only slices when placed
-						if(info.pos.getY()==currentSlice){
-							boolean skip=false;
-							BlockState toCompare=world.getBlockState(hit.add(tPos));
-							if(tState.getBlock()==toCompare.getBlock()){
-								goodBlocks++;
-								continue;
-							}else{
-								// Making it this far only needs an air check, the other already proved to be false.
-								if(toCompare!=Blocks.AIR.getDefaultState()){
-									toRender.add(new RenderInfo(1, info, setting, tPos));
-									skip=true;
-								}
-								badBlocks++;
-							}
-							
-							if(!skip){
-								toRender.add(new RenderInfo(0, info, setting, tPos));
-							}
+					case 1:{ // Bad block
+						GlStateManager.pushMatrix();
+						{
+							GlStateManager.disableDepthTest();
+							renderRedOutline(tessellator, buffer, rInfo.worldPos, flicker);
+							GlStateManager.enableDepthTest();
 						}
-					}else{ // Render all when not placed
-						toRender.add(new RenderInfo(0, info, setting, tPos));
+						GlStateManager.popMatrix();
+						break;
 					}
 				}
-				
-				perfect=(goodBlocks==blocks.size());
-				
-				toRender.sort((a,b)->{
-					if(a.layer>b.layer){
-						return 1;
-					}else if(a.layer<b.layer){
-						return -1;
-					}
-					return 0;
-				});
-				
-				// TODO Bookmark: Preview Rendering
-				
-				double px = TileEntityRendererDispatcher.staticPlayerX;
-				double py = TileEntityRendererDispatcher.staticPlayerY;
-				double pz = TileEntityRendererDispatcher.staticPlayerZ;
-				
-				GlStateManager.translated(hit.getX() - px, hit.getY() - py, hit.getZ() - pz);
-				GlStateManager.disableLighting();
-				GlStateManager.shadeModel(Minecraft.isAmbientOcclusionEnabled() ? GL11.GL_SMOOTH : GL11.GL_FLAT);
-				GlStateManager.enableBlend();
-				ClientUtils.bindAtlas();
-				Tessellator tessellator = Tessellator.getInstance();
-				BufferBuilder buffer = tessellator.getBuffer();
-				final float flicker = (world.rand.nextInt(10) == 0) ? 0.75F : (world.rand.nextInt(20) == 0 ? 0.5F : 1F);
-				toRender.forEach(rInfo->{
-					Template.BlockInfo info=rInfo.blockInfo;
-					float alpha = heldStack.getItem()==info.state.getBlock().asItem() ? 1.0F : .5F;
-					switch(rInfo.layer){
-						case 0:{ // All / Slice
-							GlStateManager.pushMatrix();
-							{
-								renderPhantom(multiblock, world, info, rInfo.worldPos, flicker, alpha, partialTicks, flip, rInfo.settings.getRotation());
-							}
-							GlStateManager.popMatrix();
-							break;
-						}
-						case 1:{ // Bad block
-							GlStateManager.pushMatrix();
-							{
-								GlStateManager.disableDepthTest();
-								renderRedOutline(tessellator, buffer, rInfo.worldPos, flicker);
-								GlStateManager.enableDepthTest();
-							}
-							GlStateManager.popMatrix();
-							break;
-						}
-					}
-				});
-				
-				if(perfect){
-					GlStateManager.pushMatrix();
-					{
-						GlStateManager.disableDepthTest();
-						int xd = (rotate % 2 == 0) ? mWidth : mDepth;
-						int zd = (rotate % 2 == 0) ? mDepth : mWidth;
-						
-						GlStateManager.disableTexture();
-						GlStateManager.enableBlend();
-						GlStateManager.disableCull();
-						GlStateManager.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-						GlStateManager.shadeModel(GL11.GL_SMOOTH);
-						float r = 0;
-						float g = 1;
-						float b = 0;
-						GlStateManager.translated(0, 0, 0);
-						GlStateManager.scaled(xd, mHeight, zd);
-						GlStateManager.lineWidth(2f);
-						buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-						buffer.pos(0, 1, 0).color(r, g, b, .375f).endVertex();
-						buffer.pos(1, 1, 0).color(r, g, b, .375f).endVertex();
-						buffer.pos(1, 1, 0).color(r, g, b, .375f).endVertex();
-						buffer.pos(1, 1, 1).color(r, g, b, .375f).endVertex();
-						buffer.pos(1, 1, 1).color(r, g, b, .375f).endVertex();
-						buffer.pos(0, 1, 1).color(r, g, b, .375f).endVertex();
-						buffer.pos(0, 1, 1).color(r, g, b, .375f).endVertex();
-						buffer.pos(0, 1, 0).color(r, g, b, .375f).endVertex();
-						
-						buffer.pos(0, 1, 0).color(r, g, b, .375f).endVertex();
-						buffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
-						buffer.pos(1, 1, 0).color(r, g, b, .375f).endVertex();
-						buffer.pos(1, 0, 0).color(r, g, b, .375f).endVertex();
-						buffer.pos(0, 1, 1).color(r, g, b, .375f).endVertex();
-						buffer.pos(0, 0, 1).color(r, g, b, .375f).endVertex();
-						buffer.pos(1, 1, 1).color(r, g, b, .375f).endVertex();
-						buffer.pos(1, 0, 1).color(r, g, b, .375f).endVertex();
-						
-						buffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
-						buffer.pos(1, 0, 0).color(r, g, b, .375f).endVertex();
-						buffer.pos(1, 0, 0).color(r, g, b, .375f).endVertex();
-						buffer.pos(1, 0, 1).color(r, g, b, .375f).endVertex();
-						buffer.pos(1, 0, 1).color(r, g, b, .375f).endVertex();
-						buffer.pos(0, 0, 1).color(r, g, b, .375f).endVertex();
-						buffer.pos(0, 0, 1).color(r, g, b, .375f).endVertex();
-						buffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
-						
-						tessellator.draw();
-						GlStateManager.shadeModel(GL11.GL_FLAT);
-						GlStateManager.enableCull();
-						GlStateManager.disableBlend();
-						GlStateManager.enableTexture();
-						GlStateManager.enableDepthTest();
-					}
-					GlStateManager.popMatrix();
+			});
+			
+			if(perfect){
+				GlStateManager.pushMatrix();
+				{
+					renderPerfectBox(size, rotation);
 				}
-				
-				/*
-				int idx = 0;
-				for(int h = 0;h < mh;h++){
-					boolean slicePerfect = true;
-					for(int l = 0;l < ml;l++){
-						for(int w = 0;w < mw;w++){
-							BlockPos pos = new BlockPos(l, h, w);
-							
-							GlStateManager.pushMatrix();
-							
-							if(mb.getStructureManual()[h][l][w] != null && !mb.getStructureManual()[h][l][w].isEmpty()){
-								BlockPos blockPos = new BlockPos(0, 0, 0);
-								
-								int xo = l;
-								int zo = w;
-								
-								switch(rotate){
-									case 1:
-										zo = l;
-										xo = (mw - w - 1);
-										break;
-									case 2:
-										xo = (ml - l - 1);
-										zo = (mw - w - 1);
-										break;
-									case 3:
-										zo = (ml - l - 1);
-										xo = w;
-										break;
-								}
-								if(rotate % 2 == 1){
-									xo = flip ? xo : (mw - xo - 1);
-								}else{
-									zo = flip ? zo : (mw - zo - 1);
-								}
-								
-								BlockPos actualPos = hit.add(xo, h, zo);
-								
-								BlockState otherState = null;
-								if(!heldStack.isEmpty() && heldStack.getItem() instanceof BlockItem){
-									otherState = ((BlockItem) heldStack.getItem()).getBlock().getStateFromMeta(heldStack.getItemDamage());
-								}
-								ItemStack stack = mb.getStructureManual()[h][l][w];
-								BlockState state = mb.getBlockstateFromStack(idx, stack);
-								BlockState actualState = world.getBlockState(actualPos);
-								boolean stateEqual = actualState.equals(state);
-								boolean otherStateEqual = otherState == null ? false : otherState.equals(state);
-								
-								int[] ids = OreDictionary.getOreIDs(stack);
-								for(int id:ids){
-									String idS = OreDictionary.getOreName(id);
-									if(Utils.isOreBlockAt(world, actualPos, idS)){
-										stateEqual = true;
-									}
-								}
-								
-								SchematicTestEvent testEvent = new SchematicTestEvent(stateEqual, mb, idx, stack, world, actualPos, rotate, l, h, w);
-								MinecraftForge.EVENT_BUS.post(testEvent);
-								stateEqual = testEvent.isEqual();
-								
-								if(!heldStack.isEmpty() && otherState != null){
-									int[] ids2 = OreDictionary.getOreIDs(heldStack);
-									for(int id2:ids2){
-										for(int id:ids){
-											if(id == id2){
-												otherStateEqual = true;
-											}
-										}
-									}
-								}
-								
-								boolean isEmpty = world.getBlockState(actualPos).getMaterial().isReplaceable();
-								perfect &= stateEqual;
-								if(!stateEqual && isEmpty){
-									slicePerfect = false;
-									float alpha = otherStateEqual ? .75F : .5F;
-									ShaderUtil.alpha_static(flicker * alpha, mc.player.ticksExisted + partialTicks);
-									GlStateManager.translated(xo, h, zo);
-									
-									GlStateManager.translated(.5, .5, .5);
-									
-									GlStateManager.scaled(2.01, 2.01, 2.01);
-									
-									SchematicRenderBlockEvent renderEvent = new SchematicRenderBlockEvent(mb, idx, stack, world, rotate, l, h, w);
-									
-									if(!MinecraftForge.EVENT_BUS.post(renderEvent)){
-										ItemStack toRender = renderEvent.getItemStack();
-										
-										ItemRenderer itemRenderer=ClientUtils.mc().getItemRenderer();
-										itemRenderer.renderItem(toRender, itemRenderer.getModelWithOverrides(toRender));
-									}
-									
-									ShaderUtil.releaseShader();
-								}
-								
-							}
-							GlStateManager.popMatrix();
-							
-							idx++;
-						}
-					}
-					if(!slicePerfect && isPlaced) break;
-				}
-				
-				idx = 0;
-				
-				for(int h = 0;h < mh;h++){
-					boolean slicePerfect = true;
-					for(int l = 0;l < ml;l++){
-						for(int w = 0;w < mw;w++){
-							BlockPos pos = new BlockPos(l, h, w);
-							
-							GlStateManager.pushMatrix();
-							
-							if(mb.getStructureManual()[h][l][w] != null && !mb.getStructureManual()[h][l][w].isEmpty()){
-								BlockPos blockPos = new BlockPos(0, 0, 0);
-								
-								int xo = l;
-								int zo = w;
-								
-								switch(rotate){
-									case 1:
-										zo = l;
-										xo = (mw - w - 1);
-										break;
-									case 2:
-										xo = (ml - l - 1);
-										zo = (mw - w - 1);
-										break;
-									case 3:
-										zo = (ml - l - 1);
-										xo = w;
-										break;
-								}
-								if(rotate % 2 == 1){
-									xo = flip ? xo : (mw - xo - 1);
-								}else{
-									zo = flip ? zo : (mw - zo - 1);
-								}
-								
-								BlockPos actualPos = hit.add(xo, h, zo);
-								
-								BlockState otherState = null;
-								if(!heldStack.isEmpty() && heldStack.getItem() instanceof BlockItem){
-									otherState = ((BlockItem) heldStack.getItem()).getBlock().getStateFromMeta(heldStack.getItemDamage());
-								}
-								ItemStack stack = mb.getStructureManual()[h][l][w];
-								BlockState state = mb.getBlockstateFromStack(idx, stack);
-								BlockState actualState = world.getBlockState(actualPos);
-								boolean stateEqual = actualState.equals(state);
-								boolean otherStateEqual = otherState == null ? false : otherState.equals(state);
-								
-								int[] ids = OreDictionary.getOreIDs(stack);
-								for(int id:ids){
-									String idS = OreDictionary.getOreName(id);
-									if(Utils.isOreBlockAt(world, actualPos, idS)){
-										stateEqual = true;
-									}
-								}
-								
-								SchematicTestEvent testEvent = new SchematicTestEvent(stateEqual, mb, idx, stack, world, actualPos, rotate, l, h, w);
-								MinecraftForge.EVENT_BUS.post(testEvent);
-								stateEqual = testEvent.isEqual();
-								
-								if(!heldStack.isEmpty() && otherState != null){
-									int[] ids2 = OreDictionary.getOreIDs(heldStack);
-									for(int id2:ids2){
-										for(int id:ids){
-											if(id == id2){
-												otherStateEqual = true;
-											}
-										}
-									}
-								}
-								
-								if(!stateEqual){
-									boolean isEmpty = world.getBlockState(actualPos).getMaterial().isReplaceable();
-									if(isEmpty) slicePerfect = false;
-									if(!isEmpty || otherStateEqual){
-										GlStateManager.pushMatrix();
-										{
-											GlStateManager.disableTexture();
-											GlStateManager.enableBlend();
-											GlStateManager.disableCull();
-											GlStateManager.blendFuncSeparate(770, 771, 1, 0);
-											GlStateManager.shadeModel(GL11.GL_SMOOTH);
-											float r = 1;
-											float g = !isEmpty ? 0 : 1;
-											float b = !isEmpty ? 0 : 1;
-											float alpha = .375F * flicker;
-											GlStateManager.translated(xo + .5, h + .5, zo + .5);
-											GlStateManager.scaled(1.01, 1.01, 1.01);
-											// buffer.setTranslation(l, h, w);
-											GlStateManager.lineWidth(2f);
-											buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-											buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-											
-											buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-											
-											buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-											buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-											
-											tessellator.draw();
-											buffer.setTranslation(0, 0, 0);
-											GlStateManager.shadeModel(GL11.GL_FLAT);
-											GlStateManager.enableCull();
-											GlStateManager.disableBlend();
-											GlStateManager.enableTexture();
-										}
-										GlStateManager.popMatrix();
-									}
-									
-								}
-								
-							}
-							GlStateManager.popMatrix();
-							
-							idx++;
-						}
-					}
-					if(!slicePerfect && isPlaced) break;
-				}*/
+				GlStateManager.popMatrix();
 			}
 		}
 	}
 
+	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public void handlePumpPlace(SchematicPlaceBlockPostEvent event){
 		IMultiblock mb = event.getMultiblock();
 		
-		BlockState state = event.getBlockState();
-		if(event.getH() < mb.getStructureManual().length - 1){
-			ItemStack stack = mb.getStructureManual()[event.getH() + 1][event.getL()][event.getW()];
-			if(stack != null && !stack.isEmpty()){
-				if(state.getBlock() == IEContent.blockMetalDevice0 && state.getBlock().getMetaFromState(state) == BlockTypes_MetalDevice0.FLUID_PUMP.getMeta() && !(stack.getItemDamage() != BlockTypes_MetalDevice0.FLUID_PUMP.getMeta() || stack.getItem() != Item.getItemFromBlock(IEContent.blockMetalDevice0))){
-					TileEntityFluidPump pump = (TileEntityFluidPump) event.getWorld().getTileEntity(event.getPos());
-					pump.placeDummies(event.getPos(), state, Direction.UP, 0, 0, 0);
-					event.getWorld().setBlockState(event.getPos(), event.getBlockState());
-				}
-			}
+		BlockState state = event.getState();
+		
+		if(state.getBlock() == IEBlocks.MetalDevices.fluidPump){
+			FluidPumpTileEntity pump = (FluidPumpTileEntity) event.getWorld().getTileEntity(event.getWorldPos());
+			//pump.placeDummies(event.getWorldPos(), state, Direction.UP, 0, 0, 0); // TODO place pump dummy
+			event.getWorld().setBlockState(event.getWorldPos(), event.getState());
 		}
 	}
 
 	@SubscribeEvent
 	public void handleConveyorPlace(SchematicPlaceBlockPostEvent event){
 		IMultiblock mb = event.getMultiblock();
-		BlockState state = event.getBlockState();
+		BlockState state = event.getState();
 		String mbName = mb.getUniqueName().getPath();
 		
 		if(mbName.equals("multiblocks/auto_workbench") || mbName.equals("multiblocks/bottling_machine") || mbName.equals("multiblocks/assembler") || mbName.equals("multiblocks/metal_press")){
 			if(state.getBlock() == IEBlocks.MetalDevices.CONVEYORS.get(null)){
-				TileEntity te = event.getWorld().getTileEntity(event.getPos());
+				TileEntity te = event.getWorld().getTileEntity(event.getWorldPos());
 				if(te instanceof ConveyorBeltTileEntity){
 					ConveyorBeltTileEntity conveyor = ((ConveyorBeltTileEntity) te);
 					ResourceLocation rl = new ResourceLocation(ImmersiveEngineering.MODID, "conveyor");
 					IConveyorBelt subType = ConveyorHandler.getConveyor(rl, conveyor);
-					conveyor.setConveyorSubtype(subType);
 					
 					Direction facing = ((ConveyorBeltTileEntity) te).getFacing();
 					
@@ -1148,7 +862,7 @@ public class ProjectorItem extends IPItemBase{
 						conveyor.setFacing(event.getRotate());
 					}
 					
-					event.getWorld().setBlockState(event.getPos(), event.getBlockState());
+					event.getWorld().setBlockState(event.getWorldPos(), event.getState());
 				}
 			}
 		}
@@ -1212,19 +926,20 @@ public class ProjectorItem extends IPItemBase{
 		}
 	}
 	
+	@Deprecated // Not used anywhere
 	public boolean doesIntersect(PlayerEntity player, ItemStack target, BlockPos check){
 		IMultiblock mb = ProjectorItem.getMultiblock(target);
 		
 		if(mb != null){
-			int mh = mb.getStructureManual().length;
-			int ml = mb.getStructureManual()[0].length;
-			int mw = mb.getStructureManual()[0][0].length;
+			int mh = mb.getSize().getY();
+			int ml = mb.getSize().getX();
+			int mw = mb.getSize().getZ();
 			
-			int rotate = ProjectorItem.getRotation(target);
+			Rotation rotation = ProjectorItem.getRotation(target);
 			boolean flip = ProjectorItem.getFlipped(target);
 			
-			int xd = (rotate % 2 == 0) ? ml : mw;
-			int zd = (rotate % 2 == 0) ? mw : ml;
+			int xd = (rotation.ordinal() % 2 == 0) ? ml : mw;
+			int zd = (rotation.ordinal() % 2 == 0) ? mw : ml;
 			
 			boolean isPlaced = false;
 			
@@ -1254,10 +969,12 @@ public class ProjectorItem extends IPItemBase{
 			return;
 		}
 		
-		BlockState state = event.getState();
+		Block block=event.getBlock();
 		Rotation rotate = event.getRotate();
-		
-		if(state.getBlock() == MetalDevices.CONVEYORS.get(BasicConveyor.NAME)){
+		if(block == IEBlocks.MetalDevices.fluidPipe){
+			event.setState(IPContent.Blocks.dummyBlockPipe.getDefaultState());
+			
+		}else if(block == MetalDevices.CONVEYORS.get(BasicConveyor.NAME)){
 			switch(rotate){
 				case CLOCKWISE_180:
 					GlStateManager.rotated(180, 0, 1, 0);
@@ -1277,21 +994,63 @@ public class ProjectorItem extends IPItemBase{
 				GlStateManager.rotated(180, 0, 1, 0);
 			}
 			GlStateManager.rotated(90, 0, 1, 0);
-		}else if(state.getBlock() == IEBlocks.MetalDevices.fluidPump){
+			
+		}else if(block == IEBlocks.MetalDevices.fluidPump){
 			GlStateManager.translated(0, .225F, 0);
 			GlStateManager.scaled(.9F, .9F, .9F);
-		}else if(state.getBlock() == Blocks.PISTON){
+			
+		}else if(block == Blocks.PISTON){
 			GlStateManager.rotated(180, 1, 0, 0);
 		}
 		
 		if(mbName.equals("multiblocks/distillationtower")){
-			if(state.getBlock() == IEBlocks.toSlab.get(IEBlocks.MetalDecoration.steelScaffolding.get(MetalScaffoldingType.STANDARD))){
+			if(block == IEBlocks.toSlab.get(IEBlocks.MetalDecoration.steelScaffolding.get(MetalScaffoldingType.STANDARD))){
 				GlStateManager.translated(0, .25F, 0);
 			}
 		}
 	}
 	
+	
+	/** This is pretty much a carrier class */
+	protected static class TestClass{
+		/** raw information from the template */
+		public final Template.BlockInfo info;
+		
+		/** Transformed Position */
+		public final BlockPos tPos;
+		
+		/** Currently applied template transformation (tPos) */
+		public final PlacementSettings setting;
+		
+		/** the multiblock in question */
+		public final IMultiblock multiblock;
+		
+		public TestClass(PlacementSettings setting, Template.BlockInfo info, IMultiblock multiblock, BlockPos transformedPos){
+			this.info=info;
+			this.tPos=transformedPos;
+			this.setting=setting;
+			this.multiblock=multiblock;
+		}
+		
+		public Rotation getRotation(){
+			return this.setting.getRotation();
+		}
+		
+		public CompoundNBT getInfoNBT(){
+			return this.info.nbt;
+		}
+		
+		public BlockPos getInfoPos(){
+			return this.info.pos;
+		}
+		
+		public BlockState getInfoState(){
+			return this.info.state;
+		}
+	}
+	
 	private static class RenderInfo{
+		/** 0 = All, 1 = Bad-Block */
 		public final int layer;
 		public final Template.BlockInfo blockInfo;
 		public final BlockPos worldPos;

@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum.api.event;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
 import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -10,44 +11,57 @@ import net.minecraftforge.eventbus.api.Event;
 
 @Cancelable
 public class SchematicPlaceBlockPostEvent extends Event{
-	private BlockState state;
 	private World world;
+	private Rotation rotation;
 	private IMultiblock multiblock;
-	private Rotation rotate;
-	private BlockPos pos;
+	private BlockPos worldPos;
+	private BlockPos templatePos;
+	private BlockState state;
+	private CompoundNBT nbt;
 	
-	public SchematicPlaceBlockPostEvent(IMultiblock multiblock, World world, BlockPos pos, BlockState state, Rotation rotate){
+	public SchematicPlaceBlockPostEvent(IMultiblock multiblock, World world, BlockPos worldPos, BlockPos templatePos, BlockState state, CompoundNBT nbt, Rotation rotation){
 		super();
-		this.state = state;
 		this.world = world;
 		this.multiblock = multiblock;
-		this.rotate = rotate;
-		this.pos = pos;
-	}
-	
-	public void setBlockState(BlockState state){
-		this.state = state;
+		this.worldPos=worldPos;
+		this.state=state;
+		this.nbt=nbt;
+		this.templatePos=templatePos;
+		this.rotation=rotation;
 	}
 	
 	public World getWorld(){
-		return world;
-	}
-	
-	public BlockState getBlockState(){
-		return state;
+		return this.world;
 	}
 	
 	public IMultiblock getMultiblock(){
-		return multiblock;
-	}
-	
-	public BlockPos getPos(){
-		return pos;
+		return this.multiblock;
 	}
 	
 	public Rotation getRotate(){
-		return this.rotate;
+		return this.rotation;
 	}
+	
+	public BlockPos getWorldPos(){
+		return this.worldPos;
+	}
+	
+	public BlockPos getTemplatePos(){
+		return this.templatePos;
+	}
+	
+	public BlockState getState(){
+		return this.state;
+	}
+	
+	public CompoundNBT getNBT(){
+		return this.nbt;
+	}
+	
+	// TODO Remove these deprecated methods at some point
+	
+	@Deprecated
+	public void setBlockState(BlockState state){}
 	
 	@Deprecated
 	public int getIndex(){

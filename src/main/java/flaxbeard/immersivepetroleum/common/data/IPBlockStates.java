@@ -31,13 +31,25 @@ public class IPBlockStates extends BlockStateProvider{
 	
 	@Override
 	protected void registerStatesAndModels(){
-		// Dummies
+		// Dummy Oil Ore
+		ModelFile dummyOilOreModel=cubeAll(IPContent.Blocks.dummyBlockOilOre);
 		getVariantBuilder(IPContent.Blocks.dummyBlockOilOre).partialState()
-			.setModels(new ConfiguredModel(cubeAll(IPContent.Blocks.dummyBlockOilOre)));
+			.setModels(new ConfiguredModel(dummyOilOreModel));
+		itemModelWithParent(IPContent.Blocks.dummyBlockOilOre, dummyOilOreModel);
+		
+		// Dummy Pipe
+		ModelFile dummyPipeModel=getExistingFile(modLoc("block/dummy_pipe"));
 		getVariantBuilder(IPContent.Blocks.dummyBlockPipe).partialState()
-			.setModels(new ConfiguredModel(getExistingFile(modLoc("block/dummy_pipe"))));
+			.setModels(new ConfiguredModel(dummyPipeModel));
+		itemModelWithParent(IPContent.Blocks.dummyBlockPipe, dummyPipeModel);
+		
+		// Dummy Conveyor
+		ModelFile dummyConveyorModel=getExistingFile(modLoc("block/dummy_conveyor"));
 		getVariantBuilder(IPContent.Blocks.dummyBlockConveyor).partialState()
-			.setModels(new ConfiguredModel(getExistingFile(modLoc("block/dummy_conveyor"))));
+			.setModels(new ConfiguredModel(dummyConveyorModel));
+		getBuilder(ImmersivePetroleum.MODID+":item/"+IPContent.Blocks.dummyBlockConveyor.getRegistryName().getPath())
+			.parent(dummyConveyorModel)
+			.texture("particle", new ResourceLocation("immersiveengineering", "block/conveyor/conveyor"));
 		
 		// Multiblocks
 		createMultiblock(IPContent.Multiblock.distillationtower, new ResourceLocation(ImmersivePetroleum.MODID, "models/distillation_tower"));
@@ -74,14 +86,18 @@ public class IPBlockStates extends BlockStateProvider{
 		loadedModels.backupModels();
 	}
 	
+	private void itemModelWithParent(Block block, ModelFile parent){
+		getBuilder(ImmersivePetroleum.MODID+":item/"+block.getRegistryName().getPath())
+			.parent(parent)
+			.texture("particle", modLoc("block/"+block.getRegistryName().getPath()));
+	}
+	
 	private void simpleBlockWithItem(Block block){
 		ModelFile file=cubeAll(block);
 		
 		getVariantBuilder(block).partialState()
 			.setModels(new ConfiguredModel(file));
-		getBuilder(ImmersivePetroleum.MODID+":item/"+block.getRegistryName().getPath())
-			.parent(file)
-			.texture("particle", modLoc("block/"+block.getRegistryName().getPath()));
+		itemModelWithParent(block, file);
 	}
 	
 	private void gasGeneratorState(){

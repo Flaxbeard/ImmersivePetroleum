@@ -12,6 +12,7 @@ import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.fluid.Fluid;
@@ -38,7 +39,6 @@ public class PumpjackHandler{
 	
 	public static Map<DimensionChunkCoords, Long> timeCache = new HashMap<>();
 	public static Map<DimensionChunkCoords, OilWorldInfo> oilCache = new HashMap<>();
-	public static double oilChance = 100;
 	
 	private static int depositSize = 1;
 	
@@ -137,8 +137,7 @@ public class PumpjackHandler{
 			ReservoirType res = null;
 			
 			Random r = SharedSeedRandom.seedSlimeChunk(coords.x, coords.z, world.getSeed(), 90210L);
-			double dd = r.nextDouble();
-			boolean empty = dd > oilChance;
+			boolean empty = (r.nextDouble() > IPConfig.EXTRACTION.reservoir_chance.get());
 			double size = r.nextDouble();
 			int query = r.nextInt();
 			

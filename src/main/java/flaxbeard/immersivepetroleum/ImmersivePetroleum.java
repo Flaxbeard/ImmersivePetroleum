@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import blusunrize.immersiveengineering.api.energy.DieselHandler;
-import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
@@ -85,10 +84,9 @@ public class ImmersivePetroleum{
 		
 		// ---------------------------------------------------------------------------------------------------------------------------------------------
 		
-		DistillationRecipe.energyModifier = IPConfig.REFINING.distillationTower_energyModifier.get();
-		DistillationRecipe.timeModifier = IPConfig.REFINING.distillationTower_timeModifier.get();
-		
-		PumpjackHandler.oilChance = IPConfig.EXTRACTION.reservoir_chance.get();
+//		DistillationRecipe.energyModifier = IPConfig.REFINING.distillationTower_energyModifier.get();
+//		DistillationRecipe.timeModifier = IPConfig.REFINING.distillationTower_timeModifier.get();
+//		PumpjackHandler.oilChance = IPConfig.EXTRACTION.reservoir_chance.get();
 		
 		// TODO See issue #4215 in the ImmersiveEngineering GitHub
 		/*

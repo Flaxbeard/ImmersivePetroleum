@@ -432,8 +432,10 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		DistillationTowerTileEntity master=master();
 		if(master!=null){
 			// Fluid Input
-			if(this.posInMultiblock.equals(Fluid_IN) && (side==null || side==getFacing().rotateY())){
-				return new IFluidTank[]{master.tanks[TANK_INPUT]};
+			if(this.posInMultiblock.equals(Fluid_IN)){
+				if(getIsMirrored() ? (side == null || side == getFacing().rotateYCCW()) : (side == null || side == getFacing().rotateY())){
+					return new IFluidTank[]{master.tanks[TANK_INPUT]};
+				}
 			}
 			
 			// Fluid Output
@@ -446,22 +448,24 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	
 	@Override
 	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource){
-		if(this.posInMultiblock.equals(Fluid_IN) && (side==null || side==getFacing().rotateY())){
-			DistillationTowerTileEntity master=master();
-			
-			if(master==null || master.tanks[TANK_INPUT].getFluidAmount()>=master.tanks[TANK_INPUT].getCapacity())
-				return false;
-			
-			FluidStack copy0=Utils.copyFluidStackWithAmount(resource, 1000, false);
-			FluidStack copy1=Utils.copyFluidStackWithAmount(master.tanks[TANK_INPUT].getFluid(), 1000, false);
-			
-			if(master.tanks[TANK_INPUT].getFluid()==FluidStack.EMPTY){
-				DistillationRecipe r=DistillationRecipe.findRecipe(copy0);
-				return r!=null;
-			}else{
-				DistillationRecipe r0=DistillationRecipe.findRecipe(copy0);
-				DistillationRecipe r1=DistillationRecipe.findRecipe(copy1);
-				return r0==r1;
+		if(this.posInMultiblock.equals(Fluid_IN)){
+			if(getIsMirrored() ? (side == null || side == getFacing().rotateYCCW()) : (side == null || side == getFacing().rotateY())){
+				DistillationTowerTileEntity master=master();
+				
+				if(master==null || master.tanks[TANK_INPUT].getFluidAmount()>=master.tanks[TANK_INPUT].getCapacity())
+					return false;
+				
+				FluidStack copy0=Utils.copyFluidStackWithAmount(resource, 1000, false);
+				FluidStack copy1=Utils.copyFluidStackWithAmount(master.tanks[TANK_INPUT].getFluid(), 1000, false);
+				
+				if(master.tanks[TANK_INPUT].getFluid()==FluidStack.EMPTY){
+					DistillationRecipe r=DistillationRecipe.findRecipe(copy0);
+					return r!=null;
+				}else{
+					DistillationRecipe r0=DistillationRecipe.findRecipe(copy0);
+					DistillationRecipe r1=DistillationRecipe.findRecipe(copy1);
+					return r0==r1;
+				}
 			}
 		}
 		return false;

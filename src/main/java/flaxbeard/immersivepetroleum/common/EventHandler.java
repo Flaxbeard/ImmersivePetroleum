@@ -16,6 +16,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 
+import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.multiblocks.ManualElementMultiblock;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
@@ -364,27 +365,28 @@ public class EventHandler{
 			TileEntity te = event.getWorld().getTileEntity(pos);
 			if(te instanceof SampleDrillTileEntity){
 				SampleDrillTileEntity drill = (SampleDrillTileEntity) te;
-				
-				if(drill.dummy != 0){
-					te = event.getWorld().getTileEntity(pos.add(0, -drill.dummy, 0));
-					if(te instanceof SampleDrillTileEntity){
-						drill = (SampleDrillTileEntity) te;
-					}
+				if(drill.isDummy()){
+					drill = (SampleDrillTileEntity)drill.master();
 				}
+				
 				if(!drill.sample.isEmpty()){
 					if(ItemNBTHelper.hasKey(drill.sample, "coords")){
 						try{
-							CompoundNBT nbt=ItemNBTHelper.getTagCompound(drill.sample, "coords");
-							
-							int x=nbt.getInt("x");
-							int z=nbt.getInt("z");
-							
 							World world = event.getWorld();
+							DimensionChunkCoords coords=DimensionChunkCoords.readFromNBT(ItemNBTHelper.getTagCompound(drill.sample, "coords"));
 							
-							OilWorldInfo info = PumpjackHandler.getOilWorldInfo(world, x, z);
+							OilWorldInfo info = PumpjackHandler.getOilWorldInfo(world, coords.x, coords.z);
 							if(info.getType() != null){
-								ItemNBTHelper.putString(drill.sample, "resType", PumpjackHandler.getOilWorldInfo(world, x, z).getType().name);
+								ItemNBTHelper.putString(drill.sample, "resType", info.getType().name);
 								ItemNBTHelper.putInt(drill.sample, "oil", info.current);
+								
+								if(event.getPlayer()!=null){
+									int cap=info.capacity;
+									int cur=info.current;
+									ReservoirType type=info.type;
+									ReservoirType override=info.overrideType;
+								}
+								
 							}else{
 								ItemNBTHelper.putInt(drill.sample, "oil", 0);
 							}

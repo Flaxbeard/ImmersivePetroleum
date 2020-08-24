@@ -579,7 +579,7 @@ public class EventHandler{
 					GlStateManager.translated(23, 37, 0);
 					ClientUtils.drawTexturedRect(-41, -73, 53, 72, 8 / 256f, 61 / 256f, 4 / 256f, 76 / 256f);
 					
-					// TODO DEBUG Comment out Later
+					// TODO DEBUG: Remove later.
 					GlStateManager.pushMatrix();
 					{
 						FontRenderer font=Minecraft.getInstance().fontRenderer;

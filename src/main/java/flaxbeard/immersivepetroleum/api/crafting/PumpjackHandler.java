@@ -117,7 +117,7 @@ public class PumpjackHandler{
 	 * @return The OilWorldInfo corresponding w/ given chunk
 	 */
 	public static OilWorldInfo getOilWorldInfo(World world, int chunkX, int chunkZ){
-		return getOilWorldInfo(world, new DimensionChunkCoords(world.getDimension().getType(), chunkX / depositSize, chunkZ / depositSize), false);
+		return getOilWorldInfo(world, new DimensionChunkCoords(world.getDimension().getType(), chunkX, chunkZ), false);
 	}
 	
 	/**
@@ -163,7 +163,7 @@ public class PumpjackHandler{
 			int capacity = 0;
 			
 			if(res != null){
-				capacity = (int) (size * (res.maxSize - res.minSize)) + res.minSize;
+				capacity = (int) ((res.maxSize - res.minSize) * size + res.minSize);
 			}
 			
 			worldInfo = new OilWorldInfo();
@@ -260,12 +260,12 @@ public class PumpjackHandler{
 		public int weight;
 		
 		// ForgeRegistries.MOD_DIMENSIONS.getValue(resourceIn)
-		public List<ResourceLocation> dimWhitelist=new ArrayList<>();
-		public List<ResourceLocation> dimBlacklist=new ArrayList<>();
+		public List<ResourceLocation> dimWhitelist=new ArrayList<>(0);
+		public List<ResourceLocation> dimBlacklist=new ArrayList<>(0);
 		
 		// ForgeRegistries.BIOMES.getValue(resourceIn)
-		public List<ResourceLocation> bioWhitelist=new ArrayList<>();
-		public List<ResourceLocation> bioBlacklist=new ArrayList<>();
+		public List<ResourceLocation> bioWhitelist=new ArrayList<>(0);
+		public List<ResourceLocation> bioBlacklist=new ArrayList<>(0);
 		
 		private Fluid fluid;
 		
@@ -355,7 +355,7 @@ public class PumpjackHandler{
 			else if(rl!=null && this.dimBlacklist.size()>0 && this.dimBlacklist.contains(rl))
 				return false;
 			
-			return false;
+			return true;
 		}
 		
 		public boolean isValidBiome(Biome biome){
@@ -371,7 +371,7 @@ public class PumpjackHandler{
 			else if(this.bioBlacklist.size()>0 && this.bioBlacklist.contains(rl))
 				return false;
 			
-			return false;
+			return true;
 		}
 		
 		@Override
@@ -411,7 +411,7 @@ public class PumpjackHandler{
 		}
 		
 		private List<ResourceLocation> toList(ListNBT nbtList){
-			List<ResourceLocation> list=new ArrayList<>();
+			List<ResourceLocation> list=new ArrayList<>(0);
 			if(nbtList.size()>0){
 				for(INBT tag:nbtList)
 					if(tag instanceof StringNBT)

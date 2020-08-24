@@ -222,7 +222,7 @@ public class IPContent{
 			throw new RuntimeException(e);
 		}
 		
-		log.info("Registered TileEntity: {} as {}", tile, type.getRegistryName());
+		log.debug("Registered TileEntity: {} as {}", tile, type.getRegistryName());
 	}
 	
 	private static  <T extends TileEntity> TileEntityType<T> createType(Class<T> typeClass, Block... valid){

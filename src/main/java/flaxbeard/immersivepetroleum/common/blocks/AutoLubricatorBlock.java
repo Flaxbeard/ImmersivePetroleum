@@ -36,7 +36,7 @@ public class AutoLubricatorBlock extends IPBlockBase{
 	public static final BooleanProperty SLAVE=BooleanProperty.create("slave");
 	
 	public AutoLubricatorBlock(String name){
-		super(name, Block.Properties.create(material).hardnessAndResistance(3.0F, 15.0F));
+		super(name, Block.Properties.create(material).hardnessAndResistance(3.0F, 8.0F));
 		
 		setDefaultState(getStateContainer().getBaseState()
 				.with(FACING, Direction.NORTH)
@@ -99,7 +99,7 @@ public class AutoLubricatorBlock extends IPBlockBase{
 			return ((AutoLubricatorTileEntity)te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), 0.0F, 0.0F, 0.0F);
 		}
 		
-		return false;
+		return true;
 	}
 	
 	static final VoxelShape SHAPE_SLAVE=VoxelShapes.create(.1875F, 0, .1875F, .8125f, 1, .8125f);

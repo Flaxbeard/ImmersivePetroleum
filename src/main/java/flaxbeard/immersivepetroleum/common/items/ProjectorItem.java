@@ -387,7 +387,6 @@ public class ProjectorItem extends IPItemBase{
 				
 				final BlockPos hitCopy=new BlockPos(hit);
 				processMultiblock(multiblock, rotation, flip, test->{
-					// TODO Re-add the event stuff
 					SchematicPlaceBlockEvent event=new SchematicPlaceBlockEvent(multiblock, world, test.tPos, test.getInfoPos(), test.getInfoState(), test.getInfoNBT(), rotation);
 					if(!MinecraftForge.EVENT_BUS.post(event)){
 						world.setBlockState(hitCopy.add(test.tPos), test.getInfoState());
@@ -535,7 +534,7 @@ public class ProjectorItem extends IPItemBase{
 		
 		GlStateManager.pushMatrix();
 		{
-			if(mc.player != null){ // TODO Bookmark: renderSchematic
+			if(mc.player != null){
 				ItemStack secondItem = mc.player.getHeldItemOffhand();
 				
 				boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
@@ -646,8 +645,6 @@ public class ProjectorItem extends IPItemBase{
 					}
 					return 0;
 				});
-				
-				// TODO Bookmark: Preview Rendering
 				
 				double px = TileEntityRendererDispatcher.staticPlayerX;
 				double py = TileEntityRendererDispatcher.staticPlayerY;
@@ -991,7 +988,7 @@ public class ProjectorItem extends IPItemBase{
 		}
 	}
 	
-	@SubscribeEvent // TODO Bookmark: SchematicRenderBlockEvent usage
+	@SubscribeEvent
 	public void handleConveyorsAndPipes(SchematicRenderBlockEvent event){
 		String mbName=event.getMultiblock().getUniqueName().getPath();
 		BlockState state=event.getState();

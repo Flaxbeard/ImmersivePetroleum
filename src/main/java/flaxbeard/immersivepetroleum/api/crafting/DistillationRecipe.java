@@ -38,6 +38,11 @@ public class DistillationRecipe extends MultiblockRecipe{
 		return null;
 	}
 	
+	public static DistillationRecipe loadFromNBT(CompoundNBT nbt){
+		FluidStack input = FluidStack.loadFluidStackFromNBT(nbt.getCompound("input"));
+		return findRecipe(input);
+	}
+	
 	public final FluidStack input;
 	public final FluidStack[] fluidOutput;
 	public final ItemStack[] itemOutput;
@@ -77,11 +82,6 @@ public class DistillationRecipe extends MultiblockRecipe{
 	public CompoundNBT writeToNBT(CompoundNBT nbt){
 		nbt.put("input", input.writeToNBT(new CompoundNBT()));
 		return nbt;
-	}
-	
-	public static DistillationRecipe loadFromNBT(CompoundNBT nbt){
-		FluidStack input = FluidStack.loadFluidStackFromNBT(nbt.getCompound("input"));
-		return findRecipe(input);
 	}
 	
 	int totalProcessTime;

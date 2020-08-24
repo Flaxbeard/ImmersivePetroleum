@@ -1,6 +1,18 @@
 {
-  "parent": "immersivepetroleum:block/generator",
   "textures": {
-    "particle": "immersivepetroleum:block/gen_top"
-  }
+    "texture": "immersivepetroleum:block/obj/generator",
+    "particle": "immersivepetroleum:block/gen_bottom"
+  },
+  "loader": "immersiveengineering:connector",
+  "base_model": {
+    "loader": "forge:obj",
+    "model": "immersivepetroleum:models/block/obj/generator.obj",
+    "flip-v": true
+  },
+  "layers": [
+    "TRANSLUCENT",
+    "CUTOUT",
+    "CUTOUT_MIPPED",
+    "SOLID"
+  ]
 }

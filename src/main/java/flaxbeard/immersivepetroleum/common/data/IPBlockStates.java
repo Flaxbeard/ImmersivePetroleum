@@ -1,7 +1,13 @@
 package flaxbeard.immersivepetroleum.common.data;
 
+import java.util.Arrays;
+
+import com.google.gson.JsonObject;
+
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.client.models.connection.ConnectionLoader;
+import blusunrize.immersiveengineering.common.data.models.LoadedModelBuilder;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
@@ -13,7 +19,6 @@ import net.minecraft.state.EnumProperty;
 import net.minecraft.state.IProperty;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
@@ -101,8 +106,19 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	private void gasGeneratorState(){
-		BlockModelBuilder model=withExistingParent(IPContent.Blocks.blockGasGenerator.getRegistryName().toString(), modLoc("block/generator"))
-				.texture("particle", modLoc("block/gen_top"));
+		JsonObject basemodel=new JsonObject();
+		basemodel.addProperty("loader", "forge:obj");
+		basemodel.addProperty("model", modLoc("models/block/obj/generator.obj").toString());
+		basemodel.addProperty("flip-v", true);
+		
+		LoadedModelBuilder model=loadedModels.getBuilder(IPContent.Blocks.blockGasGenerator.getRegistryName().toString())
+			.texture("texture", modLoc("block/obj/generator"))
+			.texture("particle", modLoc("block/gen_bottom"))
+			.loader(ConnectionLoader.LOADER_NAME)
+			.additional("base_model", basemodel)
+			.additional("layers", Arrays.asList("TRANSLUCENT", "SOLID"))
+			;
+		
 		
 		VariantBlockStateBuilder builder=getVariantBuilder(IPContent.Blocks.blockGasGenerator);
 		Direction.Plane.HORIZONTAL.forEach(dir->{

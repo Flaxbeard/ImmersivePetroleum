@@ -80,10 +80,10 @@ public class DebugItem extends IPItemBase{
 						);
 						
 						playerIn.sendStatusMessage(new StringTextComponent(out), true);
+						return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 					}
-				}else{
-					playerIn.sendStatusMessage(new StringTextComponent(String.format(Locale.ENGLISH, "%s %s: Nothing.", coords.x, coords.z)), true);
 				}
+				playerIn.sendStatusMessage(new StringTextComponent(String.format(Locale.ENGLISH, "%s %s: Nothing.", coords.x, coords.z)), true);
 			}
 			
 			return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));

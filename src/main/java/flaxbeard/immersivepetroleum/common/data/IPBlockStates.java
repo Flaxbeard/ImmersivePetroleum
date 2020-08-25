@@ -64,7 +64,7 @@ public class IPBlockStates extends BlockStateProvider{
 			.setModels(new ConfiguredModel(dummyConveyorModel));
 		getItemBuilder(IPContent.Blocks.dummyBlockConveyor)
 			.parent(dummyConveyorModel)
-			.texture("particle", new ResourceLocation("immersiveengineering", "block/conveyor/conveyor"));
+			.texture("particle", new ResourceLocation(ImmersiveEngineering.MODID, "block/conveyor/conveyor"));
 		
 		// Multiblocks
 		//createMultiblock(IPContent.Multiblock.distillationtower, modLoc("models/distillation_tower"));
@@ -91,12 +91,8 @@ public class IPBlockStates extends BlockStateProvider{
 	
 	private void distillationtower(){
 		ResourceLocation idleTexture=modLoc("multiblock/distillation_tower");
-		ResourceLocation activeTexture=modLoc("multiblock/distillation_tower_active");
 		ResourceLocation modelNormal=modLoc("models/multiblock/obj/distillationtower.obj");
 		ResourceLocation modelMirrored=modLoc("models/multiblock/obj/distillationtower_mirrored.obj");
-		
-		towerModel(modelNormal, activeTexture, "_active");
-		towerModel(modelMirrored, activeTexture, "_mirrored_active");
 		
 		LoadedModelBuilder normal=towerModel(modelNormal, idleTexture, "_idle");
 		LoadedModelBuilder mirrored=towerModel(modelMirrored, idleTexture, "_mirrored_idle");

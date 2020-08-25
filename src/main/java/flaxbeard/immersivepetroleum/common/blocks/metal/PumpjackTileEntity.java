@@ -154,17 +154,17 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	public void tick(){
 		super.tick();
 		
-		// What is this whole thing even for? I've never seen the pumpjack spawning particles anywhere.
 		if(this.world.isRemote || isDummy()){
-			if(this.world.isRemote && !isDummy() && this.state != null && this.wasActive){
-				BlockPos particlePos = getPos();
-				float r1 = (this.world.rand.nextFloat() - .5F) * 2F;
-				float r2 = (this.world.rand.nextFloat() - .5F) * 2F;
-				
-				this.world.addParticle(ParticleTypes.SMOKE,
-						particlePos.getX() + 0.5D, particlePos.getY(), particlePos.getZ() + 0.5D,
-						r1 * 0.04D, 0.25D, r2 * 0.025D);
-			}
+//			if(this.world.isRemote && !isDummy() && this.state != null && this.wasActive){
+//				// What is this whole thing even for? I've never seen the pumpjack spawning particles anywhere.
+//				BlockPos particlePos = getPos();
+//				float r1 = (this.world.rand.nextFloat() - .5F) * 2F;
+//				float r2 = (this.world.rand.nextFloat() - .5F) * 2F;
+//				
+//				this.world.addParticle(ParticleTypes.SMOKE,
+//						particlePos.getX() + 0.5D, particlePos.getY(), particlePos.getZ() + 0.5D,
+//						r1 * 0.04D, 0.25D, r2 * 0.025D);
+//			}
 			if(this.wasActive){
 				this.activeTicks++;
 			}
@@ -176,19 +176,18 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		int consumption=IPConfig.EXTRACTION.pumpjack_consumption.get();
 		int extracted=this.energyStorage.extractEnergy(IPConfig.EXTRACTION.pumpjack_consumption.get(), true);
 		
-		if(extracted>=consumption && canExtract() && !isRSDisabled()){
+		if(extracted>=consumption && canExtract()){
 			if((getPos().getX() + getPos().getZ()) % IPConfig.EXTRACTION.pipe_check_ticks.get() == this.pipeTicks){
 				this.lastHadPipes = hasPipes();
 			}
 			
-			if(this.lastHadPipes){
+			if(!isRSDisabled() && this.lastHadPipes){
 				int available = availableOil();
 				int residual = getResidualOil();
 				if(available > 0 || residual > 0){
 					int oilAmnt = availableOil() <= 0 ? residual : availableOil();
 					
 					this.energyStorage.extractEnergy(consumption, false);
-					active = true;
 					FluidStack out = new FluidStack(availableFluid(), Math.min(IPConfig.EXTRACTION.pumpjack_speed.get(), oilAmnt));
 					BlockPos outputPos = master().getBlockPosForPos(East_Port).offset(getFacing().rotateY());
 					IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, getFacing().rotateY()).orElse(null);
@@ -197,6 +196,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 						if(accepted > 0){
 							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.getAmount(), accepted), false), FluidAction.EXECUTE);
 							extractOil(drained);
+							active = true;
 							out = Utils.copyFluidStackWithAmount(out, out.getAmount() - drained, false);
 						}
 					}
@@ -208,6 +208,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 						if(accepted > 0){
 							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.getAmount(), accepted), false), FluidAction.EXECUTE);
 							extractOil(drained);
+							active = true;
 						}
 					}
 					

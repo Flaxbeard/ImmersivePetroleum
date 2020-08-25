@@ -2,6 +2,9 @@ package flaxbeard.immersivepetroleum.common.data;
 
 import java.util.Arrays;
 
+import javax.annotation.Nullable;
+
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 
 import blusunrize.immersiveengineering.ImmersiveEngineering;
@@ -18,7 +21,9 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.IProperty;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
@@ -57,13 +62,15 @@ public class IPBlockStates extends BlockStateProvider{
 		ModelFile dummyConveyorModel=getExistingFile(modLoc("block/dummy_conveyor"));
 		getVariantBuilder(IPContent.Blocks.dummyBlockConveyor).partialState()
 			.setModels(new ConfiguredModel(dummyConveyorModel));
-		getBuilder(ImmersivePetroleum.MODID+":item/"+IPContent.Blocks.dummyBlockConveyor.getRegistryName().getPath())
+		getItemBuilder(IPContent.Blocks.dummyBlockConveyor)
 			.parent(dummyConveyorModel)
 			.texture("particle", new ResourceLocation("immersiveengineering", "block/conveyor/conveyor"));
 		
 		// Multiblocks
-		createMultiblock(IPContent.Multiblock.distillationtower, new ResourceLocation(ImmersivePetroleum.MODID, "models/distillation_tower"));
-		createMultiblock(IPContent.Multiblock.pumpjack, new ResourceLocation(ImmersivePetroleum.MODID, "models/pumpjack"));
+		//createMultiblock(IPContent.Multiblock.distillationtower, modLoc("models/distillation_tower"));
+		createEmptyMultiblock(IPContent.Multiblock.pumpjack, modLoc("models/pumpjack"));
+		
+		distillationtower();
 		
 		// "Normal" Blocks
 		simpleBlockWithItem(IPContent.Blocks.blockAsphalt);
@@ -82,6 +89,30 @@ public class IPBlockStates extends BlockStateProvider{
 		loadedModels.backupModels();
 	}
 	
+	private void distillationtower(){
+		ResourceLocation idleTexture=modLoc("multiblock/distillation_tower");
+		ResourceLocation activeTexture=modLoc("multiblock/distillation_tower_active");
+		ResourceLocation modelNormal=modLoc("models/multiblock/obj/distillationtower.obj");
+		ResourceLocation modelMirrored=modLoc("models/multiblock/obj/distillationtower_mirrored.obj");
+		
+		towerModel(modelNormal, activeTexture, "_active");
+		towerModel(modelMirrored, activeTexture, "_mirrored_active");
+		
+		LoadedModelBuilder normal=towerModel(modelNormal, idleTexture, "_idle");
+		LoadedModelBuilder mirrored=towerModel(modelMirrored, idleTexture, "_mirrored_idle");
+		
+		createMultiblock(IPContent.Multiblock.distillationtower, normal, mirrored, idleTexture);
+	}
+	
+	private LoadedModelBuilder towerModel(ResourceLocation model, ResourceLocation texture, String add){
+		LoadedModelBuilder re=this.loadedModels.withExistingParent(getMultiblockPath(IPContent.Multiblock.distillationtower)+add, mcLoc("block"))
+				.texture("texture", texture)
+				.texture("particle", texture)
+				.additional("flip-v", true)
+				.additional("model", model)
+				.additional("detectCullableFaces", false)
+				.loader(FORGE_LOADER);
+		return re;
 	}
 	
 	private void autolubricator(){
@@ -116,7 +147,7 @@ public class IPBlockStates extends BlockStateProvider{
 		basemodel.addProperty("model", modLoc("models/block/obj/generator.obj").toString());
 		basemodel.addProperty("flip-v", true);
 		
-		LoadedModelBuilder model=loadedModels.getBuilder(IPContent.Blocks.blockGasGenerator.getRegistryName().toString())
+		LoadedModelBuilder model=loadedModels.getBuilder(getPath(IPContent.Blocks.blockGasGenerator))
 			.texture("texture", modLoc("block/obj/generator"))
 			.texture("particle", modLoc("block/gen_bottom"))
 			.loader(ConnectionLoader.LOADER_NAME)
@@ -134,7 +165,7 @@ public class IPBlockStates extends BlockStateProvider{
 				.addModels(new ConfiguredModel(model, 0, rotation, false));
 		});
 		
-		getBuilder(ImmersivePetroleum.MODID+":item/gas_generator").parent(getExistingFile(modLoc("block/generator")));
+		//getItemBuilder(IPContent.Blocks.blockGasGenerator).parent(getExistingFile(modLoc("block/generator")));
 	}
 	
 	/** Used basicly for every multiblock-block */
@@ -142,8 +173,69 @@ public class IPBlockStates extends BlockStateProvider{
 			new ExistingModelFile(new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty"), existingFileHelper)
 	);
 	
-	/** From {@link blusunrize.immersiveengineering.common.data.BlockStates} and altered to only result in empty models */
-	private void createMultiblock(Block block, ResourceLocation particletexture){
+	/** From {@link blusunrize.immersiveengineering.common.data.BlockStates} 
+	 * @param idleTexture */
+	private void createMultiblock(Block b, ModelFile masterModel, ModelFile mirroredModel, ResourceLocation particleTexture){
+		createMultiblock(b, masterModel, mirroredModel, IEProperties.MULTIBLOCKSLAVE, IEProperties.FACING_HORIZONTAL, IEProperties.MIRRORED, 180, particleTexture);
+	}
+	
+	/** From {@link blusunrize.immersiveengineering.common.data.BlockStates} */
+	private void createMultiblock(Block b, ModelFile masterModel, @Nullable ModelFile mirroredModel, IProperty<Boolean> isSlave, EnumProperty<Direction> facing, @Nullable IProperty<Boolean> mirroredState, int rotationOffset, ResourceLocation particleTex){
+		Preconditions.checkArgument((mirroredModel == null) == (mirroredState == null));
+		VariantBlockStateBuilder builder = getVariantBuilder(b);
+		builder.partialState()
+			.with(isSlave, true)
+			.setModels(new ConfiguredModel(
+					withExistingParent(getMultiblockPath(b)+"_empty", EMPTY_MODEL.model.getLocation())
+					.texture("particle", particleTex)));
+		
+		boolean[] possibleMirrorStates;
+		if(mirroredState != null)
+			possibleMirrorStates = new boolean[]{false, true};
+		else
+			possibleMirrorStates = new boolean[1];
+		for(boolean mirrored:possibleMirrorStates)
+			for(Direction dir:facing.getAllowedValues()){
+				final int angleY;
+				final int angleX;
+				if(facing.getAllowedValues().contains(Direction.UP)){
+					angleX = -90 * dir.getYOffset();
+					if(dir.getAxis() != Axis.Y)
+						angleY = getAngle(dir, rotationOffset);
+					else
+						angleY = 0;
+				}else{
+					angleY = getAngle(dir, rotationOffset);
+					angleX = 0;
+				}
+				
+				ModelFile model = mirrored ? mirroredModel : masterModel;
+				PartialBlockstate partialState = builder.partialState()
+						.with(isSlave, false)
+						.with(facing, dir);
+				
+				if(mirroredState != null)
+					partialState = partialState.with(mirroredState, mirrored);
+				
+				partialState.setModels(new ConfiguredModel(model, angleX, angleY, true));
+			}
+	}
+	
+	/** From {@link blusunrize.immersiveengineering.common.data.BlockStates} */
+	private int getAngle(Direction dir, int offset){
+		return (int) ((dir.getHorizontalAngle() + offset) % 360);
+	}
+	
+	/**
+	 * Gives every state an empty model
+	 * <pre>From {@link blusunrize.immersiveengineering.common.data.BlockStates}
+	 * 
+	 * Altered to only result in empty models</pre>
+	 * 
+	 * @param block
+	 * @param particletexture
+	 */
+	private void createEmptyMultiblock(Block block, ResourceLocation particletexture){
 		IProperty<Boolean> isSlave=IEProperties.MULTIBLOCKSLAVE;
 		EnumProperty<Direction> facing=IEProperties.FACING_HORIZONTAL;
 		IProperty<Boolean> mirroredState=IEProperties.MIRRORED;

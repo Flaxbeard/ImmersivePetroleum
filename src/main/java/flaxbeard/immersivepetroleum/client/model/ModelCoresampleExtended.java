@@ -1,31 +1,21 @@
 package flaxbeard.immersivepetroleum.client.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Vector2f;
 
+import com.google.common.cache.Cache;
 import com.google.common.collect.Lists;
 
-import blusunrize.immersiveengineering.api.crafting.StackWithChance;
-import blusunrize.immersiveengineering.api.tool.ExcavatorHandler;
 import blusunrize.immersiveengineering.api.tool.ExcavatorHandler.MineralMix;
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.models.ModelCoresample;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
-import net.minecraft.block.Block;
+import blusunrize.immersiveengineering.common.items.CoresampleItem;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -37,10 +27,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.client.extensions.IForgeBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
@@ -53,12 +40,19 @@ public class ModelCoresampleExtended extends ModelCoresample
 	static List<BakedQuad> emptyQuads = Lists.newArrayList();
 	MineralMix mineral;
 
-	public ModelCoresampleExtended(@Nullable MineralMix mineral, VertexFormat format, Fluid fluid){
+	public ModelCoresampleExtended(@Nullable MineralMix mineral, VertexFormat format, @Nullable Fluid fluid){
 		super(mineral, format);
 		this.mineral = mineral;
 		this.fluid = fluid;
 	}
 	
+	@Override
+	public List<BakedQuad> getQuads(BlockState coreState, Direction side, Random rand, IModelData extraData){
+		List<BakedQuad> bakedQuads=super.getQuads(coreState, side, rand, extraData);
+		return bakedQuads;
+	}
+	
+	/*
 	@Override
 	public List<BakedQuad> getQuads(BlockState coreState, Direction side, Random rand, IModelData extraData){
 		if(bakedQuads == null){
@@ -165,7 +159,7 @@ public class ModelCoresampleExtended extends ModelCoresample
 			return quadList;
 		}
 		return emptyQuads;
-	}
+	}//*/
 
 	protected final void putVertexDataSpr(Vector3f normal, Vector3f[] vertices, Vector2f[] uvs, TextureAtlasSprite sprite)
 	{
@@ -184,15 +178,72 @@ public class ModelCoresampleExtended extends ModelCoresample
 		}
 		bakedQuads.add(builder.build());
 	}
-
-	static HashMap<String, ModelCoresample> modelCache = new HashMap<>();
-
-
+	
 	@Override
 	public ItemOverrideList getOverrides(){
-		return overrideList;
+		return overrideList2;
 	}
 	
+	ItemOverrideList overrideList2 = new ItemOverrideList(){
+		@Override
+		public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, World worldIn, LivingEntity entityIn){
+			MineralMix mineral = CoresampleItem.getMix(stack);
+			if(mineral != null){
+				try{
+					return getSampleCache().get(mineral, () -> {
+						VertexFormat format;
+						if(originalModel instanceof ModelCoresample)
+							format = getVertexFormat(((ModelCoresample) originalModel));
+						else
+							format = DefaultVertexFormats.BLOCK;
+						return new ModelCoresample(mineral, format);
+					});
+				}catch(ExecutionException e){
+					throw new RuntimeException(e);
+				}
+			}
+			return originalModel;
+		}
+	};
+	
+	static Field STATIC_FIELD_modelCache;
+	static Field FIELD_format;
+	
+	@SuppressWarnings("unchecked")
+	static Cache<MineralMix, ModelCoresample> getSampleCache(){
+		if(STATIC_FIELD_modelCache == null){
+			try{
+				STATIC_FIELD_modelCache = ModelCoresample.class.getDeclaredField("modelCache"); // Don't judge me alright? :c
+				STATIC_FIELD_modelCache.setAccessible(true);
+			}catch(Exception e){
+				throw new RuntimeException(e);
+			}
+		}
+		
+		try{
+			return (Cache<MineralMix, ModelCoresample>) STATIC_FIELD_modelCache.get(null);
+		}catch(Exception e){
+			throw new RuntimeException("This shouldnt happen! Report this immediately!", e);
+		}
+	}
+	
+	static VertexFormat getVertexFormat(ModelCoresample instance){
+		if(FIELD_format == null){
+			try{
+				FIELD_format = ModelCoresample.class.getDeclaredField("format"); // Don't judge me alright? :c
+				FIELD_format.setAccessible(true);
+			}catch(Exception e){
+				throw new RuntimeException(e);
+			}
+		}
+		
+		try{
+			return (VertexFormat) FIELD_format.get(instance);
+		}catch(Exception e){
+			throw new RuntimeException("This shouldnt happen! Report this immediately!", e);
+		}
+	}
+	/*
 	ItemOverrideList overrideList = new ItemOverrideList(){
 		@Override
 		public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, World world, LivingEntity entity){
@@ -262,5 +313,5 @@ public class ModelCoresampleExtended extends ModelCoresample
 			
 			return originalModel;
 		}
-	};
+	};//*/
 }

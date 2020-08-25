@@ -3,6 +3,7 @@ package flaxbeard.immersivepetroleum.client.model;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
 
+@Deprecated
 public class ModelAutoLubricator extends Model{
 	private RendererModel base;
 	private RendererModel tank;

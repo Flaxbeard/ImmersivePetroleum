@@ -11,8 +11,6 @@
   },
   "layers": [
     "TRANSLUCENT",
-    "CUTOUT",
-    "CUTOUT_MIPPED",
     "SOLID"
   ]
 }

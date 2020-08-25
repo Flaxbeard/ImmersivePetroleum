@@ -4,9 +4,7 @@ import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.data.models.LoadedModelBuilder;
 import blusunrize.immersiveengineering.common.data.models.LoadedModelProvider;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.IPContent.Blocks;
-import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
-import flaxbeard.immersivepetroleum.common.IPContent.Items;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.fluid.Fluid;
@@ -30,24 +28,44 @@ public class IPItemModels extends LoadedModelProvider{
 	
 	@Override
 	protected void registerModels(){
-		genericItem(Items.itemBitumen);
-		genericItem(Items.itemOilCan);
-		genericItem(Items.itemSpeedboat);
+		genericItem(IPContent.Items.itemBitumen);
+		genericItem(IPContent.Items.itemOilCan);
+		genericItem(IPContent.Items.itemSpeedboat);
 		
-		genericItem(BoatUpgrades.itemUpgradeBreaker);
-		genericItem(BoatUpgrades.itemUpgradeHull);
-		genericItem(BoatUpgrades.itemUpgradePaddles);
-		genericItem(BoatUpgrades.itemUpgradeRudders);
-		genericItem(BoatUpgrades.itemUpgradeTank);
+		genericItem(IPContent.BoatUpgrades.itemUpgradeBreaker);
+		genericItem(IPContent.BoatUpgrades.itemUpgradeHull);
+		genericItem(IPContent.BoatUpgrades.itemUpgradePaddles);
+		genericItem(IPContent.BoatUpgrades.itemUpgradeRudders);
+		genericItem(IPContent.BoatUpgrades.itemUpgradeTank);
 		
-		getBuilder(Items.itemProjector)
+		getBuilder(IPContent.Items.itemProjector)
 			.parent(getExistingFile(modLoc("item/mb_projector")));
 		
-		getBuilder(Blocks.blockGasGenerator)
+		getBuilder(IPContent.Blocks.blockGasGenerator)
 			.parent(getExistingFile(modLoc("block/generator")));
+		
+		obj(IPContent.Blocks.blockAutolubricator, "block/obj/autolubricator.obj")
+			.texture("texture", modLoc("models/lubricator"));
+		
+		obj(IPContent.Blocks.blockGasGenerator, "block/obj/generator.obj")
+			.texture("texture", modLoc("block/obj/generator"));
+		
+		obj(IPContent.Multiblock.distillationtower, "multiblock/obj/distillationtower.obj")
+			.texture("texture", modLoc("multiblock/distillation_tower"));
+		
+		// TODO Convert Pumpjack model to OBJ
+//		obj(IPContent.Multiblock.pumpjack, "multiblock/obj/pumpjack.obj")
+//			.texture("texture", modLoc("multiblock/pumpjack"));
 		
 		for(IPFluid f:IPFluid.LIST)
 			createBucket(f);
+	}
+	
+	private LoadedModelBuilder obj(IItemProvider item, String model){
+		return getBuilder(item)
+			.loader(forgeLoc("obj"))
+			.additional("model", modLoc("models/"+model))
+			.additional("flip-v", true);
 	}
 	
 	private void genericItem(Item item){

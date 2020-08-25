@@ -385,10 +385,16 @@ public class EventHandler{
 									int cur=info.current;
 									ReservoirType type=info.type;
 									ReservoirType override=info.overrideType;
+									
+									String out=String.format("%.3f/%.3fmB of %s%s", cur/1000D, cap/1000D, (override!=null?override.name:type.name), (override!=null?" [OVERRIDDEN]":""));
+									event.getPlayer().sendStatusMessage(new StringTextComponent(out), true);
 								}
 								
 							}else{
 								ItemNBTHelper.putInt(drill.sample, "oil", 0);
+								
+								if(event.getPlayer()!=null)
+									event.getPlayer().sendStatusMessage(new StringTextComponent("Found nothing."), true);
 							}
 						}catch(Exception e){
 							ImmersivePetroleum.log.warn(e);

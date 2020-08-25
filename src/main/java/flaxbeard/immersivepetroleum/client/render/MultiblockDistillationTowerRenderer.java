@@ -21,7 +21,6 @@ import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -50,6 +49,10 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 	@Override
 	public void render(DistillationTowerTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
 		if(te != null && te.formed && !te.isDummy()){
+			
+			if(towerNormalInactive==null || towerNormalActive==null || towerMirroredInactive==null || towerMirroredActive==null)
+				return;
+			
 			GlStateManager.pushMatrix();
 			GlStateManager.translated(x, y, z);
 			
@@ -100,6 +103,9 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 				}
 			}
 			
+			if(list==null || list.isEmpty())
+				return;
+			
 			Tessellator tes = Tessellator.getInstance();
 			BufferBuilder buf = tes.getBuffer();
 			buf.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
@@ -118,15 +124,16 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 	
 	@SubscribeEvent
 	public static void modelStuff(ModelBakeEvent event){
-		final ResourceLocation modelRLNormalIdle = new ResourceLocation(ImmersivePetroleum.MODID, "block/obj/distillationtower_idle");
-		final ResourceLocation modelRLMirroredIdle = new ResourceLocation(ImmersivePetroleum.MODID, "block/obj/distillationtower_mirrored_idle");
-		final ResourceLocation modelRLNormalActive = new ResourceLocation(ImmersivePetroleum.MODID, "block/obj/distillationtower_active");
-		final ResourceLocation modelRLMirroredActive = new ResourceLocation(ImmersivePetroleum.MODID, "block/obj/distillationtower_mirrored_active");
+		/*
+		final ResourceLocation modelRLNormalIdle = new ResourceLocation(ImmersivePetroleum.MODID, "multiblock/distillationtower_idle");
+		final ResourceLocation modelRLNormalActive = new ResourceLocation(ImmersivePetroleum.MODID, "multiblock/distillationtower_active");
+		final ResourceLocation modelRLMirroredIdle = new ResourceLocation(ImmersivePetroleum.MODID, "multiblock/distillationtower_mirrored_idle");
+		final ResourceLocation modelRLMirroredActive = new ResourceLocation(ImmersivePetroleum.MODID, "multiblock/distillationtower_mirrored_active");
 		
-		final ResourceLocation dtNormalActive = new ResourceLocation(ImmersivePetroleum.MODID, "distillingtower_normal_active");
-		final ResourceLocation dtNormalInactive = new ResourceLocation(ImmersivePetroleum.MODID, "distillingtower_normal_inactive");
-		final ResourceLocation dtMirroredActive = new ResourceLocation(ImmersivePetroleum.MODID, "distillingtower_mirrored_active");
-		final ResourceLocation dtMirroredInactive = new ResourceLocation(ImmersivePetroleum.MODID, "distillingtower_mirrored_inactive");
+		final ResourceLocation dtNormalActive = new ResourceLocation(ImmersivePetroleum.MODID, "multiblock/distillingtower_normal_active");
+		final ResourceLocation dtNormalInactive = new ResourceLocation(ImmersivePetroleum.MODID, "multiblock/distillingtower_normal_inactive");
+		final ResourceLocation dtMirroredActive = new ResourceLocation(ImmersivePetroleum.MODID, "multiblock/distillingtower_mirrored_active");
+		final ResourceLocation dtMirroredInactive = new ResourceLocation(ImmersivePetroleum.MODID, "multiblock/distillingtower_mirrored_inactive");
 		
 		ModelLoader loader = event.getModelLoader();
 		
@@ -149,6 +156,7 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 		towerNormalActive = modelNormalActive;
 		towerMirroredInactive = modelMirroredInactive;
 		towerMirroredActive = modelMirroredActive;
+		//*/
 	}
 	
 	@SubscribeEvent
@@ -157,8 +165,8 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 			return;
 		
 		ImmersivePetroleum.log.info("Stitching Distillation Tower Textures");
-		event.addSprite(new ResourceLocation(ImmersivePetroleum.MODID, "block/obj/distillation_tower"));
-		event.addSprite(new ResourceLocation(ImmersivePetroleum.MODID, "block/obj/distillation_tower_active"));
+		//event.addSprite(new ResourceLocation(ImmersivePetroleum.MODID, "multiblock/distillation_tower"));
+		//event.addSprite(new ResourceLocation(ImmersivePetroleum.MODID, "multiblock/distillation_tower_active"));
 	}
 	
 	static BasicState state=new BasicState(new SimpleModelState(ImmutableMap.of()), false);

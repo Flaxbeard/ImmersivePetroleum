@@ -1,31 +1,45 @@
 {
   "variants": {
     "facing=north,mirrored=false,multiblockslave=false": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:multiblock/distillationtower_idle",
+      "uvlock": true
     },
     "facing=south,mirrored=false,multiblockslave=false": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:multiblock/distillationtower_idle",
+      "y": 180,
+      "uvlock": true
     },
     "facing=west,mirrored=false,multiblockslave=false": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:multiblock/distillationtower_idle",
+      "y": 270,
+      "uvlock": true
     },
     "facing=east,mirrored=false,multiblockslave=false": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:multiblock/distillationtower_idle",
+      "y": 90,
+      "uvlock": true
     },
     "facing=north,mirrored=true,multiblockslave=false": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:multiblock/distillationtower_mirrored_idle",
+      "uvlock": true
     },
     "facing=south,mirrored=true,multiblockslave=false": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:multiblock/distillationtower_mirrored_idle",
+      "y": 180,
+      "uvlock": true
     },
     "facing=west,mirrored=true,multiblockslave=false": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:multiblock/distillationtower_mirrored_idle",
+      "y": 270,
+      "uvlock": true
     },
     "facing=east,mirrored=true,multiblockslave=false": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:multiblock/distillationtower_mirrored_idle",
+      "y": 90,
+      "uvlock": true
     },
     "multiblockslave=true": {
-      "model": "immersivepetroleum:block/distillationtower_empty"
+      "model": "immersivepetroleum:multiblock/distillationtower_empty"
     }
   }
 }

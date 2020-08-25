@@ -1,3 +1,9 @@
 {
-  "parent": "immersivepetroleum:block/generator"
+  "parent": "immersivepetroleum:block/generator",
+  "textures": {
+    "texture": "immersivepetroleum:block/obj/generator"
+  },
+  "loader": "forge:obj",
+  "model": "immersivepetroleum:models/block/obj/generator.obj",
+  "flip-v": true
 }

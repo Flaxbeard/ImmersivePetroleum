@@ -1,6 +1,6 @@
 {
   "parent": "immersiveengineering:block/ie_empty",
   "textures": {
-    "particle": "immersivepetroleum:models/distillation_tower"
+    "particle": "immersivepetroleum:multiblock/distillation_tower"
   }
 }

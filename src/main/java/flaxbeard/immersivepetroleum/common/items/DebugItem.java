@@ -1,10 +1,16 @@
 package flaxbeard.immersivepetroleum.common.items;
 
+import java.util.Locale;
 import java.util.Set;
 
+import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorageAdvanced;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
@@ -13,20 +19,77 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class DebugItem extends IPItemBase{
 	public DebugItem(){
 		super("debug");
+	}
+	
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn){
+		if(!worldIn.isRemote){
+			if(playerIn.isSneaking()){ // TODO DEBUG: Remove later.
+				
+				int contentSize = PumpjackHandler.oilCache.size();
+				
+				PumpjackHandler.oilCache.clear();
+				PumpjackHandler.recalculateChances(true);
+				
+				IPSaveData.setDirty();
+				
+				playerIn.sendStatusMessage(new StringTextComponent("Cleared Oil Cache. (Removed " + contentSize + ")"), true);
+			}else{
+				
+				BlockPos pos=playerIn.getPosition();
+				
+				DimensionChunkCoords coords=new DimensionChunkCoords(worldIn.dimension.getType(), (pos.getX() >> 4), (pos.getZ() >> 4));
+				
+				int last=PumpjackHandler.oilCache.size();
+				OilWorldInfo info=PumpjackHandler.getOilWorldInfo(worldIn, coords.x, coords.z);
+				boolean isNew=PumpjackHandler.oilCache.size()!=last;
+				
+				if(info != null){
+					int cap=info.capacity;
+					int cur=info.current;
+					ReservoirType type=info.getType();
+					ReservoirType override=info.overrideType;
+					
+					if(type!=null){
+						String out = String.format(Locale.ENGLISH,
+								"%s %s: %.3f/%.3f Buckets of %s%s%s",
+								coords.x,
+								coords.z,
+								cur/1000D,
+								cap/1000D,
+								type.name,
+								(override!=null?" [OVERRIDDEN]":""),
+								(isNew?" [NEW]":"")
+						);
+						
+						playerIn.sendStatusMessage(new StringTextComponent(out), true);
+					}
+				}else{
+					playerIn.sendStatusMessage(new StringTextComponent(String.format(Locale.ENGLISH, "%s %s: Nothing.", coords.x, coords.z)), true);
+				}
+			}
+			
+			return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+		}
+		
+		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 	
 	@Override

@@ -1,6 +1,6 @@
 package flaxbeard.immersivepetroleum.client;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlocks;
+import blusunrize.immersiveengineering.common.blocks.IEBlocks.StoneDecoration;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -12,8 +12,7 @@ public class IPCoreSampleModelHandler{
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onModelBakeEvent(ModelBakeEvent event){
 		
-		ModelResourceLocation mLoc = new ModelResourceLocation(IEBlocks.MetalDevices.sampleDrill.getRegistryName(), "inventory");
+		ModelResourceLocation mLoc = new ModelResourceLocation(StoneDecoration.coresample.getRegistryName(), "inventory");
 		//event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
-		
 	}
 }

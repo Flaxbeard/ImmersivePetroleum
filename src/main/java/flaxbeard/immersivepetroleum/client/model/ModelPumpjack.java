@@ -43,8 +43,6 @@ public class ModelPumpjack extends Model{
 		barBack.addBox(-35F, 3F, -11F, 4, 4, 22);
 		this.arm.addChild(barBack);
 		
-		// "ZYX Euler" In blender
-		
 		RendererModel leg1 = new RendererModel(this, 176, 56);
 		leg1.addBox(-2F, -2F, -2F, 4, 43, 4);
 		leg1.setRotationPoint(56 - 13.6F, 8F, 12F);

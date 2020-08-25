@@ -129,8 +129,10 @@ public class PumpjackHandler{
 	 * @return The OilWorldInfo corresponding w/ given chunk
 	 */
 	public static OilWorldInfo getOilWorldInfo(World world, DimensionChunkCoords coords, boolean force){
-		if(world.isRemote)
+		if(world.isRemote){
+			ImmersivePetroleum.log.info("getOilWorldInfo was called from Client. Ignoring.");
 			return null;
+		}
 		
 		OilWorldInfo worldInfo = oilCache.get(coords);
 		if(worldInfo == null){
@@ -141,11 +143,14 @@ public class PumpjackHandler{
 			double size = r.nextDouble();
 			int query = r.nextInt();
 			
+			ImmersivePetroleum.log.info("Empty? {}. Forced? {}. Size: {}, Query: {}", empty?"Yes":"No", force?"Yes":"No", size, query);
+			
 			if(!empty || force){
 				ResourceLocation biome = world.getBiomeBody(new BlockPos(coords.x << 4, 64, coords.z << 4)).getRegistryName();
 				ResourceLocation dimension=world.getDimension().getType().getRegistryName();
 				
 				int totalWeight = getTotalWeight(dimension, biome);
+				ImmersivePetroleum.log.info("Total Weight: "+totalWeight);
 				if(totalWeight > 0){
 					int weight = Math.abs(query % totalWeight);
 					for(ReservoirType type:reservoirs.values()){
@@ -163,13 +168,19 @@ public class PumpjackHandler{
 			int capacity = 0;
 			
 			if(res != null){
+				ImmersivePetroleum.log.info("Using: {}", res.name);
+				
 				capacity = (int) ((res.maxSize - res.minSize) * size + res.minSize);
 			}
+			
+			ImmersivePetroleum.log.info("Capacity: {}", capacity);
 			
 			worldInfo = new OilWorldInfo();
 			worldInfo.capacity = capacity;
 			worldInfo.current = capacity;
 			worldInfo.type = res;
+			
+			ImmersivePetroleum.log.info("Storing {} for {}", worldInfo, coords);
 			oilCache.put(coords, worldInfo);
 		}
 		

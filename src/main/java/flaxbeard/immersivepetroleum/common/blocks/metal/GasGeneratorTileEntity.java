@@ -146,7 +146,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	
 	@Override
 	public boolean canConnectCable(WireType cableType, ConnectionPoint target, Vec3i offset){
-		return WireType.LV_CATEGORY.equals(cableType.getCategory());
+		return cableType.getCategory().equals(WireType.LV_CATEGORY) || cableType.getCategory().equals(WireType.MV_CATEGORY);
 	}
 	
 	@Override
@@ -298,6 +298,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 						}
 					}else{
 						if(this.energyStorage.receiveEnergy(FuelHandler.getFluxGeneratedPerTick(fluid), true)>0){
+							this.isActive=true;
 						}
 					}
 				}
@@ -317,7 +318,8 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 			}
 		}
 		
-		if(lastActive!=this.isActive){
+		
+		if(lastActive!=this.isActive || (!this.world.isRemote && this.isActive)){
 			markContainingBlockForUpdate(null);
 		}
 	}

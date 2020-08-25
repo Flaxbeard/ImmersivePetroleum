@@ -1,3 +1,8 @@
 {
-  "parent": "immersivepetroleum:block/lubricator_full"
+  "textures": {
+    "texture": "immersivepetroleum:models/lubricator"
+  },
+  "loader": "forge:obj",
+  "model": "immersivepetroleum:models/block/obj/autolubricator.obj",
+  "flip-v": true
 }

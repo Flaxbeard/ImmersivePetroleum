@@ -28,10 +28,15 @@ import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
 
 public class IPBlockStates extends BlockStateProvider{
+	/** ResourceLocation("forge","obj") */
+	private static final ResourceLocation FORGE_LOADER=new ResourceLocation("forge","obj");
+	
 	final IPLoadedModels loadedModels;
+	final ExistingFileHelper exFileHelper;
 	public IPBlockStates(DataGenerator gen, ExistingFileHelper exFileHelper, IPLoadedModels loadedModels){
 		super(gen, ImmersivePetroleum.MODID, exFileHelper);
 		this.loadedModels=loadedModels;
+		this.exFileHelper=exFileHelper;
 	}
 	
 	@Override
@@ -62,23 +67,9 @@ public class IPBlockStates extends BlockStateProvider{
 		
 		// "Normal" Blocks
 		simpleBlockWithItem(IPContent.Blocks.blockAsphalt);
-		gasGeneratorState();
+		gasGenerator();
 		
-		// AutoLubricator
-		VariantBlockStateBuilder lubeBuilder = getVariantBuilder(IPContent.Blocks.blockAutolubricator);
-		for(Direction dir:AutoLubricatorBlock.FACING.getAllowedValues()){
-			lubeBuilder.partialState()
-				.with(AutoLubricatorBlock.SLAVE, false)
-				.with(AutoLubricatorBlock.FACING, dir)
-				.setModels(EMPTY_MODEL);
-			
-			lubeBuilder.partialState()
-				.with(AutoLubricatorBlock.SLAVE, true)
-				.with(AutoLubricatorBlock.FACING, dir)
-				.setModels(EMPTY_MODEL);
-		}
-		getBuilder(ImmersivePetroleum.MODID+":/item/"+IPContent.Blocks.blockAutolubricator.getRegistryName().getPath())
-			.parent(getExistingFile(modLoc("block/lubricator_full")));
+		autolubricator();
 		
 		// Fluids
 		for(IPFluid f:IPFluid.LIST){
@@ -91,21 +82,35 @@ public class IPBlockStates extends BlockStateProvider{
 		loadedModels.backupModels();
 	}
 	
-	private void itemModelWithParent(Block block, ModelFile parent){
-		getBuilder(ImmersivePetroleum.MODID+":item/"+block.getRegistryName().getPath())
-			.parent(parent)
-			.texture("particle", modLoc("block/"+block.getRegistryName().getPath()));
 	}
 	
-	private void simpleBlockWithItem(Block block){
-		ModelFile file=cubeAll(block);
+	private void autolubricator(){
+		LoadedModelBuilder lubeModel=this.loadedModels.withExistingParent(getPath(IPContent.Blocks.blockAutolubricator),
+				mcLoc("block"))
+				.loader(FORGE_LOADER)
+				.additional("model", modLoc("models/block/obj/autolubricator.obj"))
+				.additional("flip-v", true)
+				.texture("texture", new ResourceLocation("immersivepetroleum", "models/lubricator"))
+				.texture("particle", new ResourceLocation("immersivepetroleum", "models/lubricator"));
 		
-		getVariantBuilder(block).partialState()
-			.setModels(new ConfiguredModel(file));
-		itemModelWithParent(block, file);
+		// Block(s)
+		VariantBlockStateBuilder lubeBuilder = getVariantBuilder(IPContent.Blocks.blockAutolubricator);
+		for(Direction dir:AutoLubricatorBlock.FACING.getAllowedValues()){
+			int rot = (90 * dir.getHorizontalIndex()) + 90 % 360;
+			
+			lubeBuilder.partialState()
+				.with(AutoLubricatorBlock.SLAVE, false)
+				.with(AutoLubricatorBlock.FACING, dir)
+				.setModels(new ConfiguredModel(lubeModel, 0, rot, false));
+			
+			lubeBuilder.partialState()
+				.with(AutoLubricatorBlock.SLAVE, true)
+				.with(AutoLubricatorBlock.FACING, dir)
+				.setModels(EMPTY_MODEL);
+		}
 	}
 	
-	private void gasGeneratorState(){
+	private void gasGenerator(){
 		JsonObject basemodel=new JsonObject();
 		basemodel.addProperty("loader", "forge:obj");
 		basemodel.addProperty("model", modLoc("models/block/obj/generator.obj").toString());
@@ -147,7 +152,7 @@ public class IPBlockStates extends BlockStateProvider{
 		builder.partialState()
 				.with(isSlave, true)
 				.setModels(new ConfiguredModel(
-						withExistingParent(block.getRegistryName()+"_empty", EMPTY_MODEL.model.getLocation())
+						withExistingParent(getMultiblockPath(block)+"_empty", EMPTY_MODEL.model.getLocation())
 						.texture("particle", particletexture)));
 		
 		boolean[] possibleMirrorStates;
@@ -165,5 +170,30 @@ public class IPBlockStates extends BlockStateProvider{
 					partialState = partialState.with(mirroredState, mirrored);
 				partialState.setModels(EMPTY_MODEL);
 			}
+	}
+	
+	private String getMultiblockPath(Block b){
+		return "multiblock/"+getPath(b);
+	}
+	
+	private String getPath(Block b){
+		return b.getRegistryName().getPath();
+	}
+	
+	private void itemModelWithParent(Block block, ModelFile parent){
+		getItemBuilder(block).parent(parent)
+			.texture("particle", modLoc("block/"+getPath(block)));
+	}
+	
+	private void simpleBlockWithItem(Block block){
+		ModelFile file=cubeAll(block);
+		
+		getVariantBuilder(block).partialState()
+			.setModels(new ConfiguredModel(file));
+		itemModelWithParent(block, file);
+	}
+	
+	private BlockModelBuilder getItemBuilder(Block block){
+		return getBuilder(modLoc("item/"+getPath(block)).toString());
 	}
 }

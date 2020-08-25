@@ -1,16 +1,20 @@
 {
   "variants": {
     "facing=north,slave=false": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:block/auto_lubricator",
+      "y": 270
     },
     "facing=south,slave=false": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:block/auto_lubricator",
+      "y": 90
     },
     "facing=west,slave=false": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:block/auto_lubricator",
+      "y": 180
     },
     "facing=east,slave=false": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:block/auto_lubricator",
+      "y": 360
     },
     "facing=north,slave=true": {
       "model": "immersiveengineering:block/ie_empty"

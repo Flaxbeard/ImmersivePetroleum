@@ -116,6 +116,9 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	private void autolubricator(){
+		BlockModelBuilder lube_empty=withExistingParent("lube_empty", new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty"))
+				.texture("particle", new ResourceLocation("immersivepetroleum", "models/lubricator"));
+		
 		LoadedModelBuilder lubeModel=this.loadedModels.withExistingParent(getPath(IPContent.Blocks.blockAutolubricator),
 				mcLoc("block"))
 				.loader(FORGE_LOADER)
@@ -124,7 +127,6 @@ public class IPBlockStates extends BlockStateProvider{
 				.texture("texture", new ResourceLocation("immersivepetroleum", "models/lubricator"))
 				.texture("particle", new ResourceLocation("immersivepetroleum", "models/lubricator"));
 		
-		// Block(s)
 		VariantBlockStateBuilder lubeBuilder = getVariantBuilder(IPContent.Blocks.blockAutolubricator);
 		for(Direction dir:AutoLubricatorBlock.FACING.getAllowedValues()){
 			int rot = (90 * dir.getHorizontalIndex()) + 90 % 360;
@@ -137,7 +139,7 @@ public class IPBlockStates extends BlockStateProvider{
 			lubeBuilder.partialState()
 				.with(AutoLubricatorBlock.SLAVE, true)
 				.with(AutoLubricatorBlock.FACING, dir)
-				.setModels(EMPTY_MODEL);
+				.setModels(new ConfiguredModel(lube_empty));
 		}
 	}
 	

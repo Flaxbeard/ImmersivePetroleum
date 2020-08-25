@@ -17,16 +17,16 @@
       "y": 360
     },
     "facing=north,slave=true": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:block/lube_empty"
     },
     "facing=south,slave=true": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:block/lube_empty"
     },
     "facing=west,slave=true": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:block/lube_empty"
     },
     "facing=east,slave=true": {
-      "model": "immersiveengineering:block/ie_empty"
+      "model": "immersivepetroleum:block/lube_empty"
     }
   }
 }

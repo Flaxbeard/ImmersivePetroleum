@@ -73,7 +73,7 @@ public class AutoLubricatorBlock extends IPBlockBase{
 	
 	@Override
 	public BlockRenderLayer getRenderLayer(){
-		return BlockRenderLayer.CUTOUT;
+		return BlockRenderLayer.TRANSLUCENT;
 	}
 	
 	@Override

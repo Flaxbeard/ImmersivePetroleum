@@ -13,6 +13,7 @@ import net.minecraft.util.ResourceLocation;
 public class IPMetalMultiblock extends MetalMultiblockBlock{
 	public IPMetalMultiblock(String name, Supplier<TileEntityType<?>> type, IProperty<?>... additionalProperties){
 		super(name, type, additionalProperties);
+		setBlockLayer(BlockRenderLayer.TRANSLUCENT);
 	}
 	
 	@Override
@@ -22,6 +23,11 @@ public class IPMetalMultiblock extends MetalMultiblockBlock{
 	
 	@Override
 	public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer){
-		return layer==BlockRenderLayer.TRANSLUCENT || layer==BlockRenderLayer.SOLID;
+		return layer==BlockRenderLayer.CUTOUT || layer==BlockRenderLayer.TRANSLUCENT;
+	}
+	
+	@Override
+	public BlockRenderLayer getRenderLayer(){
+		return BlockRenderLayer.CUTOUT;
 	}
 }

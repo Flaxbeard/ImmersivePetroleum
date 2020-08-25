@@ -13,7 +13,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
 
 public class BlockDummy extends IPBlockBase{
-	private static final Material Material = new Material(MaterialColor.IRON, false, false, false, false, false, false, false, PushReaction.NORMAL);
+	private static final Material Material = new Material(MaterialColor.IRON, false, true, true, false, false, false, false, PushReaction.BLOCK);
 	
 	public BlockDummy(String name){
 		super(name, Block.Properties.create(Material));
@@ -31,6 +31,11 @@ public class BlockDummy extends IPBlockBase{
 	
 	@Override
 	public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer){
-		return layer==BlockRenderLayer.TRANSLUCENT || layer==BlockRenderLayer.SOLID;
+		return layer==BlockRenderLayer.CUTOUT;
+	}
+	
+	@Override
+	public BlockRenderLayer getRenderLayer(){
+		return BlockRenderLayer.SOLID;
 	}
 }

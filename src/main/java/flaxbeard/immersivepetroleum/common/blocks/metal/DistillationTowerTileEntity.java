@@ -212,7 +212,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 					List<FluidStack> toDrain=new ArrayList<>();
 					
 					for(FluidStack target:this.tanks[TANK_OUTPUT].fluids){
-						FluidStack outStack=Utils.copyFluidStackWithAmount(target, Math.min(target.getAmount(), 80), false);
+						FluidStack outStack=Utils.copyFluidStackWithAmount(target, Math.min(target.getAmount(), 100), false);
 						int accepted=output.fill(outStack, FluidAction.SIMULATE);
 						if(accepted>0){
 							int drained=output.fill(Utils.copyFluidStackWithAmount(outStack, Math.min(outStack.getAmount(), accepted), false), FluidAction.EXECUTE);
@@ -378,15 +378,18 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	}
 	
 	/** Output Capability Reference */
-	private CapabilityReference<IItemHandler> output_capref = CapabilityReference.forTileEntity(this,
-			() -> new DirectionalBlockPos(getBlockPosForPos(Item_OUT).offset(getFacing().rotateYCCW()), getFacing().rotateYCCW()),
-			CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+	private CapabilityReference<IItemHandler> output_capref = CapabilityReference.forTileEntity(this, () -> {
+		Direction outputdir = (getIsMirrored() ? getFacing().rotateY() : getFacing().rotateYCCW());
+		return new DirectionalBlockPos(getBlockPosForPos(Item_OUT).offset(outputdir), outputdir);
+	}, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
 	
 	@Override
 	public void doProcessOutput(ItemStack output){
 		output = Utils.insertStackIntoInventory(this.output_capref, output, false);
-		if(!output.isEmpty())
-			Utils.dropStackAtPos(this.world, getBlockPosForPos(Item_OUT).offset(getFacing().rotateYCCW()), output, getFacing().rotateYCCW());
+		if(!output.isEmpty()){
+			Direction outputdir = (getIsMirrored() ? getFacing().rotateY() : getFacing().rotateYCCW());
+			Utils.dropStackAtPos(this.world, getBlockPosForPos(Item_OUT).offset(outputdir), output, outputdir);
+		}
 	}
 	
 	@Override

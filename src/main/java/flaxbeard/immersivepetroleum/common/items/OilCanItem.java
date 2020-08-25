@@ -51,9 +51,11 @@ public class OilCanItem extends IPItemBase{
 		FluidUtil.getFluidContained(stack).ifPresent(fluid->{
 			if(fluid!=null && fluid.getAmount()>0){
 				FluidAttributes att = fluid.getFluid().getAttributes();
-				
 				TextFormatting rarity = att.getRarity() == Rarity.COMMON ? TextFormatting.GRAY : att.getRarity().color;
-				tooltip.add(new StringTextComponent(rarity + fluid.getDisplayName().toString() + TextFormatting.GRAY + ": " + fluid.getAmount() + "/" + 8000 + "mB"));
+				
+				ITextComponent out=fluid.getDisplayName().applyTextStyle(rarity)
+					.appendSibling(new StringTextComponent(": " + fluid.getAmount() + "/8000mB").applyTextStyle(TextFormatting.GRAY));
+				tooltip.add(out);
 			}else{
 				tooltip.add(new StringTextComponent(I18n.format(Lib.DESC_FLAVOUR + "drill.empty")));
 			}

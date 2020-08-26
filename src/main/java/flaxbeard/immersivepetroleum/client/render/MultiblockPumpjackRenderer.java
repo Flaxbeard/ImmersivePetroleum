@@ -12,10 +12,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileEntity>{
-	private static ModelPumpjack model = new ModelPumpjack(false);
-	private static ModelPumpjack modelM = new ModelPumpjack(true);
+	private static ModelPumpjack model = new ModelPumpjack();
 	
-	private static String texture = "immersivepetroleum:textures/models/pumpjack.png";
+	private static String texture = "immersivepetroleum:textures/models/pumpjack_armature.png";
 	
 	@Override
 	public void render(PumpjackTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
@@ -46,14 +45,10 @@ public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileE
 			}
 			
 			float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);
-			model.ticks = modelM.ticks = 1.5F * ticks;
+			model.ticks = 1.5F * ticks;
 			
 			ClientUtils.bindTexture(texture);
-			if(te.getIsMirrored()){
-				modelM.render(0.0625F);
-			}else{
-				model.render(0.0625F);
-			}
+			model.render(0.0625F);
 			GlStateManager.popMatrix();
 		}
 	}

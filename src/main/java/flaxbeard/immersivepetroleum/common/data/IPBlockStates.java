@@ -67,10 +67,10 @@ public class IPBlockStates extends BlockStateProvider{
 			.texture("particle", new ResourceLocation(ImmersiveEngineering.MODID, "block/conveyor/conveyor"));
 		
 		// Multiblocks
-		//createMultiblock(IPContent.Multiblock.distillationtower, modLoc("models/distillation_tower"));
-		createEmptyMultiblock(IPContent.Multiblock.pumpjack, modLoc("models/pumpjack"));
-		
 		distillationtower();
+		pumpjack();
+		//createMultiblock(IPContent.Multiblock.distillationtower, modLoc("models/distillation_tower"));
+		//createEmptyMultiblock(IPContent.Multiblock.pumpjack, modLoc("models/pumpjack"));
 		
 		// "Normal" Blocks
 		simpleBlockWithItem(IPContent.Blocks.blockAsphalt);
@@ -94,14 +94,25 @@ public class IPBlockStates extends BlockStateProvider{
 		ResourceLocation modelNormal=modLoc("models/multiblock/obj/distillationtower.obj");
 		ResourceLocation modelMirrored=modLoc("models/multiblock/obj/distillationtower_mirrored.obj");
 		
-		LoadedModelBuilder normal=towerModel(modelNormal, idleTexture, "_idle");
-		LoadedModelBuilder mirrored=towerModel(modelMirrored, idleTexture, "_mirrored_idle");
+		LoadedModelBuilder normal=multiblockModel(IPContent.Multiblock.distillationtower, modelNormal, idleTexture, "_idle");
+		LoadedModelBuilder mirrored=multiblockModel(IPContent.Multiblock.distillationtower, modelMirrored, idleTexture, "_mirrored_idle");
 		
 		createMultiblock(IPContent.Multiblock.distillationtower, normal, mirrored, idleTexture);
 	}
 	
-	private LoadedModelBuilder towerModel(ResourceLocation model, ResourceLocation texture, String add){
-		LoadedModelBuilder re=this.loadedModels.withExistingParent(getMultiblockPath(IPContent.Multiblock.distillationtower)+add, mcLoc("block"))
+	private void pumpjack(){
+		ResourceLocation texture=modLoc("multiblock/pumpjack_base");
+		ResourceLocation modelNormal=modLoc("models/multiblock/obj/pumpjack.obj");
+		ResourceLocation modelMirrored=modLoc("models/multiblock/obj/pumpjack_mirrored.obj");
+		
+		LoadedModelBuilder normal=multiblockModel(IPContent.Multiblock.pumpjack, modelNormal, texture, "");
+		LoadedModelBuilder mirrored=multiblockModel(IPContent.Multiblock.pumpjack, modelMirrored, texture, "_mirrored");
+		
+		createMultiblock(IPContent.Multiblock.pumpjack, normal, mirrored, texture);
+	}
+	
+	private LoadedModelBuilder multiblockModel(Block block, ResourceLocation model, ResourceLocation texture, String add){
+		LoadedModelBuilder re=this.loadedModels.withExistingParent(getMultiblockPath(block)+add, mcLoc("block"))
 				.texture("texture", texture)
 				.texture("particle", texture)
 				.additional("flip-v", true)

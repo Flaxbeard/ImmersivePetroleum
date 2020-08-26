@@ -235,44 +235,6 @@ public class IPBlockStates extends BlockStateProvider{
 		return (int) ((dir.getHorizontalAngle() + offset) % 360);
 	}
 	
-	/**
-	 * Gives every state an empty model
-	 * <pre>From {@link blusunrize.immersiveengineering.common.data.BlockStates}
-	 * 
-	 * Altered to only result in empty models</pre>
-	 * 
-	 * @param block
-	 * @param particletexture
-	 */
-	private void createEmptyMultiblock(Block block, ResourceLocation particletexture){
-		IProperty<Boolean> isSlave=IEProperties.MULTIBLOCKSLAVE;
-		EnumProperty<Direction> facing=IEProperties.FACING_HORIZONTAL;
-		IProperty<Boolean> mirroredState=IEProperties.MIRRORED;
-		
-		VariantBlockStateBuilder builder=getVariantBuilder(block);
-		builder.partialState()
-				.with(isSlave, true)
-				.setModels(new ConfiguredModel(
-						withExistingParent(getMultiblockPath(block)+"_empty", EMPTY_MODEL.model.getLocation())
-						.texture("particle", particletexture)));
-		
-		boolean[] possibleMirrorStates;
-		if(mirroredState!=null)
-			possibleMirrorStates = new boolean[]{false, true};
-		else
-			possibleMirrorStates = new boolean[1];
-		for(boolean mirrored : possibleMirrorStates)
-			for(Direction dir : facing.getAllowedValues())
-			{
-				PartialBlockstate partialState = builder.partialState()
-						.with(isSlave, false)
-						.with(facing, dir);
-				if(mirroredState!=null)
-					partialState = partialState.with(mirroredState, mirrored);
-				partialState.setModels(EMPTY_MODEL);
-			}
-	}
-	
 	private String getMultiblockPath(Block b){
 		return "multiblock/"+getPath(b);
 	}

@@ -15,6 +15,8 @@ import flaxbeard.immersivepetroleum.api.crafting.ReservoirTypeBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Blocks;
 import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
+import flaxbeard.immersivepetroleum.common.crafting.Serializers;
+import net.minecraft.data.CustomRecipeBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
@@ -45,6 +47,9 @@ public class IPRecipes extends RecipeProvider{
 		speedboatUpgradeRecipes();
 		multiblockRecipes();
 		reservoirs();
+		
+		CustomRecipeBuilder.func_218656_a(Serializers.PROJECTOR_SERIALIZER.get())
+			.build(out, rl("projector_manual").toString());
 	}
 	
 	private void reservoirs(){

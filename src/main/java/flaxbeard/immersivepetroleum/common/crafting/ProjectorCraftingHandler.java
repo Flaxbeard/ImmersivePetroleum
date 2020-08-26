@@ -8,38 +8,34 @@ import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.RegistryObject;
 
-public class SchematicCraftingHandler implements ICraftingRecipe{
-	public static RegistryObject<SpecialRecipeSerializer<SchematicCraftingHandler>> SERIALIZER;
-	
+public class ProjectorCraftingHandler implements ICraftingRecipe{
 	private final ResourceLocation id;
-	public SchematicCraftingHandler(ResourceLocation id){
+	public ProjectorCraftingHandler(ResourceLocation id){
 		this.id = id;
 	}
 	
 	@Override
 	public IRecipeSerializer<?> getSerializer(){
-		return SERIALIZER.get();
+		return Serializers.PROJECTOR_SERIALIZER.get();
 	}
 	
 	@Override
 	public boolean matches(CraftingInventory inv, World worldIn){
-		return new SchematicResult(inv).canCraft;
+		return new Result(inv).canCraft;
 	}
 	
 	@Override
 	public ItemStack getCraftingResult(CraftingInventory inv){
-		return new SchematicResult(inv).output;
+		return new Result(inv).output;
 	}
 	
 	@Override
 	public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv){
-		return new SchematicResult(inv).remaining;
+		return new Result(inv).remaining;
 	}
 	
 	@Override
@@ -57,7 +53,7 @@ public class SchematicCraftingHandler implements ICraftingRecipe{
 		return ItemStack.EMPTY;
 	}
 	
-	private class SchematicResult{
+	private class Result{
 		private final boolean canCraft;
 		private final NonNullList<ItemStack> remaining;
 		private final ItemStack output;
@@ -65,11 +61,11 @@ public class SchematicCraftingHandler implements ICraftingRecipe{
 		private ItemStack manual;
 		int manualStack = 0;
 		
-		public SchematicResult(CraftingInventory inv){
+		public Result(CraftingInventory inv){
 			this.manual = ItemStack.EMPTY;
 			this.canCraft = isValid(inv);
 			if(canCraft){
-				remaining = NonNullList.withSize(9, ItemStack.EMPTY);
+				remaining = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
 				remaining.set(manualStack, manual.copy());
 				String last = ItemNBTHelper.getString(manual, "lastMultiblock");
 				ItemStack op = new ItemStack(Items.itemProjector, 1);
@@ -77,13 +73,13 @@ public class SchematicCraftingHandler implements ICraftingRecipe{
 				ProjectorItem.setFlipped(op, true);
 				output = op;
 			}else{
-				remaining = NonNullList.withSize(9, ItemStack.EMPTY);
+				remaining = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
 				output = ItemStack.EMPTY;
 			}
 		}
 		
 		private boolean isValid(CraftingInventory inv){
-			boolean hasPaper = false;
+			boolean hasProjector = false;
 			for(int i = 0;i < inv.getSizeInventory();i++){
 				ItemStack stack = inv.getStackInSlot(i);
 				if(!stack.isEmpty()){
@@ -95,8 +91,8 @@ public class SchematicCraftingHandler implements ICraftingRecipe{
 							return false;
 						}
 					}else if(stack.getItem() == Items.itemProjector){
-						if(!hasPaper){
-							hasPaper = true;
+						if(!hasProjector){
+							hasProjector = true;
 						}else{
 							return false;
 						}
@@ -105,7 +101,7 @@ public class SchematicCraftingHandler implements ICraftingRecipe{
 					}
 				}
 			}
-			return !manual.isEmpty() && hasPaper;
+			return !manual.isEmpty() && hasProjector;
 		}
 	}
 }

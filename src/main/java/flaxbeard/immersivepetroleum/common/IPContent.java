@@ -10,6 +10,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import blusunrize.immersiveengineering.api.energy.DieselHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect_Potion;
@@ -180,6 +181,8 @@ public class IPContent{
 		
 		IPConfig.Utils.addFuel(IPConfig.GENERATION.fuels.get());
 		IPConfig.Utils.addBoatFuel(IPConfig.MISCELLANEOUS.boat_fuels.get());
+		
+		DieselHandler.registerFuel(Fluids.fluidDiesel, 150);
 		
 		// TODO SchematicCraftingHandler
 		//ForgeRegistries.RECIPES.register(new SchematicCraftingHandler().setRegistryName(ImmersivePetroleum.MODID, "projector"));

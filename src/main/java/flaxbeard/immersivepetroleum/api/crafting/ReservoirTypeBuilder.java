@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
+import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.util.ResourceLocation;
 
@@ -19,7 +20,7 @@ public class ReservoirTypeBuilder extends IEFinishedRecipe<ReservoirTypeBuilder>
 	private final JsonArray bioWhitelist=new JsonArray();
 	private final JsonArray bioBlacklist=new JsonArray();
 	private ReservoirTypeBuilder(){
-		super(PumpjackHandler.ReservoirType.SERIALIZER.get());
+		super(Serializers.RESERVOIR_SERIALIZER.get());
 		addWriter(writer->writer.addProperty("fluid", this.fluid));
 		addWriter(writer->writer.addProperty("fluidminimum", this.fluidMinimum));
 		addWriter(writer->writer.addProperty("fluidcapacity", this.fluidMaximum));

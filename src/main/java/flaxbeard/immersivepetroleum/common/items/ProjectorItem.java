@@ -464,20 +464,6 @@ public class ProjectorItem extends IPItemBase{
 		return ActionResult.newResult(ActionResultType.SUCCESS, stack);
 	}
 	
-	/** Find the key that is being pressed while minecraft is in focus. Copied from my own project. */
-	@OnlyIn(Dist.CLIENT)
-	private boolean isPressingKey(int key){
-		long window = Minecraft.getInstance().mainWindow.getHandle();
-		return GLFW.glfwGetKey(window, key) == GLFW.GLFW_PRESS;
-	}
-	
-	/** Find the mouse button that is being pressed while minecraft is in focus. Copied from my own project. */
-	@OnlyIn(Dist.CLIENT)
-	private boolean isPressingMouse(int key){
-		long window = Minecraft.getInstance().mainWindow.getHandle();
-		return GLFW.glfwGetMouseButton(window, key) == GLFW.GLFW_PRESS;
-	}
-	
 	private boolean shiftHeld=false;
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent

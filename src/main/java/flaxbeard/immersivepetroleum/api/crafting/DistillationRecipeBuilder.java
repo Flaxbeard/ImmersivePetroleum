@@ -10,6 +10,7 @@ import com.google.gson.JsonObject;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
+import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipe;
@@ -38,7 +39,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 	private List<Tuple<ItemStack, Double>> byproducts=new ArrayList<>();
 	
 	private DistillationRecipeBuilder(){
-		super(DistillationRecipe.SERIALIZER.get());
+		super(Serializers.DISTILLATION_SERIALIZER.get());
 		addWriter(jsonObject->{
 			if(this.byproducts.size()>0){
 				final JsonArray main=new JsonArray();

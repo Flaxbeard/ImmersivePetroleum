@@ -17,14 +17,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.RegistryObject;
 
 public class DistillationRecipe extends MultiblockRecipe{
 	public static final IRecipeType<DistillationRecipe> TYPE=IRecipeType.register(ImmersivePetroleum.MODID+":distillationtower");
 	public static Map<ResourceLocation, DistillationRecipe> recipes=new HashMap<>();
-	
-	/** Initialized in {@link Serializers} */
-	public static RegistryObject<IERecipeSerializer<DistillationRecipe>> SERIALIZER;
 	
 	/** May return null! */
 	public static DistillationRecipe findRecipe(FluidStack input){
@@ -71,7 +67,7 @@ public class DistillationRecipe extends MultiblockRecipe{
 	
 	@Override
 	protected IERecipeSerializer<DistillationRecipe> getIESerializer(){
-		return SERIALIZER.get();
+		return Serializers.DISTILLATION_SERIALIZER.get();
 	}
 	
 	@Override

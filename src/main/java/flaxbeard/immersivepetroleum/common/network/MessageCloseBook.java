@@ -1,11 +1,11 @@
 package flaxbeard.immersivepetroleum.common.network;
 
-import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
 import blusunrize.immersiveengineering.common.items.IEItems;
 import blusunrize.immersiveengineering.common.network.IMessage;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -24,10 +24,8 @@ public class MessageCloseBook implements IMessage{
 	public MessageCloseBook(PacketBuffer buf){
 		boolean isStrNull = buf.readByte() == 0;
 		if(!isStrNull){
-			int len=((int)buf.readShort())&0xFFFF;
-			byte[] array=new byte[len];
-			buf.readBytes(array);
-			this.name = new ResourceLocation(new String(array, StandardCharsets.UTF_8));
+			String str=buf.readString();
+			this.name = new ResourceLocation(str);
 		}else{
 			this.name = null;
 		}
@@ -38,9 +36,7 @@ public class MessageCloseBook implements IMessage{
 		buf.writeByte(this.name == null ? 0 : 1);
 		if(this.name != null){
 			String str=this.name.toString();
-			
-			buf.writeShort(str.length());
-			buf.writeByteArray(str.getBytes(StandardCharsets.UTF_8));
+			buf.writeString(str);
 		}
 	}
 	
@@ -55,64 +51,20 @@ public class MessageCloseBook implements IMessage{
 				ItemStack offItem = p.getHeldItemOffhand();
 				
 				// "IEItems.Tools.manual" is just a guess
-				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IEItems.Tools.manual.asItem();//IEContent.itemTool && mainItem.getItemDamage() == 3;
-				boolean off = !offItem.isEmpty() && offItem.getItem() == IEItems.Tools.manual.asItem();//IEContent.itemTool && offItem.getItemDamage() == 3;
+				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IEItems.Tools.manual.asItem();
+				boolean off = !offItem.isEmpty() && offItem.getItem() == IEItems.Tools.manual.asItem();
 				ItemStack target = main ? mainItem : offItem;
 				
 				if(main || off){
 					if(this.name == null && ItemNBTHelper.hasKey(target, "lastMultiblock")){
 						ItemNBTHelper.remove(target, "lastMultiblock");
-						System.out.println("Removed Multiblock-NBT to "+target.getDisplayName().getUnformattedComponentText());
+						ImmersivePetroleum.log.debug("Removed Multiblock-NBT from {}", target.getDisplayName().getUnformattedComponentText());
 					}else if(this.name != null){
 						ItemNBTHelper.putString(target, "lastMultiblock", this.name.toString());
-						System.out.println("Added Multiblock-NBT to "+target.getDisplayName().getUnformattedComponentText()+" -> "+this.name.toString());
+						ImmersivePetroleum.log.debug("Added Multiblock-NBT to {} -> {}", target.getDisplayName().getUnformattedComponentText(), this.name.toString());
 					}
 				}
 			}
 		});
 	}
-	
-	/*
-	public static class Handler implements INetHandler<CloseBookPacket, IMessage>{
-		
-		@Override
-		public IMessage onMessage(CloseBookPacket message, MessageContext ctx){
-			ServerPlayerEntity player = ctx.getServerHandler().player;
-			DimensionManager.getWorld(player.world.provider.getDimension()).addScheduledTask(new DoSync(player, message.name));
-			
-			return null;
-		}
-		
-	}
-	
-	private static class DoSync implements Runnable{
-		private PlayerEntity p;
-		private ResourceLocation name;
-		
-		public DoSync(PlayerEntity p, ResourceLocation name){
-			this.p = p;
-			this.name = name;
-		}
-		
-		@Override
-		public void run(){
-			if(p != null){
-				ItemStack mainItem = p.getHeldItemMainhand();
-				ItemStack offItem = p.getHeldItemOffhand();
-				
-				// "IEItems.Tools.manual" is just a guess
-				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IEItems.Tools.manual.asItem();//IEContent.itemTool && mainItem.getItemDamage() == 3;
-				boolean off = !offItem.isEmpty() && offItem.getItem() == IEItems.Tools.manual.asItem();//IEContent.itemTool && offItem.getItemDamage() == 3;
-				ItemStack target = main ? mainItem : offItem;
-				
-				if(main || off){
-					if(name == null && ItemNBTHelper.hasKey(target, "lastMultiblock")){
-						ItemNBTHelper.remove(target, "lastMultiblock");
-					}else if(name != null){
-						ItemNBTHelper.putString(target, "lastMultiblock", name.toString());
-					}
-				}
-			}
-		}
-	}*/
 }

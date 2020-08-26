@@ -34,6 +34,7 @@ import blusunrize.immersiveengineering.common.items.IEItems;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.lib.manual.ManualEntry;
+import blusunrize.lib.manual.SpecialManualElement;
 import blusunrize.lib.manual.gui.ManualScreen;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
@@ -108,6 +109,7 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID)
 public class EventHandler{
+	
 	@SubscribeEvent
 	public static void onSave(WorldEvent.Save event){
 		IPSaveData.setDirty();
@@ -120,47 +122,51 @@ public class EventHandler{
 	
 	@OnlyIn(Dist.CLIENT)
 	private static Object lastGui = null;
-	
+	@OnlyIn(Dist.CLIENT)
+	private static Field FIELD_PAGES;
+	@OnlyIn(Dist.CLIENT)
+	private static Field FIELD_SPECIAL;
+	@OnlyIn(Dist.CLIENT)
+	private static Field FIELD_MULTIBLOCK;
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void guiOpen(GuiOpenEvent event){
-		if(event.getGui() == null && lastGui instanceof ManualScreen){  // FIXME The whole thing doesnt work?
+		if(event.getGui() == null && lastGui instanceof ManualScreen){
 			ManualScreen gui = (ManualScreen) lastGui;
 			ResourceLocation name = null;
 			
 			ManualEntry entry = gui.getCurrentPage();
 			if(entry != null){
-				List<?> pages=null;
 				try{
-					Field field_pages = entry.getClass().getDeclaredField("pages");
-					field_pages.setAccessible(true);
-					pages = (List<?>) field_pages.get(entry);
-				}catch(Exception e){
-					e.printStackTrace();
-				}
-				
-				if(pages != null){
-					for(int i = 0;i < pages.size();i++){
-						Object page = pages.get(i);
+					if(FIELD_PAGES==null){
+						FIELD_PAGES = ManualEntry.class.getDeclaredField("pages");
+						FIELD_PAGES.setAccessible(true);
+					}
+					
+					List<?> pages=(List<?>)FIELD_PAGES.get(entry);
+					
+					Object page = pages.get(gui.page);
+					if(page != null && page.getClass().toString().contains("blusunrize.lib.manual.ManualEntry$ManualPage")){
+						if(FIELD_SPECIAL==null){
+							FIELD_SPECIAL = page.getClass().getDeclaredField("special");
+							FIELD_SPECIAL.setAccessible(true);
+						}
 						
-						if(page instanceof ManualElementMultiblock){
-							ManualElementMultiblock mbPage = (ManualElementMultiblock) page;
-							
-							IMultiblock mb = null;
-							try{
-								Field field_multiblock = mbPage.getClass().getDeclaredField("multiblock");
-								field_multiblock.setAccessible(true);
-								mb = (IMultiblock) field_multiblock.get(mbPage);
-							}catch(Exception e){
-								e.printStackTrace();
-							}
-							if(mb != null){
-								if(name == null || i == gui.page){
-									name = mb.getUniqueName();
+						if(FIELD_SPECIAL.get(page)!=null){
+							SpecialManualElement special = (SpecialManualElement) FIELD_SPECIAL.get(page);
+							if(special != null && special instanceof ManualElementMultiblock){
+								if(FIELD_MULTIBLOCK==null){
+									FIELD_MULTIBLOCK = ManualElementMultiblock.class.getDeclaredField("multiblock");
+									FIELD_MULTIBLOCK.setAccessible(true);
 								}
+								
+								IMultiblock mb = (IMultiblock) FIELD_MULTIBLOCK.get(special);
+								name = mb.getUniqueName();
 							}
 						}
 					}
+				}catch(Exception e){
+					ImmersivePetroleum.log.warn("This shouldnt happen.", e);
 				}
 			}
 			
@@ -178,10 +184,10 @@ public class EventHandler{
 				
 				if(name == null && ItemNBTHelper.hasKey(target, "lastMultiblock")){
 					ItemNBTHelper.remove(target, "lastMultiblock");
-					System.out.println("Removed Multiblock-NBT to "+target.getDisplayName().getUnformattedComponentText());
+					ImmersivePetroleum.log.debug("Removed Multiblock-NBT from {}", target.getDisplayName().getUnformattedComponentText());
 				}else if(name != null){
 					ItemNBTHelper.putString(target, "lastMultiblock", name.toString());
-					System.out.println("Added Multiblock-NBT to "+target.getDisplayName().getUnformattedComponentText()+" -> "+name.toString());
+					ImmersivePetroleum.log.debug("Added Multiblock-NBT to {} -> {}", target.getDisplayName().getUnformattedComponentText(), name.toString());
 				}
 			}
 		}

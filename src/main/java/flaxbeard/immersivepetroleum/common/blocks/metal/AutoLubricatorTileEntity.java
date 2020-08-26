@@ -257,12 +257,10 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 							markDirty();
 						}
 						
-						if(this.world.isRemote){
-							this.countClient++;
-							if(this.countClient % 50 == 0){
-								this.countClient = this.world.rand.nextInt(40);
-								handler.spawnLubricantParticles(this.world, this, this.facing, master);
-							}
+						this.countClient++;
+						if(this.countClient % 50 == 0){
+							this.countClient = this.world.rand.nextInt(40);
+							handler.spawnLubricantParticles(this.world, this, this.facing, master);
 						}
 					}
 				}

@@ -15,10 +15,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTileEntity>{
 	
-	//private static String lubeTexture = "immersivepetroleum:textures/models/lubricator.png";
-	
-	//private static ModelAutoLubricator base = new ModelAutoLubricator();
-	
 	@Override
 	public boolean isGlobalRenderer(AutoLubricatorTileEntity te){
 		return true;
@@ -29,26 +25,6 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 	@Override
 	public void render(AutoLubricatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
 		if(te == null){
-			/*
-			GlStateManager.pushMatrix();
-			{
-				GlStateManager.translated(x, y, z);
-				GlStateManager.enableAlphaTest();
-				GlStateManager.enableBlend();
-				
-				GL11.glScalef(0.65F, 0.65F, 0.65F);
-				GL11.glTranslatef(0.25F, -0.1F, 0.25F);
-				
-				ClientUtils.bindTexture(lubeTexture);
-				base.render(0.0625F);
-				base.renderTank(0.0625F);
-				// base.renderPlunger(0.0625F);
-				
-				GlStateManager.disableBlend();
-				GlStateManager.disableAlphaTest();
-			}
-			GlStateManager.popMatrix();
-			*/
 			return;
 		}
 		

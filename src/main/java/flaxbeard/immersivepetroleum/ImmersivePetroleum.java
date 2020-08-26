@@ -3,7 +3,6 @@ package flaxbeard.immersivepetroleum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import blusunrize.immersiveengineering.api.energy.DieselHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
@@ -62,7 +61,6 @@ public class ImmersivePetroleum{
 		Serializers.RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
 		
 		IPContent.populate();
-		Serializers.construct();
 		
 		proxy.construct();
 		proxy.registerContainersAndScreens();
@@ -78,22 +76,16 @@ public class ImmersivePetroleum{
 		IPContent.preInit();
 		IPPacketHandler.preInit();
 		
-		DieselHandler.registerFuel(Fluids.fluidDiesel, 150);
-		
 		proxy.preInitEnd();
 		
 		// ---------------------------------------------------------------------------------------------------------------------------------------------
-		
-//		DistillationRecipe.energyModifier = IPConfig.REFINING.distillationTower_energyModifier.get();
-//		DistillationRecipe.timeModifier = IPConfig.REFINING.distillationTower_timeModifier.get();
-//		PumpjackHandler.oilChance = IPConfig.EXTRACTION.reservoir_chance.get();
 		
 		// TODO See issue #4215 in the ImmersiveEngineering GitHub
 		/*
 		IEConfig.manual_int.put("distillationTower_operationCost", (int) (2048 * IPConfig.REFINING.distillationTower_energyModifier.get()));
 		IEConfig.manual_int.put("pumpjack_consumption", IPConfig.EXTRACTION.pumpjack_consumption.get());
 		IEConfig.manual_int.put("pumpjack_speed", IPConfig.EXTRACTION.pumpjack_speed.get());
-
+		
 		int oil_min = 1000000;
 		int oil_max = 5000000;
 		for(ReservoirType type:PumpjackHandler.reservoirList.keySet()){
@@ -105,8 +97,7 @@ public class ImmersivePetroleum{
 		}
 		IEConfig.manual_int.put("pumpjack_days", (((oil_max + oil_min) / 2) + oil_min) / (IPConfig.EXTRACTION.pumpjack_speed.get() * 24000));
 		IEConfig.manual_double.put("autoLubricant_speedup", 1.25);
-
-
+		
 		Map<ResourceLocation, Integer> map = FuelHandler.getFuelFluxesPerTick();
 		if(map.size() > 0 && map.containsKey("gasoline")){
 			IEConfig.manual_int.put("portableGenerator_flux", map.get("gasoline"));

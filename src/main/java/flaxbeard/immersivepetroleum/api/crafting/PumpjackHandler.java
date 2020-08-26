@@ -29,7 +29,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.ModDimension;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class PumpjackHandler{
@@ -258,9 +257,6 @@ public class PumpjackHandler{
 	public static class ReservoirType extends IESerializableRecipe{
 		public static final IRecipeType<ReservoirType> TYPE=IRecipeType.register(ImmersivePetroleum.MODID+":reservoirtype");
 		
-		/** Initialized in {@link Serializers} */
-		public static RegistryObject<IERecipeSerializer<ReservoirType>> SERIALIZER;
-		
 		public String name;
 		public ResourceLocation fluidLocation;
 		
@@ -387,7 +383,7 @@ public class PumpjackHandler{
 		
 		@Override
 		protected IERecipeSerializer<ReservoirType> getIESerializer(){
-			return SERIALIZER.get();
+			return Serializers.RESERVOIR_SERIALIZER.get();
 		}
 		
 		@Override

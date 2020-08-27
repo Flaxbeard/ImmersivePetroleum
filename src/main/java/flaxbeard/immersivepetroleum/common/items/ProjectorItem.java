@@ -24,9 +24,11 @@ import blusunrize.immersiveengineering.common.blocks.IEBlocks.MetalDevices;
 import blusunrize.immersiveengineering.common.blocks.metal.ConveyorBeltTileEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.conveyors.BasicConveyor;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.event.SchematicPlaceBlockEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicPlaceBlockPostEvent;
 import flaxbeard.immersivepetroleum.api.event.SchematicRenderBlockEvent;
+import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.client.ShaderUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
@@ -79,11 +81,12 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
+@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID)
 public class ProjectorItem extends IPItemBase{
 	public ProjectorItem(String name){
 		super(name, new Item.Properties().maxStackSize(1));
-		MinecraftForge.EVENT_BUS.register(this);
 	}
 	
 	/** Like {@link ProjectorItem#getMultiblock(ResourceLocation)} but using the ItemStack directly */
@@ -265,8 +268,15 @@ public class ProjectorItem extends IPItemBase{
 					int z = pos.getInt("z");
 					tooltip.add(new TranslationTextComponent("chat.immersivepetroleum.info.schematic.center", x, y, z).applyTextStyle(TextFormatting.DARK_GRAY));
 				}else{
-					tooltip.add(new TranslationTextComponent("chat.immersivepetroleum.info.schematic.controls1").applyTextStyle(TextFormatting.DARK_GRAY));
-					tooltip.add(new TranslationTextComponent("chat.immersivepetroleum.info.schematic.controls2").applyTextStyle(TextFormatting.DARK_GRAY));
+					ITextComponent ctrl0=new TranslationTextComponent("chat.immersivepetroleum.info.schematic.controls1")
+							.applyTextStyle(TextFormatting.DARK_GRAY);
+					
+					ITextComponent ctrl1=new TranslationTextComponent("chat.immersivepetroleum.info.schematic.controls2",
+							ClientProxy.keybind_preview_flip.getLocalizedName())
+							.applyTextStyle(TextFormatting.DARK_GRAY);
+					
+					tooltip.add(ctrl0);
+					tooltip.add(ctrl1);
 				}
 				return;
 			}
@@ -416,6 +426,10 @@ public class ProjectorItem extends IPItemBase{
 	public static Rotation getRotation(ItemStack stack){
 		if(ItemNBTHelper.hasKey(stack, "rotate")){
 			int index = ItemNBTHelper.getInt(stack, "rotate") % 4;
+			
+			if(index<0 || index>=Rotation.values().length)
+				index=0; // Pure safety precaution
+			
 			return Rotation.values()[index];
 		}
 		return Rotation.NONE;
@@ -428,9 +442,13 @@ public class ProjectorItem extends IPItemBase{
 		return false;
 	}
 	
-	public static void rotateClient(ItemStack stack){
-		int newRotate = (getRotation(stack).ordinal() + 1) % 4;
+	public static void rotateClient(ItemStack stack, int direction){
+		int newRotate = (getRotation(stack).ordinal() + direction) % 4;
 		boolean flip = getFlipped(stack);
+		
+		while(newRotate < 0)
+			newRotate += 4;
+		
 		setRotate(stack, newRotate);
 		IPPacketHandler.INSTANCE.sendToServer(new MessageRotateSchematic(newRotate, flip));
 	}
@@ -464,83 +482,134 @@ public class ProjectorItem extends IPItemBase{
 		return ActionResult.newResult(ActionResultType.SUCCESS, stack);
 	}
 	
-	private boolean shiftHeld=false;
-	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
-	public void handleScroll(InputEvent.MouseScrollEvent event){
-		double delta=event.getScrollDelta();
+	public static void handleConveyorPlace(SchematicPlaceBlockPostEvent event){
+		IMultiblock mb = event.getMultiblock();
+		BlockState state = event.getState();
+		String mbName = mb.getUniqueName().getPath();
 		
-		if(this.shiftHeld){
-			PlayerEntity player=ClientUtils.mc().player;
-			ItemStack mainItem = player.getHeldItemMainhand();
-			ItemStack secondItem = player.getHeldItemOffhand();
-			
-			boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
-			boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
-			ItemStack target = main ? mainItem : secondItem;
-			
-			if(main || off){
-				if(delta<0){
-					ProjectorItem.flipClient(target);
+		if(mbName.equals("multiblocks/auto_workbench") || mbName.equals("multiblocks/bottling_machine") || mbName.equals("multiblocks/assembler") || mbName.equals("multiblocks/metal_press")){
+			if(state.getBlock() == IEBlocks.MetalDevices.CONVEYORS.get(BasicConveyor.NAME)){
+				TileEntity te = event.getWorld().getTileEntity(event.getWorldPos());
+				if(te instanceof ConveyorBeltTileEntity){
 					
-					boolean flipped=ProjectorItem.getFlipped(target);
-					String yesno=flipped?I18n.format("chat.immersivepetroleum.info.projector.flipped.yes"):I18n.format("chat.immersivepetroleum.info.projector.flipped.no");
-					player.sendStatusMessage(new TranslationTextComponent("chat.immersivepetroleum.info.projector.flipped", yesno), true);
-				}else if(delta>0){
-					ProjectorItem.rotateClient(target);
-					Rotation rot=ProjectorItem.getRotation(target);
-					player.sendStatusMessage(new StringTextComponent("Rotated "+rot), true); // TODO Translation
-				}
-				event.setCanceled(true);
-			}
-		}
-	}
-	
-	@OnlyIn(Dist.CLIENT)
-	@SubscribeEvent
-	public void handleKey(InputEvent.KeyInputEvent event){
-		if(event.getKey()==GLFW.GLFW_KEY_RIGHT_SHIFT || event.getKey()==GLFW.GLFW_KEY_LEFT_SHIFT){
-			switch(event.getAction()){
-				case GLFW.GLFW_PRESS:{
-					shiftHeld=true;
-					return;
-				}
-				case GLFW.GLFW_RELEASE:{
-					shiftHeld=false;
-					return;
 				}
 			}
 		}
 	}
 	
-	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
-	public void renderLast(RenderWorldLastEvent event){
-		Minecraft mc = ClientUtils.mc();
+	public static void handleConveyorsAndPipes(SchematicRenderBlockEvent event){
+		String mbName=event.getMultiblock().getUniqueName().getPath();
+		BlockState state=event.getState();
+		Block block=state.getBlock();
+		Rotation rotate = event.getRotate();
 		
-		GlStateManager.pushMatrix();
-		{
-			if(mc.player != null){
-				ItemStack secondItem = mc.player.getHeldItemOffhand();
-				
-				boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
-				
-				for(int i = 0;i <= 10;i++){
-					ItemStack stack = (i == 10 ? secondItem : mc.player.inventory.getStackInSlot(i));
-					if(!stack.isEmpty() && stack.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(stack, "multiblock")){
-						GlStateManager.pushMatrix();
-						{
-							renderSchematic(stack, mc.player, mc.player.world, event.getPartialTicks(), i == mc.player.inventory.currentItem || (i == 10 && off));
+		if(state.getProperties().contains(IEProperties.MULTIBLOCKSLAVE)){
+			if(state.get(IEProperties.MULTIBLOCKSLAVE)){
+				event.setCanceled(true); // Skip rendering if it's a dummy block. (Like fluid pump)
+				return;
+			}
+		}
+		
+		if(mbName.equals("multiblocks/distillationtower")){
+			if(block instanceof SlabBlock){
+				if(state.get(SlabBlock.TYPE)==SlabType.TOP){
+					GlStateManager.translated(0, 0.5, 0);
+				}
+			}
+		}
+		
+		if(block == IEBlocks.MetalDevices.fluidPipe){
+			event.setState(IPContent.Blocks.dummyBlockPipe.getDefaultState());
+			
+		}else if(block == MetalDevices.CONVEYORS.get(BasicConveyor.NAME)){
+			Direction facing=state.get(IEProperties.FACING_HORIZONTAL);
+			
+			switch(facing){
+				case NORTH:{
+					GlStateManager.rotated(0, 0, 1, 0);
+					break;
+				}
+				case SOUTH:{
+					GlStateManager.rotated(180, 0, 1, 0);
+					break;
+				}
+				case EAST:{
+					GlStateManager.rotated(270, 0, 1, 0);
+					break;
+				}
+				default:break;
+			}
+			
+			switch(rotate){
+				case CLOCKWISE_90:
+					GlStateManager.rotated(-90, 0, 1, 0);
+					break;
+				case CLOCKWISE_180:
+					GlStateManager.rotated(-180, 0, 1, 0);
+					break;
+				case COUNTERCLOCKWISE_90:
+					GlStateManager.rotated(-270, 0, 1, 0);
+					break;
+				default:break;
+			}
+			
+		}else if(block == Blocks.PISTON){
+			Direction facing=state.get(PistonBlock.FACING);
+			
+			if(facing==Direction.DOWN){
+				GlStateManager.rotated(180, 1, 0, 0);
+			}else if(facing==Direction.NORTH){
+				GlStateManager.rotated(270, 1, 0, 0);
+			}else if(facing==Direction.SOUTH){
+				GlStateManager.rotated(90, 1, 0, 0);
+			}else if(facing==Direction.EAST){
+				GlStateManager.rotated(270, 0, 0, 1);
+			}else if(facing==Direction.WEST){
+				GlStateManager.rotated(90, 0, 0, 1);
+			}else{
+				// Piston is facing up by default
+			}
+			
+			// Can't exactly test this without a multiblock
+			// that has a horizontaly oriented piston
+		}
+	}
+	
+	// STATIC SUPPORT CLASSES
+	
+	/** Client Rendering Stuff */
+	@OnlyIn(Dist.CLIENT)
+	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID)
+	public static class ClientRenderHandler{
+		@SubscribeEvent
+		public static void renderLast(RenderWorldLastEvent event){
+			Minecraft mc = ClientUtils.mc();
+			
+			GlStateManager.pushMatrix();
+			{
+				if(mc.player != null){
+					ItemStack secondItem = mc.player.getHeldItemOffhand();
+					
+					boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
+					
+					for(int i = 0;i <= 10;i++){
+						ItemStack stack = (i == 10 ? secondItem : mc.player.inventory.getStackInSlot(i));
+						if(!stack.isEmpty() && stack.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(stack, "multiblock")){
+							GlStateManager.pushMatrix();
+							{
+								renderSchematic(stack, mc.player, mc.player.world, event.getPartialTicks(), i == mc.player.inventory.currentItem || (i == 10 && off));
+							}
+							GlStateManager.popMatrix();
 						}
-						GlStateManager.popMatrix();
 					}
 				}
 			}
+			GlStateManager.popMatrix();
 		}
-		GlStateManager.popMatrix();
-	}
-	@OnlyIn(Dist.CLIENT)
-		public void renderSchematic(ItemStack target, PlayerEntity player, World world, float partialTicks, boolean shouldRenderMoving){
+		
+		public static void renderSchematic(ItemStack target, PlayerEntity player, World world, float partialTicks, boolean shouldRenderMoving){
 			Minecraft mc = ClientUtils.mc();
 			IMultiblock multiblock = ProjectorItem.getMultiblock(target);
 			if(multiblock==null)
@@ -719,341 +788,210 @@ public class ProjectorItem extends IPItemBase{
 				}
 			}
 		}
+		
+		private static void renderPhantom(IMultiblock multiblock, World world, Template.BlockInfo info, BlockPos wPos, float flicker, float alpha, float partialTicks, boolean flipXZ, Rotation rotation){
+			ItemRenderer itemRenderer=ClientUtils.mc().getItemRenderer();
+			
+			GlStateManager.translated(wPos.getX()+.5, wPos.getY()+.5, wPos.getZ()+.5); // Centers the preview block
+			
+			ShaderUtil.alpha_static(flicker * alpha, ClientUtils.mc().player.ticksExisted + partialTicks);
+			SchematicRenderBlockEvent renderEvent = new SchematicRenderBlockEvent(multiblock, world, wPos, info.pos, info.state, info.nbt, rotation);
+			if(!MinecraftForge.EVENT_BUS.post(renderEvent)){
+				ItemStack toRender = new ItemStack(renderEvent.getState().getBlock());
+				itemRenderer.renderItem(toRender, itemRenderer.getModelWithOverrides(toRender));
+			}
+			ShaderUtil.releaseShader();
+		}
+		
+		private static void renderOutlineBox(Vec3i min, Vec3i max, float r, float g, float b, float flicker){
+			Tessellator tessellator = Tessellator.getInstance();
+			BufferBuilder buffer = tessellator.getBuffer();
+			
+			float alpha = 0.25F+(0.5F*flicker);
+			
+			float xMax=Math.abs(min.getX()-max.getX())+1;
+			float yMax=Math.abs(min.getY()-max.getY())+1;
+			float zMax=Math.abs(min.getZ()-max.getZ())+1;
+			
+			buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+			buffer.pos(0.0F, 1.0F, 0.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(1.0F, 1.0F, 0.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(1.0F, 1.0F, 0.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(1.0F, 1.0F, 1.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(1.0F, 1.0F, 1.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(0.0F, 1.0F, 1.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(0.0F, 1.0F, 1.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(0.0F, 1.0F, 0.0F).color(r, g, b, alpha).endVertex();
+			
+			buffer.pos(0.0F, 1.0F, 0.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(0.0F, 0.0F, 0.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(1.0F, 1.0F, 0.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(1.0F, 0.0F, 0.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(0.0F, 1.0F, 1.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(0.0F, 0.0F, 1.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(1.0F, 1.0F, 1.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(1.0F, 0.0F, 1.0F).color(r, g, b, alpha).endVertex();
+			
+			buffer.pos(0.0F, 0.0F, 0.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(1.0F, 0.0F, 0.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(1.0F, 0.0F, 0.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(1.0F, 0.0F, 1.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(1.0F, 0.0F, 1.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(0.0F, 0.0F, 1.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(0.0F, 0.0F, 1.0F).color(r, g, b, alpha).endVertex();
+			buffer.pos(0.0F, 0.0F, 0.0F).color(r, g, b, alpha).endVertex();
+			
+			GlStateManager.disableTexture();
+			GlStateManager.enableBlend();
+			GlStateManager.disableCull();
+			GlStateManager.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+			GlStateManager.shadeModel(GL11.GL_SMOOTH);
+			GlStateManager.lineWidth(2.5F);
+			
+			GlStateManager.translated(min.getX(), min.getY(), min.getZ());
+			GlStateManager.scalef(xMax, yMax, zMax);
+			
+			tessellator.draw();
+			
+			GlStateManager.shadeModel(GL11.GL_FLAT);
+			GlStateManager.enableCull();
+			GlStateManager.disableBlend();
+			GlStateManager.enableTexture();
+		}
+		
+		private static void renderCenteredOutlineBox(Vec3i position, float r, float g, float b, float flicker, float xyzScale){
+			renderCenteredOutlineBox(position, r, g, b, flicker, xyzScale, xyzScale, xyzScale);
+		}
+		
+		private static void renderCenteredOutlineBox(Vec3i position, float r, float g, float b, float flicker, float xScale, float yScale, float zScale){
+			Tessellator tessellator = Tessellator.getInstance();
+			BufferBuilder buffer = tessellator.getBuffer();
+			
+			float alpha = .375F * flicker;
+			
+			buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+			buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
+			
+			buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
+			
+			buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
+			buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
+			
+			GlStateManager.translated(position.getX()+0.50, position.getY()+0.50, position.getZ()+0.50);
+			GlStateManager.scalef(xScale, yScale, zScale);
+			
+			GlStateManager.disableTexture();
+			GlStateManager.enableBlend();
+			GlStateManager.disableCull();
+			GlStateManager.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+			GlStateManager.shadeModel(GL11.GL_SMOOTH);
+			GlStateManager.lineWidth(3.5f);
+			
+			tessellator.draw();
+			
+			GlStateManager.shadeModel(GL11.GL_FLAT);
+			GlStateManager.enableCull();
+			GlStateManager.disableBlend();
+			GlStateManager.enableTexture();
+		}
+	}
+	
+	/** Client Input Stuff */
+	@OnlyIn(Dist.CLIENT)
+	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID)
+	public static class ClientInputHandler{
+		static boolean shiftHeld = false;
+		@SubscribeEvent
+		public static void handleScroll(InputEvent.MouseScrollEvent event){
+			double delta = event.getScrollDelta();
+			
+			if(shiftHeld && delta != 0.0){
+				PlayerEntity player = ClientUtils.mc().player;
+				ItemStack mainItem = player.getHeldItemMainhand();
+				ItemStack secondItem = player.getHeldItemOffhand();
+				
+				boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
+				boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
+				ItemStack target = main ? mainItem : secondItem;
+				
+				if(main || off){
+					ProjectorItem.rotateClient(target, (int) delta);
+					Rotation rot = ProjectorItem.getRotation(target);
+					Direction facing=Direction.byHorizontalIndex(rot.ordinal());
+					player.sendStatusMessage(new TranslationTextComponent("chat.immersivepetroleum.info.projector.rotated."+facing), true);
+					event.setCanceled(true);
+				}
+			}
+		}
+		
+		@SubscribeEvent
+		public static void handleKey(InputEvent.KeyInputEvent event){
+			if(event.getKey() == GLFW.GLFW_KEY_RIGHT_SHIFT || event.getKey() == GLFW.GLFW_KEY_LEFT_SHIFT){
+				switch(event.getAction()){
+					case GLFW.GLFW_PRESS:{
+						shiftHeld = true;
+						return;
+					}
+					case GLFW.GLFW_RELEASE:{
+						shiftHeld = false;
+						return;
+					}
+				}
+			}
+			
+			if(shiftHeld){
+				if(ClientProxy.keybind_preview_flip.isPressed()){
+					doAFlip();
+				}
+			}
+		}
+		
+		@SubscribeEvent
+		public static void handleMouseInput(InputEvent.MouseInputEvent event){
+			if(ClientProxy.keybind_preview_flip.isPressed()){
+				doAFlip();
+			}
+		}
+		
+		private static void doAFlip(){
+			PlayerEntity player = ClientUtils.mc().player;
+			ItemStack mainItem = player.getHeldItemMainhand();
+			ItemStack secondItem = player.getHeldItemOffhand();
+			
+			boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
+			boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
+			ItemStack target = main ? mainItem : secondItem;
+			
+			if(main || off){
+				ProjectorItem.flipClient(target);
+				
+				boolean flipped = ProjectorItem.getFlipped(target);
+				String yesno = flipped ? I18n.format("chat.immersivepetroleum.info.projector.flipped.yes") : I18n.format("chat.immersivepetroleum.info.projector.flipped.no");
+				player.sendStatusMessage(new TranslationTextComponent("chat.immersivepetroleum.info.projector.flipped", yesno), true);
+			}
+		}
+	}
 
-	@OnlyIn(Dist.CLIENT)
-	private void renderOutlineBox(Vec3i min, Vec3i max, float r, float g, float b, float flicker){
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator.getBuffer();
-		
-		float alpha = 0.25F+(0.5F*flicker);
-		
-		float xMax=Math.abs(min.getX()-max.getX())+1;
-		float yMax=Math.abs(min.getY()-max.getY())+1;
-		float zMax=Math.abs(min.getZ()-max.getZ())+1;
-		
-		buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-		buffer.pos(0.0F, 1.0F, 0.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(1.0F, 1.0F, 0.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(1.0F, 1.0F, 0.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(1.0F, 1.0F, 1.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(1.0F, 1.0F, 1.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(0.0F, 1.0F, 1.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(0.0F, 1.0F, 1.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(0.0F, 1.0F, 0.0F).color(r, g, b, alpha).endVertex();
-		
-		buffer.pos(0.0F, 1.0F, 0.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(0.0F, 0.0F, 0.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(1.0F, 1.0F, 0.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(1.0F, 0.0F, 0.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(0.0F, 1.0F, 1.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(0.0F, 0.0F, 1.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(1.0F, 1.0F, 1.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(1.0F, 0.0F, 1.0F).color(r, g, b, alpha).endVertex();
-		
-		buffer.pos(0.0F, 0.0F, 0.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(1.0F, 0.0F, 0.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(1.0F, 0.0F, 0.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(1.0F, 0.0F, 1.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(1.0F, 0.0F, 1.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(0.0F, 0.0F, 1.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(0.0F, 0.0F, 1.0F).color(r, g, b, alpha).endVertex();
-		buffer.pos(0.0F, 0.0F, 0.0F).color(r, g, b, alpha).endVertex();
-		
-		GlStateManager.disableTexture();
-		GlStateManager.enableBlend();
-		GlStateManager.disableCull();
-		GlStateManager.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		GlStateManager.lineWidth(2.5F);
-		
-		GlStateManager.translated(min.getX(), min.getY(), min.getZ());
-		GlStateManager.scalef(xMax, yMax, zMax);
-		
-		tessellator.draw();
-		
-		GlStateManager.shadeModel(GL11.GL_FLAT);
-		GlStateManager.enableCull();
-		GlStateManager.disableBlend();
-		GlStateManager.enableTexture();
-	}
-	
-	@OnlyIn(Dist.CLIENT) // For debugging
-	private void renderCenteredOutlineBox(Vec3i position, float r, float g, float b, float flicker, float xyzScale){
-		renderCenteredOutlineBox(position, r, g, b, flicker, xyzScale, xyzScale, xyzScale);
-	}
-	
-	@OnlyIn(Dist.CLIENT) // For debugging
-	private void renderCenteredOutlineBox(Vec3i position, float r, float g, float b, float flicker, float xScale, float yScale, float zScale){
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator.getBuffer();
-		
-		float alpha = .375F * flicker;
-		
-		buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-		buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-		
-		buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-		
-		buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-		
-		GlStateManager.translated(position.getX()+0.50, position.getY()+0.50, position.getZ()+0.50);
-		GlStateManager.scalef(xScale, yScale, zScale);
-		
-		GlStateManager.disableTexture();
-		GlStateManager.enableBlend();
-		GlStateManager.disableCull();
-		GlStateManager.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		GlStateManager.lineWidth(3.5f);
-		
-		tessellator.draw();
-		
-		GlStateManager.shadeModel(GL11.GL_FLAT);
-		GlStateManager.enableCull();
-		GlStateManager.disableBlend();
-		GlStateManager.enableTexture();
-	}
-	
-	@OnlyIn(Dist.CLIENT)
-	private void renderRedOutline(Tessellator tessellator, BufferBuilder buffer, BlockPos wPos, float flicker){
-		GlStateManager.disableTexture();
-		GlStateManager.enableBlend();
-		GlStateManager.disableCull();
-		GlStateManager.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		float r = 1;
-		float g = 0;
-		float b = 0;
-		float alpha = .375F * flicker;
-		GlStateManager.translated(wPos.getX()+0.50, wPos.getY()+0.50, wPos.getZ()+0.50);
-		GlStateManager.scaled(1.005, 1.005, 1.005);
-		GlStateManager.lineWidth(2.5f);
-		buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-		buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-		
-		buffer.pos(-.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, .5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, .5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-		
-		buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, -.5F, .5F).color(r, g, b, alpha).endVertex();
-		buffer.pos(-.5F, -.5F, -.5F).color(r, g, b, alpha).endVertex();
-		
-		tessellator.draw();
-		GlStateManager.shadeModel(GL11.GL_FLAT);
-		GlStateManager.enableCull();
-		GlStateManager.disableBlend();
-		GlStateManager.enableTexture();
-	}
-	
-	@OnlyIn(Dist.CLIENT)
-	private void renderPhantom(IMultiblock multiblock, World world, Template.BlockInfo info, BlockPos wPos, float flicker, float alpha, float partialTicks, boolean flipXZ, Rotation rotation){
-		ItemRenderer itemRenderer=ClientUtils.mc().getItemRenderer();
-		
-		GlStateManager.translated(wPos.getX()+.5, wPos.getY()+.5, wPos.getZ()+.5); // Centers the preview block
-		
-		ShaderUtil.alpha_static(flicker * alpha, ClientUtils.mc().player.ticksExisted + partialTicks);
-		SchematicRenderBlockEvent renderEvent = new SchematicRenderBlockEvent(multiblock, world, wPos, info.pos, info.state, info.nbt, rotation);
-		if(!MinecraftForge.EVENT_BUS.post(renderEvent)){
-			ItemStack toRender = new ItemStack(renderEvent.getState().getBlock());
-			itemRenderer.renderItem(toRender, itemRenderer.getModelWithOverrides(toRender));
-		}
-		ShaderUtil.releaseShader();
-	}
-	
-	@OnlyIn(Dist.CLIENT)
-	private void renderPerfectBox(Vec3i mSize, Rotation rotation){
-		int mWidth = mSize.getX();
-		int mHeight = mSize.getY();
-		int mDepth = mSize.getZ();
-		
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator.getBuffer();
-		
-		int xd = (rotation.ordinal() % 2 == 0) ? mWidth : mDepth;
-		int zd = (rotation.ordinal() % 2 == 0) ? mDepth : mWidth;
-		
-		GlStateManager.disableDepthTest();
-		GlStateManager.disableTexture();
-		GlStateManager.enableBlend();
-		GlStateManager.disableCull();
-		GlStateManager.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		float r = 0;
-		float g = 1;
-		float b = 0;
-		GlStateManager.scaled(xd, mHeight, zd);
-		GlStateManager.lineWidth(2f);
-		buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-		buffer.pos(0, 1, 0).color(r, g, b, .375f).endVertex();
-		buffer.pos(1, 1, 0).color(r, g, b, .375f).endVertex();
-		buffer.pos(1, 1, 0).color(r, g, b, .375f).endVertex();
-		buffer.pos(1, 1, 1).color(r, g, b, .375f).endVertex();
-		buffer.pos(1, 1, 1).color(r, g, b, .375f).endVertex();
-		buffer.pos(0, 1, 1).color(r, g, b, .375f).endVertex();
-		buffer.pos(0, 1, 1).color(r, g, b, .375f).endVertex();
-		buffer.pos(0, 1, 0).color(r, g, b, .375f).endVertex();
-		
-		buffer.pos(0, 1, 0).color(r, g, b, .375f).endVertex();
-		buffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
-		buffer.pos(1, 1, 0).color(r, g, b, .375f).endVertex();
-		buffer.pos(1, 0, 0).color(r, g, b, .375f).endVertex();
-		buffer.pos(0, 1, 1).color(r, g, b, .375f).endVertex();
-		buffer.pos(0, 0, 1).color(r, g, b, .375f).endVertex();
-		buffer.pos(1, 1, 1).color(r, g, b, .375f).endVertex();
-		buffer.pos(1, 0, 1).color(r, g, b, .375f).endVertex();
-		
-		buffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
-		buffer.pos(1, 0, 0).color(r, g, b, .375f).endVertex();
-		buffer.pos(1, 0, 0).color(r, g, b, .375f).endVertex();
-		buffer.pos(1, 0, 1).color(r, g, b, .375f).endVertex();
-		buffer.pos(1, 0, 1).color(r, g, b, .375f).endVertex();
-		buffer.pos(0, 0, 1).color(r, g, b, .375f).endVertex();
-		buffer.pos(0, 0, 1).color(r, g, b, .375f).endVertex();
-		buffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
-		
-		tessellator.draw();
-		GlStateManager.shadeModel(GL11.GL_FLAT);
-		GlStateManager.enableCull();
-		GlStateManager.disableBlend();
-		GlStateManager.enableTexture();
-		GlStateManager.enableDepthTest();
-	}
-	
-	@SubscribeEvent
-	public void handleConveyorPlace(SchematicPlaceBlockPostEvent event){
-		IMultiblock mb = event.getMultiblock();
-		BlockState state = event.getState();
-		String mbName = mb.getUniqueName().getPath();
-		
-		if(mbName.equals("multiblocks/auto_workbench") || mbName.equals("multiblocks/bottling_machine") || mbName.equals("multiblocks/assembler") || mbName.equals("multiblocks/metal_press")){
-			if(state.getBlock() == IEBlocks.MetalDevices.CONVEYORS.get(BasicConveyor.NAME)){
-				TileEntity te = event.getWorld().getTileEntity(event.getWorldPos());
-				if(te instanceof ConveyorBeltTileEntity){
-					
-				}
-			}
-		}
-	}
-	
-	@SubscribeEvent
-	public void handleConveyorsAndPipes(SchematicRenderBlockEvent event){
-		String mbName=event.getMultiblock().getUniqueName().getPath();
-		BlockState state=event.getState();
-		Block block=state.getBlock();
-		Rotation rotate = event.getRotate();
-		
-		if(state.getProperties().contains(IEProperties.MULTIBLOCKSLAVE)){
-			if(state.get(IEProperties.MULTIBLOCKSLAVE)){
-				event.setCanceled(true); // Skip rendering if it's a dummy block. (Like fluid pump)
-				return;
-			}
-		}
-		
-		if(mbName.equals("multiblocks/distillationtower")){
-			if(block instanceof SlabBlock){
-				if(state.get(SlabBlock.TYPE)==SlabType.TOP){
-					GlStateManager.translated(0, 0.5, 0);
-				}
-			}
-		}
-		
-		if(block == IEBlocks.MetalDevices.fluidPipe){
-			event.setState(IPContent.Blocks.dummyBlockPipe.getDefaultState());
-			
-		}else if(block == MetalDevices.CONVEYORS.get(BasicConveyor.NAME)){
-			Direction facing=state.get(IEProperties.FACING_HORIZONTAL);
-			
-			switch(facing){
-				case NORTH:{
-					GlStateManager.rotated(0, 0, 1, 0);
-					break;
-				}
-				case SOUTH:{
-					GlStateManager.rotated(180, 0, 1, 0);
-					break;
-				}
-				case EAST:{
-					GlStateManager.rotated(270, 0, 1, 0);
-					break;
-				}
-				default:break;
-			}
-			
-			switch(rotate){
-				case CLOCKWISE_90:
-					GlStateManager.rotated(-90, 0, 1, 0);
-					break;
-				case CLOCKWISE_180:
-					GlStateManager.rotated(-180, 0, 1, 0);
-					break;
-				case COUNTERCLOCKWISE_90:
-					GlStateManager.rotated(-270, 0, 1, 0);
-					break;
-				default:break;
-			}
-			
-		}else if(block == Blocks.PISTON){
-			Direction facing=state.get(PistonBlock.FACING);
-			
-			if(facing==Direction.DOWN){
-				GlStateManager.rotated(180, 1, 0, 0);
-			}else if(facing==Direction.NORTH){
-				GlStateManager.rotated(270, 1, 0, 0);
-			}else if(facing==Direction.SOUTH){
-				GlStateManager.rotated(90, 1, 0, 0);
-			}else if(facing==Direction.EAST){
-				GlStateManager.rotated(270, 0, 0, 1);
-			}else if(facing==Direction.WEST){
-				GlStateManager.rotated(90, 0, 0, 1);
-			}else{
-				// Piston is facing up by default
-			}
-			
-			// Can't exactly test this without a multiblock
-			// that has a horizontaly oriented piston
-		}
-	}
-	
-	
 	/** This is pretty much a carrier class */
 	protected static class BlockProcessInfo{
 		/** raw information from the template */

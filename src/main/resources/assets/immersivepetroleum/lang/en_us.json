@@ -158,10 +158,17 @@
 	"chat.immersivepetroleum.info.schematic.build0": "Displays instructions",
 	"chat.immersivepetroleum.info.schematic.build1": "for making a %s",
 	"chat.immersivepetroleum.info.schematic.center": "Centered at (%d, %d, %d)",
-	"chat.immersivepetroleum.info.schematic.controls1": "Shift + Scroll-UP to rotate",
-	"chat.immersivepetroleum.info.schematic.controls2": "Shift + Scroll-DOWN to flip",
+	"chat.immersivepetroleum.info.schematic.controls1": "Shift + Scroll-UP/DOWN to Rotate",
+	"chat.immersivepetroleum.info.schematic.controls2": "Shift + %s to Flip",
 	
 	"chat.immersivepetroleum.info.projector.flipped": "Flipped: %s",
 	"chat.immersivepetroleum.info.projector.flipped.yes": "Yes.",
-	"chat.immersivepetroleum.info.projector.flipped.no": "No."
+	"chat.immersivepetroleum.info.projector.flipped.no": "No.",
+	
+	"chat.immersivepetroleum.info.projector.rotated.north":"Rotated North",
+	"chat.immersivepetroleum.info.projector.rotated.east":  "Rotated East",
+	"chat.immersivepetroleum.info.projector.rotated.south": "Rotated South",
+	"chat.immersivepetroleum.info.projector.rotated.west": "Rotated West",
+	
+	"key.immersivepetroleum.projector.flip":"Flip Projector-Preview"
 }

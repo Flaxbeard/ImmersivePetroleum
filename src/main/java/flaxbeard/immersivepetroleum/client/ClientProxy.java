@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -50,6 +51,8 @@ import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.Container;
@@ -61,6 +64,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
@@ -74,6 +78,8 @@ public class ClientProxy extends CommonProxy{
 	@SuppressWarnings("unused")
 	private static final Logger log=LogManager.getLogger(ImmersivePetroleum.MODID+"/ClientProxy");
 	public static final String CAT_IP = "ip";
+	
+	public static final KeyBinding keybind_preview_flip = new KeyBinding("key.immersivepetroleum.projector.flip", InputMappings.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_3, "key.categories.gameplay");
 	
 	@Override
 	public void construct(){}
@@ -111,6 +117,10 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	public void init(){
 		//ShaderUtil.init(); // Get's initialized befor the first time it's actualy used.
+		
+		keybind_preview_flip.setKeyConflictContext(KeyConflictContext.IN_GAME);
+		ClientRegistry.registerKeyBinding(keybind_preview_flip);
+		
 	}
 	
 	/** ImmersivePetroleum's Manual Category */

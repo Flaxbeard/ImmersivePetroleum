@@ -1,6 +1,2 @@
-# Blender MTL File: 'GasGenerator.blend'
-# Material Count: 1
-
 newmtl None
-Kd 1.000000 1.000000 1.000000
 map_Kd #texture

@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -363,14 +364,159 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		return SHAPES.get(this.posInMultiblock, Pair.of(getFacing(), getIsMirrored()));
 	}
 	
-	@SuppressWarnings("unused")
 	private static List<AxisAlignedBB> getShape(BlockPos posInMultiblock){
 		final int bX=posInMultiblock.getX();
 		final int bY=posInMultiblock.getY();
 		final int bZ=posInMultiblock.getZ();
 		
+		// Most of the arm doesnt need collision. Dumb anyway.
+		if((bY==3 && bX==1 && bZ!=2) || (bX==1 && bY==2 && bZ==0)){
+			return new ArrayList<>();
+		}
 		
-		return Arrays.asList(new AxisAlignedBB(0, 0, 0, 1, 1, 1));
+		// Motor
+		if(bY<3 && bX==1 && bZ==4){
+			List<AxisAlignedBB> list=new ArrayList<>();
+			if(bY==2){
+				list.add(new AxisAlignedBB(0.25, 0.0, 0.0, 0.75, 0.25, 1.0));
+			}else{
+				list.add(new AxisAlignedBB(0.25, 0.0, 0.0, 0.75, 1.0, 1.0));
+			}
+			if(bY==0){
+				list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
+			}
+			return list;
+		}
+		
+		// Support
+		if(bZ==2 && bY>0){
+			if(bX==0){
+				if(bY==1){
+					List<AxisAlignedBB> list=new ArrayList<>();
+					list.add(new AxisAlignedBB(0.6875, 0.0, 0.0, 1.0, 1.0, 0.25));
+					list.add(new AxisAlignedBB(0.6875, 0.0, 0.75, 1.0, 1.0, 1.0));
+					return list;
+				}
+				if(bY==2){
+					List<AxisAlignedBB> list=new ArrayList<>();
+					list.add(new AxisAlignedBB(0.8125, 0.0, 0.0, 1.0, 0.5, 1.0));
+					list.add(new AxisAlignedBB(0.8125, 0.5, 0.25, 1.0, 1.0, 0.75));
+					return list;
+				}
+				if(bY==3){
+					return Arrays.asList(new AxisAlignedBB(0.9375, 0.0, 0.375, 1.0, 0.125, 0.625));
+				}
+			}
+			if(bX==1 && bY==3){
+				return Arrays.asList(new AxisAlignedBB(0.0, -0.125, 0.375, 1.0, 0.125, 0.625));
+			}
+			if(bX==2){
+				if(bY==1){
+					List<AxisAlignedBB> list=new ArrayList<>();
+					list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 0.3125, 1.0, 0.25));
+					list.add(new AxisAlignedBB(0.0, 0.0, 0.75, 0.3125, 1.0, 1.0));
+					return list;
+				}
+				if(bY==2){
+					List<AxisAlignedBB> list=new ArrayList<>();
+					list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 0.1875, 0.5, 1.0));
+					list.add(new AxisAlignedBB(0.0, 0.5, 0.25, 0.1875, 1.0, 0.75));
+					return list;
+				}
+				if(bY==3){
+					return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.375, 0.0625, 0.125, 0.625));
+				}
+			}
+		}
+		
+		// Redstone Controller
+		if(bX==0 && bZ==5){
+			if(bY==0){ // Bottom
+				return Arrays.asList(
+						new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0),
+						new AxisAlignedBB(0.75, 0.0, 0.625, 0.875, 1.0, 0.875),
+						new AxisAlignedBB(0.125, 0.0, 0.625, 0.25, 1.0, 0.875)
+				);
+			}
+			if(bY==1){ // Top
+				return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0));
+			}
+		}
+		
+		// Below the power-in block, base height
+		if(bX==2 && bY==0 && bZ==5){
+			return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+		}
+		
+		// Misc
+		if(bY==0){
+			
+			// Legs Bottom Front
+			if(bZ==1 && (bX==0 || bX==2)){
+				List<AxisAlignedBB> list=new ArrayList<>();
+				
+				list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
+
+				if(bX==0){
+					list.add(new AxisAlignedBB(0.5, 0.5, 0.5, 1.0, 1.0, 1.0));
+				}
+				if(bX==2){
+					list.add(new AxisAlignedBB(0.0, 0.5, 0.5, 0.5, 1.0, 1.0));
+				}
+				
+				return list;
+			}
+			
+			// Legs Bottom Back
+			if(bZ==3 && (bX==0 || bX==2)){
+				List<AxisAlignedBB> list=new ArrayList<>();
+				
+				list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
+
+				if(bX==0){
+					list.add(new AxisAlignedBB(0.5, 0.5, 0.0, 1.0, 1.0, 0.5));
+				}
+				if(bX==2){
+					list.add(new AxisAlignedBB(0.0, 0.5, 0.0, 0.5, 1.0, 0.5));
+				}
+				
+				return list;
+			}
+			
+			// Fluid Outputs
+			if(bZ==2 && (bX==0 || bX==2)){
+				return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+			}
+			
+			if(bX==1){
+				// Well
+				if(bZ==0){
+					return Arrays.asList(
+							new AxisAlignedBB(0.3125, 0.5, 0.8125, 0.6875, 0.875, 1.0),
+							new AxisAlignedBB(0.1875, 0, 0.1875, 0.8125, 1.0, 0.8125)
+					);
+				}
+				
+				// Pipes
+				if(bZ==1){
+					return Arrays.asList(
+							new AxisAlignedBB(0.3125, 0.5, 0.0, 0.6875, 0.875, 1.0),
+							new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0)
+					);
+				}
+				if(bZ==2){
+					return Arrays.asList(
+							new AxisAlignedBB(0.3125, 0.5, 0.0, 0.6875, 0.875, 0.6875),
+							new AxisAlignedBB(0.0, 0.5, 0.3125, 1.0, 0.875, 0.6875),
+							new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0)
+					);
+				}
+			}
+			
+			return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
+		}
+		
+		return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 		
 //		Direction fl = getFacing();
 //		Direction fw = getFacing().rotateY();

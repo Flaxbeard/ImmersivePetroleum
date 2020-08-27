@@ -10,7 +10,6 @@ import com.google.common.collect.ImmutableSet;
 
 import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.common.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
@@ -356,23 +355,6 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	@Override
 	protected boolean canDrainTankFrom(int iTank, Direction side){
 		return false;
-	}
-	
-	@OnlyIn(Dist.CLIENT)
-	@Override
-	public AxisAlignedBB getRenderBoundingBox(){ // TODO Needs rewrite probably
-		BlockPos nullPos = this.getPos();
-		
-		BlockPos a=nullPos.offset(getFacing(), -2).offset(getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY(), -1).down(1);
-		BlockPos b=nullPos.offset(getFacing(), 5).offset(getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY(), 2).up(3);
-		
-		return new AxisAlignedBB(a, b);
-	}
-	
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public double getMaxRenderDistanceSquared(){
-		return super.getMaxRenderDistanceSquared() * IEConfig.GENERAL.increasedTileRenderdistance.get();
 	}
 	
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(PumpjackTileEntity::getShape);

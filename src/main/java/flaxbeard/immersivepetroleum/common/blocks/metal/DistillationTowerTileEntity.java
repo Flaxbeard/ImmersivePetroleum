@@ -488,13 +488,6 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		return this.posInMultiblock.getY()>0 && (this.posInMultiblock.getX()==2 && this.posInMultiblock.getZ()==0);
 	}
 	
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public AxisAlignedBB getRenderBoundingBox(){
-		BlockPos pos = getPos();
-		return new AxisAlignedBB(pos.add(-4, -16, -4), pos.add(4, 16, 4));
-	}
-	
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(DistillationTowerTileEntity::getShape);
 	
 	@Override

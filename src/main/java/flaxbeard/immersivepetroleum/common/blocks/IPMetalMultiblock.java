@@ -23,7 +23,7 @@ public class IPMetalMultiblock extends MetalMultiblockBlock{
 	
 	@Override
 	public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer){
-		return layer==BlockRenderLayer.CUTOUT || layer==BlockRenderLayer.TRANSLUCENT;
+		return layer==BlockRenderLayer.CUTOUT;
 	}
 	
 	@Override

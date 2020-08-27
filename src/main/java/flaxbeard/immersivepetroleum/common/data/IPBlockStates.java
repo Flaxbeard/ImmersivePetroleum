@@ -123,16 +123,18 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	private void autolubricator(){
+		ResourceLocation texture=modLoc("models/lubricator");
+		
 		BlockModelBuilder lube_empty=withExistingParent("lube_empty", new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty"))
-				.texture("particle", new ResourceLocation("immersivepetroleum", "models/lubricator"));
+				.texture("particle", texture);
 		
 		LoadedModelBuilder lubeModel=this.loadedModels.withExistingParent(getPath(IPContent.Blocks.blockAutolubricator),
 				mcLoc("block"))
 				.loader(FORGE_LOADER)
 				.additional("model", modLoc("models/block/obj/autolubricator.obj"))
 				.additional("flip-v", true)
-				.texture("texture", new ResourceLocation("immersivepetroleum", "models/lubricator"))
-				.texture("particle", new ResourceLocation("immersivepetroleum", "models/lubricator"));
+				.texture("texture", texture)
+				.texture("particle", texture);
 		
 		VariantBlockStateBuilder lubeBuilder = getVariantBuilder(IPContent.Blocks.blockAutolubricator);
 		for(Direction dir:AutoLubricatorBlock.FACING.getAllowedValues()){
@@ -156,9 +158,10 @@ public class IPBlockStates extends BlockStateProvider{
 		basemodel.addProperty("model", modLoc("models/block/obj/generator.obj").toString());
 		basemodel.addProperty("flip-v", true);
 		
+		ResourceLocation texture=modLoc("block/obj/generator");
 		LoadedModelBuilder model=loadedModels.getBuilder(getPath(IPContent.Blocks.blockGasGenerator))
-			.texture("texture", modLoc("block/obj/generator"))
-			.texture("particle", modLoc("block/gen_bottom"))
+			.texture("texture", texture)
+			.texture("particle", texture)
 			.loader(ConnectionLoader.LOADER_NAME)
 			.additional("base_model", basemodel)
 			.additional("layers", Arrays.asList("TRANSLUCENT", "SOLID"))

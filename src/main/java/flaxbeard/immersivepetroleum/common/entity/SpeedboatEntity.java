@@ -68,6 +68,10 @@ public class SpeedboatEntity extends BoatEntity{
 		TYPE.setRegistryName(ImmersivePetroleum.MODID, "speedboat");
 	}
 	
+	public static DataParameter<Byte> getFlags(){
+		return FLAGS;
+	}
+
 	/** Storage for {@link ResourceLocation} using {@link ResourceLocation#toString()} */
 	static final DataParameter<String> TANK_FLUID = EntityDataManager.createKey(SpeedboatEntity.class, DataSerializers.STRING);
 	static final DataParameter<Integer> TANK_AMOUNT = EntityDataManager.createKey(SpeedboatEntity.class, DataSerializers.VARINT);
@@ -221,8 +225,8 @@ public class SpeedboatEntity extends BoatEntity{
 		ItemStack stack3=this.dataManager.get(UPGRADE_3);
 		
 		CompoundNBT tank=new CompoundNBT();
-		compound.putString("fluid", fluid);
-		compound.putInt("amount", amount);
+		tank.putString("fluid", fluid);
+		tank.putInt("amount", amount);
 		compound.put("tank", tank);
 		
 		CompoundNBT upgrades=new CompoundNBT();
@@ -616,10 +620,6 @@ public class SpeedboatEntity extends BoatEntity{
 	@Override
 	public Item getItemBoat(){
 		return Items.itemSpeedboat;
-	}
-	
-	public static DataParameter<Byte> getFlags(){
-		return FLAGS;
 	}
 	
 	public boolean isEmergency(){

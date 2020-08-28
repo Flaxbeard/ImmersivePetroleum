@@ -40,7 +40,8 @@ public class DebugItem extends IPItemBase{
 	
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn){
-		if(!worldIn.isRemote){
+		boolean skip=true;
+		if(!worldIn.isRemote && !skip){
 			if(playerIn.isSneaking()){ // TODO DEBUG: Remove later.
 				
 				int contentSize = PumpjackHandler.oilCache.size();

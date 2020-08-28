@@ -600,7 +600,7 @@ public class EventHandler{
 						if(font!=null){
 							Vec3d vec=boat.getMotion();
 							
-							float speed=(float)(100*Math.sqrt(vec.x*vec.x + vec.z*vec.z));
+							float speed=(float)(Math.sqrt(vec.x*vec.x + vec.z*vec.z));
 							
 							String out0=String.format(Locale.US, "Fuel: %s/%sMB", amount,capacity);
 							String out1=String.format(Locale.US, "Speed: %.2f", speed);

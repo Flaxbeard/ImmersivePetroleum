@@ -90,13 +90,16 @@ public class SpeedboatEntity extends BoatEntity{
 	public float lastMoving;
 	public float propellerRotation = 0F;
 	
-	public SpeedboatEntity(World world, double x, double y, double z){
-		this(TYPE, world);
-		setLocationAndAngles(x, y, z, 0.0F, 0.0F);
-	}
-	
 	public SpeedboatEntity(World world){
 		this(TYPE, world);
+	}
+	
+	public SpeedboatEntity(World world, double x, double y, double z){
+		this(TYPE, world);
+		setPosition(x, y, z);
+		this.prevPosX=x;
+		this.prevPosY=y;
+		this.prevPosZ=z;
 	}
 	
 	@Override
@@ -601,11 +604,11 @@ public class SpeedboatEntity extends BoatEntity{
 					}
 				}
 				
-				this.rotationYaw += this.deltaRotation;
-				
 				if(!this.leftInputDown && !this.rightInputDown){
 					this.propellerRotation *= 0.7F;
 				}
+				
+				this.rotationYaw += this.deltaRotation;
 				
 				this.setMotion(motion);
 				this.setPaddleState(this.rightInputDown && !this.leftInputDown || this.forwardInputDown, this.leftInputDown && !this.rightInputDown || this.forwardInputDown);

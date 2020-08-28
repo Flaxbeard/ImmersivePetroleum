@@ -1,7 +1,7 @@
 {
   "textures": {
     "texture": "immersivepetroleum:block/obj/generator",
-    "particle": "immersivepetroleum:block/gen_bottom"
+    "particle": "immersivepetroleum:block/obj/generator"
   },
   "loader": "immersiveengineering:connector",
   "base_model": {

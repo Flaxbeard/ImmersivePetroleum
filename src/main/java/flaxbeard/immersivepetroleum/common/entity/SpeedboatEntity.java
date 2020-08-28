@@ -586,8 +586,7 @@ public class SpeedboatEntity extends BoatEntity{
 				Vec3d motion=this.getMotion().add((double) (MathHelper.sin(-this.rotationYaw * ((float) Math.PI / 180F)) * f), 0.0D, (double) (MathHelper.cos(this.rotationYaw * ((float) Math.PI / 180F)) * f));
 				
 				if(this.leftInputDown || this.rightInputDown){
-					// sqrt is expensive, only do this when either of the above is down
-					float speed = (float) Math.sqrt(motion.x * motion.x + motion.z + motion.z);
+					float speed = (float)Math.sqrt(motion.x * motion.x + motion.z * motion.z);
 					
 					if(this.leftInputDown){
 						this.deltaRotation += -1.1F * speed * (this.hasRudders ? 1.5F : 1F) * (this.isBoosting ? 0.5F : 1) * (this.backInputDown && !this.forwardInputDown ? 2F : 1F);

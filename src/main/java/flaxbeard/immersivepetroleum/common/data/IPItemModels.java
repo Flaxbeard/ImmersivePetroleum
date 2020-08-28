@@ -1,8 +1,11 @@
 package flaxbeard.immersivepetroleum.common.data;
 
+import javax.vecmath.Vector3d;
+
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.data.models.LoadedModelBuilder;
 import blusunrize.immersiveengineering.common.data.models.LoadedModelProvider;
+import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
@@ -12,6 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
+import net.minecraftforge.client.model.generators.ModelBuilder.Perspective;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 
 public class IPItemModels extends LoadedModelProvider{
@@ -50,15 +54,66 @@ public class IPItemModels extends LoadedModelProvider{
 		obj(IPContent.Blocks.blockGasGenerator, "block/obj/generator.obj")
 			.texture("texture", modLoc("block/obj/generator"));
 		
-		obj(IPContent.Multiblock.distillationtower, "multiblock/obj/distillationtower.obj")
-			.texture("texture", modLoc("multiblock/distillation_tower"));
+		distillationtowerItem();
 		
-		// TODO Convert Pumpjack model to OBJ
+		// TODO Make a mock-up Pumpjack OBJ model for Item display use.
 //		obj(IPContent.Multiblock.pumpjack, "multiblock/obj/pumpjack.obj")
 //			.texture("texture", modLoc("multiblock/pumpjack"));
 		
 		for(IPFluid f:IPFluid.LIST)
 			createBucket(f);
+	}
+	
+	// Doing that manualy for transforms and stuff.
+	private void distillationtowerItem(){
+		LoadedModelBuilder model=obj(IPContent.Multiblock.distillationtower, "multiblock/obj/distillationtower.obj")
+			.texture("texture", modLoc("multiblock/distillation_tower"));
+		
+		// Translation Vector in MC-PIXELS (1/16 = 1 MC-Pixel)
+		model.transformationMap()
+			.setTransformations(Perspective.FIRSTPERSON_LEFT,
+					createMatrix(new Vector3d(-1.75, 2.5, 1.25), new Vector3d(0, 225, 0), 0.03125))
+			
+			.setTransformations(Perspective.FIRSTPERSON_RIGHT,
+					createMatrix(new Vector3d(-1.75, 2.5, 1.75), new Vector3d(0, 225, 0), 0.03125))
+			
+			.setTransformations(Perspective.THIRDPERSON_LEFT,
+					createMatrix(new Vector3d(-0.75, -5, -1.25), new Vector3d(0, 90, 0), 0.03125))
+			
+			.setTransformations(Perspective.THIRDPERSON_RIGHT,
+					createMatrix(new Vector3d(1.0, -5, -1.75), new Vector3d(0, 270, 0), 0.03125))
+			
+			.setTransformations(Perspective.HEAD,
+					createMatrix(new Vector3d(-4.75, 8, -4.75), null, 0.2))
+			
+			.setTransformations(Perspective.GUI,
+					createMatrix(new Vector3d(3, -6, 0), new Vector3d(30, 225, 0), 0.0625))
+			
+			.setTransformations(Perspective.GROUND,
+					createMatrix(new Vector3d(-1.5, 3, -1.5), null, 0.0625))
+			
+			.setTransformations(Perspective.FIXED,
+					createMatrix(new Vector3d(-1, -8, -2), null, 0.0625))
+			;
+	}
+	
+	private Matrix4 createMatrix(Vector3d translation, Vector3d rotationAngle, double scale){
+		Matrix4 mat=new Matrix4().setIdentity();
+		mat.translate(translation.x/16D, translation.y/16D, translation.z/16D);
+		
+		if(rotationAngle!=null){
+			if(rotationAngle.x!=0.0)
+				mat.rotate(Math.toRadians(rotationAngle.x), 1, 0, 0);
+			
+			if(rotationAngle.y!=0.0)
+				mat.rotate(Math.toRadians(rotationAngle.y), 0, 1, 0);
+			
+			if(rotationAngle.z!=0.0)
+				mat.rotate(Math.toRadians(rotationAngle.z), 0, 0, 1);
+		}
+		
+		mat.scale(scale, scale, scale);
+		return mat;
 	}
 	
 	private LoadedModelBuilder obj(IItemProvider item, String model){

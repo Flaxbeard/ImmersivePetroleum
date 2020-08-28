@@ -58,7 +58,6 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
-// FIXME Invalid move vehicle packet received. SOMEWHERE!
 public class SpeedboatEntity extends BoatEntity{
 	
 	public static final EntityType<SpeedboatEntity> TYPE = EntityType.Builder.<SpeedboatEntity>create(SpeedboatEntity::new, EntityClassification.MISC)
@@ -102,14 +101,14 @@ public class SpeedboatEntity extends BoatEntity{
 		this.prevPosZ=z;
 	}
 	
-	@Override
-	public EntityType<?> getType(){
-		return TYPE;
-	}
-	
 	public SpeedboatEntity(EntityType<SpeedboatEntity> type, World world){
 		super(type, world);
 		this.preventEntitySpawning = true;
+	}
+	
+	@Override
+	public EntityType<?> getType(){
+		return TYPE;
 	}
 	
 	@Override
@@ -439,19 +438,19 @@ public class SpeedboatEntity extends BoatEntity{
 			}
 		}
 		
-		if(!this.isEmergency()){
-			if(this.getPaddleState(0)){
-				this.paddlePositions[0] = (float) ((double) this.paddlePositions[0] + (isBoosting ? 0.02D : 0.01D));
-			}else if(this.getPaddleState(1)){
-				this.paddlePositions[0] = (float) ((double) this.paddlePositions[0] - 0.01D);
-			}
-		}else{
+		if(this.isEmergency()){
 			for(int i = 0;i <= 1;++i){
 				if(this.getPaddleState(i)){
 					this.paddlePositions[i] = (float)((double)this.paddlePositions[i] + (double)((float)Math.PI / 4F));
 				}else{
 					this.paddlePositions[i] = 0.0F;
 				}
+			}
+		}else{
+			if(this.getPaddleState(0)){
+				this.paddlePositions[0] = (float) ((double) this.paddlePositions[0] + (isBoosting ? 0.02D : 0.01D));
+			}else if(this.getPaddleState(1)){
+				this.paddlePositions[0] = (float) ((double) this.paddlePositions[0] - 0.01D);
 			}
 		}
 		
@@ -561,15 +560,15 @@ public class SpeedboatEntity extends BoatEntity{
 				if(fluid != FluidStack.EMPTY && fluid.getAmount() >= consumeAmount && (this.forwardInputDown || this.backInputDown)){
 					int toConsume = consumeAmount;
 					if(this.forwardInputDown){
-						f += 0.06F;
+						f += 0.05F;
 						if(this.isBoosting && fluid.getAmount() >= 3 * consumeAmount){
-							f *= 1.4;
+							f *= 1.6;
 							toConsume *= 3;
 						}
 					}
 					
 					if(this.backInputDown){
-						f -= 0.005F;
+						f -= 0.01F;
 					}
 					
 					fluid.setAmount(Math.max(0, fluid.getAmount() - toConsume));
@@ -589,7 +588,7 @@ public class SpeedboatEntity extends BoatEntity{
 					float speed = (float)Math.sqrt(motion.x * motion.x + motion.z * motion.z);
 					
 					if(this.leftInputDown){
-						this.deltaRotation += -1.1F * speed * (this.hasRudders ? 1.5F : 1F) * (this.isBoosting ? 0.5F : 1) * (this.backInputDown && !this.forwardInputDown ? 2F : 1F);
+						this.deltaRotation -= 1.1F * speed * (this.hasRudders ? 1.5F : 1F) * (this.isBoosting ? 0.5F : 1) * (this.backInputDown && !this.forwardInputDown ? 2F : 1F);
 						if(this.propellerRotation > -1F){
 							this.propellerRotation -= 0.2F;
 						}
@@ -610,7 +609,7 @@ public class SpeedboatEntity extends BoatEntity{
 				this.rotationYaw += this.deltaRotation;
 				
 				this.setMotion(motion);
-				this.setPaddleState(this.rightInputDown && !this.leftInputDown || this.forwardInputDown, this.leftInputDown && !this.rightInputDown || this.forwardInputDown);
+				this.setPaddleState((this.rightInputDown && !this.leftInputDown || this.forwardInputDown), (this.leftInputDown && !this.rightInputDown || this.forwardInputDown));
 			}
 		}
 	}

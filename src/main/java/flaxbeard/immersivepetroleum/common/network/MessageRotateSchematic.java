@@ -41,8 +41,8 @@ public class MessageRotateSchematic implements IMessage{
 				ItemStack mainItem = p.getHeldItemMainhand();
 				ItemStack secondItem = p.getHeldItemOffhand();
 				
-				boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
-				boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
+				boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.projector && ItemNBTHelper.hasKey(mainItem, "multiblock");
+				boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.projector && ItemNBTHelper.hasKey(secondItem, "multiblock");
 				
 				ItemStack target = main ? mainItem : secondItem;
 				

@@ -11,7 +11,7 @@
 	
 	"block.immersivepetroleum.asphalt": "Asphalt Concrete",
 	
-	"block.immersivepetroleum.automatic_lubricator": "Automatic Lubricator",
+	"block.immersivepetroleum.auto_lubricator": "Automatic Lubricator",
 	"block.immersivepetroleum.gas_generator": "Portable Generator",
 	
 	"block.immersivepetroleum.pumpjack": "Pumpjack",
@@ -54,11 +54,11 @@
 	"desc.immersivepetroleum.info.reservoir.aquifer": "Aquifer",
 	"desc.immersivepetroleum.info.reservoir.lava": "Magma Chamber",
 	
-	"desc.immersivepetroleum.flavour.upgrades.reinforced_hull": "Makes Motorboat fire resistant and increases its health",
-	"desc.immersivepetroleum.flavour.upgrades.icebreaker": "Allows Motorboat to destroy ice and harm mobs",
-	"desc.immersivepetroleum.flavour.upgrades.tank": "Increases fuel tank capacity for Motorboat",
-	"desc.immersivepetroleum.flavour.upgrades.rudders": "Allows for tighter turns in the Motorboat",
-	"desc.immersivepetroleum.flavour.upgrades.paddles": "Can paddle Motorboat when out of fuel",
+	"desc.immersivepetroleum.flavour.upgrade_reinforced_hull": "Makes Motorboat fire resistant and increases its health",
+	"desc.immersivepetroleum.flavour.upgrade_icebreaker": "Allows Motorboat to destroy ice and harm mobs",
+	"desc.immersivepetroleum.flavour.upgrade_tank": "Increases fuel tank capacity for Motorboat",
+	"desc.immersivepetroleum.flavour.upgrade_rudders": "Allows for tighter turns in the Motorboat",
+	"desc.immersivepetroleum.flavour.upgrade_paddles": "Can paddle Motorboat when out of fuel",
 	
 	"_comment": "################## IE-Manual ##################",
 	"_comment": "Everything with _ at the start is temporarly disabled basicly!",
@@ -119,22 +119,27 @@
 	
 	"ie.manual.entry.reservoirs.title": "Fluid Reservoirs",
 	"ie.manual.entry.reservoirs.subtitle": "Black gold",
-	"ie.manual.entry.reservoirs.oil": "While mining near bedrock, you've occasionally noticed a slick black flammable substance: oil. Oil is just one of many fluids that can be found underneath the impenetrable rock, but you won't be able to breach these reserves on your own.<br><br>With the help of a <link;pumpjack;§o§nspecially §o§ndesigned §o§nmachine§r> you may be able to get your hands on the contents of these reservoirs.<np><&oil1>The <link;minerals;§o§nCore §o§nSample §o§nDrill§r> will determine whether a reservoir can be found in a specific chunk and gives insight into the size of the fluid deposit.<br><br>Despite the finite volume of fluid in each chunk, certain types of reservoirs may have trace amounts of fluid that can still be harvested after the chunk is depleted. Using more than one Pumpjack in a depleted chunk does not provide any benefit.",
+	
+	"ie.manual.entry.reservoirs.oil0": "While mining near bedrock, you've occasionally noticed a slick black flammable substance: oil. Oil is just one of many fluids that can be found underneath the impenetrable rock, but you won't be able to breach these reserves on your own.\n\nWith the help of a <link;immersivepetroleum:pumpjack;§o§nspecially §o§ndesigned §o§nmachine§r> you may be able to get your hands on the contents of these reservoirs.<np>",
+	"ie.manual.entry.reservoirs.oil1": "The <link;minerals;§o§nCore §o§nSample §o§nDrill§r> will determine whether a reservoir can be found in a specific chunk and gives insight into the size of the fluid deposit.\n\nDespite the finite volume of fluid in each chunk, certain types of reservoirs may have trace amounts of fluid that can still be harvested after the chunk is depleted. Using more than one Pumpjack in a depleted chunk does not provide any benefit.<np>",
 	
 	"ie.manual.entry.reservoirs.consonant": "A",
 	"ie.manual.entry.reservoirs.vowel": "An",
-	"ie.manual.entry.reservoirs.content": "%1$s %6$s<br>It contains %3$s to %4$s mB of %2$s.%5$s",
+	
 	"ie.manual.entry.reservoirs.dim.valid": "%3$s §l%1$s§r is a type of fluid reservoir that can be found in %2$s.",
 	"ie.manual.entry.reservoirs.dim.invalid": "%3$s §l%1$s§r is a type of fluid reservoir that can be found anywhere but in %2$s.",
 	"ie.manual.entry.reservoirs.dim.any": "%2$s §l%1$s§r is a type of fluid reservoir that can be found in any Dimension.",
+	
 	"ie.manual.entry.reservoirs.bio.valid": "This reservoir will generate in %s Biomes.",
 	"ie.manual.entry.reservoirs.bio.invalid": "This reservoir will not generate in %s Biomes.",
 	"ie.manual.entry.reservoirs.bio.any": "This reservoir will generate in any Biome.",
-	"ie.manual.entry.reservoirs.replenish": "<br>After the reservoir is depleted, %1$d mB/tick of trace %2$s can be extracted by a single Pumpjack.",
+	
+	"ie.manual.entry.reservoirs.content": "%1$s %6$s\nIt contains %3$s to %4$s mB of %2$s.%5$s",
+	"ie.manual.entry.reservoirs.replenish": "\nAfter the reservoir is depleted, %1$d mB/tick of trace %2$s can be extracted by a single Pumpjack.",
 	
 	"_comment": "################## Chat ##################",
 	
-	"chat.immersivepetroleum.command.help.help": "§6Usage: /ip help <command> [sub-commands ...]§r<br> To get more info on the specified command or, optionally, its sub commands",
+	"chat.immersivepetroleum.command.help.help": "§6Usage: /ip help <command> [sub-commands ...]§r\nTo get more info on the specified command or, optionally, its sub commands",
 	"chat.immersivepetroleum.command.reservoir.help": "§6Usage: /ip reservoir <list|get|set|setAmount|setCapacity>§r",
 	"chat.immersivepetroleum.command.reservoir.list.help": "§6Usage: /ip reservoir list§r<br> Lists all registered reservoirs",
 	"chat.immersivepetroleum.command.reservoir.get.help": "§6Usage: /ip reservoir get§r<br> Displays the reservoir for the chunk",

@@ -1,0 +1,10 @@
+{
+	"schematics0":{
+		"type": "crafting",
+		"recipe": "immersivepetroleum:projector"
+	},
+	"schematics1":{
+		"type": "crafting",
+		"recipe": "immersivepetroleum:projector_crafting"
+	}
+}

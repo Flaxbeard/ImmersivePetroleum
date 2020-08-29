@@ -2,26 +2,36 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "immersivepetroleum:icebreaker"
+      "immersivepetroleum:generator"
     ]
   },
   "criteria": {
-    "has_steel_ingot": {
+    "has_iron_plate": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/steel"
+            "tag": "forge:plates/iron"
           }
         ]
       }
     },
-    "has_steel_block": {
+    "has_capacitor_lv": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "tag": "forge:storage_blocks/steel"
+            "item": "immersiveengineering:capacitor_lv"
+          }
+        ]
+      }
+    },
+    "has_generator": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "immersiveengineering:generator"
           }
         ]
       }
@@ -29,14 +39,15 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "immersivepetroleum:icebreaker"
+        "recipe": "immersivepetroleum:generator"
       }
     }
   },
   "requirements": [
     [
-      "has_steel_ingot",
-      "has_steel_block",
+      "has_iron_plate",
+      "has_capacitor_lv",
+      "has_generator",
       "has_the_recipe"
     ]
   ]

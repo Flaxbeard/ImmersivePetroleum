@@ -68,7 +68,7 @@ public class ProjectorCraftingHandler implements ICraftingRecipe{
 				remaining = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
 				remaining.set(manualStack, manual.copy());
 				String last = ItemNBTHelper.getString(manual, "lastMultiblock");
-				ItemStack op = new ItemStack(Items.itemProjector, 1);
+				ItemStack op = new ItemStack(Items.projector, 1);
 				ItemNBTHelper.putString(op, "multiblock", last);
 				ProjectorItem.setFlipped(op, true);
 				output = op;
@@ -90,7 +90,7 @@ public class ProjectorCraftingHandler implements ICraftingRecipe{
 						}else{
 							return false;
 						}
-					}else if(stack.getItem() == Items.itemProjector){
+					}else if(stack.getItem() == Items.projector){
 						if(!hasProjector){
 							hasProjector = true;
 						}else{

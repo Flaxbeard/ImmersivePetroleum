@@ -2,7 +2,7 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "immersivepetroleum:paddles"
+      "immersivepetroleum:auto_lubricator"
     ]
   },
   "criteria": {
@@ -16,16 +16,27 @@
         ]
       }
     },
+    "has_fluid_pipe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "immersiveengineering:fluid_pipe"
+          }
+        ]
+      }
+    },
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "immersivepetroleum:paddles"
+        "recipe": "immersivepetroleum:auto_lubricator"
       }
     }
   },
   "requirements": [
     [
       "has_treated_planks",
+      "has_fluid_pipe",
       "has_the_recipe"
     ]
   ]

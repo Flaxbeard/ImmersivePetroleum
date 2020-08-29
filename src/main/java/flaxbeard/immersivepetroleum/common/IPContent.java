@@ -72,37 +72,37 @@ public class IPContent{
 	}
 	
 	public static class Fluids{
-		public static IPFluid fluidCrudeOil;
-		public static IPFluid fluidDiesel;
-		public static IPFluid fluidLubricant;
-		public static IPFluid fluidGasoline;
-		public static IPFluid fluidNapalm;
+		public static IPFluid crudeOil;
+		public static IPFluid diesel;
+		public static IPFluid lubricant;
+		public static IPFluid gasoline;
+		public static IPFluid napalm;
 	}
 	
 	public static class Blocks{
-		public static IPBlockBase blockAsphalt;
+		public static IPBlockBase asphalt;
 		
-		public static IPBlockBase blockGasGenerator;
-		public static IPBlockBase blockAutolubricator;
+		public static IPBlockBase gas_generator;
+		public static IPBlockBase auto_lubricator;
 		
-		public static BlockDummy dummyBlockOilOre;
-		public static BlockDummy dummyBlockPipe;
-		public static BlockDummy dummyBlockConveyor;
+		public static BlockDummy dummyOilOre;
+		public static BlockDummy dummyPipe;
+		public static BlockDummy dummyConveyor;
 	}
 	
 	public static class Items{
-		public static IPItemBase itemBitumen;
-		public static IPItemBase itemProjector;
-		public static IPItemBase itemSpeedboat;
-		public static IPItemBase itemOilCan;
+		public static IPItemBase bitumen;
+		public static IPItemBase projector;
+		public static IPItemBase speedboat;
+		public static IPItemBase oil_can;
 	}
 	
 	public static class BoatUpgrades{
-		public static IPUpgradeItem itemUpgradeHull;
-		public static IPUpgradeItem itemUpgradeBreaker;
-		public static IPUpgradeItem itemUpgradeTank;
-		public static IPUpgradeItem itemUpgradeRudders;
-		public static IPUpgradeItem itemUpgradePaddles;
+		public static IPUpgradeItem reinforced_hull;
+		public static IPUpgradeItem ice_breaker;
+		public static IPUpgradeItem tank;
+		public static IPUpgradeItem rudders;
+		public static IPUpgradeItem paddles;
 	}
 
 	public static DebugItem debugItem;
@@ -111,49 +111,45 @@ public class IPContent{
 	public static void populate(){
 		IPContent.debugItem=new DebugItem();
 		
-		Fluids.fluidCrudeOil = new IPFluid("oil",
+		Fluids.crudeOil = new IPFluid("oil",
 				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/oil_still"),
 				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/oil_flow"), IPFluid.createBuilder(1000, 2250));
 		
-		Fluids.fluidDiesel = new IPFluid("diesel",
+		Fluids.diesel = new IPFluid("diesel",
 				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/diesel_still"),
 				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/diesel_flow"), IPFluid.createBuilder(789, 1750));
 		
-		Fluids.fluidLubricant = new IPFluid("lubricant",
+		Fluids.lubricant = new IPFluid("lubricant",
 				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/lubricant_still"),
 				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/lubricant_flow"), IPFluid.createBuilder(925, 1000));
 		
-		Fluids.fluidGasoline = new IPFluid("gasoline",
+		Fluids.gasoline = new IPFluid("gasoline",
 				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/gasoline_still"),
 				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/gasoline_flow"), IPFluid.createBuilder(789, 1200));
 		
-		Fluids.fluidNapalm = new IPFluid("napalm",
+		Fluids.napalm = new IPFluid("napalm",
 				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/napalm_still"),
 				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/napalm_flow"), IPFluid.createBuilder(1000, 4000));
 		
-		//blockMetalDevice = new BlockIPMetalDevice();
+		Blocks.asphalt=new IPBlockBase("asphalt", Block.Properties.create(Material.ROCK).hardnessAndResistance(2.0F, 10.0F));
+		Blocks.gas_generator=new GasGeneratorBlock();
 		
-		Blocks.blockAsphalt=new IPBlockBase("asphalt", Block.Properties.create(Material.ROCK).hardnessAndResistance(2.0F, 10.0F));
-		Blocks.blockGasGenerator=new GasGeneratorBlock();
+		Blocks.auto_lubricator=new AutoLubricatorBlock("auto_lubricator");
 		
-		Blocks.blockAutolubricator=new AutoLubricatorBlock("auto_lubricator");
+		Blocks.dummyOilOre=new BlockDummy("dummy_oil_ore");
+		Blocks.dummyPipe=new BlockDummy("dummy_pipe");
+		Blocks.dummyConveyor=new BlockDummy("dummy_conveyor");
 		
-		Blocks.dummyBlockOilOre=new BlockDummy("dummy_oil_ore");
-		Blocks.dummyBlockPipe=new BlockDummy("dummy_pipe");
-		Blocks.dummyBlockConveyor=new BlockDummy("dummy_conveyor");
+		Items.bitumen = new IPItemBase("bitumen");
+		Items.projector = new ProjectorItem("projector");
+		Items.speedboat = new SpeedboatItem("speedboat");
+		Items.oil_can = new OilCanItem("oil_can");
 		
-		Items.itemBitumen = new IPItemBase("bitumen");
-		
-		Items.itemProjector = new ProjectorItem("projector");
-		Items.itemSpeedboat = new SpeedboatItem("speedboat");
-		
-		BoatUpgrades.itemUpgradeHull = new IPUpgradeItem("reinforced_hull", "BOAT");
-		BoatUpgrades.itemUpgradeBreaker = new IPUpgradeItem("icebreaker", "BOAT");
-		BoatUpgrades.itemUpgradeTank = new IPUpgradeItem("tank", "BOAT");
-		BoatUpgrades.itemUpgradeRudders = new IPUpgradeItem("rudders", "BOAT");
-		BoatUpgrades.itemUpgradePaddles = new IPUpgradeItem("paddles", "BOAT");
-		
-		Items.itemOilCan = new OilCanItem("oil_can");
+		BoatUpgrades.reinforced_hull = new IPUpgradeItem("reinforced_hull", "BOAT");
+		BoatUpgrades.ice_breaker = new IPUpgradeItem("icebreaker", "BOAT");
+		BoatUpgrades.tank = new IPUpgradeItem("tank", "BOAT");
+		BoatUpgrades.rudders = new IPUpgradeItem("rudders", "BOAT");
+		BoatUpgrades.paddles = new IPUpgradeItem("paddles", "BOAT");
 		
 		Multiblock.distillationtower=new DistillationTowerBlock();
 		Multiblock.pumpjack=new PumpjackBlock();
@@ -168,13 +164,13 @@ public class IPContent{
 		//blockFluidLubricant.setPotionEffects(new PotionEffect(IEPotions.slippery, 100, 1));
 		//blockFluidNapalm.setPotionEffects(new PotionEffect(IEPotions.flammable, 140, 2));
 		
-		ChemthrowerHandler.registerEffect(Fluids.fluidLubricant, new LubricantEffect());
-		ChemthrowerHandler.registerEffect(Fluids.fluidLubricant, new ChemthrowerEffect_Potion(null, 0, IEPotions.slippery, 60, 1));
+		ChemthrowerHandler.registerEffect(Fluids.lubricant, new LubricantEffect());
+		ChemthrowerHandler.registerEffect(Fluids.lubricant, new ChemthrowerEffect_Potion(null, 0, IEPotions.slippery, 60, 1));
 		ChemthrowerHandler.registerEffect(IEContent.fluidPlantoil, new LubricantEffect());
-		ChemthrowerHandler.registerEffect(Fluids.fluidGasoline, new ChemthrowerEffect_Potion(null, 0, IEPotions.flammable, 60, 1));
-		ChemthrowerHandler.registerFlammable(Fluids.fluidGasoline);
-		ChemthrowerHandler.registerEffect(Fluids.fluidNapalm, new ChemthrowerEffect_Potion(null, 0, IEPotions.flammable, 60, 2));
-		ChemthrowerHandler.registerFlammable(Fluids.fluidNapalm);
+		ChemthrowerHandler.registerEffect(Fluids.gasoline, new ChemthrowerEffect_Potion(null, 0, IEPotions.flammable, 60, 1));
+		ChemthrowerHandler.registerFlammable(Fluids.gasoline);
+		ChemthrowerHandler.registerEffect(Fluids.napalm, new ChemthrowerEffect_Potion(null, 0, IEPotions.flammable, 60, 2));
+		ChemthrowerHandler.registerFlammable(Fluids.napalm);
 		
 		MultiblockHandler.registerMultiblock(DistillationTowerMultiblock.INSTANCE);
 		MultiblockHandler.registerMultiblock(PumpjackMultiblock.INSTANCE);
@@ -182,12 +178,12 @@ public class IPContent{
 		IPConfig.Utils.addFuel(IPConfig.GENERATION.fuels.get());
 		IPConfig.Utils.addBoatFuel(IPConfig.MISCELLANEOUS.boat_fuels.get());
 		
-		DieselHandler.registerFuel(Fluids.fluidDiesel, 150);
+		DieselHandler.registerFuel(Fluids.diesel, 150);
 		
 		// TODO SchematicCraftingHandler
 		//ForgeRegistries.RECIPES.register(new SchematicCraftingHandler().setRegistryName(ImmersivePetroleum.MODID, "projector"));
 		
-		LubricantHandler.registerLubricant(Fluids.fluidLubricant, 3);
+		LubricantHandler.registerLubricant(Fluids.lubricant, 3);
 		LubricantHandler.registerLubricant(IEContent.fluidPlantoil, 12);
 		
 		LubricatedHandler.registerLubricatedTile(PumpjackTileEntity.class, new PumpjackLubricationHandler());
@@ -199,9 +195,9 @@ public class IPContent{
 	public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event){
 		registerTile(event, DistillationTowerTileEntity.class, Multiblock.distillationtower);
 		registerTile(event, PumpjackTileEntity.class, Multiblock.pumpjack);
-		registerTile(event, AutoLubricatorTileEntity.class, Blocks.blockAutolubricator);
+		registerTile(event, AutoLubricatorTileEntity.class, Blocks.auto_lubricator);
 		
-		registerTile(event, GasGeneratorTileEntity.class, Blocks.blockGasGenerator);
+		registerTile(event, GasGeneratorTileEntity.class, Blocks.gas_generator);
 	}
 	
 	/**

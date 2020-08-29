@@ -12,15 +12,15 @@ import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import net.minecraft.item.ItemStack;
 
 public class ManualElementSchematicCrafting extends ManualElementCrafting{
-	@SuppressWarnings("unchecked")
-	public ManualElementSchematicCrafting(ManualInstance manual, String text, Object stack){
-		super(manual, text, stack);
+	@SuppressWarnings({"unchecked", "unused"})
+	public ManualElementSchematicCrafting(ManualInstance manual, Object stack){
+		super(manual, stack);
 		
 		List<PositionedItemStack[]>[] recipes = (List<PositionedItemStack[]>[]) new List[10]; // It changed to this.
 		
 		int xBase = (120 - (5) * 18) / 2;
 		
-		ItemStack schematic = new ItemStack(Items.itemProjector);
+		ItemStack schematic = new ItemStack(Items.projector);
 		ItemNBTHelper.putString(schematic, "multiblock", IEMultiblocks.ARC_FURNACE.getUniqueName().toString());
 		
 		// Init crafting slots with "air"
@@ -32,7 +32,7 @@ public class ManualElementSchematicCrafting extends ManualElementCrafting{
 		}
 		
 		pIngredients[0] = new PositionedItemStack(new ItemStack(IEItems.Tools.manual, 1), xBase, 0);
-		pIngredients[1] = new PositionedItemStack(new ItemStack(Items.itemProjector, 1), xBase + 18, 0);
+		pIngredients[1] = new PositionedItemStack(new ItemStack(Items.projector, 1), xBase + 18, 0);
 		pIngredients[9] = new PositionedItemStack(schematic, xBase + 3 * 18 + 18, (int) (3 / 2f * 18) - 8);
 		//recipes.put(stack, pIngredients);
 		

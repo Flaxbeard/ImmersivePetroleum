@@ -417,6 +417,11 @@ public class PumpjackHandler{
 			return nbt;
 		}
 		
+		@Override
+		public String toString(){
+			return this.writeToNBT().toString();
+		}
+		
 		private List<ResourceLocation> toList(ListNBT nbtList){
 			List<ResourceLocation> list=new ArrayList<>(0);
 			if(nbtList.size()>0){

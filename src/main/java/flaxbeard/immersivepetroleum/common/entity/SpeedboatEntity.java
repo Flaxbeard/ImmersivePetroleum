@@ -142,15 +142,15 @@ public class SpeedboatEntity extends BoatEntity{
 			NonNullList<ItemStack> upgrades = getUpgrades();
 			for(ItemStack upgrade:upgrades){
 				if(upgrade != null && upgrade!=ItemStack.EMPTY){
-					if(upgrade.getItem() == BoatUpgrades.itemUpgradeHull){
+					if(upgrade.getItem() == BoatUpgrades.reinforced_hull){
 						this.isFireproof = true;
-					}else if(upgrade.getItem() == BoatUpgrades.itemUpgradeBreaker){
+					}else if(upgrade.getItem() == BoatUpgrades.ice_breaker){
 						this.hasIcebreaker = true;
-					}else if(upgrade.getItem() == BoatUpgrades.itemUpgradeTank){
+					}else if(upgrade.getItem() == BoatUpgrades.tank){
 						this.hasTank = true;
-					}else if(upgrade.getItem() == BoatUpgrades.itemUpgradeRudders){
+					}else if(upgrade.getItem() == BoatUpgrades.rudders){
 						this.hasRudders = true;
-					}else if(upgrade.getItem() == BoatUpgrades.itemUpgradePaddles){
+					}else if(upgrade.getItem() == BoatUpgrades.paddles){
 						this.hasPaddles = true;
 					}
 				}
@@ -620,7 +620,7 @@ public class SpeedboatEntity extends BoatEntity{
 	
 	@Override
 	public Item getItemBoat(){
-		return Items.itemSpeedboat;
+		return Items.speedboat;
 	}
 	
 	public boolean isEmergency(){

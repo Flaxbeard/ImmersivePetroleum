@@ -521,7 +521,7 @@ public class ProjectorItem extends IPItemBase{
 		}
 		
 		if(block == IEBlocks.MetalDevices.fluidPipe){
-			event.setState(IPContent.Blocks.dummyBlockPipe.getDefaultState());
+			event.setState(IPContent.Blocks.dummyPipe.getDefaultState());
 			
 		}else if(block == MetalDevices.CONVEYORS.get(BasicConveyor.NAME)){
 			Direction facing=state.get(IEProperties.FACING_HORIZONTAL);
@@ -592,11 +592,11 @@ public class ProjectorItem extends IPItemBase{
 				if(mc.player != null){
 					ItemStack secondItem = mc.player.getHeldItemOffhand();
 					
-					boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
+					boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.projector && ItemNBTHelper.hasKey(secondItem, "multiblock");
 					
 					for(int i = 0;i <= 10;i++){
 						ItemStack stack = (i == 10 ? secondItem : mc.player.inventory.getStackInSlot(i));
-						if(!stack.isEmpty() && stack.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(stack, "multiblock")){
+						if(!stack.isEmpty() && stack.getItem() == Items.projector && ItemNBTHelper.hasKey(stack, "multiblock")){
 							GlStateManager.pushMatrix();
 							{
 								renderSchematic(stack, mc.player, mc.player.world, event.getPartialTicks(), i == mc.player.inventory.currentItem || (i == 10 && off));
@@ -930,8 +930,8 @@ public class ProjectorItem extends IPItemBase{
 				ItemStack mainItem = player.getHeldItemMainhand();
 				ItemStack secondItem = player.getHeldItemOffhand();
 				
-				boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
-				boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
+				boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.projector && ItemNBTHelper.hasKey(mainItem, "multiblock");
+				boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.projector && ItemNBTHelper.hasKey(secondItem, "multiblock");
 				ItemStack target = main ? mainItem : secondItem;
 				
 				if(main || off){
@@ -978,8 +978,8 @@ public class ProjectorItem extends IPItemBase{
 			ItemStack mainItem = player.getHeldItemMainhand();
 			ItemStack secondItem = player.getHeldItemOffhand();
 			
-			boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(mainItem, "multiblock");
-			boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.itemProjector && ItemNBTHelper.hasKey(secondItem, "multiblock");
+			boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.projector && ItemNBTHelper.hasKey(mainItem, "multiblock");
+			boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.projector && ItemNBTHelper.hasKey(secondItem, "multiblock");
 			ItemStack target = main ? mainItem : secondItem;
 			
 			if(main || off){

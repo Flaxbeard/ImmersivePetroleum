@@ -70,7 +70,7 @@ public class IPRecipes extends RecipeProvider{
 			.build(this.out, rl("reservoirs/aquifer"));
 		
 		// Shorthand for the above. (name   fluid                           min       max        trace  weight)
-		ReservoirTypeBuilder.builder("oil", IPContent.Fluids.fluidCrudeOil, 2500.000, 15000.000, 0.006, 40)
+		ReservoirTypeBuilder.builder("oil", IPContent.Fluids.crudeOil, 2500.000, 15000.000, 0.006, 40)
 			.addDimensions(true, DimensionType.THE_END.getRegistryName()) // false = Whitelist, true = blacklist
 			.build(this.out, rl("reservoirs/oil"));
 		
@@ -89,18 +89,18 @@ public class IPRecipes extends RecipeProvider{
 		// setEnergy and setTime are 2048 and 1 by default. But still allows to be customized.
 		
 		DistillationRecipeBuilder.builder(new FluidStack[]{
-				new FluidStack(flaxbeard.immersivepetroleum.common.IPContent.Fluids.fluidLubricant, 9),
-				new FluidStack(flaxbeard.immersivepetroleum.common.IPContent.Fluids.fluidDiesel, 27),
-				new FluidStack(flaxbeard.immersivepetroleum.common.IPContent.Fluids.fluidGasoline, 39)})
-			.addByproduct(new ItemStack(flaxbeard.immersivepetroleum.common.IPContent.Items.itemBitumen), 0.07)
-			.addInput(flaxbeard.immersivepetroleum.common.IPContent.Fluids.fluidCrudeOil, 75)
+				new FluidStack(flaxbeard.immersivepetroleum.common.IPContent.Fluids.lubricant, 9),
+				new FluidStack(flaxbeard.immersivepetroleum.common.IPContent.Fluids.diesel, 27),
+				new FluidStack(flaxbeard.immersivepetroleum.common.IPContent.Fluids.gasoline, 39)})
+			.addByproduct(new ItemStack(flaxbeard.immersivepetroleum.common.IPContent.Items.bitumen), 0.07)
+			.addInput(flaxbeard.immersivepetroleum.common.IPContent.Fluids.crudeOil, 75)
 			.setEnergy(2048)
 			.setTime(1)
 			.build(this.out, rl("distillationtower/oilcracking"));
 	}
 	
 	private void speedboatUpgradeRecipes(){
-		ShapedRecipeBuilder.shapedRecipe(BoatUpgrades.itemUpgradeHull)
+		ShapedRecipeBuilder.shapedRecipe(BoatUpgrades.reinforced_hull)
 			.key('P', IETags.getTagsFor(EnumMetals.STEEL).plate)
 			.key('B', IETags.getItemTag(IETags.getTagsFor(EnumMetals.STEEL).storage))
 			.patternLine("P P")
@@ -109,7 +109,7 @@ public class IPRecipes extends RecipeProvider{
 			.addCriterion("has_steel_block", hasItem(IETags.getItemTag(IETags.getTagsFor(EnumMetals.STEEL).storage)))
 			.build(this.out);
 		
-		ShapedRecipeBuilder.shapedRecipe(BoatUpgrades.itemUpgradeBreaker)
+		ShapedRecipeBuilder.shapedRecipe(BoatUpgrades.ice_breaker)
 			.key('P', IETags.getTagsFor(EnumMetals.STEEL).plate)
 			.key('I', IETags.getTagsFor(EnumMetals.STEEL).ingot)
 			.key('B', IETags.getItemTag(IETags.getTagsFor(EnumMetals.STEEL).storage))
@@ -120,7 +120,7 @@ public class IPRecipes extends RecipeProvider{
 			.addCriterion("has_steel_block", hasItem(IETags.getItemTag(IETags.getTagsFor(EnumMetals.STEEL).storage)))
 			.build(this.out);
 		
-		ShapedRecipeBuilder.shapedRecipe(BoatUpgrades.itemUpgradeTank)
+		ShapedRecipeBuilder.shapedRecipe(BoatUpgrades.tank)
 			.key('P', IETags.getTagsFor(EnumMetals.IRON).plate)
 			.key('T', IEBlocks.MetalDevices.barrel)
 			.patternLine(" P ")
@@ -129,7 +129,7 @@ public class IPRecipes extends RecipeProvider{
 			.addCriterion("has_iron_plate", hasItem(IETags.getTagsFor(EnumMetals.IRON).plate))
 			.build(this.out);
 		
-		ShapedRecipeBuilder.shapedRecipe(BoatUpgrades.itemUpgradeRudders)
+		ShapedRecipeBuilder.shapedRecipe(BoatUpgrades.rudders)
 			.key('P', IETags.getTagsFor(EnumMetals.IRON).plate)
 			.key('R', IETags.ironRod)
 			.patternLine(" RR")
@@ -138,7 +138,7 @@ public class IPRecipes extends RecipeProvider{
 			.addCriterion("has_iron_rod", hasItem(IETags.ironRod))
 			.build(this.out);
 		
-		ShapedRecipeBuilder.shapedRecipe(BoatUpgrades.itemUpgradePaddles)
+		ShapedRecipeBuilder.shapedRecipe(BoatUpgrades.paddles)
 			.key('P', IETags.getItemTag(IETags.treatedWood))
 			.key('S', IETags.treatedStick)
 			.patternLine("S S")
@@ -149,32 +149,55 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void blockRecipes(){
-		ShapedRecipeBuilder.shapedRecipe(Blocks.blockAsphalt, 8)
-			.key('C', flaxbeard.immersivepetroleum.common.IPContent.Items.itemBitumen)
+		ShapedRecipeBuilder.shapedRecipe(Blocks.asphalt, 8)
+			.key('C', flaxbeard.immersivepetroleum.common.IPContent.Items.bitumen)
 			.key('S', Tags.Items.SAND)
 			.key('G', Tags.Items.GRAVEL)
 			.key('B', Items.WATER_BUCKET)
 			.patternLine("SCS")
 			.patternLine("GBG")
 			.patternLine("SCS")
-			.addCriterion("has_bitumen", hasItem(flaxbeard.immersivepetroleum.common.IPContent.Items.itemBitumen))
+			.addCriterion("has_bitumen", hasItem(flaxbeard.immersivepetroleum.common.IPContent.Items.bitumen))
 			.build(this.out, rl("asphalt"));
 		
-		ShapedRecipeBuilder.shapedRecipe(Blocks.blockAsphalt, 12)
-			.key('C', flaxbeard.immersivepetroleum.common.IPContent.Items.itemBitumen)
+		ShapedRecipeBuilder.shapedRecipe(Blocks.asphalt, 12)
+			.key('C', flaxbeard.immersivepetroleum.common.IPContent.Items.bitumen)
 			.key('S', IEItems.Ingredients.slag)
 			.key('G', Tags.Items.GRAVEL)
 			.key('B', Items.WATER_BUCKET)
 			.patternLine("SCS")
 			.patternLine("GBG")
 			.patternLine("SCS")
-			.addCriterion("has_bitumen", hasItem(flaxbeard.immersivepetroleum.common.IPContent.Items.itemBitumen))
+			.addCriterion("has_bitumen", hasItem(flaxbeard.immersivepetroleum.common.IPContent.Items.bitumen))
 			.addCriterion("has_slag", hasItem(IEItems.Ingredients.slag))
 			.build(this.out, rl("asphalt"));
+		
+		ShapedRecipeBuilder.shapedRecipe(Blocks.gas_generator)
+			.key('P', IETags.getTagsFor(EnumMetals.IRON).plate)
+			.key('G', IEBlocks.MetalDecoration.generator)
+			.key('C', IEBlocks.MetalDevices.capacitorLV)
+			.patternLine("PPP")
+			.patternLine("PGC")
+			.patternLine("PPP")
+			.addCriterion("has_iron_plate", hasItem(IETags.getTagsFor(EnumMetals.IRON).plate))
+			.addCriterion("has_"+toPath(IEBlocks.MetalDevices.capacitorLV), hasItem(IEBlocks.MetalDevices.capacitorLV))
+			.addCriterion("has_"+toPath(IEBlocks.MetalDecoration.generator), hasItem(IEBlocks.MetalDecoration.generator))
+			.build(this.out, rl("generator"));
+		
+		ShapedRecipeBuilder.shapedRecipe(Blocks.auto_lubricator)
+			.key('G', Tags.Items.GLASS)
+			.key('T', IETags.getItemTag(IETags.treatedWood))
+			.key('P', IEBlocks.MetalDevices.fluidPipe)
+			.patternLine(" G ")
+			.patternLine("G G")
+			.patternLine("TPT")
+			.addCriterion("has_treated_planks", hasItem(IETags.getItemTag(IETags.treatedWood)))
+			.addCriterion("has_"+toPath(IEBlocks.MetalDevices.fluidPipe), hasItem(IEBlocks.MetalDevices.fluidPipe))
+			.build(this.out, rl("auto_lubricator"));
 	}
 	
 	private void itemRecipes(){
-		ShapedRecipeBuilder.shapedRecipe(flaxbeard.immersivepetroleum.common.IPContent.Items.itemOilCan)
+		ShapedRecipeBuilder.shapedRecipe(flaxbeard.immersivepetroleum.common.IPContent.Items.oil_can)
 			.key('R', Tags.Items.DYES_RED)
 			.key('P', IETags.getTagsFor(EnumMetals.IRON).plate)
 			.key('B', Items.BUCKET)
@@ -184,7 +207,7 @@ public class IPRecipes extends RecipeProvider{
 			.addCriterion("has_iron_plate", hasItem(IETags.getTagsFor(EnumMetals.IRON).plate))
 			.build(out);
 		
-		ShapedRecipeBuilder.shapedRecipe(flaxbeard.immersivepetroleum.common.IPContent.Items.itemProjector)
+		ShapedRecipeBuilder.shapedRecipe(flaxbeard.immersivepetroleum.common.IPContent.Items.projector)
 			.key('I', Tags.Items.INGOTS_IRON)
 			.key('W', IETags.getItemTag(IETags.treatedWood))
 			.key('L', IEBlocks.MetalDecoration.lantern)
@@ -196,7 +219,7 @@ public class IPRecipes extends RecipeProvider{
 			.addCriterion("has_treated_planks", hasItem(IETags.getItemTag(IETags.treatedWood)))
 			.build(out);
 		
-		ShapedRecipeBuilder.shapedRecipe(flaxbeard.immersivepetroleum.common.IPContent.Items.itemSpeedboat)
+		ShapedRecipeBuilder.shapedRecipe(flaxbeard.immersivepetroleum.common.IPContent.Items.speedboat)
 			.key('P', IETags.getItemTag(IETags.treatedWood))
 			.key('E', IEBlocks.MetalDecoration.engineeringLight)
 			.key('M', IEItems.Ingredients.componentIron)

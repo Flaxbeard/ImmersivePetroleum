@@ -243,8 +243,8 @@ public class EventHandler{
 				ItemStack mainItem = mc.player.getHeldItemMainhand();
 				ItemStack secondItem = mc.player.getHeldItemOffhand();
 				
-				boolean main = (mainItem != null && !mainItem.isEmpty()) && mainItem.getItem() == IPContent.Blocks.blockAutolubricator.asItem();
-				boolean off = (secondItem != null && !secondItem.isEmpty()) && secondItem.getItem() == IPContent.Blocks.blockAutolubricator.asItem();
+				boolean main = (mainItem != null && !mainItem.isEmpty()) && mainItem.getItem() == IPContent.Blocks.auto_lubricator.asItem();
+				boolean off = (secondItem != null && !secondItem.isEmpty()) && secondItem.getItem() == IPContent.Blocks.auto_lubricator.asItem();
 				
 				if(main || off){
 					ItemRenderer itemRenderer=ClientUtils.mc().getItemRenderer();
@@ -296,7 +296,7 @@ public class EventHandler{
 													GlStateManager.scaled(1, 1, 1);
 													//GlStateManager.scaled(2, 2, 2);
 													
-													ItemStack toRender = new ItemStack(IPContent.Blocks.blockAutolubricator);
+													ItemStack toRender = new ItemStack(IPContent.Blocks.auto_lubricator);
 													itemRenderer.renderItem(toRender, itemRenderer.getModelWithOverrides(toRender));
 													
 													ShaderUtil.releaseShader();
@@ -699,7 +699,7 @@ public class EventHandler{
 					if(world.isRemote){
 						if(te instanceof MultiblockPartTileEntity){
 							MultiblockPartTileEntity<?> part = (MultiblockPartTileEntity<?>) te;
-							BlockState n = Fluids.fluidLubricant.block.getDefaultState();
+							BlockState n = Fluids.lubricant.block.getDefaultState();
 							Vec3i size=lubeHandler.getStructureDimensions();
 							
 							int numBlocks = (int)(size.getX()*size.getY()*size.getZ()*0.25F);
@@ -782,8 +782,8 @@ public class EventHandler{
 				List<BlockPos> iterate = new ArrayList<>(napalmPositions.get(d));
 				for(BlockPos position:iterate){
 					BlockState state = event.world.getBlockState(position);
-					if(state.getBlock() instanceof FlowingFluidBlock && state.getBlock() == Fluids.fluidNapalm.block){
-						((BlockNapalm) Fluids.fluidNapalm).processFire(event.world, position);
+					if(state.getBlock() instanceof FlowingFluidBlock && state.getBlock() == Fluids.napalm.block){
+						((BlockNapalm) Fluids.napalm).processFire(event.world, position);
 					}
 					toRemove.get(d).add(position);
 				}

@@ -40,7 +40,7 @@ public class ImmersivePetroleum{
 	public static final ItemGroup creativeTab = new ItemGroup(MODID){
 		@Override
 		public ItemStack createIcon(){
-			return new ItemStack(Fluids.fluidCrudeOil.getFilledBucket());
+			return new ItemStack(Fluids.crudeOil.getFilledBucket());
 		}
 	};
 

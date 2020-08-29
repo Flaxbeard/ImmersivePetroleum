@@ -12,10 +12,13 @@ import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
+import blusunrize.immersiveengineering.api.multiblocks.ManualElementMultiblock;
 import blusunrize.immersiveengineering.client.models.ModelCoresample;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalScaffoldingType;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.IEMultiblocks;
 import blusunrize.immersiveengineering.common.gui.GuiHandler;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualElementCrafting;
 import blusunrize.lib.manual.ManualElementTable;
 import blusunrize.lib.manual.ManualEntry;
@@ -27,16 +30,18 @@ import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
-import flaxbeard.immersivepetroleum.client.page.ManualElementSchematicCrafting;
 import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.client.render.SpeedboatRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -104,6 +109,7 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void completed(){
+		setupManualPages();
 	}
 	
 	@Override
@@ -130,58 +136,111 @@ public class ClientProxy extends CommonProxy{
 		
 		IP_CATEGORY=man.getRoot().getOrCreateSubnode(modLoc("main"), 100);
 		
-		handleReservoirManual(modLoc("reservoir"), 0);
-		distillation(modLoc("distillationTower"), 1);
+		pumpjack(modLoc("pumpjack"), 0);
+		distillation(modLoc("distillationtower"), 1);
+		handleReservoirManual(modLoc("reservoir"), 2);
 		
-		man.addEntry(IP_CATEGORY, modLoc("pumpjack"), 2);
-		man.addEntry(IP_CATEGORY, modLoc("lubricant"), 3);
+		lubricant(modLoc("lubricant"), 3);
 		man.addEntry(IP_CATEGORY, modLoc("asphalt"), 4);
-		man.addEntry(IP_CATEGORY, modLoc("schematics"), 5);
+		schematics(modLoc("schematics"), 5);
 		man.addEntry(IP_CATEGORY, modLoc("speedboat"), 6);
 		man.addEntry(IP_CATEGORY, modLoc("napalm"), 7);
-		man.addEntry(IP_CATEGORY, modLoc("portableGenerator"), 8);
-		man.addEntry(IP_CATEGORY, modLoc("automaticLubricator"), 9);
-		schematics(modLoc("schematics"), 10);
-		
-		//man.addEntry(cat, modLoc(""));
+		generator(modLoc("portablegenerator"), 8);
+		autolube(modLoc("automaticlubricator"), 9);
 	}
 	
-	private static void schematics(ResourceLocation location, int priority){
+	protected static void autolube(ResourceLocation location, int priority){
 		ManualInstance man=ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("schematics0", 0, new ManualElementCrafting(man, new ItemStack(Items.itemProjector, 1)));
-		builder.addSpecialElement("schematics1", 0, new ManualElementSchematicCrafting(man, "schematics1", new ItemStack(Items.itemProjector, 1)));
+		builder.addSpecialElement("automaticlubricator0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.auto_lubricator)));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	private static void distillation(ResourceLocation location, int priority){
+	protected static void generator(ResourceLocation location, int priority){
 		ManualInstance man=ManualHelper.getManual();
 		
-		Collection<DistillationRecipe> recipeList = DistillationRecipe.recipes.values();
-		List<String[]> l = new ArrayList<String[]>();
-		for(DistillationRecipe recipe:recipeList){
-			boolean first = true;
-			for(FluidStack output:recipe.fluidOutput){
-				String inputName = recipe.input.getDisplayName().getUnformattedComponentText();
-				String outputName = output.getDisplayName().getUnformattedComponentText();
-				String[] test = new String[]{
-						first ? recipe.input.getAmount() + " mB " + inputName : "",
-						output.getAmount() + " mB " + outputName
-				};
-				l.add(test);
-				first = false;
+		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement("portablegenerator0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.gas_generator)));
+		builder.readFromFile(location);
+		man.addEntry(IP_CATEGORY, builder.create(), priority);
+	}
+	
+	protected static void speedboat(ResourceLocation location, int priority){
+		ManualInstance man=ManualHelper.getManual();
+		
+		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement("speedboat0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Items.speedboat)));
+		builder.addSpecialElement("speedboat1", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.tank)));
+		builder.addSpecialElement("speedboat2", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.rudders)));
+		builder.addSpecialElement("speedboat3", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.ice_breaker)));
+		builder.addSpecialElement("speedboat4", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.reinforced_hull)));
+		builder.addSpecialElement("speedboat5", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.paddles)));
+		builder.readFromFile(location);
+		man.addEntry(IP_CATEGORY, builder.create(), priority);
+	}
+	
+	protected static void lubricant(ResourceLocation location, int priority){
+		ManualInstance man=ManualHelper.getManual();
+		
+		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement("lubricant1", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Items.oil_can)));
+		builder.readFromFile(location);
+		man.addEntry(IP_CATEGORY, builder.create(), priority);
+	}
+	
+	protected static void pumpjack(ResourceLocation location, int priority){
+		ManualInstance man=ManualHelper.getManual();
+		
+		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement("pumpjack0", 0, new ManualElementMultiblock(man, PumpjackMultiblock.INSTANCE));
+		builder.readFromFile(location);
+		man.addEntry(IP_CATEGORY, builder.create(), priority);
+	}
+	
+	protected static void distillation(ResourceLocation location, int priority){
+		ManualInstance man=ManualHelper.getManual();
+		
+		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement("distillationtower0", 0, new ManualElementMultiblock(man, DistillationTowerMultiblock.INSTANCE));
+		builder.addSpecialElement("distillationtower1", 0, ()->{
+			Collection<DistillationRecipe> recipeList = DistillationRecipe.recipes.values();
+			List<String[]> l = new ArrayList<String[]>();
+			for(DistillationRecipe recipe:recipeList){
+				boolean first = true;
+				for(FluidStack output:recipe.fluidOutput){
+					String inputName = recipe.input.getDisplayName().getUnformattedComponentText();
+					String outputName = output.getDisplayName().getUnformattedComponentText();
+					String[] array = new String[]{
+							first ? recipe.input.getAmount()+"mB "+inputName : "",
+							output.getAmount()+"mB "+outputName
+					};
+					l.add(array);
+					first = false;
+				}
 			}
-		}
-		
-		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("distillationtower2", 0, new ManualElementTable(ManualHelper.getManual(), l.toArray(new String[0][]), false));
+			
+			return new ManualElementTable(man, l.toArray(new String[0][]), false);
+		});
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	public static void handleReservoirManual(ResourceLocation location, int priority){
+	protected static void schematics(ResourceLocation location, int priority){
+		ManualInstance man=ManualHelper.getManual();
+		
+		ItemStack projectorWithNBT=new ItemStack(Items.projector);
+		ItemNBTHelper.putString(projectorWithNBT, "multiblock", IEMultiblocks.ARC_FURNACE.getUniqueName().toString());
+		
+		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement("schematics0", 0, new ManualElementCrafting(man, new ItemStack(Items.projector)));
+		builder.addSpecialElement("schematics1", 0, new ManualElementCrafting(man, projectorWithNBT));
+		builder.readFromFile(location);
+		man.addEntry(IP_CATEGORY, builder.create(), priority);
+	}
+	
+	protected static void handleReservoirManual(ResourceLocation location, int priority){
 		ManualInstance man=ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
@@ -189,24 +248,29 @@ public class ClientProxy extends CommonProxy{
 		builder.setLocation(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
-
+	
 	static final DecimalFormat FORMATTER = new DecimalFormat("#,###.##");
 	static ManualEntry entry;
-	private static String[] createContent(TextSplitter splitter){
+	protected static String[] createContent(TextSplitter splitter){
 		ArrayList<ItemStack> list = new ArrayList<>();
-		final ReservoirType[] minerals = PumpjackHandler.reservoirs.values().toArray(new ReservoirType[0]);
+		final ReservoirType[] reservoirs = PumpjackHandler.reservoirs.values().toArray(new ReservoirType[0]);
 		
 		StringBuilder content=new StringBuilder();
 		content.append(I18n.format("ie.manual.entry.reservoirs.oil0"));
 		content.append(I18n.format("ie.manual.entry.reservoirs.oil1"));
 		
-		for(ReservoirType type:minerals){
+		for(int i=0;i<reservoirs.length;i++){
+			ReservoirType type=reservoirs[i];
+			
+			ImmersivePetroleum.log.info("Creating entry for "+type);
+			
 			String name = "desc.immersivepetroleum.info.reservoir." + type.name;
 			String localizedName = I18n.format(name);
 			if(localizedName.equalsIgnoreCase(name))
 				localizedName = type.name;
 			
-			boolean isVowel = (localizedName.toLowerCase().charAt(0) == 'a' || localizedName.toLowerCase().charAt(0) == 'e' || localizedName.toLowerCase().charAt(0) == 'i' || localizedName.toLowerCase().charAt(0) == 'o' || localizedName.toLowerCase().charAt(0) == 'u');
+			char c=localizedName.toLowerCase().charAt(0);
+			boolean isVowel = (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
 			String aOrAn = I18n.format(isVowel ? "ie.manual.entry.reservoirs.vowel" : "ie.manual.entry.reservoirs.consonant");
 			
 			String dimBLWL = "";
@@ -225,7 +289,6 @@ public class ClientProxy extends CommonProxy{
 			}else{
 				dimBLWL = I18n.format("ie.manual.entry.reservoirs.dim.any", localizedName, aOrAn);
 			}
-			content.append(dimBLWL);
 			
 			String bioBLWL = "";
 			if(type.bioWhitelist != null && type.bioWhitelist.size() > 0){
@@ -245,7 +308,6 @@ public class ClientProxy extends CommonProxy{
 			}else{
 				bioBLWL = I18n.format("ie.manual.entry.reservoirs.bio.any");
 			}
-			content.append(bioBLWL);
 			
 			String fluidName = "";
 			Fluid fluid = type.getFluid();
@@ -257,7 +319,10 @@ public class ClientProxy extends CommonProxy{
 			if(type.replenishRate > 0){
 				repRate = I18n.format("ie.manual.entry.reservoirs.replenish", type.replenishRate, fluidName);
 			}
-			content.append(I18n.format("ie.manual.entry.reservoirs.oil", dimBLWL, fluidName, FORMATTER.format(type.minSize), FORMATTER.format(type.maxSize), repRate, bioBLWL));
+			content.append(I18n.format("ie.manual.entry.reservoirs.content", dimBLWL, fluidName, FORMATTER.format(type.minSize), FORMATTER.format(type.maxSize), repRate, bioBLWL));
+			
+			if(i<(reservoirs.length-1))
+				content.append("<np>");
 			
 			list.add(new ItemStack(fluid.getFilledBucket()));
 		}
@@ -274,16 +339,16 @@ public class ClientProxy extends CommonProxy{
 		*/
 		
 		return new String[]{
-				"title",
-				"sub",
-				content.toString()
+				I18n.format("ie.manual.entry.reservoirs.title"),
+				I18n.format("ie.manual.entry.reservoirs.subtitle"),
+				content.toString().replaceAll("\r\n|\r|\n", "\n")
 		};
 	}
+	
 	@Override
 	public void postInit(){
 		ClientRegistry.bindTileEntitySpecialRenderer(DistillationTowerTileEntity.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(PumpjackTileEntity.class, new MultiblockPumpjackRenderer());
-		//ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorTileEntity.class, new TileAutoLubricatorRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorTileEntity.class, new AutoLubricatorRenderer());
 		
 		// Don't think this is needed anymore

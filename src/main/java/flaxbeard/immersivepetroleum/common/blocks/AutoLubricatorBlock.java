@@ -72,8 +72,13 @@ public class AutoLubricatorBlock extends IPBlockBase{
 	}
 	
 	@Override
+	public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer){
+		return layer==BlockRenderLayer.CUTOUT;
+	}
+	
+	@Override
 	public BlockRenderLayer getRenderLayer(){
-		return BlockRenderLayer.TRANSLUCENT;
+		return BlockRenderLayer.CUTOUT;
 	}
 	
 	@Override

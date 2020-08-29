@@ -25,7 +25,7 @@ public class DistillationTowerMultiblock extends IETemplateMultiblock{
 	
 	@Override
 	public float getManualScale(){
-		return 9;
+		return 6;
 	}
 	
 	@Override
@@ -43,8 +43,18 @@ public class DistillationTowerMultiblock extends IETemplateMultiblock{
 		if(renderStack==null)
 			renderStack=new ItemStack(Multiblock.distillationtower);
 		
-		GlStateManager.disableCull();
-		ClientUtils.mc().getItemRenderer().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
-		GlStateManager.enableCull();
+		GlStateManager.pushMatrix();
+		{
+			// "Undo" the GUI Perspective Transform
+			GlStateManager.scaled(16.0, 16.0, 16.0);
+			GlStateManager.translated(0.030, 0.355, 0.300);
+			GlStateManager.rotated(-225, 0, 1, 0);
+			GlStateManager.rotated(-30, 1, 0, 0);
+			
+			GlStateManager.disableCull();
+			ClientUtils.mc().getItemRenderer().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
+			GlStateManager.enableCull();
+		}
+		GlStateManager.popMatrix();
 	}
 }

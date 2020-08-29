@@ -32,26 +32,25 @@ public class IPItemModels extends LoadedModelProvider{
 	
 	@Override
 	protected void registerModels(){
-		genericItem(IPContent.Items.itemBitumen);
-		genericItem(IPContent.Items.itemOilCan);
-		genericItem(IPContent.Items.itemSpeedboat);
+		genericItem(IPContent.Items.bitumen);
+		genericItem(IPContent.Items.oil_can);
+		genericItem(IPContent.Items.speedboat);
 		
-		genericItem(IPContent.BoatUpgrades.itemUpgradeBreaker);
-		genericItem(IPContent.BoatUpgrades.itemUpgradeHull);
-		genericItem(IPContent.BoatUpgrades.itemUpgradePaddles);
-		genericItem(IPContent.BoatUpgrades.itemUpgradeRudders);
-		genericItem(IPContent.BoatUpgrades.itemUpgradeTank);
+		genericItem(IPContent.BoatUpgrades.ice_breaker);
+		genericItem(IPContent.BoatUpgrades.reinforced_hull);
+		genericItem(IPContent.BoatUpgrades.paddles);
+		genericItem(IPContent.BoatUpgrades.rudders);
+		genericItem(IPContent.BoatUpgrades.tank);
 		
-		getBuilder(IPContent.Items.itemProjector)
+		getBuilder(IPContent.Items.projector)
 			.parent(getExistingFile(modLoc("item/mb_projector")));
 		
-		getBuilder(IPContent.Blocks.blockGasGenerator)
+		getBuilder(IPContent.Blocks.gas_generator)
 			.parent(getExistingFile(modLoc("block/generator")));
 		
-		obj(IPContent.Blocks.blockAutolubricator, "block/obj/autolubricator.obj")
-			.texture("texture", modLoc("models/lubricator"));
+		autolubeItem();
 		
-		obj(IPContent.Blocks.blockGasGenerator, "block/obj/generator.obj")
+		obj(IPContent.Blocks.gas_generator, "block/obj/generator.obj")
 			.texture("texture", modLoc("block/obj/generator"));
 		
 		distillationtowerItem();
@@ -64,12 +63,41 @@ public class IPItemModels extends LoadedModelProvider{
 			createBucket(f);
 	}
 	
-	// Doing that manualy for transforms and stuff.
+	private void autolubeItem(){
+		LoadedModelBuilder model=obj(IPContent.Blocks.auto_lubricator, "block/obj/autolubricator.obj")
+			.texture("texture", modLoc("models/lubricator"));
+		
+		model.transformationMap()
+			.setTransformations(Perspective.FIRSTPERSON_LEFT,
+					createMatrix(new Vector3d(0, 2, 0), new Vector3d(0, 45, 0), 0.25))
+			
+			.setTransformations(Perspective.FIRSTPERSON_RIGHT,
+					createMatrix(new Vector3d(0, 2, 0), new Vector3d(0, 45, 0), 0.25))
+			
+			.setTransformations(Perspective.THIRDPERSON_LEFT,
+					createMatrix(new Vector3d(0, 0, 0), new Vector3d(0, 0, 0), 0.25))
+			
+			.setTransformations(Perspective.THIRDPERSON_RIGHT,
+					createMatrix(new Vector3d(0, 0, 0), new Vector3d(0, 0, 0), 0.25))
+			
+			.setTransformations(Perspective.HEAD,
+					createMatrix(new Vector3d(0, 12, 0), null, 0.75))
+			
+			.setTransformations(Perspective.GUI,
+					createMatrix(new Vector3d(0, -3, 0), new Vector3d(30, 225, 0), 0.4))
+			
+			.setTransformations(Perspective.GROUND,
+					createMatrix(new Vector3d(0, 3, 0), null, 0.25))
+			
+			.setTransformations(Perspective.FIXED,
+					createMatrix(new Vector3d(0, -4, 0), null, 0.5))
+			;
+	}
+	
 	private void distillationtowerItem(){
 		LoadedModelBuilder model=obj(IPContent.Multiblock.distillationtower, "multiblock/obj/distillationtower.obj")
 			.texture("texture", modLoc("multiblock/distillation_tower"));
 		
-		// Translation Vector in MC-PIXELS (1/16 = 1 MC-Pixel)
 		model.transformationMap()
 			.setTransformations(Perspective.FIRSTPERSON_LEFT,
 					createMatrix(new Vector3d(-1.75, 2.5, 1.25), new Vector3d(0, 225, 0), 0.03125))
@@ -149,10 +177,6 @@ public class IPItemModels extends LoadedModelProvider{
 	
 	private String name(IItemProvider item){
 		return item.asItem().getRegistryName().getPath();
-	}
-	
-	private String name(Item item){
-		return item.getRegistryName().getPath();
 	}
 	
 	protected ResourceLocation ieLoc(String str){

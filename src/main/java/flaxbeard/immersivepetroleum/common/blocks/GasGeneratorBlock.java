@@ -21,6 +21,9 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -28,7 +31,7 @@ import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootParameters;
 
 public class GasGeneratorBlock extends IPBlockBase{
-	private static final Material material=new Material(MaterialColor.IRON, false, true, false, false, false, false, false, PushReaction.BLOCK);
+	private static final Material material=new Material(MaterialColor.IRON, false, true, true, false, false, false, false, PushReaction.BLOCK);
 	
 	public static final DirectionProperty FACING=DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
 	
@@ -45,12 +48,46 @@ public class GasGeneratorBlock extends IPBlockBase{
 	
 	@Override
 	public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer){
-		return layer==BlockRenderLayer.TRANSLUCENT || layer==BlockRenderLayer.SOLID;
+		return layer==BlockRenderLayer.CUTOUT || layer==BlockRenderLayer.SOLID;
 	}
 	
 	@Override
 	public BlockRenderLayer getRenderLayer(){
-		return BlockRenderLayer.TRANSLUCENT;
+		return BlockRenderLayer.CUTOUT;
+	}
+	
+	@Override
+	public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos){
+		return 0;
+	}
+	
+	@Override
+	public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos){
+		return 1.0F;
+	}
+	
+	@Override
+	public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos){
+		return true;
+	}
+	
+	@Override
+	public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos){
+		return false;
+	}
+	
+	// Fixes black faces apearing when a solid block is placed next to the generator
+	// at the cost of not being able to put a lever on the generator anymore.
+	static final VoxelShape SHAPE=VoxelShapes.create(0.0001, 0.0001, 0.0001, 0.9999, 0.9999, 0.9999);
+	
+	@Override
+	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
+		return SHAPE;
+	}
+	
+	@Override
+	public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
+		return SHAPE;
 	}
 	
 	@Override
@@ -91,11 +128,6 @@ public class GasGeneratorBlock extends IPBlockBase{
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
 		return getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
-	}
-	
-	@Override
-	public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos){
-		return true;
 	}
 	
 	@Override

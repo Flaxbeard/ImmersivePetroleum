@@ -69,8 +69,6 @@ public class IPBlockStates extends BlockStateProvider{
 		// Multiblocks
 		distillationtower();
 		pumpjack();
-		//createMultiblock(IPContent.Multiblock.distillationtower, modLoc("models/distillation_tower"));
-		//createEmptyMultiblock(IPContent.Multiblock.pumpjack, modLoc("models/pumpjack"));
 		
 		// "Normal" Blocks
 		simpleBlockWithItem(IPContent.Blocks.asphalt);
@@ -164,7 +162,7 @@ public class IPBlockStates extends BlockStateProvider{
 			.texture("particle", texture)
 			.loader(ConnectionLoader.LOADER_NAME)
 			.additional("base_model", basemodel)
-			.additional("layers", Arrays.asList("TRANSLUCENT", "SOLID"))
+			.additional("layers", Arrays.asList("CUTOUT", "SOLID"))
 			;
 		
 		

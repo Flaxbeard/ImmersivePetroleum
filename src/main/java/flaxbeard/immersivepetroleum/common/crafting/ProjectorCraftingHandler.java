@@ -53,6 +53,11 @@ public class ProjectorCraftingHandler implements ICraftingRecipe{
 		return ItemStack.EMPTY;
 	}
 	
+	@Override
+	public boolean isDynamic(){
+		return true;
+	}
+	
 	private class Result{
 		private final boolean canCraft;
 		private final NonNullList<ItemStack> remaining;

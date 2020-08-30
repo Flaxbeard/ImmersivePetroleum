@@ -209,6 +209,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 				if(this.tanks[TANK_OUTPUT].fluids.size()>0){
 					List<FluidStack> toDrain=new ArrayList<>();
 					
+					// Tries to Output the output-fluids in parallel
 					for(FluidStack target:this.tanks[TANK_OUTPUT].fluids){
 						FluidStack outStack=Utils.copyFluidStackWithAmount(target, Math.min(target.getAmount(), 100), false);
 						int accepted=output.fill(outStack, FluidAction.SIMULATE);

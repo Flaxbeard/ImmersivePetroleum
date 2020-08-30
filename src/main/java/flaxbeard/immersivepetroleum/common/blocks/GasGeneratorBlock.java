@@ -6,6 +6,7 @@ import java.util.List;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.block.material.PushReaction;
@@ -29,6 +30,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootParameters;
+import net.minecraftforge.common.ToolType;
 
 public class GasGeneratorBlock extends IPBlockBase{
 	private static final Material material=new Material(MaterialColor.IRON, false, true, true, false, false, false, false, PushReaction.BLOCK);
@@ -36,7 +38,7 @@ public class GasGeneratorBlock extends IPBlockBase{
 	public static final DirectionProperty FACING=DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
 	
 	public GasGeneratorBlock(){
-		super("gas_generator", Block.Properties.create(material).hardnessAndResistance(3.0F, 8.0F));
+		super("gas_generator", Block.Properties.create(material).hardnessAndResistance(5.0F, 6.0F).harvestTool(ToolType.PICKAXE).sound(SoundType.METAL));
 		
 		setDefaultState(getStateContainer().getBaseState().with(FACING, Direction.NORTH));
 	}

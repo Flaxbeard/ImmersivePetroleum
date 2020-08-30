@@ -5,6 +5,7 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.block.material.PushReaction;
@@ -28,15 +29,16 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 
 public class AutoLubricatorBlock extends IPBlockBase{
-	private static final Material material=new Material(MaterialColor.IRON, false, true, true, false, false, false, false, PushReaction.BLOCK);
+	private static final Material material=new Material(MaterialColor.IRON, false, true, true, false, true, false, false, PushReaction.BLOCK);
 	
 	public static final DirectionProperty FACING=DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
 	public static final BooleanProperty SLAVE=BooleanProperty.create("slave");
 	
 	public AutoLubricatorBlock(String name){
-		super(name, Block.Properties.create(material).hardnessAndResistance(3.0F, 8.0F));
+		super(name, Block.Properties.create(material).hardnessAndResistance(5.0F, 6.0F).harvestTool(ToolType.AXE).sound(SoundType.METAL));
 		
 		setDefaultState(getStateContainer().getBaseState()
 				.with(FACING, Direction.NORTH)

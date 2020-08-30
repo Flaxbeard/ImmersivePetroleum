@@ -10,6 +10,7 @@ import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipeBuilder;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
@@ -106,6 +107,6 @@ public class DistillationRecipeSerializer extends IERecipeSerializer<Distillatio
 	
 	@Override
 	public ItemStack getIcon(){
-		return ItemStack.EMPTY; // TODO Icon for Distillation Recipes
+		return new ItemStack(IPContent.Multiblock.distillationtower);
 	}
 }

@@ -92,12 +92,9 @@ public class GasGeneratorBlock extends IPBlockBase{
 	
 	@Override
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit){
-		ItemStack held=player.getHeldItem(handIn);
-		if(held!=ItemStack.EMPTY){
-			GasGeneratorTileEntity te=(GasGeneratorTileEntity)worldIn.getTileEntity(pos);
-			if(te!=null){
-				return te.interact(hit.getFace(), player, handIn, held, (float)hit.getHitVec().x, (float)hit.getHitVec().y, (float)hit.getHitVec().z);
-			}
+		GasGeneratorTileEntity te=(GasGeneratorTileEntity)worldIn.getTileEntity(pos);
+		if(te!=null){
+			return te.interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), (float)hit.getHitVec().x, (float)hit.getHitVec().y, (float)hit.getHitVec().z);
 		}
 		return true;
 	}

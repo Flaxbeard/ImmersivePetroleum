@@ -231,7 +231,6 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	
 	@Override
 	public boolean interact(Direction side, PlayerEntity player, Hand hand, ItemStack heldItem, float hitX, float hitY, float hitZ){
-		// FluidStack f = FluidUtil.getFluidContained(heldItem).orElse(null);
 		if(FluidUtil.interactWithFluidHandler(player, hand, tank)){
 			markContainingBlockForUpdate(null);
 			markDirty();
@@ -248,6 +247,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 			if(added){
 				world.setBlockState(pos, Blocks.AIR.getDefaultState());
 			}
+			return true;
 		}
 		return false;
 	}

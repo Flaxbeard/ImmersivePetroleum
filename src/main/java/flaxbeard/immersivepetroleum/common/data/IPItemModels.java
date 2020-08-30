@@ -42,18 +42,13 @@ public class IPItemModels extends LoadedModelProvider{
 		genericItem(IPContent.BoatUpgrades.rudders);
 		genericItem(IPContent.BoatUpgrades.tank);
 		
+		distillationtowerItem();
+		generatorItem();
+		autolubeItem();
+		
 		getBuilder(IPContent.Items.projector)
 			.parent(getExistingFile(modLoc("item/mb_projector")));
 		
-		getBuilder(IPContent.Blocks.gas_generator)
-			.parent(getExistingFile(modLoc("block/generator")));
-		
-		autolubeItem();
-		
-		obj(IPContent.Blocks.gas_generator, "block/obj/generator.obj")
-			.texture("texture", modLoc("block/obj/generator"));
-		
-		distillationtowerItem();
 		
 		// TODO Make a mock-up Pumpjack OBJ model for Item display use.
 //		obj(IPContent.Multiblock.pumpjack, "multiblock/obj/pumpjack.obj")
@@ -61,6 +56,37 @@ public class IPItemModels extends LoadedModelProvider{
 		
 		for(IPFluid f:IPFluid.LIST)
 			createBucket(f);
+	}
+	
+	private void generatorItem(){
+		LoadedModelBuilder model=obj(IPContent.Blocks.gas_generator, "block/obj/generator.obj")
+				.texture("texture", modLoc("block/obj/generator"));
+		
+		model.transformationMap()
+		.setTransformations(Perspective.FIRSTPERSON_LEFT,
+				createMatrix(new Vector3d(0, 2.0, 0), new Vector3d(0, 225, 0), 0.4))
+		
+		.setTransformations(Perspective.FIRSTPERSON_RIGHT,
+				createMatrix(new Vector3d(0, 2.0, 0), new Vector3d(0, 45, 0), 0.4))
+		
+		.setTransformations(Perspective.THIRDPERSON_LEFT,
+				createMatrix(new Vector3d(0, 2.5, 0), new Vector3d(75, 225, 0), 0.375))
+		
+		.setTransformations(Perspective.THIRDPERSON_RIGHT,
+				createMatrix(new Vector3d(0, 2.5, 0), new Vector3d(75, 45, 0), 0.375))
+		
+		.setTransformations(Perspective.HEAD,
+				createMatrix(new Vector3d(0, 13, 0), null, 0.8))
+		
+		.setTransformations(Perspective.GUI,
+				createMatrix(new Vector3d(0, 0, 0), new Vector3d(30, 225, 0), 0.625))
+		
+		.setTransformations(Perspective.GROUND,
+				createMatrix(new Vector3d(0, 3, 0), null, 0.25))
+		
+		.setTransformations(Perspective.FIXED,
+				createMatrix(new Vector3d(0, 0, 0), null, 0.5))
+		;
 	}
 	
 	private void autolubeItem(){

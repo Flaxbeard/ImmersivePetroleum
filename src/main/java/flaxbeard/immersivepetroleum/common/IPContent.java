@@ -180,9 +180,6 @@ public class IPContent{
 		
 		DieselHandler.registerFuel(Fluids.diesel, 150);
 		
-		// TODO SchematicCraftingHandler
-		//ForgeRegistries.RECIPES.register(new SchematicCraftingHandler().setRegistryName(ImmersivePetroleum.MODID, "projector"));
-		
 		LubricantHandler.registerLubricant(Fluids.lubricant, 3);
 		LubricantHandler.registerLubricant(IEContent.fluidPlantoil, 12);
 		

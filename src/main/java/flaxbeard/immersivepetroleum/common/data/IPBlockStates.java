@@ -170,14 +170,12 @@ public class IPBlockStates extends BlockStateProvider{
 		
 		VariantBlockStateBuilder builder=getVariantBuilder(IPContent.Blocks.gas_generator);
 		Direction.Plane.HORIZONTAL.forEach(dir->{
-			int rotation=90*dir.getHorizontalIndex();
+			int rotation = (90 * dir.getHorizontalIndex() + 90) % 360;
 			
 			builder.partialState()
 				.with(GasGeneratorBlock.FACING, dir)
 				.addModels(new ConfiguredModel(model, 0, rotation, false));
 		});
-		
-		//getItemBuilder(IPContent.Blocks.blockGasGenerator).parent(getExistingFile(modLoc("block/generator")));
 	}
 	
 	/** Used basicly for every multiblock-block */

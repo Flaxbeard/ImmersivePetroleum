@@ -90,7 +90,7 @@ public class GasGeneratorBlock extends IPBlockBase{
 	
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(FACING, context.getPlacementHorizontalFacing().rotateYCCW());
+		return getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
 	}
 	
 	@Override
@@ -105,6 +105,8 @@ public class GasGeneratorBlock extends IPBlockBase{
 	
 	@Override
 	public TileEntity createTileEntity(BlockState state, IBlockReader world){
-		return new GasGeneratorTileEntity();
+		GasGeneratorTileEntity te=new GasGeneratorTileEntity();
+		te.setFacing(state.get(FACING));
+		return te;
 	}
 }

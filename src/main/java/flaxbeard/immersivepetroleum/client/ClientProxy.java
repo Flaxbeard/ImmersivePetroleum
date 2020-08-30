@@ -126,7 +126,6 @@ public class ClientProxy extends CommonProxy{
 		
 		keybind_preview_flip.setKeyConflictContext(KeyConflictContext.IN_GAME);
 		ClientRegistry.registerKeyBinding(keybind_preview_flip);
-		
 	}
 	
 	/** ImmersivePetroleum's Manual Category */

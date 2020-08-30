@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.util;
+package flaxbeard.immersivepetroleum.common.util.commands;
 
 @Deprecated
 public class CommandHelp{}

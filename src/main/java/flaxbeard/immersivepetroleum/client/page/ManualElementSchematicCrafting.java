@@ -11,6 +11,7 @@ import blusunrize.lib.manual.PositionedItemStack;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import net.minecraft.item.ItemStack;
 
+// TODO Don't know if this still can be done.
 public class ManualElementSchematicCrafting extends ManualElementCrafting{
 	@SuppressWarnings({"unchecked", "unused"})
 	public ManualElementSchematicCrafting(ManualInstance manual, Object stack){

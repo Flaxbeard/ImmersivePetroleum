@@ -42,16 +42,13 @@ public class IPItemModels extends LoadedModelProvider{
 		genericItem(IPContent.BoatUpgrades.rudders);
 		genericItem(IPContent.BoatUpgrades.tank);
 		
+		pumpjackItem();
 		distillationtowerItem();
 		generatorItem();
 		autolubeItem();
 		
 		getBuilder(IPContent.Items.projector)
 			.parent(getExistingFile(modLoc("item/mb_projector")));
-		
-		// TODO Make a mock-up Pumpjack OBJ model for Item display use.
-//		obj(IPContent.Multiblock.pumpjack, "multiblock/obj/pumpjack.obj")
-//			.texture("texture", modLoc("multiblock/pumpjack"));
 		
 		for(IPFluid f:IPFluid.LIST)
 			createBucket(f);
@@ -119,6 +116,39 @@ public class IPItemModels extends LoadedModelProvider{
 			;
 	}
 	
+	private void pumpjackItem(){
+		LoadedModelBuilder model=obj(IPContent.Multiblock.pumpjack, "item/obj/pumpjack_itemmockup.obj")
+			.texture("texture_base", modLoc("multiblock/pumpjack_base"))
+			.texture("texture_armature", modLoc("models/pumpjack_armature"))
+			;
+		
+		model.transformationMap()
+			.setTransformations(Perspective.FIRSTPERSON_LEFT,
+					createMatrix(new Vector3d(-1.75, 2.5, 1.25), new Vector3d(0, 225, 0), 0.03125))
+			
+			.setTransformations(Perspective.FIRSTPERSON_RIGHT,
+					createMatrix(new Vector3d(-1.75, 2.5, 1.75), new Vector3d(0, 225, 0), 0.03125))
+			
+			.setTransformations(Perspective.THIRDPERSON_LEFT,
+					createMatrix(new Vector3d(-0.75, 0, -1.25), new Vector3d(0, 90, 0), 0.03125))
+			
+			.setTransformations(Perspective.THIRDPERSON_RIGHT,
+					createMatrix(new Vector3d(1.0, 0, -1.75), new Vector3d(0, 270, 0), 0.03125))
+			
+			.setTransformations(Perspective.HEAD,
+					createMatrix(new Vector3d(0, 8, -8), null, 0.2))
+			
+			.setTransformations(Perspective.GUI,
+					createMatrix(new Vector3d(6, -6, 0), new Vector3d(30, 225, 0), 0.1875))
+			
+			.setTransformations(Perspective.GROUND,
+					createMatrix(new Vector3d(-1.5, 3, -1.5), null, 0.0625))
+			
+			.setTransformations(Perspective.FIXED,
+					createMatrix(new Vector3d(-1, -8, -2), null, 0.0625))
+			;
+	}
+	
 	private void distillationtowerItem(){
 		LoadedModelBuilder model=obj(IPContent.Multiblock.distillationtower, "multiblock/obj/distillationtower.obj")
 			.texture("texture", modLoc("multiblock/distillation_tower"));
@@ -150,6 +180,14 @@ public class IPItemModels extends LoadedModelProvider{
 			;
 	}
 	
+	/**
+	 * Short-hand for easy matrix creation.
+	 * 
+	 * @param translation Location of the model origin. (x/16, y/16, z/16)
+	 * @param rotationAngle Rotation in Degrees. (XYZ Euler)
+	 * @param scale Size of the model.
+	 * @return
+	 */
 	private Matrix4 createMatrix(Vector3d translation, Vector3d rotationAngle, double scale){
 		Matrix4 mat=new Matrix4().setIdentity();
 		mat.translate(translation.x/16D, translation.y/16D, translation.z/16D);

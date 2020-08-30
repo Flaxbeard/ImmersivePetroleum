@@ -32,8 +32,8 @@ import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 
-public class ModelCoresampleExtended extends ModelCoresample
-{
+@SuppressWarnings("unused")
+public class ModelCoresampleExtended extends ModelCoresample{
 	private Fluid fluid;
 
 	Set<BakedQuad> bakedQuads;

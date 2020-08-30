@@ -9,6 +9,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class IPCoreSampleModelHandler{
 	public static IPCoreSampleModelHandler instance = new IPCoreSampleModelHandler();
 	
+	@SuppressWarnings("unused")
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onModelBakeEvent(ModelBakeEvent event){
 		

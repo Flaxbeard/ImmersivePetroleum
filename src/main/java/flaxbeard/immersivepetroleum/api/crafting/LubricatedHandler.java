@@ -65,7 +65,7 @@ public class LubricatedHandler{
 	
 	public static class LubricatedTileInfo{
 		public BlockPos pos;
-		// TODO Use a more general way (ie Combined use of ModDimension and DimensionType)
+		// TODO Use a more general way? (ie Combined use of ModDimension and DimensionType)
 		public DimensionType world;
 		public int ticks;
 		

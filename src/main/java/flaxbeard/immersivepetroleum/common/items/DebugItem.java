@@ -12,6 +12,7 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.block.BlockState;
@@ -111,6 +112,19 @@ public class DebugItem extends IPItemBase{
 				}else{
 					out.appendText("Empty");
 				}
+				
+				context.getPlayer().sendMessage(out);
+				
+				return ActionResultType.PASS;
+			}
+			
+			if(te instanceof GasGeneratorTileEntity){
+				GasGeneratorTileEntity gas=(GasGeneratorTileEntity)te;
+				
+				ITextComponent out=new StringTextComponent(context.getWorld().isRemote?"CLIENT: ":"SERVER: ");
+				out.appendText(gas.getFacing()+", ");
+				out.appendText(gas.getEnergyStored(null)+", ");
+				out.appendText(gas.getMaxEnergyStored(null)+", ");
 				
 				context.getPlayer().sendMessage(out);
 				

@@ -49,7 +49,6 @@ public class IPItemModels extends LoadedModelProvider{
 		getBuilder(IPContent.Items.projector)
 			.parent(getExistingFile(modLoc("item/mb_projector")));
 		
-		
 		// TODO Make a mock-up Pumpjack OBJ model for Item display use.
 //		obj(IPContent.Multiblock.pumpjack, "multiblock/obj/pumpjack.obj")
 //			.texture("texture", modLoc("multiblock/pumpjack"));

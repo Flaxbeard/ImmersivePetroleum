@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
+import flaxbeard.immersivepetroleum.client.ShaderUtil;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.tileentity.TileEntity;
@@ -49,10 +50,11 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 				ClientUtils.bindAtlas();
 				
 //				GlStateManager.depthMask(false);
-//				GlStateManager.disableCull();
-//				GlStateManager.enableBlend();
-//				GlStateManager.blendFuncSeparate(770, 771, 1, 0);
-//				ShaderUtil.alpha_static(0.25f, 1);
+				GlStateManager.disableLighting();
+				GlStateManager.disableCull();
+				GlStateManager.enableBlend();
+				GlStateManager.blendFuncSeparate(770, 771, 1, 0);
+				ShaderUtil.alpha_static(0.35f, 1);
 				
 				float h = height * level;
 				ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 8, h);
@@ -68,13 +70,14 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 				GlStateManager.rotated(90, 1, 0, 0);
 				GlStateManager.translated(0, 0, -h);
 				ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 8, 8);
-				GlStateManager.rotated(180, 1, 0, 0);
-				GlStateManager.translated(0, -9, -h);
-				ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 8, 8);
+//				GlStateManager.rotated(180, 1, 0, 0);
+//				GlStateManager.translated(0, -9, -h);
+//				ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 8, 8); // Causes Z-Fighting
 				
-//				ShaderUtil.releaseShader();
-//				GlStateManager.disableBlend();
-//				GlStateManager.enableCull();
+				ShaderUtil.releaseShader();
+				GlStateManager.disableBlend();
+				GlStateManager.enableCull();
+				GlStateManager.enableLighting();
 //				GlStateManager.depthMask(true);
 			}
 			GlStateManager.popMatrix();

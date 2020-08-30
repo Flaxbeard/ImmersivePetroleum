@@ -43,6 +43,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -64,6 +65,18 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	
 	public GasGeneratorTileEntity(){
 		super(TYPE);
+	}
+	
+	public int getMaxInput(){
+		return IEConfig.MACHINES.capacitorLvInput.get();
+	}
+	
+	public int getMaxOutput(){
+		return IEConfig.MACHINES.capacitorLvOutput.get();
+	}
+	
+	private int getMaxStorage(){
+		return 16000;
 	}
 	
 	@Override
@@ -108,25 +121,21 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	public void readOnPlacement(LivingEntity placer, ItemStack stack){
 		if(stack.hasTag()){
 			CompoundNBT nbt=stack.getOrCreateTag();
+			
 			this.tank.readFromNBT(nbt.getCompound("tank"));
+			this.energyStorage.readFromNBT(nbt.getCompound("energy"));
 		}
-	}
-	
-	public int getMaxInput(){
-		return IEConfig.MACHINES.capacitorLvInput.get();
-	}
-	
-	public int getMaxOutput(){
-		return IEConfig.MACHINES.capacitorLvOutput.get();
-	}
-	
-	private int getMaxStorage(){
-		return 16000;
 	}
 	
 	@Override
 	public List<ItemStack> getTileDrops(LootContext context){
-		ItemStack stack=new ItemStack(getBlockState().getBlock());
+		ItemStack stack;
+		if(context!=null){
+			stack=new ItemStack(context.get(LootParameters.BLOCK_STATE).getBlock());
+		}else{
+			stack=new ItemStack(getBlockState().getBlock());
+		}
+		
 		CompoundNBT nbt=new CompoundNBT();
 		
 		if(this.tank.getFluidAmount()>0){

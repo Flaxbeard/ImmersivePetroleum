@@ -3,6 +3,10 @@ package flaxbeard.immersivepetroleum.common.blocks;
 import java.util.Collections;
 import java.util.List;
 
+import blusunrize.immersiveengineering.common.blocks.IEBaseTileEntity;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IReadOnPlacement;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -27,8 +31,8 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameterSets;
 import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.common.ToolType;
 
@@ -94,9 +98,11 @@ public class GasGeneratorBlock extends IPBlockBase{
 	
 	@Override
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit){
-		GasGeneratorTileEntity te=(GasGeneratorTileEntity)worldIn.getTileEntity(pos);
-		if(te!=null){
-			return te.interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), (float)hit.getHitVec().x, (float)hit.getHitVec().y, (float)hit.getHitVec().z);
+		if(!worldIn.isRemote){
+			TileEntity te=worldIn.getTileEntity(pos);
+			if(te instanceof IPlayerInteraction){
+				return ((IPlayerInteraction)te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), (float)hit.getHitVec().x, (float)hit.getHitVec().y, (float)hit.getHitVec().z);
+			}
 		}
 		return true;
 	}
@@ -104,21 +110,23 @@ public class GasGeneratorBlock extends IPBlockBase{
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
 		if(!worldIn.isRemote){
-			TileEntity te=worldIn.getTileEntity(pos);
-			if(te instanceof GasGeneratorTileEntity){
-				((GasGeneratorTileEntity)te).readOnPlacement(placer, stack);
+			TileEntity te = worldIn.getTileEntity(pos);
+			if(te instanceof IReadOnPlacement){
+				((IReadOnPlacement) te).readOnPlacement(placer, stack);
+				
+				if(te instanceof IEBaseTileEntity){
+					((IEBaseTileEntity) te).markContainingBlockForUpdate(null);
+				}
 			}
 		}
 	}
 	
 	@Override
 	public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder){
-		ServerWorld world=builder.getWorld();
-		BlockPos pos=builder.get(LootParameters.POSITION);
+		TileEntity te = builder.get(LootParameters.BLOCK_ENTITY);
 		
-		TileEntity te=world.getTileEntity(pos);
-		if(te instanceof GasGeneratorTileEntity){
-			return ((GasGeneratorTileEntity)te).getTileDrops(null);
+		if(te instanceof ITileDrop){
+			return ((ITileDrop) te).getTileDrops(builder.withParameter(LootParameters.BLOCK_STATE, state).build(LootParameterSets.BLOCK));
 		}
 		
 		return Collections.emptyList();

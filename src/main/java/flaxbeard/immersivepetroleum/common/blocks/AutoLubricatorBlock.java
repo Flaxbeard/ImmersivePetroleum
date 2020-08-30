@@ -1,5 +1,11 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
+import java.util.Collections;
+import java.util.List;
+
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IReadOnPlacement;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import net.minecraft.block.Block;
@@ -29,6 +35,10 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameterSets;
+import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.common.ToolType;
 
 public class AutoLubricatorBlock extends IPBlockBase{
@@ -84,11 +94,6 @@ public class AutoLubricatorBlock extends IPBlockBase{
 	}
 	
 	@Override
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
-		worldIn.setBlockState(pos.add(0, 1, 0), state.with(SLAVE, true));
-	}
-	
-	@Override
 	public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player){
 		if(state.get(SLAVE)){
 			worldIn.destroyBlock(pos.add(0, -1, 0), true);
@@ -101,12 +106,44 @@ public class AutoLubricatorBlock extends IPBlockBase{
 	
 	@Override
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit){
-		TileEntity te=worldIn.getTileEntity(pos);
+		if(!worldIn.isRemote){
+			TileEntity te=worldIn.getTileEntity(pos);
+			if(te instanceof IPlayerInteraction){
+				return ((IPlayerInteraction)te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), (float)hit.getHitVec().x, (float)hit.getHitVec().y, (float)hit.getHitVec().z);
+			}
+		}
+		return true;
+	}
+	
+	@Override
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
+		if(!worldIn.isRemote){
+			worldIn.setBlockState(pos.add(0, 1, 0), state.with(SLAVE, true));
+			TileEntity te=worldIn.getTileEntity(pos);
+			if(te instanceof IReadOnPlacement){
+				((IReadOnPlacement)te).readOnPlacement(placer, stack);
+			}
+		}
+	}
+	
+	@Override
+	public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder){
+		TileEntity te = builder.get(LootParameters.BLOCK_ENTITY);
+		
 		if(te instanceof AutoLubricatorTileEntity){
-			return ((AutoLubricatorTileEntity)te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), 0.0F, 0.0F, 0.0F);
+			if(((AutoLubricatorTileEntity) te).isSlave){
+				ServerWorld world = builder.getWorld();
+				BlockPos pos = builder.get(LootParameters.POSITION);
+				
+				te = world.getTileEntity(pos.offset(Direction.DOWN));
+			}
 		}
 		
-		return true;
+		if(te instanceof ITileDrop){
+			return ((ITileDrop) te).getTileDrops(builder.withParameter(LootParameters.BLOCK_STATE, state).build(LootParameterSets.BLOCK));
+		}
+		
+		return Collections.emptyList();
 	}
 	
 	static final VoxelShape SHAPE_SLAVE=VoxelShapes.create(.1875F, 0, .1875F, .8125f, 1, .8125f);

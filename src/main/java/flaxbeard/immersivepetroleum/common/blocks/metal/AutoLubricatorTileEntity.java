@@ -29,6 +29,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
@@ -125,7 +126,7 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	
 	@Override
 	public List<ItemStack> getTileDrops(LootContext context){
-		ItemStack stack = new ItemStack(this.getWorld().getBlockState(getPos()).getBlock(), 1);
+		ItemStack stack = new ItemStack(context.get(LootParameters.BLOCK_STATE).getBlock());
 		CompoundNBT tag = new CompoundNBT();
 		writeTank(tag, true);
 		if(!tag.isEmpty())

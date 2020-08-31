@@ -24,6 +24,7 @@ import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
+import flaxbeard.immersivepetroleum.common.blocks.AsphaltBlock;
 import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.BlockDummy;
 import flaxbeard.immersivepetroleum.common.blocks.GasGeneratorBlock;
@@ -48,7 +49,6 @@ import flaxbeard.immersivepetroleum.common.lubehandlers.ExcavatorLubricationHand
 import flaxbeard.immersivepetroleum.common.lubehandlers.PumpjackLubricationHandler;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
@@ -133,19 +133,21 @@ public class IPContent{
 				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/napalm_still"),
 				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/napalm_flow"), IPFluid.createBuilder(1000, 4000));
 		
-		Blocks.asphalt=new IPBlockBase("asphalt", Block.Properties.create(Material.ROCK).hardnessAndResistance(2.0F, 10.0F));
-		Blocks.gas_generator=new GasGeneratorBlock();
-		
-		Blocks.auto_lubricator=new AutoLubricatorBlock("auto_lubricator");
-		
 		Blocks.dummyOilOre=new BlockDummy("dummy_oil_ore");
 		Blocks.dummyPipe=new BlockDummy("dummy_pipe");
 		Blocks.dummyConveyor=new BlockDummy("dummy_conveyor");
 		
+		Multiblock.distillationtower=new DistillationTowerBlock();
+		Multiblock.pumpjack=new PumpjackBlock();
+		
+		Blocks.asphalt=new AsphaltBlock();
+		Blocks.gas_generator=new GasGeneratorBlock();
+		
+		Blocks.auto_lubricator=new AutoLubricatorBlock("auto_lubricator");
+		
 		Items.bitumen = new IPItemBase("bitumen");
-		Items.projector = new ProjectorItem("projector");
-		Items.speedboat = new SpeedboatItem("speedboat");
 		Items.oil_can = new OilCanItem("oil_can");
+		Items.speedboat = new SpeedboatItem("speedboat");
 		
 		BoatUpgrades.reinforced_hull = new IPUpgradeItem("reinforced_hull", "BOAT");
 		BoatUpgrades.ice_breaker = new IPUpgradeItem("icebreaker", "BOAT");
@@ -153,8 +155,7 @@ public class IPContent{
 		BoatUpgrades.rudders = new IPUpgradeItem("rudders", "BOAT");
 		BoatUpgrades.paddles = new IPUpgradeItem("paddles", "BOAT");
 		
-		Multiblock.distillationtower=new DistillationTowerBlock();
-		Multiblock.pumpjack=new PumpjackBlock();
+		Items.projector = new ProjectorItem("projector");
 	}
 	
 	public static void preInit(){

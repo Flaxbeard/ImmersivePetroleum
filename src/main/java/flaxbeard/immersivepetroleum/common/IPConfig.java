@@ -123,6 +123,7 @@ public class IPConfig{
 		public final BooleanValue sample_displayBorder;
 		public final ConfigValue<List<String>> boat_fuels;
 		public final BooleanValue autounlock_recipes;
+		public final BooleanValue asphalt_speed;
 		Miscellaneous(ForgeConfigSpec.Builder builder){
 			builder.push("Miscellaneous");
 			
@@ -139,6 +140,10 @@ public class IPConfig{
 			autounlock_recipes=builder
 					.comment("Automatically unlock IP recipes for new players, default=true")
 					.define("autounlock_recipes", true);
+			
+			asphalt_speed=builder
+					.comment("Set to false to disable the asphalt block boosting player speed, default=true")
+					.define("asphalt_speed", true);
 			
 			builder.pop();
 		}

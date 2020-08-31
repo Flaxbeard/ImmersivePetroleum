@@ -60,6 +60,8 @@
 	"desc.immersivepetroleum.flavour.upgrade_rudders": "Allows for tighter turns in the Motorboat",
 	"desc.immersivepetroleum.flavour.upgrade_paddles": "Can paddle Motorboat when out of fuel",
 	
+	"desc.immersivepetroleum.flavour.asphalt": "Increases walking speed by %1$s",
+	
 	"_comment": "################## IE-Manual ##################",
 	"_comment": "Everything with _ at the start is temporarly disabled basicly!",
 	

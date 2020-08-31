@@ -1,9 +1,14 @@
 package flaxbeard.immersivepetroleum.common;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import com.electronwill.nightconfig.core.Config;
+import com.google.common.base.Preconditions;
+
+import blusunrize.immersiveengineering.common.IEConfig;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -30,6 +35,22 @@ public class IPConfig{
 		TOOLS=new Tools(builder);
 		
 		ALL=builder.build();
+	}
+	
+	
+	private static Config rawConfig;
+	public static Config getRawConfig(){
+		if(rawConfig==null){
+			try{
+				Field childConfig = ForgeConfigSpec.class.getDeclaredField("childConfig");
+				childConfig.setAccessible(true);
+				rawConfig = (Config) childConfig.get(IEConfig.ALL);
+				Preconditions.checkNotNull(rawConfig);
+			}catch(Exception x){
+				throw new RuntimeException(x);
+			}
+		}
+		return rawConfig;
 	}
 	
 	public static class Extraction{

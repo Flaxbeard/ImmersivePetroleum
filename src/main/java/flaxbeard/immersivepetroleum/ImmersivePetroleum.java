@@ -1,9 +1,16 @@
 package flaxbeard.immersivepetroleum;
 
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.electronwill.nightconfig.core.Config;
+
+import blusunrize.immersiveengineering.api.ManualHelper;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
+import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPConfig;
@@ -17,6 +24,7 @@ import flaxbeard.immersivepetroleum.common.util.commands.ReservoirCommand;
 import net.minecraft.command.Commands;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
@@ -80,33 +88,6 @@ public class ImmersivePetroleum{
 		
 		// ---------------------------------------------------------------------------------------------------------------------------------------------
 		
-		// TODO See issue #4215 in the ImmersiveEngineering GitHub
-		/*
-		IEConfig.manual_int.put("distillationTower_operationCost", (int) (2048 * IPConfig.REFINING.distillationTower_energyModifier.get()));
-		IEConfig.manual_int.put("pumpjack_consumption", IPConfig.EXTRACTION.pumpjack_consumption.get());
-		IEConfig.manual_int.put("pumpjack_speed", IPConfig.EXTRACTION.pumpjack_speed.get());
-		
-		int oil_min = 1000000;
-		int oil_max = 5000000;
-		for(ReservoirType type:PumpjackHandler.reservoirList.keySet()){
-			if(type.name.equals("oil")){
-				oil_min = type.minSize;
-				oil_max = type.maxSize;
-				break;
-			}
-		}
-		IEConfig.manual_int.put("pumpjack_days", (((oil_max + oil_min) / 2) + oil_min) / (IPConfig.EXTRACTION.pumpjack_speed.get() * 24000));
-		IEConfig.manual_double.put("autoLubricant_speedup", 1.25);
-		
-		Map<ResourceLocation, Integer> map = FuelHandler.getFuelFluxesPerTick();
-		if(map.size() > 0 && map.containsKey("gasoline")){
-			IEConfig.manual_int.put("portableGenerator_flux", map.get("gasoline"));
-			
-		}else{
-			IEConfig.manual_int.put("portableGenerator_flux", -1);
-		}
-		*/
-		
 		IPContent.init();
 		
 		proxy.init();
@@ -120,6 +101,56 @@ public class ImmersivePetroleum{
 	
 	public void loadComplete(FMLLoadCompleteEvent event){
 		proxy.completed();
+		
+		ManualHelper.addConfigGetter(str->{
+			switch(str){
+				case "distillationtower_operationcost":{
+					return Integer.valueOf((int)(2048 * IPConfig.REFINING.distillationTower_energyModifier.get()));
+				}
+				case "pumpjack_consumption":{
+					return IPConfig.EXTRACTION.pumpjack_consumption.get();
+				}
+				case "pumpjack_speed":{
+					return IPConfig.EXTRACTION.pumpjack_speed.get();
+				}
+				case "pumpjack_days":{
+					int oil_min = 1000000;
+					int oil_max = 5000000;
+					for(ReservoirType type:PumpjackHandler.reservoirs.values()){
+						if(type.name.equals("oil")){
+							oil_min = type.minSize;
+							oil_max = type.maxSize;
+							break;
+						}
+					}
+					
+					return Integer.valueOf((((oil_max + oil_min) / 2) + oil_min) / (IPConfig.EXTRACTION.pumpjack_speed.get() * 24000));
+				}
+				case "autolubricant_speedup":{
+					return Double.valueOf(1.25D);
+				}
+				case "portablegenerator_flux":{
+					Map<ResourceLocation, Integer> map = FuelHandler.getFuelFluxesPerTick();
+					if(map.size()>0){
+						for(ResourceLocation loc:map.keySet()){
+							if(loc.toString().contains("gasoline")){
+								return map.get(loc);
+							}
+						}
+					}
+					
+					return Integer.valueOf(-1);
+				}
+				default:break;
+			}
+			
+			// Last resort
+			Config cfg=IPConfig.getRawConfig();
+			if(cfg.contains(str)){
+				return cfg.get(str);
+			}
+			return null;
+		});
 	}
 	
 	public void serverAboutToStart(FMLServerAboutToStartEvent event){

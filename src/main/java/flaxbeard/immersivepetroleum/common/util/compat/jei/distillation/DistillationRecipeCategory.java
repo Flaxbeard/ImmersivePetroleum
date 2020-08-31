@@ -38,7 +38,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRec
 				out.add(fluid);
 		}
 		
-		ingredients.setInput(VanillaTypes.FLUID, recipe.input);
+		ingredients.setInputs(VanillaTypes.FLUID, recipe.input.getMatchingFluidStacks());
 		ingredients.setOutputs(VanillaTypes.FLUID, out);
 	}
 	
@@ -48,7 +48,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRec
 		
 		if(recipe.input!=null){
 			guiFluidStacks.init(0, true, 9, 19, 20, 51, 100, false, this.tankOverlay);
-			guiFluidStacks.set(0, recipe.input);
+			guiFluidStacks.set(0, recipe.input.getMatchingFluidStacks());
 		}
 		
 		guiFluidStacks.init(1, false, 61, 21, 16, 47, 100, false, null);

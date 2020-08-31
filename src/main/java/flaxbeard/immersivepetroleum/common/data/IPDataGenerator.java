@@ -21,6 +21,7 @@ public class IPDataGenerator{
 			
 			generator.addProvider(new IPBlockTags(generator));
 			generator.addProvider(new IPItemTags(generator));
+			generator.addProvider(new IPFluidTags(generator));
 			generator.addProvider(new IPRecipes(generator));
 			
 			IPLoadedModels loadedModels=new IPLoadedModels(generator, event.getExistingFileHelper());

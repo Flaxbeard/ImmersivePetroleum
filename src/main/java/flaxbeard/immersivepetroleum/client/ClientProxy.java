@@ -22,6 +22,7 @@ import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualElementCrafting;
 import blusunrize.lib.manual.ManualElementTable;
 import blusunrize.lib.manual.ManualEntry;
+import blusunrize.lib.manual.ManualEntry.EntryData;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.TextSplitter;
 import blusunrize.lib.manual.Tree.InnerNode;
@@ -65,6 +66,8 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
@@ -205,22 +208,22 @@ public class ClientProxy extends CommonProxy{
 		builder.addSpecialElement("distillationtower0", 0, new ManualElementMultiblock(man, DistillationTowerMultiblock.INSTANCE));
 		builder.addSpecialElement("distillationtower1", 0, ()->{
 			Collection<DistillationRecipe> recipeList = DistillationRecipe.recipes.values();
-			List<String[]> l = new ArrayList<String[]>();
+			List<ITextComponent[]> l = new ArrayList<ITextComponent[]>();
 			for(DistillationRecipe recipe:recipeList){
 				boolean first = true;
 				for(FluidStack output:recipe.fluidOutput){
-					String inputName = recipe.input.getDisplayName().getUnformattedComponentText();
+					String inputName = recipe.input.getMatchingFluidStacks().get(0).getDisplayName().getUnformattedComponentText();
 					String outputName = output.getDisplayName().getUnformattedComponentText();
-					String[] array = new String[]{
-							first ? recipe.input.getAmount()+"mB "+inputName : "",
-							output.getAmount()+"mB "+outputName
+					ITextComponent[] array = new ITextComponent[]{
+							new StringTextComponent(first ? recipe.input.getAmount()+"mB "+inputName : ""),
+							new StringTextComponent(output.getAmount()+"mB "+outputName)
 					};
 					l.add(array);
 					first = false;
 				}
 			}
 			
-			return new ManualElementTable(man, l.toArray(new String[0][]), false);
+			return new ManualElementTable(man, l.toArray(new ITextComponent[0][]), false);
 		});
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
@@ -248,15 +251,19 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
+	protected static EntryData createContentTest(TextSplitter splitter){
+		return new EntryData("title", "subtext", "content");
+	}
+	
 	static final DecimalFormat FORMATTER = new DecimalFormat("#,###.##");
 	static ManualEntry entry;
-	protected static String[] createContent(TextSplitter splitter){
+	protected static EntryData createContent(TextSplitter splitter){
 		ArrayList<ItemStack> list = new ArrayList<>();
 		final ReservoirType[] reservoirs = PumpjackHandler.reservoirs.values().toArray(new ReservoirType[0]);
 		
-		StringBuilder content=new StringBuilder();
-		content.append(I18n.format("ie.manual.entry.reservoirs.oil0"));
-		content.append(I18n.format("ie.manual.entry.reservoirs.oil1"));
+		StringBuilder contentBuilder=new StringBuilder();
+		contentBuilder.append(I18n.format("ie.manual.entry.reservoirs.oil0"));
+		contentBuilder.append(I18n.format("ie.manual.entry.reservoirs.oil1"));
 		
 		for(int i=0;i<reservoirs.length;i++){
 			ReservoirType type=reservoirs[i];
@@ -318,10 +325,10 @@ public class ClientProxy extends CommonProxy{
 			if(type.replenishRate > 0){
 				repRate = I18n.format("ie.manual.entry.reservoirs.replenish", type.replenishRate, fluidName);
 			}
-			content.append(I18n.format("ie.manual.entry.reservoirs.content", dimBLWL, fluidName, FORMATTER.format(type.minSize), FORMATTER.format(type.maxSize), repRate, bioBLWL));
+			contentBuilder.append(I18n.format("ie.manual.entry.reservoirs.content", dimBLWL, fluidName, FORMATTER.format(type.minSize), FORMATTER.format(type.maxSize), repRate, bioBLWL));
 			
 			if(i<(reservoirs.length-1))
-				content.append("<np>");
+				contentBuilder.append("<np>");
 			
 			list.add(new ItemStack(fluid.getFilledBucket()));
 		}
@@ -337,11 +344,10 @@ public class ClientProxy extends CommonProxy{
 		}
 		*/
 		
-		return new String[]{
-				I18n.format("ie.manual.entry.reservoirs.title"),
-				I18n.format("ie.manual.entry.reservoirs.subtitle"),
-				content.toString().replaceAll("\r\n|\r|\n", "\n")
-		};
+		String translatedTitle=I18n.format("ie.manual.entry.reservoirs.title");
+		String tanslatedSubtext=I18n.format("ie.manual.entry.reservoirs.subtitle");
+		String formattedContent=contentBuilder.toString().replaceAll("\r\n|\r|\n", "\n");
+		return new EntryData(translatedTitle, tanslatedSubtext, formattedContent);
 	}
 	
 	@Override

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
@@ -26,7 +27,7 @@ public class DistillationRecipe extends MultiblockRecipe{
 	public static DistillationRecipe findRecipe(FluidStack input){
 		if(!recipes.isEmpty()){
 			for(DistillationRecipe r:recipes.values()){
-				if(r.input!=null && r.input.isFluidEqual(input)){
+				if(r.input!=null && r.input.testIgnoringAmount(input)){
 					return r;
 				}
 			}
@@ -39,19 +40,19 @@ public class DistillationRecipe extends MultiblockRecipe{
 		return findRecipe(input);
 	}
 	
-	public final FluidStack input;
+	public final FluidTagInput input;
 	public final FluidStack[] fluidOutput;
 	public final ItemStack[] itemOutput;
 	public final double[] chances;
 	
-	public DistillationRecipe(ResourceLocation id, FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidStack input, int energy, int time, double[] chances){
+	public DistillationRecipe(ResourceLocation id, FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidTagInput input, int energy, int time, double[] chances){
 		super(ItemStack.EMPTY, TYPE, id);
 		this.fluidOutput = fluidOutput;
 		this.itemOutput = itemOutput;
 		this.input = input;
 		this.totalProcessEnergy = (int) Math.floor(energy * IPConfig.REFINING.distillationTower_energyModifier.get());
 		this.totalProcessTime = (int) Math.floor(time * IPConfig.REFINING.distillationTower_timeModifier.get());
-		this.fluidInputList = Collections.singletonList(this.input);
+		this.fluidInputList = Collections.singletonList(input);
 		this.fluidOutputList = Arrays.asList(this.fluidOutput);
 		this.outputList = NonNullList.from(ItemStack.EMPTY, itemOutput);
 		this.chances = chances;
@@ -75,8 +76,9 @@ public class DistillationRecipe extends MultiblockRecipe{
 		return 0;
 	}
 	
+	@Deprecated
 	public CompoundNBT writeToNBT(CompoundNBT nbt){
-		nbt.put("input", input.writeToNBT(new CompoundNBT()));
+//		nbt.put("input", this.input.writeToNBT(new CompoundNBT()));
 		return nbt;
 	}
 	

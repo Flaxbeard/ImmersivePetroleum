@@ -10,6 +10,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.energy.DieselHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
@@ -19,6 +20,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.CrusherTileEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.ExcavatorTileEntity;
 import blusunrize.immersiveengineering.common.util.IEPotions;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
@@ -164,13 +166,13 @@ public class IPContent{
 		//blockFluidLubricant.setPotionEffects(new PotionEffect(IEPotions.slippery, 100, 1));
 		//blockFluidNapalm.setPotionEffects(new PotionEffect(IEPotions.flammable, 140, 2));
 		
-		ChemthrowerHandler.registerEffect(Fluids.lubricant, new LubricantEffect());
-		ChemthrowerHandler.registerEffect(Fluids.lubricant, new ChemthrowerEffect_Potion(null, 0, IEPotions.slippery, 60, 1));
-		ChemthrowerHandler.registerEffect(IEContent.fluidPlantoil, new LubricantEffect());
-		ChemthrowerHandler.registerEffect(Fluids.gasoline, new ChemthrowerEffect_Potion(null, 0, IEPotions.flammable, 60, 1));
-		ChemthrowerHandler.registerFlammable(Fluids.gasoline);
-		ChemthrowerHandler.registerEffect(Fluids.napalm, new ChemthrowerEffect_Potion(null, 0, IEPotions.flammable, 60, 2));
-		ChemthrowerHandler.registerFlammable(Fluids.napalm);
+		ChemthrowerHandler.registerEffect(IPTags.Fluids.lubricant, new LubricantEffect());
+		ChemthrowerHandler.registerEffect(IPTags.Fluids.lubricant, new ChemthrowerEffect_Potion(null, 0, IEPotions.slippery, 60, 1));
+		ChemthrowerHandler.registerEffect(IETags.fluidPlantoil, new LubricantEffect());
+		ChemthrowerHandler.registerEffect(IPTags.Fluids.gasoline, new ChemthrowerEffect_Potion(null, 0, IEPotions.flammable, 60, 1));
+		ChemthrowerHandler.registerFlammable(IPTags.Fluids.gasoline);
+		ChemthrowerHandler.registerEffect(IPTags.Fluids.napalm, new ChemthrowerEffect_Potion(null, 0, IEPotions.flammable, 60, 2));
+		ChemthrowerHandler.registerFlammable(IPTags.Fluids.napalm);
 		
 		MultiblockHandler.registerMultiblock(DistillationTowerMultiblock.INSTANCE);
 		MultiblockHandler.registerMultiblock(PumpjackMultiblock.INSTANCE);
@@ -178,7 +180,7 @@ public class IPContent{
 		IPConfig.Utils.addFuel(IPConfig.GENERATION.fuels.get());
 		IPConfig.Utils.addBoatFuel(IPConfig.MISCELLANEOUS.boat_fuels.get());
 		
-		DieselHandler.registerFuel(Fluids.diesel, 150);
+		DieselHandler.registerFuel(IPTags.Fluids.diesel, 150);
 		
 		LubricantHandler.registerLubricant(Fluids.lubricant, 3);
 		LubricantHandler.registerLubricant(IEContent.fluidPlantoil, 12);

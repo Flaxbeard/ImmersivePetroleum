@@ -7,6 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
+import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipeBuilder;
@@ -21,12 +22,7 @@ import net.minecraftforge.fluids.FluidStack;
 public class DistillationRecipeSerializer extends IERecipeSerializer<DistillationRecipe>{
 	@Override
 	public DistillationRecipe readFromJson(ResourceLocation recipeId, JsonObject json){
-		if(!json.has("input"))
-			throw new com.google.gson.JsonSyntaxException("Missing \"input\" fluid in a distillation recipe.");
-		if(!json.has("results"))
-			throw new com.google.gson.JsonSyntaxException("Missing \"results\" array in a distillation recipe.");
-		
-		FluidStack input=ApiUtils.jsonDeserializeFluidStack(JSONUtils.getJsonObject(json, "input"));
+		FluidTagInput input=FluidTagInput.deserialize(JSONUtils.getJsonObject(json, "input"));
 		JsonArray fluidResults=JSONUtils.getJsonArray(json, "results");
 		JsonArray itemResults=JSONUtils.getJsonArray(json, "byproducts");
 		
@@ -79,7 +75,7 @@ public class DistillationRecipeSerializer extends IERecipeSerializer<Distillatio
 		for(int i=0;i<chances.length;i++)
 			chances[i]=buffer.readDouble();
 		
-		FluidStack input=buffer.readFluidStack();
+		FluidTagInput input=FluidTagInput.read(buffer);
 		int energy=buffer.readInt();
 		int time=buffer.readInt();
 		
@@ -100,7 +96,7 @@ public class DistillationRecipeSerializer extends IERecipeSerializer<Distillatio
 		for(double d:recipe.chances)
 			buffer.writeDouble(d);
 		
-		buffer.writeFluidStack(recipe.input);
+		recipe.input.write(buffer);
 		buffer.writeInt(recipe.getTotalProcessEnergy());
 		buffer.writeInt(recipe.getTotalProcessTime());
 	}

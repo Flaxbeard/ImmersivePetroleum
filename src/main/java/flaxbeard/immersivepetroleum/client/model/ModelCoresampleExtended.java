@@ -12,7 +12,7 @@ import javax.vecmath.Vector2f;
 import com.google.common.cache.Cache;
 import com.google.common.collect.Lists;
 
-import blusunrize.immersiveengineering.api.tool.ExcavatorHandler.MineralMix;
+import blusunrize.immersiveengineering.api.excavator.MineralMix;
 import blusunrize.immersiveengineering.client.models.ModelCoresample;
 import blusunrize.immersiveengineering.common.items.CoresampleItem;
 import net.minecraft.block.BlockState;
@@ -38,9 +38,9 @@ public class ModelCoresampleExtended extends ModelCoresample{
 
 	Set<BakedQuad> bakedQuads;
 	static List<BakedQuad> emptyQuads = Lists.newArrayList();
-	MineralMix mineral;
+	MineralMix[] mineral;
 
-	public ModelCoresampleExtended(@Nullable MineralMix mineral, VertexFormat format, @Nullable Fluid fluid){
+	public ModelCoresampleExtended(@Nullable MineralMix[] mineral, VertexFormat format, @Nullable Fluid fluid){
 		super(mineral, format);
 		this.mineral = mineral;
 		this.fluid = fluid;
@@ -187,16 +187,19 @@ public class ModelCoresampleExtended extends ModelCoresample{
 	ItemOverrideList overrideList2 = new ItemOverrideList(){
 		@Override
 		public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, World worldIn, LivingEntity entityIn){
-			MineralMix mineral = CoresampleItem.getMix(stack);
-			if(mineral != null){
+			MineralMix[] minerals = CoresampleItem.getMineralMixes(stack);
+			if(minerals.length > 0){
 				try{
-					return getSampleCache().get(mineral, () -> {
+					String cacheKey = "";
+					for(int i = 0;i < minerals.length;i++)
+						cacheKey += (i > 0 ? "_" : "") + minerals[i].getId().toString();
+					return getSampleCache().get(cacheKey, () -> {
 						VertexFormat format;
 						if(originalModel instanceof ModelCoresample)
-							format = getVertexFormat(((ModelCoresample) originalModel));
+							format =getVertexFormat((ModelCoresample) originalModel);
 						else
 							format = DefaultVertexFormats.BLOCK;
-						return new ModelCoresample(mineral, format);
+						return new ModelCoresample(minerals, format);
 					});
 				}catch(ExecutionException e){
 					throw new RuntimeException(e);
@@ -210,7 +213,7 @@ public class ModelCoresampleExtended extends ModelCoresample{
 	static Field FIELD_format;
 	
 	@SuppressWarnings("unchecked")
-	static Cache<MineralMix, ModelCoresample> getSampleCache(){
+	static Cache<String, ModelCoresample> getSampleCache(){
 		if(STATIC_FIELD_modelCache == null){
 			try{
 				STATIC_FIELD_modelCache = ModelCoresample.class.getDeclaredField("modelCache"); // Don't judge me alright? :c
@@ -221,7 +224,7 @@ public class ModelCoresampleExtended extends ModelCoresample{
 		}
 		
 		try{
-			return (Cache<MineralMix, ModelCoresample>) STATIC_FIELD_modelCache.get(null);
+			return (Cache<String, ModelCoresample>) STATIC_FIELD_modelCache.get(null);
 		}catch(Exception e){
 			throw new RuntimeException("This shouldnt happen! Report this immediately!", e);
 		}

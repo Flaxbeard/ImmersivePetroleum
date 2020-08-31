@@ -11,17 +11,18 @@ import com.google.common.collect.ImmutableSet;
 
 import blusunrize.immersiveengineering.api.DirectionalBlockPos;
 import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
+import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import blusunrize.immersiveengineering.common.util.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
-import blusunrize.immersiveengineering.common.util.shapes.CachedShapesWithTransform;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
 import net.minecraft.block.Block;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.ItemStackHelper;
@@ -424,9 +425,10 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		return this.cooldownTicks > 0 || super.shouldRenderAsActive();
 	}
 	
+	
 	@Override
-	public boolean hammerUseSide(Direction side, PlayerEntity player, Vec3d hitVec){
-		return this.operated ? super.hammerUseSide(side, player, hitVec) : true;
+	public boolean canHammerRotate(Direction side, Vec3d hit, LivingEntity entity){
+		return this.operated ? super.canHammerRotate(side, hit, entity) : true;
 	}
 	
 	@Override

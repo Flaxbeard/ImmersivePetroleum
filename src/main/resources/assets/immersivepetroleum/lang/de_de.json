@@ -1,0 +1,40 @@
+{
+    "block.immersivepetroleum.fluid_diesel": "Diesel",
+    "block.immersivepetroleum.fluid_crude_oil": "Rohöl",
+
+    "block.immersivepetroleum.stone_decoration.asphalt": "Asphalt",
+
+    "block.immersivepetroleum.metal_multiblock.pumpjack": "Tiefpumpe",
+    "block.immersivepetroleum.metal_multiblock.distillation_tower": "Rektifikationskolonne",
+    "block.immersivepetroleum.metal_multiblock.pumpjack_parent": "Tiefpumpe",
+    "block.immersivepetroleum.metal_multiblock.distillation_tower_parent": "Rektifikationskolonne",
+
+    "chat.immersivepetroleum.info.coresample.oil": "%s mB Öl",
+    "chat.immersivepetroleum.info.coresample.noOil": "Kein Öl",
+
+    "fluid.diesel": "Diesel",
+    "fluid.oil": "Rohöl",
+
+    "item.immersivepetroleum.material.bitumen": "Bitumen",
+    "item.immersivepetroleum.material.petcoke": "Petrolkoks",
+
+    "itemGroup.immersivepetroleum": "Immersive Petroleum",
+
+    "ie.manual.entry.blank_text": "",
+
+    "desc.immersiveengineering.info.multiblock.IP:DistillationTower": "Rektifikationskolonne",
+
+    "ie.manual.entry.distillationTower": "Rektifikationskolonne",
+    "ie.manual.entry.distillationTower.subtext": "Umweltunfreundlich",
+
+    "ie.manual.entry.pumpjack": "Tiefpumpe",
+    "ie.manual.entry.pumpjack.subtext": "Pump, pump it up",
+
+    "ie.manual.entry.oil": "Ölreservoirs",
+    "ie.manual.entry.oil.subtext": "Schwarzes Gold",
+
+    "ie.manual.entry.asphalt": "Asphalt",
+    "ie.manual.entry.asphalt.subtext": "Zeit für Autobahnen",
+
+    "ie.manual.category.ip": "Ölverarbeitung"
+}

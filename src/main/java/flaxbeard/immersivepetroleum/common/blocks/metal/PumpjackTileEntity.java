@@ -327,19 +327,23 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(Direction side){
 		PumpjackTileEntity master = master();
-		if(master!=null){
+		if(master != null){
 			// East Port
-			if(this.posInMultiblock.equals(East_Port) && (side==null || side==getFacing().rotateY())){
-				return new FluidTank[]{master.fakeTank};
+			if(this.posInMultiblock.equals(East_Port)){
+				if(side == null || (getIsMirrored() ? (side == getFacing().rotateYCCW()) : (side == getFacing().rotateY()))){
+					return new FluidTank[]{master.fakeTank};
+				}
 			}
 			
 			// West Port
-			if(this.posInMultiblock.equals(West_Port) && (side==null || side==getFacing().rotateYCCW())){
-				return new FluidTank[]{master.fakeTank};
+			if(this.posInMultiblock.equals(West_Port)){
+				if(side == null || (getIsMirrored() ? (side == getFacing().rotateY()) : (side == getFacing().rotateYCCW()))){
+					return new FluidTank[]{master.fakeTank};
+				}
 			}
 			
 			// Below Head
-			if(IPConfig.EXTRACTION.required_pipes.get() && this.posInMultiblock.equals(Down_Port) && (side==null || side==Direction.DOWN)){
+			if(IPConfig.EXTRACTION.required_pipes.get() && this.posInMultiblock.equals(Down_Port) && (side == null || side == Direction.DOWN)){
 				return new FluidTank[]{master.fakeTank};
 			}
 		}
@@ -515,140 +519,5 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		}
 		
 		return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
-		
-//		Direction fl = getFacing();
-//		Direction fw = getFacing().rotateY();
-//		if(getIsMirrored()) fw = fw.getOpposite();
-//		
-//		int pos = -1;
-//		
-//		if(pos == 0){
-//			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(0, 0, 0, 1, .5f, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//			
-//			float minX = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 2F / 16F : ((fl == Direction.WEST) ? 10F / 16F : 2F / 16F);
-//			float maxX = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 4F / 16F : ((fl == Direction.WEST) ? 14F / 16F : 6F / 16F);
-//			float minZ = (fl == Direction.EAST || fl == Direction.WEST) ? 2F / 16F : ((fl == Direction.NORTH) ? 10F / 16F : 2F / 16F);
-//			float maxZ = (fl == Direction.EAST || fl == Direction.WEST) ? 4F / 16F : ((fl == Direction.NORTH) ? 14F / 16F : 6F / 16F);
-//			list.add(new AxisAlignedBB(minX, 0.5, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//			
-//			minX = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 12F / 16F : minX;
-//			maxX = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 14F / 16F : maxX;
-//			minZ = (fl == Direction.EAST || fl == Direction.WEST) ? 12F / 16F : minZ;
-//			maxZ = (fl == Direction.EAST || fl == Direction.WEST) ? 14F / 16F : maxZ;
-//			list.add(new AxisAlignedBB(minX, 0.5, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//			return list;
-//		}else if(pos == 18){
-//			float minX = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 0F : ((fl == Direction.WEST) ? .5F : 0F);
-//			float maxX = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 1F : ((fl == Direction.WEST) ? 1F : .5F);
-//			float minZ = (fl == Direction.EAST || fl == Direction.WEST) ? 0F : ((fl == Direction.NORTH) ? .5F : 0F);
-//			float maxZ = (fl == Direction.EAST || fl == Direction.WEST) ? 1F : ((fl == Direction.NORTH) ? 1F : .5F);
-//			return Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//		}else if((pos >= 3 && pos <= 14 && pos != 10 && pos != 13 && pos != 11 && pos != 9) || pos == 1){
-//			return Lists.newArrayList(new AxisAlignedBB(0, 0, 0, 1, .5f, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//		}else if(pos == 13){
-//			float minX = (fl == Direction.EAST || fl == Direction.WEST) ? 0F : .3125F;
-//			float maxX = (fl == Direction.EAST || fl == Direction.WEST) ? 1F : .685F;
-//			float minZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 0F : .3125F;
-//			float maxZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 1F : .685F;
-//			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(minX, 0.5, minZ, maxX, .5 + 3 / 8F, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//			list.add(new AxisAlignedBB(0, 0, 0, 1, .5f, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//			return list;
-//			
-//		}else if(pos == 10){
-//			float minX = (fl == Direction.NORTH || fl == Direction.SOUTH) ? .3125F : ((fl == Direction.EAST) ? 11F / 16F : 0F / 16F);
-//			float maxX = (fl == Direction.NORTH || fl == Direction.SOUTH) ? .685F : ((fl == Direction.EAST) ? 16F / 16F : 5F / 16F);
-//			float minZ = (fl == Direction.EAST || fl == Direction.WEST) ? .3125F : ((fl == Direction.SOUTH) ? 11F / 16F : 0F / 16F);
-//			float maxZ = (fl == Direction.EAST || fl == Direction.WEST) ? .685F : ((fl == Direction.SOUTH) ? 16F / 16F : 5F / 16F);
-//			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(minX, 0.5, minZ, maxX, .5 + 3 / 8F, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//			
-//			minX = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 0F : 5F / 16F;
-//			maxX = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 1F : 11F / 16F;
-//			minZ = (fl == Direction.EAST || fl == Direction.WEST) ? 0F : 5F / 16F;
-//			maxZ = (fl == Direction.EAST || fl == Direction.WEST) ? 1F : 11F / 16F;
-//			list.add(new AxisAlignedBB(minX, 0.5, minZ, maxX, .5 + 3 / 8F, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//			
-//			list.add(new AxisAlignedBB(0, 0, 0, 1, .5f, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//			return list;
-//			
-//		}else if(pos == 16){
-//			return Lists.newArrayList(new AxisAlignedBB(3 / 16F, 0, 3 / 16F, 13 / 16F, 1, 13 / 16F).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//		}else if(pos == 22){
-//			float minX = (fl == Direction.EAST || fl == Direction.WEST) ? 0F : .25F;
-//			float maxX = (fl == Direction.EAST || fl == Direction.WEST) ? 1F : .75F;
-//			float minZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 0F : .25F;
-//			float maxZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 1F : .75F;
-//			return Lists.newArrayList(new AxisAlignedBB(minX, -0.75, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//		}else if(pos == 40){
-//			float minX = (fl == Direction.EAST || fl == Direction.WEST) ? 0F : .25F;
-//			float maxX = (fl == Direction.EAST || fl == Direction.WEST) ? 1F : .75F;
-//			float minZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 0F : .25F;
-//			float maxZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 1F : .75F;
-//			return Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 0.25, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//		}else if(pos == 27){
-//			fl = this.getIsMirrored() ? getFacing().getOpposite() : getFacing();
-//			float minX = (fl == Direction.EAST || fl == Direction.WEST) ? 0.7F : ((fl == Direction.NORTH) ? 0.6F : -.1F);
-//			float maxX = (fl == Direction.EAST || fl == Direction.WEST) ? 1.4F : ((fl == Direction.NORTH) ? 1.1F : 0.4F);
-//			float minZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 0.7F : ((fl == Direction.EAST) ? .6F : -.1F);
-//			float maxZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 1.4F : ((fl == Direction.EAST) ? 1.1F : 0.4F);
-//			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(minX, -0.5F, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//			
-//			minX = (fl == Direction.EAST || fl == Direction.WEST) ? -.4F : ((fl == Direction.NORTH) ? 0.6F : -.1F);
-//			maxX = (fl == Direction.EAST || fl == Direction.WEST) ? .3F : ((fl == Direction.NORTH) ? 1.1F : 0.4F);
-//			minZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? -.4F : ((fl == Direction.EAST) ? .6F : -.1F);
-//			maxZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? .3F : ((fl == Direction.EAST) ? 1.1F : 0.4F);
-//			list.add(new AxisAlignedBB(minX, -0.5F, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//			return list;
-//		}else if(pos == 29){
-//			fl = this.getIsMirrored() ? getFacing().getOpposite() : getFacing();
-//			float minX = (fl == Direction.EAST || fl == Direction.WEST) ? 0.7F : ((fl == Direction.SOUTH) ? 0.6F : -.1F);
-//			float maxX = (fl == Direction.EAST || fl == Direction.WEST) ? 1.4F : ((fl == Direction.SOUTH) ? 1.1F : 0.4F);
-//			float minZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 0.7F : ((fl == Direction.WEST) ? .6F : -.1F);
-//			float maxZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 1.4F : ((fl == Direction.WEST) ? 1.1F : 0.4F);
-//			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(minX, -0.5F, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//			
-//			minX = (fl == Direction.EAST || fl == Direction.WEST) ? -.4F : ((fl == Direction.SOUTH) ? 0.6F : -.1F);
-//			maxX = (fl == Direction.EAST || fl == Direction.WEST) ? .3F : ((fl == Direction.SOUTH) ? 1.1F : 0.4F);
-//			minZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? -.4F : ((fl == Direction.WEST) ? .6F : -.1F);
-//			maxZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? .3F : ((fl == Direction.WEST) ? 1.1F : 0.4F);
-//			list.add(new AxisAlignedBB(minX, -0.5F, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//			return list;
-//		}else if(pos == 45){
-//			fl = this.getIsMirrored() ? getFacing().getOpposite() : getFacing();
-//			float minX = (fl == Direction.EAST || fl == Direction.WEST) ? 0F : ((fl == Direction.NORTH) ? 0.8F : -0.2F);
-//			float maxX = (fl == Direction.EAST || fl == Direction.WEST) ? 1F : ((fl == Direction.NORTH) ? 1.2F : 0.2F);
-//			float minZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 0F : ((fl == Direction.EAST) ? 0.8F : -0.2F);
-//			float maxZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 1 : ((fl == Direction.EAST) ? 1.2F : 0.2F);
-//			return Lists.newArrayList(new AxisAlignedBB(minX, 0F, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//		}else if(pos == 47){
-//			fl = this.getIsMirrored() ? getFacing().getOpposite() : getFacing();
-//			float minX = (fl == Direction.EAST || fl == Direction.WEST) ? 0F : ((fl == Direction.NORTH) ? -0.2F : 0.8F);
-//			float maxX = (fl == Direction.EAST || fl == Direction.WEST) ? 1F : ((fl == Direction.NORTH) ? 0.2F : 1.2F);
-//			float minZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 0F : ((fl == Direction.EAST) ? -0.2F : 0.8F);
-//			float maxZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 1 : ((fl == Direction.EAST) ? 0.2F : 1.2F);
-//			return Lists.newArrayList(new AxisAlignedBB(minX, 0F, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//		}else if(pos == 63 || pos == 65){
-//			return new ArrayList<AxisAlignedBB>();
-//		}else if(pos == 58 || pos == 61 || pos == 64 || pos == 67){
-//			float minX = (fl == Direction.EAST || fl == Direction.WEST) ? 0F : 0.25F;
-//			float maxX = (fl == Direction.EAST || fl == Direction.WEST) ? 1F : 0.75F;
-//			float minZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 0F : 0.25F;
-//			float maxZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 1 : 0.75F;
-//			return Lists.newArrayList(new AxisAlignedBB(minX, -.25F, minZ, maxX, 0.75F, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//		}else if(pos == 70){
-//			float minX = (fl == Direction.EAST || fl == Direction.WEST) ? 0F : 0.125F;
-//			float maxX = (fl == Direction.EAST || fl == Direction.WEST) ? 1F : 0.875F;
-//			float minZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 0F : 0.125F;
-//			float maxZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 1 : 0.875F;
-//			return Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 1.25F, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//		}else if(pos == 52){
-//			float minX = (fl == Direction.EAST || fl == Direction.WEST) ? 0F : 0.125F;
-//			float maxX = (fl == Direction.EAST || fl == Direction.WEST) ? 1F : 0.875F;
-//			float minZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 0F : 0.125F;
-//			float maxZ = (fl == Direction.NORTH || fl == Direction.SOUTH) ? 1 : 0.875F;
-//			return Lists.newArrayList(new AxisAlignedBB(minX, .25F, minZ, maxX, 1F, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-//		}
-//		
-//		List<AxisAlignedBB> list = new ArrayList<AxisAlignedBB>();
-//		list.add(new AxisAlignedBB(0, 0, 0, 1, 1, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 	}
 }

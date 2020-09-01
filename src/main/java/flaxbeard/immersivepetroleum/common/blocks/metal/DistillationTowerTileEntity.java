@@ -437,7 +437,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		if(master!=null){
 			// Fluid Input
 			if(this.posInMultiblock.equals(Fluid_IN)){
-				if(getIsMirrored() ? (side == null || side == getFacing().rotateYCCW()) : (side == null || side == getFacing().rotateY())){
+				if(side == null || (getIsMirrored() ? (side == getFacing().rotateYCCW()) : (side == getFacing().rotateY()))){
 					return new IFluidTank[]{master.tanks[TANK_INPUT]};
 				}
 			}

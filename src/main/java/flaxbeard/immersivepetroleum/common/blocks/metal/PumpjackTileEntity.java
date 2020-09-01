@@ -186,8 +186,9 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 					
 					this.energyStorage.extractEnergy(consumption, false);
 					FluidStack out = new FluidStack(availableFluid(), Math.min(IPConfig.EXTRACTION.pumpjack_speed.get(), oilAmnt));
-					BlockPos outputPos = master().getBlockPosForPos(East_Port).offset(getFacing().rotateY());
-					IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, getFacing().rotateY()).orElse(null);
+					Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
+					BlockPos outputPos = master().getBlockPosForPos(East_Port).offset(facing);
+					IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, facing).orElse(null);
 					if(output != null){
 						int accepted = output.fill(out, FluidAction.SIMULATE);
 						if(accepted > 0){
@@ -198,8 +199,9 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 						}
 					}
 					
-					outputPos = master().getBlockPosForPos(West_Port).offset(getFacing().rotateYCCW());
-					output = FluidUtil.getFluidHandler(this.world, outputPos, getFacing().rotateYCCW()).orElse(null);
+					facing = getIsMirrored() ? getFacing().rotateY() : getFacing().rotateYCCW();
+					outputPos = master().getBlockPosForPos(West_Port).offset(facing);
+					output = FluidUtil.getFluidHandler(this.world, outputPos, facing).orElse(null);
 					if(output != null){
 						int accepted = output.fill(out, FluidAction.SIMULATE);
 						if(accepted > 0){

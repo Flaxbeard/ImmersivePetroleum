@@ -25,7 +25,6 @@ src/main/java/cofh/api/energy/IEnergyReceiver.java
 out/
 eclipse/
 *.launch
-*.txt
 run/
 *.project
 *.classpath

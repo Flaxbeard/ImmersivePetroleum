@@ -1,0 +1,9 @@
+Multiblock Projector
+Invaluable instructions
+<&schematics0>When it comes to building large multiblock structures, referring to your Engineer's Manual time and time again has grown tedious. By crafting a primitive projector device, you believe you can project schematics of these structures into the world to use as a template.<np>
+<&schematics1>If you turn your Engineer's Manual to the page of a multiblock structure and then place it in a crafting bench alongside a Projector, you can set the internal slide to match that multiblock. The Projector will then act as a three dimensional building guide.<np>
+Holding a Projector will display the structure. Pressing the §l<keybind;key.immersivepetroleum.projector.flip>§r Key will flip the structure, and sneaking while scrolling will rotate it. Right clicking will lock the image in place, where it will show as long as the Projector is in your hotbar.
+
+Sneaking and right clicking with a projector that has a locked image will unlock the image.
+
+In Creative mode, sneaking while locking the image will build the multiblock automatically.

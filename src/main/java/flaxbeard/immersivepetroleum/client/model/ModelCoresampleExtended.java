@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 import blusunrize.immersiveengineering.api.excavator.MineralMix;
 import blusunrize.immersiveengineering.client.models.ModelCoresample;
 import blusunrize.immersiveengineering.common.items.CoresampleItem;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.BakedQuad;
@@ -187,6 +188,11 @@ public class ModelCoresampleExtended extends ModelCoresample{
 	ItemOverrideList overrideList2 = new ItemOverrideList(){
 		@Override
 		public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, World worldIn, LivingEntity entityIn){
+			String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
+			if(ItemNBTHelper.hasKey(stack, "oil") && resName == null && ItemNBTHelper.getInt(stack, "oil") > 0){
+				resName = "oil";
+			}
+			
 			MineralMix[] minerals = CoresampleItem.getMineralMixes(stack);
 			if(minerals.length > 0){
 				try{
@@ -196,10 +202,10 @@ public class ModelCoresampleExtended extends ModelCoresample{
 					return getSampleCache().get(cacheKey, () -> {
 						VertexFormat format;
 						if(originalModel instanceof ModelCoresample)
-							format =getVertexFormat((ModelCoresample) originalModel);
+							format = getVertexFormat((ModelCoresample) originalModel);
 						else
 							format = DefaultVertexFormats.BLOCK;
-						return new ModelCoresample(minerals, format);
+						return new ModelCoresampleExtended(minerals, format, null);
 					});
 				}catch(ExecutionException e){
 					throw new RuntimeException(e);
@@ -208,6 +214,77 @@ public class ModelCoresampleExtended extends ModelCoresample{
 			return originalModel;
 		}
 	};
+	
+	/*
+	ItemOverrideList overrideList = new ItemOverrideList(){
+		@Override
+		public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, World world, LivingEntity entity){
+			String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
+			if(ItemNBTHelper.hasKey(stack, "oil") && resName == null && ItemNBTHelper.getInt(stack, "oil") > 0){
+				resName = "oil";
+			}
+			
+			if(ItemNBTHelper.hasKey(stack, "mineral")){
+				String name = ItemNBTHelper.getString(stack, "mineral");
+				String indexName = resName == null ? name : name + "_" + resName;
+				if(name != null && !name.isEmpty()){
+					if(!getSampleCache().asMap().containsKey(indexName)){
+						outer: for(MineralVein mix:ExcavatorHandler.getMineralVeinList().values()){
+							if(name.equals(mix.getPlainName())){
+								if(resName != null){
+									for(ReservoirType type:PumpjackHandler.reservoirs.values()){
+										if(resName.equals(type.name)){
+											List<StackWithChance> outputs = new ArrayList<>(Arrays.asList(mix.outputs));
+											outputs.add(new StackWithChance(new ItemStack(flaxbeard.immersivepetroleum.common.IPContent.Blocks.dummyBlockOilOre), 0.04F));
+											StackWithChance[] outputNew = outputs.toArray(new StackWithChance[0]);
+											DimensionType[] copy = mix.dimensions.toArray(new DimensionType[0]);
+											MineralMix mix2 = new MineralMix(mix.getId(), outputNew, mix.weight, mix.failChance, copy, mix.background);
+											getSampleCache().put(indexName, new ModelCoresampleExtended(mix2, DefaultVertexFormats.BLOCK, type.getFluid()));
+											
+//											mix.outputs.add(new ExcavatorHandler.OreOutput(IPContent.dummyBlockOilOre.getRegistryName(), 0.4F));
+											
+//											MineralMix mix2 = new MineralMix(mix.name, mix.failChance, newOres, newChances);
+//											mix2.recalculateChances();
+//											mix2.outputs.set(mix2.outputs.size() - 1, new ItemStack(IPContent.blockDummy, 1));
+											
+//											Fluid fluid = type.getFluid();
+//											modelCache.put(indexName, new ModelCoresampleExtended(mix, fluid));
+											break outer;
+										}
+									}
+									
+//									modelCache.put(indexName, new ModelCoresample(mix));
+								}else{
+//									modelCache.put(indexName, new ModelCoresample(mix));
+								}
+							}
+						}
+					}
+					
+					IBakedModel model = ExcavatorHandler.getMineralVeinList().get(indexName);
+					if(model != null) return model;
+				}
+			}
+			
+			if(resName != null){
+				if(!modelCache.containsKey("_" + resName)){
+					for(ReservoirType type:PumpjackHandler.reservoirs.values()){
+						if(resName.equals(type.name)){
+//							MineralMix mix = new MineralMix(resName, 1, Arrays.asList(new ExcavatorHandler.OreOutput(IPContent.dummyBlockOilOre.getRegistryName(), 1F)));
+//							mix.outputs.set(0, new ItemStack(IPContent.blockDummy, 1, EnumDummyType.OIL_DEPOSIT.getMeta()));
+//							Fluid fluid = type.getFluid();
+//							modelCache.put("_" + resName, new ModelCoresampleExtended(mix, null, fluid));
+						}
+					}
+				}
+				
+				//IBakedModel model = modelCache.get("_" + resName);
+				//if(model != null) return model;
+			}
+			
+			return originalModel;
+		}
+	};//*/
 	
 	static Field STATIC_FIELD_modelCache;
 	static Field FIELD_format;
@@ -246,75 +323,4 @@ public class ModelCoresampleExtended extends ModelCoresample{
 			throw new RuntimeException("This shouldnt happen! Report this immediately!", e);
 		}
 	}
-	/*
-	ItemOverrideList overrideList = new ItemOverrideList(){
-		@Override
-		public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, World world, LivingEntity entity){
-			String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
-			if(ItemNBTHelper.hasKey(stack, "oil") && resName == null && ItemNBTHelper.getInt(stack, "oil") > 0){
-				resName = "oil";
-			}
-			
-			if(ItemNBTHelper.hasKey(stack, "mineral")){
-				String name = ItemNBTHelper.getString(stack, "mineral");
-				String indexName = resName == null ? name : name + "_" + resName;
-				if(name != null && !name.isEmpty()){
-					if(!modelCache.containsKey(indexName)){
-						outer:
-						for(MineralMix mix:ExcavatorHandler.mineralList.values()){
-							if(name.equals(mix.getPlainName())){
-								if(resName != null){
-									for(ReservoirType type:PumpjackHandler.reservoirs.values()){
-										if(resName.equals(type.name)){
-											List<StackWithChance> outputs=new ArrayList<>(Arrays.asList(mix.outputs));
-											outputs.add(new StackWithChance(new ItemStack(flaxbeard.immersivepetroleum.common.IPContent.Blocks.dummyBlockOilOre), 0.04F));
-											StackWithChance[] outputNew=outputs.toArray(new StackWithChance[0]);
-											DimensionType[] copy=mix.dimensions.toArray(new DimensionType[0]);
-											MineralMix mix2=new MineralMix(mix.getId(), outputNew, mix.weight, mix.failChance, copy, mix.background);
-											modelCache.put(indexName, new ModelCoresampleExtended(mix2, new VertexFormat(), type.getFluid()));
-											
-//											mix.outputs.add(new ExcavatorHandler.OreOutput(IPContent.dummyBlockOilOre.getRegistryName(), 0.4F));
-											
-//											MineralMix mix2 = new MineralMix(mix.name, mix.failChance, newOres, newChances);
-//											mix2.recalculateChances();
-//											mix2.outputs.set(mix2.outputs.size() - 1, new ItemStack(IPContent.blockDummy, 1));
-											
-//											Fluid fluid = type.getFluid();
-//											modelCache.put(indexName, new ModelCoresampleExtended(mix, fluid));
-											break outer;
-										}
-									}
-									
-//									modelCache.put(indexName, new ModelCoresample(mix));
-								}else{
-//									modelCache.put(indexName, new ModelCoresample(mix));
-								}
-							}
-						}
-					}
-					
-					IBakedModel model = modelCache.get(indexName);
-					if(model != null) return model;
-				}
-			}
-			
-			if(resName != null){
-				if(!modelCache.containsKey("_" + resName)){
-					for(ReservoirType type:PumpjackHandler.reservoirs.values()){
-						if(resName.equals(type.name)){
-//							MineralMix mix = new MineralMix(resName, 1, Arrays.asList(new ExcavatorHandler.OreOutput(IPContent.dummyBlockOilOre.getRegistryName(), 1F)));
-//							mix.outputs.set(0, new ItemStack(IPContent.blockDummy, 1, EnumDummyType.OIL_DEPOSIT.getMeta()));
-//							Fluid fluid = type.getFluid();
-//							modelCache.put("_" + resName, new ModelCoresampleExtended(mix, null, fluid));
-						}
-					}
-				}
-				
-				//IBakedModel model = modelCache.get("_" + resName);
-				//if(model != null) return model;
-			}
-			
-			return originalModel;
-		}
-	};//*/
 }

@@ -31,7 +31,7 @@ public class AsphaltBlock extends IPBlockBase{
 	public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		if(IPConfig.MISCELLANEOUS.asphalt_speed.get()){
 			ITextComponent out = new TranslationTextComponent(
-					"desc.immersivepetroleum.info.asphalt",
+					"desc.immersivepetroleum.flavour.asphalt",
 					String.format(Locale.ENGLISH, "%.1f", (SPEED_MULTIPLIER * 100 - 100)) + "%"
 			).applyTextStyle(TextFormatting.GRAY);
 			

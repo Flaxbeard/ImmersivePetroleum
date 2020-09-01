@@ -41,7 +41,7 @@ public class DebugItem extends IPItemBase{
 	
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn){
-		boolean skip=true;
+		boolean skip=false;
 		if(!worldIn.isRemote && !skip){
 			if(playerIn.isSneaking()){ // TODO DEBUG: Remove later.
 				
@@ -96,7 +96,10 @@ public class DebugItem extends IPItemBase{
 	
 	@Override
 	public ActionResultType onItemUse(ItemUseContext context){
-		if(context.getPlayer().isSneaking()){
+		PlayerEntity player=context.getPlayer();
+		if(player==null) return ActionResultType.PASS;
+		
+		if(player.isSneaking()){
 			TileEntity te=context.getWorld().getTileEntity(context.getPos());
 			
 			if(te instanceof AutoLubricatorTileEntity){
@@ -113,7 +116,7 @@ public class DebugItem extends IPItemBase{
 					out.appendText("Empty");
 				}
 				
-				context.getPlayer().sendMessage(out);
+				player.sendMessage(out);
 				
 				return ActionResultType.PASS;
 			}
@@ -126,35 +129,39 @@ public class DebugItem extends IPItemBase{
 				out.appendText(gas.getEnergyStored(null)+", ");
 				out.appendText(gas.getMaxEnergyStored(null)+", ");
 				
-				context.getPlayer().sendMessage(out);
+				player.sendMessage(out);
 				
 				return ActionResultType.PASS;
 			}
 			
 			if(te instanceof PoweredMultiblockTileEntity){ // Generic
-				PoweredMultiblockTileEntity<?,?> master=(PoweredMultiblockTileEntity<?,?>)te;
+				PoweredMultiblockTileEntity<?,?> poweredMultiblock=(PoweredMultiblockTileEntity<?,?>)te;
 				
-				Vec3i loc=master.posInMultiblock;
+				Vec3i loc=poweredMultiblock.posInMultiblock;
+				Set<BlockPos> energyInputs=poweredMultiblock.getEnergyPos();
+				Set<BlockPos> redstoneInputs=poweredMultiblock.getRedstonePos();
 				
-				Set<BlockPos> energyInputs=master.getEnergyPos();
-				Set<BlockPos> redstoneInputs=master.getRedstonePos();
+				ITextComponent out=new StringTextComponent("["+loc.getX()+" "+loc.getY()+" "+loc.getZ()+"]: ");
 				
 				for(BlockPos pos:energyInputs){
 					if(pos.equals(loc)){
-						context.getPlayer().sendStatusMessage(new StringTextComponent("Energy Port").applyTextStyle(TextFormatting.AQUA), true);
-						return ActionResultType.PASS;
+						out.appendText("Energy Port.");
 					}
 				}
 				
 				for(BlockPos pos:redstoneInputs){
 					if(pos.equals(loc)){
-						context.getPlayer().sendStatusMessage(new StringTextComponent("Redstone Port").applyTextStyle(TextFormatting.RED), true);
-						return ActionResultType.PASS;
+						out.appendText("Redstone Port.");
 					}
 				}
 				
-				String strOut="At: "+loc.getX()+" "+loc.getY()+" "+loc.getZ()+" "+context.getFace();
-				context.getPlayer().sendStatusMessage(new StringTextComponent(strOut), true);
+				if(poweredMultiblock.offsetToMaster.equals(BlockPos.ZERO)){
+					out.appendText("Master.");
+				}
+				
+				out.appendText(" (Facing: "+poweredMultiblock.getFacing()+", Block-Face: "+context.getFace()+")");
+				
+				player.sendStatusMessage(out, true);
 				return ActionResultType.PASS;
 			}
 			

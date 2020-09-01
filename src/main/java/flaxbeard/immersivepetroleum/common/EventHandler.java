@@ -519,6 +519,9 @@ public class EventHandler{
 											String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
 											
 											s = I18n.format("chat.immersivepetroleum.info.coresample.oil", fluidName);
+										}else if(res != null && res.replenishRate > 0){
+											String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
+											s = I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName);
 										}
 										
 										int fx = event.getWindow().getScaledWidth() / 2 + 8;

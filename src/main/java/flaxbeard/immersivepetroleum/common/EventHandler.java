@@ -64,7 +64,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
@@ -75,6 +74,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
@@ -82,6 +83,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -206,12 +209,6 @@ public class EventHandler{
 			
 			GlStateManager.pushMatrix();
 			{
-				ItemStack mainItem = player.getHeldItemMainhand();
-				ItemStack secondItem = player.getHeldItemOffhand();
-				
-				boolean main = !mainItem.isEmpty() && mainItem.getItem() instanceof CoresampleItem && ItemNBTHelper.hasKey(mainItem, "coords");
-				boolean off = !secondItem.isEmpty() && secondItem.getItem() instanceof CoresampleItem && ItemNBTHelper.hasKey(secondItem, "coords");
-				
 				boolean chunkBorders = false;
 				for(Hand hand:Hand.values()){
 					if(player.getHeldItem(hand).getItem().equals(IEBlocks.MetalDevices.sampleDrill.asItem())){
@@ -223,15 +220,17 @@ public class EventHandler{
 				if(!chunkBorders && ClientUtils.mc().objectMouseOver != null && ClientUtils.mc().objectMouseOver.getType() == Type.BLOCK && mc.world.getTileEntity(new BlockPos(mc.objectMouseOver.getHitVec())) instanceof SampleDrillTileEntity)
 					chunkBorders = true;
 				
-				ItemStack target = main ? mainItem : secondItem;
+				ItemStack mainItem = player.getHeldItemMainhand();
+				ItemStack secondItem = player.getHeldItemOffhand();
+				boolean main = !mainItem.isEmpty() && mainItem.getItem() instanceof CoresampleItem;
+				boolean off = !secondItem.isEmpty() && secondItem.getItem() instanceof CoresampleItem;
 				
+				ItemStack target = main ? mainItem : secondItem;
 				if(!chunkBorders && (main || off)){
-					CompoundNBT nbt=ItemNBTHelper.getTagCompound(target, "coords");
-					
-					int x=nbt.getInt("x");
-					int z=nbt.getInt("z");
-					
-					renderChunkBorder(x << 4, z << 4);
+					ColumnPos pos=CoresampleItem.getCoords(target);
+					if(pos!=null){
+						renderChunkBorder(pos.x >> 4 << 4, pos.z >> 4 << 4);
+					}
 				}
 			}
 			GlStateManager.popMatrix();
@@ -376,10 +375,11 @@ public class EventHandler{
 				}
 				
 				if(!drill.sample.isEmpty()){
-					if(ItemNBTHelper.hasKey(drill.sample, "coords")){
+					ColumnPos cPos=CoresampleItem.getCoords(drill.sample);
+					if(cPos!=null){
 						try{
 							World world = event.getWorld();
-							DimensionChunkCoords coords=DimensionChunkCoords.readFromNBT(ItemNBTHelper.getTagCompound(drill.sample, "coords"));
+							DimensionChunkCoords coords=new DimensionChunkCoords(world.getDimension().getType(), cPos.x >> 4, cPos.z >> 4);
 							
 							OilWorldInfo info = PumpjackHandler.getOilWorldInfo(world, coords.x, coords.z);
 							if(info.getType() != null){
@@ -431,19 +431,36 @@ public class EventHandler{
 					}
 				}
 				
-				int amnt = ItemNBTHelper.getInt(stack, "oil");
 				List<ITextComponent> tooltip = event.getToolTip();
+				int amnt = ItemNBTHelper.getInt(stack, "oil");
+				int tipPos = Math.max(0, tooltip.size() - 5);
+				
 				if(res != null && amnt > 0){
-					int est = (amnt / 1000) * 1000; // ?!
+					int est = (amnt / 1000) * 1000;
 					String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
 					
-					tooltip.add(2, new StringTextComponent(I18n.format("chat.immersivepetroleum.info.coresample.oil", FORMATTER.format(est), fluidName)));
+					ITextComponent header=new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oil", fluidName)
+							.applyTextStyle(TextFormatting.GRAY);
+					
+					ITextComponent info=new StringTextComponent("  "+FORMATTER.format(est)+" mB")
+							.applyTextStyle(TextFormatting.DARK_GRAY);
+					
+					tooltip.add(tipPos, header);
+					tooltip.add(tipPos+1, info);
 				}else{
 					if(res != null && res.replenishRate > 0){
 						String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
-						tooltip.add(2, new StringTextComponent(I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName)));
+						
+						ITextComponent header=new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oil", fluidName)
+								.applyTextStyle(TextFormatting.GRAY);
+						
+						ITextComponent info=new StringTextComponent("  "+I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName))
+								.applyTextStyle(TextFormatting.GRAY);
+						
+						tooltip.add(tipPos, header);
+						tooltip.add(tipPos+1, info);
 					}else{
-						tooltip.add(2, new StringTextComponent(I18n.format("chat.immersivepetroleum.info.coresample.noOil")));
+						tooltip.add(tipPos, new StringTextComponent(I18n.format("chat.immersivepetroleum.info.coresample.noOil")).applyTextStyle(TextFormatting.GRAY));
 					}
 				}
 			}
@@ -478,7 +495,7 @@ public class EventHandler{
 					switch(mop.getType()){
 						case BLOCK:{
 							if(mop.getHitVec() != null){
-								TileEntity tileEntity = player.world.getTileEntity(new BlockPos(mop.getHitVec()));
+								TileEntity tileEntity = player.world.getTileEntity(((BlockRayTraceResult)mop).getPos());
 								
 								if(tileEntity instanceof CoresampleTileEntity){
 									IBlockOverlayText overlayBlock = (IBlockOverlayText) tileEntity;
@@ -499,13 +516,9 @@ public class EventHandler{
 										
 										String s = I18n.format("chat.immersivepetroleum.info.coresample.noOil");
 										if(res != null && amnt > 0){
-											int est = (amnt / 1000) * 1000; // Why?
 											String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
 											
-											s = I18n.format("chat.immersivepetroleum.info.coresample.oil", FORMATTER.format(est), fluidName);
-										}else if(res != null && res.replenishRate > 0){
-											String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
-											s = I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName);
+											s = I18n.format("chat.immersivepetroleum.info.coresample.oil", fluidName);
 										}
 										
 										int fx = event.getWindow().getScaledWidth() / 2 + 8;

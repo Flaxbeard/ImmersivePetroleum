@@ -106,9 +106,9 @@
 	"chat.immersivepetroleum.command.reservoir.setCapacity.sucess": "Reservoir capacity set to: %1$s",
 	"chat.immersivepetroleum.command.reservoir.setCapacity.NFE": "Error, '%1$s' is not a valid number",
 	
-	"chat.immersivepetroleum.info.coresample.oil": "%s mB %s",
-	"chat.immersivepetroleum.info.coresample.noOil": "No Fluid Reservoir",
+	"chat.immersivepetroleum.info.coresample.oil": "%s Reservoir",
 	"chat.immersivepetroleum.info.coresample.oilRep": "Up to %d mB/tick of trace %s",
+	"chat.immersivepetroleum.info.coresample.noOil": "No Fluid Reservoir",
 	
 	"chat.immersivepetroleum.info.schematic.noMultiblock": "Craft with Engineer's Manual",
 	"chat.immersivepetroleum.info.schematic.build0": "Displays instructions",

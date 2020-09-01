@@ -580,8 +580,7 @@ public class ProjectorItem extends IPItemBase{
 	// STATIC SUPPORT CLASSES
 	
 	/** Client Rendering Stuff */
-	@OnlyIn(Dist.CLIENT)
-	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID)
+	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value=Dist.CLIENT)
 	public static class ClientRenderHandler{
 		@SubscribeEvent
 		public static void renderLast(RenderWorldLastEvent event){
@@ -917,8 +916,7 @@ public class ProjectorItem extends IPItemBase{
 	}
 	
 	/** Client Input Stuff */
-	@OnlyIn(Dist.CLIENT)
-	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID)
+	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value=Dist.CLIENT)
 	public static class ClientInputHandler{
 		static boolean shiftHeld = false;
 		@SubscribeEvent

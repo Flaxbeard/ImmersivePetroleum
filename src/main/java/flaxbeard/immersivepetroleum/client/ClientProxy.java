@@ -4,11 +4,13 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
+import com.electronwill.nightconfig.core.Config;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
@@ -30,12 +32,14 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
 import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.client.render.SpeedboatRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
+import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
@@ -43,6 +47,7 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEnt
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
+import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -73,6 +78,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
@@ -112,6 +118,57 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void completed(){
+		
+		ManualHelper.addConfigGetter(str->{
+			switch(str){
+				case "distillationtower_operationcost":{
+					return Integer.valueOf((int)(2048 * IPConfig.REFINING.distillationTower_energyModifier.get()));
+				}
+				case "pumpjack_consumption":{
+					return IPConfig.EXTRACTION.pumpjack_consumption.get();
+				}
+				case "pumpjack_speed":{
+					return IPConfig.EXTRACTION.pumpjack_speed.get();
+				}
+				case "pumpjack_days":{
+					int oil_min = 1000000;
+					int oil_max = 5000000;
+					for(ReservoirType type:PumpjackHandler.reservoirs.values()){
+						if(type.name.equals("oil")){
+							oil_min = type.minSize;
+							oil_max = type.maxSize;
+							break;
+						}
+					}
+					
+					return Integer.valueOf((((oil_max + oil_min) / 2) + oil_min) / (IPConfig.EXTRACTION.pumpjack_speed.get() * 24000));
+				}
+				case "autolubricant_speedup":{
+					return Double.valueOf(1.25D);
+				}
+				case "portablegenerator_flux":{
+					Map<ResourceLocation, Integer> map = FuelHandler.getFuelFluxesPerTick();
+					if(map.size()>0){
+						for(ResourceLocation loc:map.keySet()){
+							if(loc.toString().contains("gasoline")){
+								return map.get(loc);
+							}
+						}
+					}
+					
+					return Integer.valueOf(-1);
+				}
+				default:break;
+			}
+			
+			// Last resort
+			Config cfg=IPConfig.getRawConfig();
+			if(cfg.contains(str)){
+				return cfg.get(str);
+			}
+			return null;
+		});
+		
 		setupManualPages();
 	}
 	
@@ -126,6 +183,9 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	public void init(){
 		//ShaderUtil.init(); // Get's initialized befor the first time it's actualy used.
+		
+		MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
+		MinecraftForge.EVENT_BUS.register(new RecipeReloadListener());
 		
 		keybind_preview_flip.setKeyConflictContext(KeyConflictContext.IN_GAME);
 		ClientRegistry.registerKeyBinding(keybind_preview_flip);

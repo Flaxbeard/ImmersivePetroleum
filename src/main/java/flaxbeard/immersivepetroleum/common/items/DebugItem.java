@@ -67,7 +67,6 @@ public class DebugItem extends IPItemBase{
 					int cap=info.capacity;
 					int cur=info.current;
 					ReservoirType type=info.getType();
-					ReservoirType override=info.overrideType;
 					
 					if(type!=null){
 						String out = String.format(Locale.ENGLISH,
@@ -77,7 +76,7 @@ public class DebugItem extends IPItemBase{
 								cur/1000D,
 								cap/1000D,
 								type.name,
-								(override!=null?" [OVERRIDDEN]":""),
+								(info.overrideType!=null?" [OVERRIDDEN]":""),
 								(isNew?" [NEW]":"")
 						);
 						

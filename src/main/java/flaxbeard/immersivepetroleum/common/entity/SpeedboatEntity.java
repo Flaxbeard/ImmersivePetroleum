@@ -34,6 +34,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -55,10 +56,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class SpeedboatEntity extends BoatEntity{
+public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpawnData{
 	
 	public static final EntityType<SpeedboatEntity> TYPE = EntityType.Builder.<SpeedboatEntity>create(SpeedboatEntity::new, EntityClassification.MISC)
 				.size(1.375F, 0.5625F)
@@ -660,5 +662,39 @@ public class SpeedboatEntity extends BoatEntity{
 	@Override
 	public IPacket<?> createSpawnPacket(){
 		return NetworkHooks.getEntitySpawningPacket(this);
+	}
+	
+	@Override
+	public void readSpawnData(PacketBuffer buffer){
+		String fluid=buffer.readString();
+		int amount=buffer.readInt();
+		ItemStack stack0=buffer.readItemStack();
+		ItemStack stack1=buffer.readItemStack();
+		ItemStack stack2=buffer.readItemStack();
+		ItemStack stack3=buffer.readItemStack();
+		
+		this.dataManager.set(TANK_FLUID, fluid);
+		this.dataManager.set(TANK_AMOUNT, amount);
+		this.dataManager.set(UPGRADE_0, stack0);
+		this.dataManager.set(UPGRADE_1, stack1);
+		this.dataManager.set(UPGRADE_2, stack2);
+		this.dataManager.set(UPGRADE_3, stack3);
+	}
+	
+	@Override
+	public void writeSpawnData(PacketBuffer buffer){
+		String fluid=this.dataManager.get(TANK_FLUID);
+		int amount=this.dataManager.get(TANK_AMOUNT);
+		ItemStack stack0=this.dataManager.get(UPGRADE_0);
+		ItemStack stack1=this.dataManager.get(UPGRADE_1);
+		ItemStack stack2=this.dataManager.get(UPGRADE_2);
+		ItemStack stack3=this.dataManager.get(UPGRADE_3);
+		
+		buffer.writeString(fluid);
+		buffer.writeInt(amount);
+		buffer.writeItemStack(stack0);
+		buffer.writeItemStack(stack1);
+		buffer.writeItemStack(stack2);
+		buffer.writeItemStack(stack3);
 	}
 }

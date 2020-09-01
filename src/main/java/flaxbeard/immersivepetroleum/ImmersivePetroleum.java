@@ -1,30 +1,22 @@
 package flaxbeard.immersivepetroleum;
 
-import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.electronwill.nightconfig.core.Config;
-
-import blusunrize.immersiveengineering.api.ManualHelper;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
-import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.client.ClientProxy;
+import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
-import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.util.commands.ReservoirCommand;
 import net.minecraft.command.Commands;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
@@ -90,6 +82,7 @@ public class ImmersivePetroleum{
 		
 		IPContent.init();
 		
+		MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
 		proxy.init();
 		
 		// ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -101,62 +94,10 @@ public class ImmersivePetroleum{
 	
 	public void loadComplete(FMLLoadCompleteEvent event){
 		proxy.completed();
-		
-		ManualHelper.addConfigGetter(str->{
-			switch(str){
-				case "distillationtower_operationcost":{
-					return Integer.valueOf((int)(2048 * IPConfig.REFINING.distillationTower_energyModifier.get()));
-				}
-				case "pumpjack_consumption":{
-					return IPConfig.EXTRACTION.pumpjack_consumption.get();
-				}
-				case "pumpjack_speed":{
-					return IPConfig.EXTRACTION.pumpjack_speed.get();
-				}
-				case "pumpjack_days":{
-					int oil_min = 1000000;
-					int oil_max = 5000000;
-					for(ReservoirType type:PumpjackHandler.reservoirs.values()){
-						if(type.name.equals("oil")){
-							oil_min = type.minSize;
-							oil_max = type.maxSize;
-							break;
-						}
-					}
-					
-					return Integer.valueOf((((oil_max + oil_min) / 2) + oil_min) / (IPConfig.EXTRACTION.pumpjack_speed.get() * 24000));
-				}
-				case "autolubricant_speedup":{
-					return Double.valueOf(1.25D);
-				}
-				case "portablegenerator_flux":{
-					Map<ResourceLocation, Integer> map = FuelHandler.getFuelFluxesPerTick();
-					if(map.size()>0){
-						for(ResourceLocation loc:map.keySet()){
-							if(loc.toString().contains("gasoline")){
-								return map.get(loc);
-							}
-						}
-					}
-					
-					return Integer.valueOf(-1);
-				}
-				default:break;
-			}
-			
-			// Last resort
-			Config cfg=IPConfig.getRawConfig();
-			if(cfg.contains(str)){
-				return cfg.get(str);
-			}
-			return null;
-		});
 	}
 	
 	public void serverAboutToStart(FMLServerAboutToStartEvent event){
 		proxy.serverAboutToStart();
-		
-		event.getServer().getResourceManager().addReloadListener(new RecipeReloadListener());
 	}
 
 	public void serverStarting(FMLServerStartingEvent event){

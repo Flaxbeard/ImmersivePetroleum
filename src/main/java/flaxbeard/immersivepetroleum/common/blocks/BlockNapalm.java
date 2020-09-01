@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import flaxbeard.immersivepetroleum.common.EventHandler;
+import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -66,7 +66,7 @@ public class BlockNapalm extends IPFluid{
 			public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
 				if(worldIn.getBlockState(fromPos).getBlock() instanceof FireBlock || worldIn.getBlockState(fromPos).getMaterial() == Material.FIRE){
 					int d = worldIn.getDimension().getType().getId();
-					if(!EventHandler.napalmPositions.containsKey(d) || !EventHandler.napalmPositions.get(d).contains(fromPos)){
+					if(!CommonEventHandler.napalmPositions.containsKey(d) || !CommonEventHandler.napalmPositions.get(d).contains(fromPos)){
 						processFire(worldIn, pos);
 					}
 				}
@@ -79,10 +79,10 @@ public class BlockNapalm extends IPFluid{
 	
 	public void processFire(World world, BlockPos pos){
 		int d = world.getDimension().getType().getId();
-		if(!EventHandler.napalmPositions.containsKey(d)){
-			EventHandler.napalmPositions.put(d, new ArrayList<>());
+		if(!CommonEventHandler.napalmPositions.containsKey(d)){
+			CommonEventHandler.napalmPositions.put(d, new ArrayList<>());
 		}
-		EventHandler.napalmPositions.get(d).add(pos);
+		CommonEventHandler.napalmPositions.get(d).add(pos);
 		
 		world.setBlockState(pos, Blocks.FIRE.getDefaultState(), 1 | 2);
 		
@@ -90,7 +90,7 @@ public class BlockNapalm extends IPFluid{
 			BlockPos notifyPos = pos.offset(facing);
 			Block block = world.getBlockState(notifyPos).getBlock();
 			if(block == this.block){
-				EventHandler.napalmPositions.get(d).add(notifyPos);
+				CommonEventHandler.napalmPositions.get(d).add(notifyPos);
 				// world.neighborChanged(notifyPos, block, neighbourPos);
 			}
 		}

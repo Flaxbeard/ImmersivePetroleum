@@ -321,7 +321,7 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 		ItemStack stack = player.getHeldItem(hand);
 		
 		if(stack!=ItemStack.EMPTY && stack.getItem() instanceof DebugItem){
-			((DebugItem)stack.getItem()).onSpeedboatClick(this, player);
+			((DebugItem)stack.getItem()).onSpeedboatClick(this, player, stack);
 			return true;
 		}
 		

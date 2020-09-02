@@ -32,6 +32,12 @@ public class IPItemModels extends LoadedModelProvider{
 	
 	@Override
 	protected void registerModels(){
+		String debugItem=name(IPContent.debugItem);
+		
+		getBuilder(debugItem)
+			.parent(getExistingFile(mcLoc("item/generated")))
+			.texture("layer0", modLoc("item/schematic"));
+		
 		genericItem(IPContent.Items.bitumen);
 		genericItem(IPContent.Items.oil_can);
 		genericItem(IPContent.Items.speedboat);

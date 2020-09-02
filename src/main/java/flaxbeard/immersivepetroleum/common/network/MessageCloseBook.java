@@ -53,9 +53,10 @@ public class MessageCloseBook implements IMessage{
 				// "IEItems.Tools.manual" is just a guess
 				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IEItems.Tools.manual.asItem();
 				boolean off = !offItem.isEmpty() && offItem.getItem() == IEItems.Tools.manual.asItem();
-				ItemStack target = main ? mainItem : offItem;
 				
 				if(main || off){
+					ItemStack target = main ? mainItem : offItem;
+					
 					if(this.name == null && ItemNBTHelper.hasKey(target, "lastMultiblock")){
 						ItemNBTHelper.remove(target, "lastMultiblock");
 						ImmersivePetroleum.log.debug("Removed Multiblock-NBT from {}", target.getDisplayName().getUnformattedComponentText());

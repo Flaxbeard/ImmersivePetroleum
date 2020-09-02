@@ -37,16 +37,17 @@ public class MessageRotateSchematic implements IMessage{
 			Context con=context.get();
 			
 			if(con.getDirection().getReceptionSide()==LogicalSide.SERVER && con.getSender()!=null){
-				PlayerEntity p=con.getSender();
-				ItemStack mainItem = p.getHeldItemMainhand();
-				ItemStack secondItem = p.getHeldItemOffhand();
+				PlayerEntity player=con.getSender();
+				ItemStack mainItem = player.getHeldItemMainhand();
+				ItemStack secondItem = player.getHeldItemOffhand();
 				
 				boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.projector && ItemNBTHelper.hasKey(mainItem, "multiblock");
 				boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.projector && ItemNBTHelper.hasKey(secondItem, "multiblock");
 				
-				ItemStack target = main ? mainItem : secondItem;
 				
 				if(main || off){
+					ItemStack target = main ? mainItem : secondItem;
+					
 					ProjectorItem.setFlipped(target, this.flip);
 					ProjectorItem.setRotate(target, this.rotate);
 				}

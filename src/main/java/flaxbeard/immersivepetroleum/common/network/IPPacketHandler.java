@@ -23,6 +23,14 @@ public class IPPacketHandler
 			.clientAcceptedVersions(NET_VERSION::equals)
 			.simpleChannel();
 	
+	public static void preInit(){
+		registerMessage(MessageDebugSync.class, MessageDebugSync::new);
+		registerMessage(MessageCloseBook.class, MessageCloseBook::new);
+		registerMessage(MessageRotateSchematic.class, MessageRotateSchematic::new);
+		registerMessage(MessageSyncReservoirs.class, MessageSyncReservoirs::new);
+		registerMessage(MessageConsumeBoatFuel.class, MessageConsumeBoatFuel::new);
+	}
+	
 	private static int id=0;
 	public static <T extends IMessage> void registerMessage(Class<T> type, Function<PacketBuffer, T> decoder){
 		INSTANCE.registerMessage(id++, type, IMessage::toBytes, decoder, (t, ctx) -> {
@@ -62,12 +70,5 @@ public class IPPacketHandler
 		if(message == null) return;
 		
 		INSTANCE.send(PacketDistributor.ALL.noArg(), message);
-	}
-	
-	public static void preInit(){
-		registerMessage(MessageCloseBook.class, MessageCloseBook::new);
-		registerMessage(MessageRotateSchematic.class, MessageRotateSchematic::new);
-		registerMessage(MessageSyncReservoirs.class, MessageSyncReservoirs::new);
-		registerMessage(MessageConsumeBoatFuel.class, MessageConsumeBoatFuel::new);
 	}
 }

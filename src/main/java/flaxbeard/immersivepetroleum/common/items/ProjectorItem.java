@@ -450,14 +450,14 @@ public class ProjectorItem extends IPItemBase{
 			newRotate += 4;
 		
 		setRotate(stack, newRotate);
-		IPPacketHandler.INSTANCE.sendToServer(new MessageRotateSchematic(newRotate, flip));
+		IPPacketHandler.sendToServer(new MessageRotateSchematic(newRotate, flip));
 	}
 	
 	public static void flipClient(ItemStack stack){
 		int newRotate = getRotation(stack).ordinal();
 		boolean flip = !getFlipped(stack);
 		setFlipped(stack, flip);
-		IPPacketHandler.INSTANCE.sendToServer(new MessageRotateSchematic(newRotate, flip));
+		IPPacketHandler.sendToServer(new MessageRotateSchematic(newRotate, flip));
 	}
 	
 	public static void setRotate(ItemStack stack, Rotation rotation){
@@ -916,7 +916,7 @@ public class ProjectorItem extends IPItemBase{
 	}
 	
 	/** Client Input Stuff */
-	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value=Dist.CLIENT)
+	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT)
 	public static class ClientInputHandler{
 		static boolean shiftHeld = false;
 		@SubscribeEvent
@@ -930,9 +930,10 @@ public class ProjectorItem extends IPItemBase{
 				
 				boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.projector && ItemNBTHelper.hasKey(mainItem, "multiblock");
 				boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.projector && ItemNBTHelper.hasKey(secondItem, "multiblock");
-				ItemStack target = main ? mainItem : secondItem;
 				
 				if(main || off){
+					ItemStack target = main ? mainItem : secondItem;
+					
 					ProjectorItem.rotateClient(target, (int) delta);
 					Rotation rot = ProjectorItem.getRotation(target);
 					Direction facing=Direction.byHorizontalIndex(rot.ordinal());

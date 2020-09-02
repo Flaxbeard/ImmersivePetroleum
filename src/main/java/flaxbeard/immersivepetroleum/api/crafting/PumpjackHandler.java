@@ -39,7 +39,7 @@ public class PumpjackHandler{
 	private static Map<ResourceLocation, Map<ResourceLocation, Integer>> totalWeightMap = new HashMap<>();
 	
 	public static Map<DimensionChunkCoords, Long> timeCache = new HashMap<>();
-	public static Map<DimensionChunkCoords, OilWorldInfo> oilCache = new HashMap<>();
+	public static Map<DimensionChunkCoords, OilWorldInfo> reservoirsCache = new HashMap<>();
 	
 	private static int depositSize = 1;
 	
@@ -135,7 +135,7 @@ public class PumpjackHandler{
 			return null;
 		}
 		
-		OilWorldInfo worldInfo = oilCache.get(coords);
+		OilWorldInfo worldInfo = reservoirsCache.get(coords);
 		if(worldInfo == null){
 			ReservoirType res = null;
 			
@@ -182,12 +182,12 @@ public class PumpjackHandler{
 			worldInfo.type = res;
 			
 			ImmersivePetroleum.log.info("Storing {} for {}", worldInfo, coords);
-			oilCache.put(coords, worldInfo);
+			reservoirsCache.put(coords, worldInfo);
 		}
 		
 		return worldInfo;
 	}
-
+	
 	/**
 	 * Depletes fluid from a given chunk
 	 *
@@ -238,7 +238,7 @@ public class PumpjackHandler{
 		reservoirs.put(id, reservoir);
 		return reservoir;
 	}
-
+	
 	public static void recalculateChances(boolean mutePackets){
 		totalWeightMap.clear();
 		

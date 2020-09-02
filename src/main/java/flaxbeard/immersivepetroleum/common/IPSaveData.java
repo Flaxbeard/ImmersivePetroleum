@@ -22,13 +22,13 @@ public class IPSaveData extends WorldSavedData{
 	@Override
 	public void read(CompoundNBT nbt){
 		ListNBT oilList = nbt.getList("oilInfo", 10);
-		PumpjackHandler.oilCache.clear();
+		PumpjackHandler.reservoirsCache.clear();
 		for(int i = 0;i < oilList.size();i++){
 			CompoundNBT tag = oilList.getCompound(i);
 			DimensionChunkCoords coords = DimensionChunkCoords.readFromNBT(tag);
 			if(coords != null){
 				OilWorldInfo info = OilWorldInfo.readFromNBT(tag.getCompound("info"));
-				PumpjackHandler.oilCache.put(coords, info);
+				PumpjackHandler.reservoirsCache.put(coords, info);
 			}
 		}
 		
@@ -44,7 +44,7 @@ public class IPSaveData extends WorldSavedData{
 	@Override
 	public CompoundNBT write(CompoundNBT nbt){
 		ListNBT oilList = new ListNBT();
-		for(Map.Entry<DimensionChunkCoords, OilWorldInfo> e:PumpjackHandler.oilCache.entrySet()){
+		for(Map.Entry<DimensionChunkCoords, OilWorldInfo> e:PumpjackHandler.reservoirsCache.entrySet()){
 			if(e.getKey() != null && e.getValue() != null){
 				CompoundNBT tag = e.getKey().writeToNBT();
 				tag.put("info", e.getValue().writeToNBT());

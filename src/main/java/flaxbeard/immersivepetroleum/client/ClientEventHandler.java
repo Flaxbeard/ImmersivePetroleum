@@ -134,7 +134,7 @@ public class ClientEventHandler{
 			ItemStack target = main ? mainItem : offItem;
 			
 			if(main || off){
-				IPPacketHandler.INSTANCE.sendToServer(new MessageCloseBook(name));
+				IPPacketHandler.sendToServer(new MessageCloseBook(name));
 				
 				if(name == null && ItemNBTHelper.hasKey(target, "lastMultiblock")){
 					ItemNBTHelper.remove(target, "lastMultiblock");

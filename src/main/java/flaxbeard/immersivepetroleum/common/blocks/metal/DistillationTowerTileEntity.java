@@ -219,54 +219,6 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 				
 				return ret;
 			}).orElse(false);
-			
-//			update|=FluidUtil.getFluidHandler(this.world, getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite()), getFacing().getOpposite()).map(output->{
-//				FluidStack targetFluidStack=null;
-//				if(this.lastFluidOut!=null){
-//					for(FluidStack f:this.tanks[TANK_OUTPUT].fluids){
-//						if(f.getFluid()==this.lastFluidOut){
-//							targetFluidStack=f;
-//						}
-//					}
-//				}
-//				
-//				if(targetFluidStack==null){
-//					int max=0;
-//					for(FluidStack f:this.tanks[TANK_OUTPUT].fluids){
-//						if(f.getAmount()>max){
-//							max=f.getAmount();
-//							targetFluidStack=f;
-//						}
-//					}
-//				}
-//				
-//				this.lastFluidOut=null;
-//				if(targetFluidStack!=null){
-//					FluidStack outStack = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.getAmount(), 80), false);
-//					int accepted=output.fill(outStack, FluidAction.SIMULATE);
-//					if(accepted>0){
-//						this.lastFluidOut=targetFluidStack.getFluid();
-//						int drained=output.fill(Utils.copyFluidStackWithAmount(outStack, Math.min(outStack.getAmount(), accepted), false), FluidAction.EXECUTE);
-//						this.tanks[TANK_OUTPUT].drain(new FluidStack(targetFluidStack.getFluid(), drained), FluidAction.EXECUTE);
-//						return true;
-//					}else{
-//						Iterator<FluidStack> it=this.tanks[TANK_OUTPUT].fluids.iterator();
-//						while(it.hasNext()){
-//							targetFluidStack = it.next();
-//							outStack = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.getAmount(), 80), false);
-//							accepted = output.fill(outStack, FluidAction.SIMULATE);
-//							if(accepted>0){
-//								this.lastFluidOut=targetFluidStack.getFluid();
-//								int drained=output.fill(Utils.copyFluidStackWithAmount(outStack, Math.min(outStack.getAmount(), accepted), false), FluidAction.EXECUTE);
-//								this.tanks[TANK_OUTPUT].drain(new FluidStack(targetFluidStack.getFluid(), drained), FluidAction.EXECUTE);
-//								return true;
-//							}
-//						}
-//					}
-//				}
-//				
-//				return false;
-//			}).orElse(false);
 		}
 		
 		if(this.inventory.get(INV_0)!=ItemStack.EMPTY && this.tanks[TANK_INPUT].getFluidAmount()<this.tanks[TANK_INPUT].getCapacity()){

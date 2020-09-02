@@ -22,7 +22,6 @@ import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
 import net.minecraft.block.Block;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.ItemStackHelper;
@@ -34,7 +33,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraftforge.event.RegistryEvent;
@@ -89,7 +87,6 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	public MultiFluidTank[] tanks = new MultiFluidTank[]{new MultiFluidTank(24000), new MultiFluidTank(24000)};
 	public Fluid lastFluidOut = null;
 	private int cooldownTicks = 0;
-	private boolean operated = false;
 	private boolean wasActive = false;
 	
 	public DistillationTowerTileEntity(){
@@ -106,7 +103,6 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		super.readCustomNBT(nbt, descPacket);
 		tanks[0].readFromNBT(nbt.getCompound("tank0"));
 		tanks[1].readFromNBT(nbt.getCompound("tank1"));
-		operated = nbt.getBoolean("operated");
 		cooldownTicks = nbt.getInt("cooldownTicks");
 		
 		String lastFluidName = nbt.getString("lastFluidOut");
@@ -126,7 +122,6 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.put("tank0", tanks[TANK_INPUT].writeToNBT(new CompoundNBT()));
 		nbt.put("tank1", tanks[TANK_OUTPUT].writeToNBT(new CompoundNBT()));
-		nbt.putBoolean("operated", operated);
 		nbt.putInt("cooldownTicks", cooldownTicks);
 		nbt.putString("lastFluidOut", lastFluidOut == null ? "" : lastFluidOut.getRegistryName().toString());
 		if(!descPacket){
@@ -159,9 +154,6 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			this.cooldownTicks--;
 		
 		boolean update=false;
-		if(!this.operated)
-			this.operated=true;
-		
 		if(this.energyStorage.getEnergyStored() > 0 && this.processQueue.size() < getProcessQueueMaxLength()){
 			if(this.tanks[TANK_INPUT].getFluidAmount() > 0){
 				DistillationRecipe recipe = DistillationRecipe.findRecipe(this.tanks[TANK_INPUT].getFluid());

@@ -425,12 +425,6 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		return this.cooldownTicks > 0 || super.shouldRenderAsActive();
 	}
 	
-	
-	@Override
-	public boolean canHammerRotate(Direction side, Vec3d hit, LivingEntity entity){
-		return this.operated ? super.canHammerRotate(side, hit, entity) : true;
-	}
-	
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(Direction side){
 		DistillationTowerTileEntity master=master();

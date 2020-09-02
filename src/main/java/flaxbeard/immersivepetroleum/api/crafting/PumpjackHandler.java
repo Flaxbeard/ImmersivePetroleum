@@ -15,6 +15,8 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
+import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
+import flaxbeard.immersivepetroleum.common.network.MessageSyncReservoirs;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeType;
@@ -238,19 +240,10 @@ public class PumpjackHandler{
 	}
 
 	public static void recalculateChances(boolean mutePackets){
-		mutePackets=true; // See MessageReservoirListSync being deprecated? Look at it to see why.
-		
 		totalWeightMap.clear();
 		
 		if(!mutePackets){
-//			HashMap<ReservoirType, Integer> packetMap = new HashMap<>();
-//
-//			for(ReservoirType e:PumpjackHandler.reservoirs.values())
-//				if(e.getKey() != null && e.getValue() != null)
-//					packetMap.put(e.getKey(), e.getValue());
-//			
-			// Figured it out, but there's no point to it anymore.
-			//IPPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new MessageReservoirListSync(packetMap));
+			IPPacketHandler.sendAll(new MessageSyncReservoirs(reservoirs));
 		}
 	}
 	

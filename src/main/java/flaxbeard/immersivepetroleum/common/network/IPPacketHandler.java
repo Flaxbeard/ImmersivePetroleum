@@ -25,7 +25,7 @@ public class IPPacketHandler
 	
 	private static int id=0;
 	public static <T extends IMessage> void registerMessage(Class<T> type, Function<PacketBuffer, T> decoder){
-		INSTANCE.registerMessage(id++, type, IMessage::toBytes, decoder, (t, ctx)->{
+		INSTANCE.registerMessage(id++, type, IMessage::toBytes, decoder, (t, ctx) -> {
 			t.process(ctx);
 			ctx.get().setPacketHandled(true);
 		});
@@ -39,27 +39,35 @@ public class IPPacketHandler
 	 * @param message The message to send
 	 */
 	public static <MSG> void sendToPlayer(PlayerEntity player, MSG message){
-		if(player instanceof ServerPlayerEntity)
-			INSTANCE.send(PacketDistributor.PLAYER.with(()->(ServerPlayerEntity)player), message);
+		if(message == null || !(player instanceof ServerPlayerEntity)) return;
+		
+		INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), message);
 	}
 	
 	/** Client -> Server */
 	public static <MSG> void sendToServer(MSG message){
-		if(message!=null)
-			INSTANCE.send(PacketDistributor.SERVER.noArg(), message);
+		if(message == null) return;
+		
+		INSTANCE.send(PacketDistributor.SERVER.noArg(), message);
 	}
 	
 	/** Sends a packet to everyone in the specified dimension. <pre>Server -> Client</pre> */
 	public static <MSG> void sendToDimension(DimensionType dim, MSG message){
-		if(message!=null)
-			INSTANCE.send(PacketDistributor.DIMENSION.with(()->dim), message);
+		if(message == null) return;
+		
+		INSTANCE.send(PacketDistributor.DIMENSION.with(() -> dim), message);
 	}
 	
-	public static void preInit()
-	{
+	public static <MSG> void sendAll(MSG message){
+		if(message == null) return;
+		
+		INSTANCE.send(PacketDistributor.ALL.noArg(), message);
+	}
+	
+	public static void preInit(){
 		registerMessage(MessageCloseBook.class, MessageCloseBook::new);
 		registerMessage(MessageRotateSchematic.class, MessageRotateSchematic::new);
-		//registerMessage(MessageReservoirListSync.class, MessageReservoirListSync::new);
+		registerMessage(MessageSyncReservoirs.class, MessageSyncReservoirs::new);
 		registerMessage(MessageConsumeBoatFuel.class, MessageConsumeBoatFuel::new);
 	}
 }

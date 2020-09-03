@@ -47,11 +47,13 @@ import flaxbeard.immersivepetroleum.common.items.SpeedboatItem;
 import flaxbeard.immersivepetroleum.common.lubehandlers.CrusherLubricationHandler;
 import flaxbeard.immersivepetroleum.common.lubehandlers.ExcavatorLubricationHandler;
 import flaxbeard.immersivepetroleum.common.lubehandlers.PumpjackLubricationHandler;
+import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Effect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
@@ -282,5 +284,10 @@ public class IPContent{
 			log.error("Failed to register Speedboat Entity. {}", e.getMessage());
 			throw e;
 		}
+	}
+	
+	@SubscribeEvent
+	public static void registerEffects(RegistryEvent.Register<Effect> event){
+		IPEffects.init();
 	}
 }

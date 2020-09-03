@@ -24,14 +24,18 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.BlockNapalm;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
+import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
@@ -45,6 +49,7 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.TickEvent.WorldTickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
@@ -108,7 +113,14 @@ public class CommonEventHandler{
 				SpeedboatEntity boat = (SpeedboatEntity) entity.getRidingEntity();
 				if(boat.isFireproof){
 					event.setCanceled(true);
+					return;
 				}
+			}
+			
+			if(entity.getFireTimer()>0 && entity.getActivePotionEffect(IPEffects.ANTI_DISMOUNT_FIRE)!=null){
+				entity.extinguish();
+				entity.removePotionEffect(IPEffects.ANTI_DISMOUNT_FIRE);
+				event.setCanceled(true);
 			}
 		}
 	}
@@ -121,6 +133,33 @@ public class CommonEventHandler{
 			if(boat.isFireproof){
 				entity.extinguish();
 				boat.setFlag(0, false);
+			}
+		}
+	}
+	
+	/**
+	 * Handles dismounting the Speedboat while in lava to trying avoid getting
+	 * burned
+	 */
+	@SubscribeEvent
+	public void handleDismountingBoat(EntityMountEvent event){
+		if(event.getEntityMounting()==null){
+			return;
+		}
+		
+		if(event.getEntityMounting() instanceof LivingEntity && event.getEntityBeingMounted() instanceof SpeedboatEntity){
+			if(event.isDismounting()){
+				SpeedboatEntity boat = (SpeedboatEntity) event.getEntityBeingMounted();
+				
+				if(boat.isFireproof){
+					IFluidState fluidstate=event.getWorldObj().getBlockState(new BlockPos(boat.getPositionVec().add(0.5, 0, 0.5))).getFluidState();
+					if(fluidstate!=net.minecraft.fluid.Fluids.EMPTY && fluidstate.isTagged(FluidTags.LAVA)){
+						LivingEntity living = (LivingEntity) event.getEntityMounting();
+						
+						living.addPotionEffect(new EffectInstance(IPEffects.ANTI_DISMOUNT_FIRE, 1, 0, false, false));
+						return;
+					}
+				}
 			}
 		}
 	}

@@ -288,15 +288,12 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 								ItemEntity itemEntity = new ItemEntity(this.world, player.posX, player.posY, player.posZ, stack);
 								itemEntity.setNoPickupDelay();
 								this.world.addEntity(itemEntity);
-								ImmersivePetroleum.log.info("2 Inventory.");
 							}
 						}else{
 							entityDropItem(stack, 0F);
-							ImmersivePetroleum.log.info("Drop.");
 						}
 					}
 					
-					ImmersivePetroleum.log.info("Remove.");
 					remove();
 				}
 				
@@ -631,6 +628,14 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	@Override
 	public Item getItemBoat(){
 		return Items.speedboat;
+	}
+	
+	@Override
+	public boolean isBurning(){
+		if(this.isFireproof)
+			return false;
+		
+		return super.isBurning();
 	}
 	
 	public boolean isEmergency(){

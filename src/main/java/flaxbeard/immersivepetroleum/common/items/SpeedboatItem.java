@@ -33,6 +33,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
@@ -92,7 +94,6 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 		
 		if(upgradeTag != null){
 			ItemNBTHelper.setTagCompound(stack, "upgrades", upgradeTag);
-			this.finishUpgradeRecalculation(stack);
 		}
 		
 		this.finishUpgradeRecalculation(stack);
@@ -151,10 +152,8 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 				boolean flag1 = block == Blocks.WATER;
 				SpeedboatEntity entityboat = new SpeedboatEntity(worldIn, hit.x, flag1 ? hit.y - 0.12D : hit.y, hit.z);
 				{
-					NonNullList<ItemStack> items=NonNullList.create();
-					entityboat.setUpgrades(getContainedItems(itemstack));
 					entityboat.rotationYaw = playerIn.rotationYaw;
-					entityboat.setUpgrades(items);
+					entityboat.setUpgrades(getContainedItems(itemstack));
 					entityboat.readTank(itemstack.getTag());
 				}
 				
@@ -218,11 +217,28 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 	
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		super.addInformation(stack, worldIn, tooltip, flagIn);
 		if(ItemNBTHelper.hasKey(stack, "tank")){
 			FluidStack fs = FluidStack.loadFluidStackFromNBT(ItemNBTHelper.getTagCompound(stack, "tank"));
-			if(fs != null)
+			if(fs != null){
 				tooltip.add(new StringTextComponent(fs.getDisplayName() + ": " + fs.getAmount() + "mB"));
+			}
 		}
+		
+		IItemHandler handler=stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElse(null);
+		if(handler!=null && handler instanceof IPItemStackHandler){
+			boolean first=true;
+			for(int i=0;i<handler.getSlots();i++){
+				ItemStack upgrade=handler.getStackInSlot(i);
+				if(upgrade!=null && upgrade!=ItemStack.EMPTY){
+					if(first){
+						tooltip.add(new TranslationTextComponent("desc.immersivepetroleum.flavour.speedboat0").applyTextStyle(TextFormatting.GRAY));
+					}
+					tooltip.add(new StringTextComponent("  ").appendSibling(upgrade.getDisplayName()).applyTextStyle(TextFormatting.DARK_GRAY));
+					first=false;
+				}
+			}
+		}
+		
+		super.addInformation(stack, worldIn, tooltip, flagIn);
 	}
 }

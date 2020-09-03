@@ -30,7 +30,6 @@ import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
@@ -121,10 +120,7 @@ public class CommonEventHandler{
 			SpeedboatEntity boat = (SpeedboatEntity) entity.getRidingEntity();
 			if(boat.isFireproof){
 				entity.extinguish();
-				DataParameter<Byte> FLAGS = SpeedboatEntity.getFlags();
-				byte b0 = ((Byte) entity.getDataManager().get(FLAGS)).byteValue();
-				
-				entity.getDataManager().set(FLAGS, Byte.valueOf((byte) (b0 & ~(1 << 0))));
+				boat.setFlag(0, false);
 			}
 		}
 	}

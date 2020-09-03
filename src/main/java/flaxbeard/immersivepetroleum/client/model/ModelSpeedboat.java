@@ -246,13 +246,13 @@ public class ModelSpeedboat extends Model{
 		this.propeller.rotateAngleX = BoatEntity.isEmergency() ? 0 : f1;
 		float pr = BoatEntity.isEmergency() ? 0f : BoatEntity.propellerRotation;
 		
-		if(BoatEntity.leftInputDown && pr > -1)
+		if(BoatEntity.isLeftInDown() && pr > -1)
 			pr = pr - 0.1F * Minecraft.getInstance().getRenderPartialTicks();
 		
-		if(BoatEntity.rightInputDown && pr < 1)
+		if(BoatEntity.isRightInDown() && pr < 1)
 			pr = pr + 0.1F * Minecraft.getInstance().getRenderPartialTicks();
 		
-		if(!BoatEntity.leftInputDown && !BoatEntity.rightInputDown)
+		if(!BoatEntity.isLeftInDown() && !BoatEntity.isRightInDown())
 			pr = (float) (pr * Math.pow(0.7, Minecraft.getInstance().getRenderPartialTicks()));
 		
 		this.propellerAssembly.rotateAngleY = (float) Math.toRadians(pr * 15);
@@ -282,13 +282,13 @@ public class ModelSpeedboat extends Model{
 		SpeedboatEntity BoatEntity = (SpeedboatEntity) entityIn;
 		float pr = BoatEntity.propellerRotation;
 		
-		if(BoatEntity.leftInputDown && pr > -1)
+		if(BoatEntity.isLeftInDown() && pr > -1)
 			pr = pr - 0.1F * Minecraft.getInstance().getRenderPartialTicks();
 		
-		if(BoatEntity.rightInputDown && pr < 1)
+		if(BoatEntity.isRightInDown() && pr < 1)
 			pr = pr + 0.1F * Minecraft.getInstance().getRenderPartialTicks();
 		
-		if(!BoatEntity.leftInputDown && !BoatEntity.rightInputDown)
+		if(!BoatEntity.isLeftInDown() && !BoatEntity.isRightInDown())
 			pr = (float) (pr * Math.pow(0.7F, Minecraft.getInstance().getRenderPartialTicks()));
 		
 		this.rudder2.rotateAngleY = (float) Math.toRadians(pr * 20f);

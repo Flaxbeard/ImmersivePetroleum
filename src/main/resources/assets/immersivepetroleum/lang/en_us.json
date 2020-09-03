@@ -62,6 +62,9 @@
 	
 	"desc.immersivepetroleum.flavour.asphalt": "Increases walking speed by %1$s",
 	
+	"_comment": "This is for the upgrade list of the speedboat tooltip",
+	"desc.immersivepetroleum.flavour.speedboat0": "Upgrade(s)",
+	
 	"_comment": "################## IE-Manual ##################",
 	
 	"manual.immersivepetroleum.main": "Oil Processing",

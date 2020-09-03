@@ -100,7 +100,7 @@ public class ReservoirCommand{
 	
 	static void setReservoir(CommandContext<CommandSource> context, int xChunk, int zChunk){
 		CommandSource sender=context.getSource();
-		OilWorldInfo info=PumpjackHandler.getOilWorldInfo(sender.getWorld(), xChunk, zChunk);
+		OilWorldInfo info=PumpjackHandler.getOrCreateOilWorldInfo(sender.getWorld(), xChunk, zChunk);
 		
 		String name=context.getArgument("name", String.class);
 		ReservoirType reservoir = null;
@@ -166,7 +166,7 @@ public class ReservoirCommand{
 	
 	static OilWorldInfo getOilWorldInfo(ServerPlayerEntity playerEntity){
 		ChunkPos coords=new ChunkPos(playerEntity.getPosition());
-		return PumpjackHandler.getOilWorldInfo(playerEntity.getEntityWorld(), coords.x, coords.z);
+		return PumpjackHandler.getOrCreateOilWorldInfo(playerEntity.getEntityWorld(), coords.x, coords.z);
 	}
 	
 	static ChunkPos getChunkCoords(ServerPlayerEntity playerEntity){

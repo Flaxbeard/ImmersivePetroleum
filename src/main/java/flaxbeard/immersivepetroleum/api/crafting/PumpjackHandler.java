@@ -52,12 +52,15 @@ public class PumpjackHandler{
 	 * @return mB of fluid in the given reservoir
 	 */
 	public static int getFluidAmount(World world, int chunkX, int chunkZ){
-		if (world.isRemote)
+		assert !world.isRemote;
+		
+		if(world.isRemote)
 			return 0;
-		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
-		if (info == null || (info.capacity == 0) || info.getType() == null || info.getType().fluidLocation == null || (info.current == 0 && info.getType().replenishRate == 0))
+		
+		OilWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
+		if(info == null || (info.capacity == 0) || info.getType() == null || info.getType().fluidLocation == null || (info.current == 0 && info.getType().replenishRate == 0))
 			return 0;
-
+		
 		return info.current;
 	}
 
@@ -70,10 +73,12 @@ public class PumpjackHandler{
 	 * @return Fluid in given reservoir (or null if none)
 	 */
 	public static Fluid getFluid(World world, int chunkX, int chunkZ){
+		assert !world.isRemote;
+		
 		if(world.isRemote)
 			return null;
 		
-		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
+		OilWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
 		
 		if(info == null || info.getType() == null){
 			return null;
@@ -91,7 +96,9 @@ public class PumpjackHandler{
 	 * @return mB of fluid that can be extracted "residually"
 	 */
 	public static int getResidualFluid(World world, int chunkX, int chunkZ){
-		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
+		assert !world.isRemote;
+		
+		OilWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
 		
 		if(info == null || info.getType() == null || info.getType().fluidLocation == null || (info.capacity == 0) || (info.current == 0 && info.getType().replenishRate == 0))
 			return 0;
@@ -117,8 +124,8 @@ public class PumpjackHandler{
 	 * @param chunkZ Z coordinate of desired chunk
 	 * @return The OilWorldInfo corresponding w/ given chunk
 	 */
-	public static OilWorldInfo getOilWorldInfo(World world, int chunkX, int chunkZ){
-		return getOilWorldInfo(world, new DimensionChunkCoords(world.getDimension().getType(), chunkX, chunkZ), false);
+	public static OilWorldInfo getOrCreateOilWorldInfo(World world, int chunkX, int chunkZ){
+		return getOrCreateOilWorldInfo(world, new DimensionChunkCoords(world.getDimension().getType(), chunkX, chunkZ), false);
 	}
 	
 	/**
@@ -129,11 +136,11 @@ public class PumpjackHandler{
 	 * @param force  Force creation on an empty chunk
 	 * @return The OilWorldInfo corresponding w/ given chunk
 	 */
-	public static OilWorldInfo getOilWorldInfo(World world, DimensionChunkCoords coords, boolean force){
-		if(world.isRemote){
-			ImmersivePetroleum.log.info("getOilWorldInfo was called from Client. Ignoring.");
+	public static OilWorldInfo getOrCreateOilWorldInfo(World world, DimensionChunkCoords coords, boolean force){
+		assert !world.isRemote;
+		
+		if(world.isRemote)
 			return null;
-		}
 		
 		OilWorldInfo worldInfo = reservoirsCache.get(coords);
 		if(worldInfo == null){
@@ -197,7 +204,9 @@ public class PumpjackHandler{
 	 * @param amount Amount of fluid in mB to drain
 	 */
 	public static void depleteFluid(World world, int chunkX, int chunkZ, int amount){
-		OilWorldInfo info = getOilWorldInfo(world, chunkX, chunkZ);
+		assert !world.isRemote;
+		
+		OilWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
 		info.current = Math.max(info.current - amount, 0);
 		IPSaveData.setDirty();
 	}

@@ -26,12 +26,14 @@ import net.minecraft.block.Blocks;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraftforge.event.RegistryEvent;
@@ -81,19 +83,19 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		return true;
 	}
 	
-	public int availableOil(){
+	public int getFluidAmount(){
 		return PumpjackHandler.getFluidAmount(this.world, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
-	public Fluid availableFluid(){
+	public Fluid getFluidType(){
 		return PumpjackHandler.getFluid(this.world, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
-	public int getResidualOil(){
+	public int getResidualFluid(){
 		return PumpjackHandler.getResidualFluid(this.world, getPos().getX() >> 4, getPos().getZ() >> 4);
 	}
 	
-	public void extractOil(int amount){
+	public void extractFluid(int amount){
 		PumpjackHandler.depleteFluid(this.world, getPos().getX() >> 4, getPos().getZ() >> 4, amount);
 	}
 	
@@ -129,7 +131,9 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 			
 			if(!stack.isEmpty()){
 				Block block = Block.getBlockFromItem(stack.getItem());
-				this.state = block.getDefaultState();
+				if(block!=Blocks.AIR){
+					this.state = block.getDefaultState();
+				}
 			}
 		}
 	}
@@ -139,8 +143,8 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.putBoolean("wasActive", this.wasActive);
 		nbt.putBoolean("lastHadPipes", this.lastHadPipes);
-		if(availableFluid() != null){
-			FluidStack stack = new FluidStack(availableFluid(), 0);
+		if(getFluidType() != null){
+			FluidStack stack = new FluidStack(getFluidType(), 0);
 			CompoundNBT comp = new CompoundNBT();
 			stack.writeToNBT(comp);
 			nbt.put("comp", comp);
@@ -151,20 +155,20 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	public void tick(){
 		super.tick();
 		
-		if(this.world.isRemote || isDummy()){
-//			if(this.world.isRemote && !isDummy() && this.state != null && this.wasActive){
-//				// What is this whole thing even for? I've never seen the pumpjack spawning particles anywhere.
-//				BlockPos particlePos = getPos();
-//				float r1 = (this.world.rand.nextFloat() - .5F) * 2F;
-//				float r2 = (this.world.rand.nextFloat() - .5F) * 2F;
-//				
-//				this.world.addParticle(ParticleTypes.SMOKE,
-//						particlePos.getX() + 0.5D, particlePos.getY(), particlePos.getZ() + 0.5D,
-//						r1 * 0.04D, 0.25D, r2 * 0.025D);
-//			}
-			if(this.wasActive){
-				this.activeTicks++;
+		if((this.world.isRemote || isDummy()) && this.wasActive){
+			this.activeTicks++;
+			
+			if(this.state != null){
+				// What is this whole thing even for? I've never seen the pumpjack spawning particles anywhere.
+				float r1 = (this.world.rand.nextFloat() - .5F) * 2F;
+				float r2 = (this.world.rand.nextFloat() - .5F) * 2F;
+				
+				Vec3d particlePos = new Vec3d(getPos()).add(0.5, 0.0, 0.5);
+				this.world.addParticle(ParticleTypes.SMOKE,
+						particlePos.getX(), particlePos.getY(), particlePos.getZ(),
+						r1 * 0.04D, 0.25D, r2 * 0.025D);
 			}
+			
 			return;
 		}
 		
@@ -179,13 +183,13 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 			}
 			
 			if(!isRSDisabled() && this.lastHadPipes){
-				int available = availableOil();
-				int residual = getResidualOil();
+				int available = getFluidAmount();
+				int residual = getResidualFluid();
 				if(available > 0 || residual > 0){
-					int oilAmnt = availableOil() <= 0 ? residual : availableOil();
+					int oilAmnt = getFluidAmount() <= 0 ? residual : getFluidAmount();
 					
 					this.energyStorage.extractEnergy(consumption, false);
-					FluidStack out = new FluidStack(availableFluid(), Math.min(IPConfig.EXTRACTION.pumpjack_speed.get(), oilAmnt));
+					FluidStack out = new FluidStack(getFluidType(), Math.min(IPConfig.EXTRACTION.pumpjack_speed.get(), oilAmnt));
 					Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
 					BlockPos outputPos = master().getBlockPosForPos(East_Port).offset(facing);
 					IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, facing).orElse(null);
@@ -193,7 +197,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 						int accepted = output.fill(out, FluidAction.SIMULATE);
 						if(accepted > 0){
 							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.getAmount(), accepted), false), FluidAction.EXECUTE);
-							extractOil(drained);
+							extractFluid(drained);
 							active = true;
 							out = Utils.copyFluidStackWithAmount(out, out.getAmount() - drained, false);
 						}
@@ -206,7 +210,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 						int accepted = output.fill(out, FluidAction.SIMULATE);
 						if(accepted > 0){
 							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.getAmount(), accepted), false), FluidAction.EXECUTE);
-							extractOil(drained);
+							extractFluid(drained);
 							active = true;
 						}
 					}

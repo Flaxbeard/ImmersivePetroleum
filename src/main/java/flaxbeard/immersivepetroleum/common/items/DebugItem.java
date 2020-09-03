@@ -67,7 +67,7 @@ public class DebugItem extends IPItemBase{
 			tooltip.add(new StringTextComponent("  "+mode.display).applyTextStyle(TextFormatting.DARK_GRAY));
 		}
 		
-		tooltip.add(new StringTextComponent("You're not supposed to have this.").applyTextStyle(TextFormatting.GRAY));
+		tooltip.add(new StringTextComponent("You're not supposed to have this.").applyTextStyle(TextFormatting.DARK_RED));
 		super.addInformation(stack, worldIn, tooltip, flagIn);
 	}
 	
@@ -77,7 +77,6 @@ public class DebugItem extends IPItemBase{
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn){
 		if(!worldIn.isRemote){
-			
 			Modes mode=DebugItem.getMode(playerIn.getHeldItem(handIn));
 			switch(mode){
 				case CLEAR_RESERVOIR_CACHE:{
@@ -97,7 +96,7 @@ public class DebugItem extends IPItemBase{
 					DimensionChunkCoords coords=new DimensionChunkCoords(worldIn.dimension.getType(), (pos.getX() >> 4), (pos.getZ() >> 4));
 					
 					int last=PumpjackHandler.reservoirsCache.size();
-					OilWorldInfo info=PumpjackHandler.getOilWorldInfo(worldIn, coords, false);
+					OilWorldInfo info=PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
 					boolean isNew=PumpjackHandler.reservoirsCache.size()!=last;
 					
 					if(info != null){
@@ -283,22 +282,6 @@ public class DebugItem extends IPItemBase{
 	}
 	
 	
-	protected static enum Modes{
-		DISABLED("Disabled"),
-		INFO_SPEEDBOAT("Info: Speedboat."),
-		INFO_TE_AUTOLUBE("Info: AutoLubricator."),
-		INFO_TE_GASGEN("Info: Portable Generator."),
-		INFO_TE_MULTIBLOCK("Info: Powered Multiblock."),
-		RESERVOIR("Create/Get Reservoir"),
-		CLEAR_RESERVOIR_CACHE("Clear Reservoir Cache"),
-		;
-		
-		public final String display;
-		private Modes(String display){
-			this.display=display;
-		}
-	}
-	
 	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT)
 	public static class ClientInputHandler{
 		static boolean shiftHeld = false;
@@ -348,6 +331,22 @@ public class DebugItem extends IPItemBase{
 					}
 				}
 			}
+		}
+	}
+	
+	protected static enum Modes{
+		DISABLED("Disabled"),
+		INFO_SPEEDBOAT("Info: Speedboat."),
+		INFO_TE_AUTOLUBE("Info: AutoLubricator."),
+		INFO_TE_GASGEN("Info: Portable Generator."),
+		INFO_TE_MULTIBLOCK("Info: Powered Multiblock."),
+		RESERVOIR("Create/Get Reservoir"),
+		CLEAR_RESERVOIR_CACHE("Clear Reservoir Cache"),
+		;
+		
+		public final String display;
+		private Modes(String display){
+			this.display=display;
 		}
 	}
 }

@@ -21,7 +21,6 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationH
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.BlockNapalm;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
@@ -41,7 +40,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -58,20 +56,20 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class CommonEventHandler{
 	
 	@SubscribeEvent
-	public static void onSave(WorldEvent.Save event){
+	public void onSave(WorldEvent.Save event){
 		IPSaveData.setDirty();
 	}
 	
 	@SubscribeEvent
-	public static void onUnload(WorldEvent.Unload event){
+	public void onUnload(WorldEvent.Unload event){
 		IPSaveData.setDirty();
 	}
 	
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public static void handlePickupItem(RightClickBlock event){
+	public void handlePickupItem(RightClickBlock event){
 		BlockPos pos = event.getPos();
 		BlockState state = event.getWorld().getBlockState(pos);
-		if(!event.getWorld().isRemote && state.getBlock() == IEBlocks.MetalDevices.sampleDrill){
+		if(state.getBlock() == IEBlocks.MetalDevices.sampleDrill){
 			TileEntity te = event.getWorld().getTileEntity(pos);
 			if(te instanceof SampleDrillTileEntity){
 				SampleDrillTileEntity drill = (SampleDrillTileEntity) te;
@@ -86,29 +84,16 @@ public class CommonEventHandler{
 							World world = event.getWorld();
 							DimensionChunkCoords coords=new DimensionChunkCoords(world.getDimension().getType(), cPos.x >> 4, cPos.z >> 4);
 							
-							OilWorldInfo info = PumpjackHandler.getOilWorldInfo(world, coords.x, coords.z);
-							if(info.getType() != null){
+							OilWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(world, coords, false);
+							if(info!=null && info.getType() != null){
 								ItemNBTHelper.putString(drill.sample, "resType", info.getType().name);
 								ItemNBTHelper.putInt(drill.sample, "oil", info.current);
-								
-								if(event.getPlayer()!=null){
-									int cap=info.capacity;
-									int cur=info.current;
-									ReservoirType type=info.type;
-									ReservoirType override=info.overrideType;
-									
-									String out=String.format("%.3f/%.3fmB of %s%s", cur/1000D, cap/1000D, (override!=null?override.name:type.name), (override!=null?" [OVERRIDDEN]":""));
-									event.getPlayer().sendStatusMessage(new StringTextComponent(out), true);
-								}
-								
 							}else{
 								ItemNBTHelper.putInt(drill.sample, "oil", 0);
-								
-								if(event.getPlayer()!=null)
-									event.getPlayer().sendStatusMessage(new StringTextComponent("Found nothing."), true);
 							}
+							
 						}catch(Exception e){
-							ImmersivePetroleum.log.warn(e);
+							ImmersivePetroleum.log.warn("This aint good!", e);
 						}
 					}
 				}
@@ -116,22 +101,8 @@ public class CommonEventHandler{
 		}
 	}
 	
-//	@SubscribeEvent(priority = EventPriority.HIGH)
-//	public static void onLogin(PlayerLoggedInEvent event){
-		// ExcavatorHandler.allowPacketsToPlayer = true;
-//		if(!event.getPlayer().world.isRemote){
-//			HashMap<ReservoirType, Integer> packetMap = new HashMap<ReservoirType, Integer>();
-//			for(Entry<ReservoirType, Integer> e:PumpjackHandler.reservoirList.entrySet()){
-//				if(e.getKey() != null && e.getValue() != null)
-//					packetMap.put(e.getKey(), e.getValue());
-//			}
-//			
-//			//IPPacketHandler.sendToPlayer(event.getPlayer(), new MessageReservoirListSync(packetMap));
-//		}
-//	}
-	
 	@SubscribeEvent
-	public static void handleBoatImmunity(LivingAttackEvent event){
+	public void handleBoatImmunity(LivingAttackEvent event){
 		if(event.getSource() == DamageSource.LAVA || event.getSource() == DamageSource.ON_FIRE || event.getSource() == DamageSource.IN_FIRE){
 			LivingEntity entity = event.getEntityLiving();
 			if(entity.getRidingEntity() instanceof SpeedboatEntity){
@@ -144,7 +115,7 @@ public class CommonEventHandler{
 	}
 	
 	@SubscribeEvent
-	public static void handleBoatImmunity(PlayerTickEvent event){
+	public void handleBoatImmunity(PlayerTickEvent event){
 		PlayerEntity entity = event.player;
 		if(entity.isBurning() && entity.getRidingEntity() instanceof SpeedboatEntity){
 			SpeedboatEntity boat = (SpeedboatEntity) entity.getRidingEntity();
@@ -159,7 +130,7 @@ public class CommonEventHandler{
 	}
 	
 	@SubscribeEvent
-	public static void handleLubricatingMachinesServer(WorldTickEvent event){
+	public void handleLubricatingMachinesServer(WorldTickEvent event){
 		if(event.phase == Phase.END){
 			handleLubricatingMachines(event.world);
 		}
@@ -181,7 +152,8 @@ public class CommonEventHandler{
 					if(world.isRemote){
 						if(te instanceof MultiblockPartTileEntity){
 							MultiblockPartTileEntity<?> part = (MultiblockPartTileEntity<?>) te;
-							BlockState n = Fluids.lubricant.block.getDefaultState();
+							
+							BlockParticleData lubeParticle=new BlockParticleData(ParticleTypes.FALLING_DUST, Fluids.lubricant.block.getDefaultState());
 							Vec3i size=lubeHandler.getStructureDimensions();
 							
 							int numBlocks = (int)(size.getX()*size.getY()*size.getZ()*0.25F);
@@ -197,7 +169,7 @@ public class CommonEventHandler{
 										for(Direction facing:Direction.Plane.HORIZONTAL){
 											if(world.rand.nextInt(30) == 0){// && world.getBlockState(pos.offset(facing)).getBlock().isReplaceable(world, pos.offset(facing))){
 												Vec3i direction = facing.getDirectionVec();
-												world.addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, n),
+												world.addParticle(lubeParticle,
 														pos.getX() + .5f + direction.getX() * .65f,
 														pos.getY() + 1,
 														pos.getZ() + .5f + direction.getZ() * .65f,
@@ -222,30 +194,31 @@ public class CommonEventHandler{
 	}
 	
 	@SubscribeEvent
-	public static void onEntityJoiningWorld(EntityJoinWorldEvent event){
-		if(IPConfig.MISCELLANEOUS.autounlock_recipes.get() && event.getEntity() instanceof PlayerEntity){
+	public void onEntityJoiningWorld(EntityJoinWorldEvent event){
+		if(event.getEntity() instanceof PlayerEntity){
 			if(event.getEntity() instanceof FakePlayer){
 				return;
 			}
 			
-			List<IRecipe<?>> l = new ArrayList<IRecipe<?>>();
-			Collection<IRecipe<?>> recipes=event.getWorld().getRecipeManager().getRecipes();
-			recipes.forEach(recipe->{
-				ResourceLocation name = recipe.getId();
-				if(name.getNamespace()==ImmersivePetroleum.MODID){
-					if(recipe.getRecipeOutput().getItem() != null){
-						l.add(recipe);
+			if(IPConfig.MISCELLANEOUS.autounlock_recipes.get()){
+				List<IRecipe<?>> l = new ArrayList<IRecipe<?>>();
+				Collection<IRecipe<?>> recipes=event.getWorld().getRecipeManager().getRecipes();
+				recipes.forEach(recipe->{
+					ResourceLocation name = recipe.getId();
+					if(name.getNamespace()==ImmersivePetroleum.MODID){
+						if(recipe.getRecipeOutput().getItem() != null){
+							l.add(recipe);
+						}
 					}
-				}
-			});
-			
-			((PlayerEntity) event.getEntity()).unlockRecipes(l);
-			
+				});
+				
+				((PlayerEntity) event.getEntity()).unlockRecipes(l);
+			}
 		}
 	}
 	
 	@SubscribeEvent
-	public static void test(LivingEvent.LivingUpdateEvent event){
+	public void test(LivingEvent.LivingUpdateEvent event){
 		if(event.getEntityLiving() instanceof PlayerEntity){
 			// event.getEntityLiving().setFire(1);
 		}
@@ -255,7 +228,7 @@ public class CommonEventHandler{
 	public static Map<Integer, List<BlockPos>> toRemove = new HashMap<>();
 	
 	@SubscribeEvent
-	public static void handleNapalm(WorldTickEvent event){
+	public void handleNapalm(WorldTickEvent event){
 		int d = event.world.getDimension().getType().getId();
 		
 		if(event.phase == Phase.START){

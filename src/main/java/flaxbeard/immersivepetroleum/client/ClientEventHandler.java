@@ -36,6 +36,7 @@ import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
+import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageCloseBook;
 import net.minecraft.block.BlockState;
@@ -84,7 +85,7 @@ public class ClientEventHandler{
 	private static Field FIELD_SPECIAL;
 	private static Field FIELD_MULTIBLOCK;
 	@SubscribeEvent
-	public static void guiOpen(GuiOpenEvent event){
+	public void guiOpen(GuiOpenEvent event){
 		if(event.getGui() == null && lastGui instanceof ManualScreen){
 			ManualScreen gui = (ManualScreen) lastGui;
 			ResourceLocation name = null;
@@ -151,7 +152,7 @@ public class ClientEventHandler{
 	
 	@SubscribeEvent
 	@SuppressWarnings("unchecked")
-	public static void renderLast(RenderWorldLastEvent event){
+	public void renderLast(RenderWorldLastEvent event){
 		Minecraft mc = Minecraft.getInstance();
 		
 		if(IPConfig.MISCELLANEOUS.sample_displayBorder.get() && mc.player != null){
@@ -264,7 +265,7 @@ public class ClientEventHandler{
 		GlStateManager.popMatrix();
 	}
 	
-	public static void renderChunkBorder(int chunkX, int chunkZ){
+	public void renderChunkBorder(int chunkX, int chunkZ){
 		PlayerEntity player = ClientUtils.mc().player;
 		
 		double px = TileEntityRendererDispatcher.staticPlayerX;
@@ -314,7 +315,7 @@ public class ClientEventHandler{
 	static final DecimalFormat FORMATTER = new DecimalFormat("#,###.##");
 	
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public static void handleItemTooltip(ItemTooltipEvent event){
+	public void handleItemTooltip(ItemTooltipEvent event){
 		ItemStack stack = event.getItemStack();
 		if(stack.getItem() instanceof CoresampleItem){
 			if(ItemNBTHelper.hasKey(stack, "oil")){
@@ -366,8 +367,8 @@ public class ClientEventHandler{
 		}
 	}
 	
-	@SubscribeEvent()
-	public static void renderInfoOverlays(RenderGameOverlayEvent.Post event){
+	@SubscribeEvent
+	public void renderInfoOverlays(RenderGameOverlayEvent.Post event){
 		if(ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
 			PlayerEntity player = ClientUtils.mc().player;
 			
@@ -378,7 +379,7 @@ public class ClientEventHandler{
 				if(mop != null){
 					switch(mop.getType()){
 						case BLOCK:{
-							if(mop.getHitVec() != null){
+							if(mop instanceof BlockRayTraceResult){
 								TileEntity tileEntity = player.world.getTileEntity(((BlockRayTraceResult)mop).getPos());
 								
 								if(tileEntity instanceof CoresampleTileEntity){
@@ -443,18 +444,22 @@ public class ClientEventHandler{
 		}
 	}
 	
-	@SubscribeEvent()
-	public static void onRenderOverlayPost(RenderGameOverlayEvent.Post event){
+	@SubscribeEvent
+	public void onRenderOverlayPost(RenderGameOverlayEvent.Post event){
 		if(ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
 			PlayerEntity player = ClientUtils.mc().player;
 			
 			if(player.getRidingEntity() instanceof SpeedboatEntity){
 				int offset = 0;
+				boolean holdingDebugItem=false;
 				for(Hand hand:Hand.values()){
 					if(!player.getHeldItem(hand).isEmpty()){
 						ItemStack equipped = player.getHeldItem(hand);
-						if((equipped.getItem() instanceof DrillItem) || equipped.getItem() instanceof ChemthrowerItem || equipped.getItem() instanceof BuzzsawItem){
+						if((equipped.getItem() instanceof DrillItem) || (equipped.getItem() instanceof ChemthrowerItem) || (equipped.getItem() instanceof BuzzsawItem)){
 							offset -= 85;
+						}
+						if(equipped.getItem() instanceof DebugItem){
+							holdingDebugItem=true;
 						}
 					}
 				}
@@ -492,22 +497,23 @@ public class ClientEventHandler{
 					GlStateManager.translated(23, 37, 0);
 					ClientUtils.drawTexturedRect(-41, -73, 53, 72, 8 / 256f, 61 / 256f, 4 / 256f, 76 / 256f);
 					
-					// TODO DEBUG: Remove later.
-					GlStateManager.pushMatrix();
-					{
-						FontRenderer font=Minecraft.getInstance().fontRenderer;
-						if(font!=null){
-							Vec3d vec=boat.getMotion();
-							
-							float speed=(float)(Math.sqrt(vec.x*vec.x + vec.z*vec.z));
-							
-							String out0=String.format(Locale.US, "Fuel: %s/%sMB", amount,capacity);
-							String out1=String.format(Locale.US, "Speed: %.2f", speed);
-							font.drawStringWithShadow(out0, -65, -94, 0xFFFFFFFF);
-							font.drawStringWithShadow(out1, -65, -85, 0xFFFFFFFF);
+					if(holdingDebugItem){
+						GlStateManager.pushMatrix();
+						{
+							FontRenderer font=Minecraft.getInstance().fontRenderer;
+							if(font!=null){
+								Vec3d vec=boat.getMotion();
+								
+								float speed=(float)(Math.sqrt(vec.x*vec.x + vec.z*vec.z));
+								
+								String out0=String.format(Locale.US, "Fuel: %s/%sMB", amount,capacity);
+								String out1=String.format(Locale.US, "Speed: %.2f", speed);
+								font.drawStringWithShadow(out0, -65, -94, 0xFFFFFFFF);
+								font.drawStringWithShadow(out1, -65, -85, 0xFFFFFFFF);
+							}
 						}
+						GlStateManager.popMatrix();
 					}
-					GlStateManager.popMatrix();
 				}
 				GlStateManager.popMatrix();
 			}
@@ -515,7 +521,7 @@ public class ClientEventHandler{
 	}
 	
 	@SubscribeEvent
-	public static void handleBoatImmunity(RenderBlockOverlayEvent event){
+	public void handleBoatImmunity(RenderBlockOverlayEvent event){
 		PlayerEntity entity = event.getPlayer();
 		if(event.getOverlayType() == OverlayType.FIRE && entity.isBurning() && entity.getRidingEntity() instanceof SpeedboatEntity){
 			SpeedboatEntity boat = (SpeedboatEntity) entity.getRidingEntity();
@@ -526,7 +532,7 @@ public class ClientEventHandler{
 	}
 	
 	@SubscribeEvent
-	public static void handleFireRender(RenderPlayerEvent.Pre event){
+	public void handleFireRender(RenderPlayerEvent.Pre event){
 		PlayerEntity entity = event.getPlayer();
 		if(entity.isBurning() && entity.getRidingEntity() instanceof SpeedboatEntity){
 			SpeedboatEntity boat = (SpeedboatEntity) entity.getRidingEntity();
@@ -537,7 +543,7 @@ public class ClientEventHandler{
 	}
 	
 	@SubscribeEvent
-	public static void handleLubricatingMachinesClient(ClientTickEvent event){
+	public void handleLubricatingMachinesClient(ClientTickEvent event){
 		if(event.phase == Phase.END && Minecraft.getInstance().world != null){
 			CommonEventHandler.handleLubricatingMachines(Minecraft.getInstance().world);
 		}

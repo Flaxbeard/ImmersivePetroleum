@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
@@ -15,6 +16,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -28,7 +30,7 @@ public class RecipeReloadListener implements IResourceManagerReloadListener{
 		}
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void recipesUpdated(RecipesUpdatedEvent event){
 		lists(event.getRecipeManager());
 	}
@@ -36,8 +38,10 @@ public class RecipeReloadListener implements IResourceManagerReloadListener{
 	static void lists(RecipeManager recipeManager){
 		Collection<IRecipe<?>> recipes=recipeManager.getRecipes();
 		
+		ImmersivePetroleum.log.info("Loading Distillation Recipes.");
 		DistillationRecipe.recipes=filterRecipes(recipes, DistillationRecipe.class, DistillationRecipe.TYPE);
 		
+		ImmersivePetroleum.log.info("Loading Reservoirs.");
 		PumpjackHandler.reservoirs=new LinkedHashMap<>(filterRecipes(recipes, ReservoirType.class, ReservoirType.TYPE));
 	}
 	

@@ -27,12 +27,12 @@ public class CommonProxy{
 	/** Fired at {@link FMLCommonSetupEvent} */
 	public void setup(){}
 	
-	public void registerContainersAndScreens(){
-		GuiHandler.register(DistillationTowerTileEntity.class, new ResourceLocation(ImmersivePetroleum.MODID, "distillationtower"), DistillationTowerContainer::new);
-	}
-	
 	/** Fired at {@link FMLLoadCompleteEvent} */
 	public void completed(){
+	}
+	
+	public void registerContainersAndScreens(){
+		GuiHandler.register(DistillationTowerTileEntity.class, new ResourceLocation(ImmersivePetroleum.MODID, "distillationtower"), DistillationTowerContainer::new);
 	}
 	
 	public void preInit(){

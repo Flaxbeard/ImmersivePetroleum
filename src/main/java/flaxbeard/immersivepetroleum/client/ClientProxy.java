@@ -415,9 +415,6 @@ public class ClientProxy extends CommonProxy{
 		ClientRegistry.bindTileEntitySpecialRenderer(DistillationTowerTileEntity.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(PumpjackTileEntity.class, new MultiblockPumpjackRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorTileEntity.class, new AutoLubricatorRenderer());
-		
-		// Don't think this is needed anymore
-		//ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice), 0, AutoLubricatorTileEntity.class);
 	}
 	
 	@SubscribeEvent(priority = EventPriority.LOWEST)
@@ -481,104 +478,6 @@ public class ClientProxy extends CommonProxy{
 		blockRenderer.getBlockModelRenderer().renderModelBrightness(model, state, 0.75F, false);
 		GlStateManager.popMatrix();
 	}
-	
-	/*// Data Generators are responsible for dealing with this now
-	public static void registerModels(ModelRegistryEvent evt)
-	{
-		//Going through registered stuff at the end of preInit, because of compat modules possibly adding items
-		for (Block block : IPContent.registeredIPBlocks)
-		{
-			Item blockItem = Item.getItemFromBlock(block);
-			final ResourceLocation loc = Block.REGISTRY.getNameForObject(block);
-			if (loc != null)
-				if (block instanceof IIEMetaBlock)
-				{
-					IIEMetaBlock ieMetaBlock = (IIEMetaBlock) block;
-					if (ieMetaBlock.useCustomStateMapper())
-						ModelLoader.setCustomStateMapper(block, IECustomStateMapper.getStateMapper(ieMetaBlock));
-					ModelLoader.setCustomMeshDefinition(blockItem, new ItemMeshDefinition()
-					{
-						@Override
-						public ModelResourceLocation getModelLocation(ItemStack stack)
-						{
-							return new ModelResourceLocation(loc, "inventory");
-						}
-					});
-					boolean isMD = block == IPContent.blockMetalDevice;
-					for (int meta = isMD ? 1 : 0; meta < ieMetaBlock.getMetaEnums().length; meta++)
-					{
-						String location = loc.toString();
-						String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getName() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)) : null;
-						if (ieMetaBlock.useCustomStateMapper())
-						{
-							String custom = ieMetaBlock.getCustomStateMapping(meta, true);
-							if (custom != null)
-								location += "_" + custom;
-						}
-						try
-						{
-							ModelLoader.setCustomModelResourceLocation(blockItem, meta, new ModelResourceLocation(location, prop));
-						} catch (NullPointerException npe)
-						{
-							throw new RuntimeException("WELP! apparently " + ieMetaBlock + " lacks an item!", npe);
-						}
-					}
-					if (isMD)
-					{
-						ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "auto_lube"), "inventory"));
-					}
-				}
-				else if (block instanceof BlockIPFluid)
-					mapFluidState(block, ((BlockIPFluid) block).getFluid());
-				else
-					ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(loc, "inventory"));
-		}
-
-		for (Item item : IPContent.registeredIPItems)
-		{
-			if (item instanceof ItemIPBase)
-			{
-				ItemIPBase ipMetaItem = (ItemIPBase) item;
-				if (ipMetaItem.registerSubModels && ipMetaItem.getSubNames() != null && ipMetaItem.getSubNames().length > 0)
-				{
-					for (int meta = 0; meta < ipMetaItem.getSubNames().length; meta++)
-					{
-						ResourceLocation loc = new ResourceLocation("immersivepetroleum", ipMetaItem.itemName + "/" + ipMetaItem.getSubNames()[meta]);
-
-						ModelBakery.registerItemVariants(ipMetaItem, loc);
-						ModelLoader.setCustomModelResourceLocation(ipMetaItem, meta, new ModelResourceLocation(loc, "inventory"));
-					}
-				}
-				else
-				{
-					final ResourceLocation loc = new ResourceLocation("immersivepetroleum", ipMetaItem.itemName);
-					ModelBakery.registerItemVariants(ipMetaItem, loc);
-					ModelLoader.setCustomMeshDefinition(ipMetaItem, new ItemMeshDefinition()
-					{
-						@Override
-						public ModelResourceLocation getModelLocation(ItemStack stack)
-						{
-							return new ModelResourceLocation(loc, "inventory");
-						}
-					});
-				}
-			}
-			else
-			{
-				final ResourceLocation loc = Item.REGISTRY.getNameForObject(item);
-				ModelBakery.registerItemVariants(item, loc);
-				ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
-				{
-					@Override
-					public ModelResourceLocation getModelLocation(ItemStack stack)
-					{
-						return new ModelResourceLocation(loc, "inventory");
-					}
-				});
-			}
-		}
-	}
-	*/
 	
 	@Override
 	public World getClientWorld(){

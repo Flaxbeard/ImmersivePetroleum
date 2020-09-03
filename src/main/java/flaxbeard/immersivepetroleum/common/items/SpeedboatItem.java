@@ -220,7 +220,7 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 		if(ItemNBTHelper.hasKey(stack, "tank")){
 			FluidStack fs = FluidStack.loadFluidStackFromNBT(ItemNBTHelper.getTagCompound(stack, "tank"));
 			if(fs != null){
-				tooltip.add(new StringTextComponent(fs.getDisplayName() + ": " + fs.getAmount() + "mB"));
+				tooltip.add(fs.getDisplayName().appendText(": " + fs.getAmount() + "mB").applyTextStyle(TextFormatting.GRAY));
 			}
 		}
 		

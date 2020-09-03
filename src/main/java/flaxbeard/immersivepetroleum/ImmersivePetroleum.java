@@ -11,6 +11,7 @@ import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
+import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.util.commands.ReservoirCommand;
@@ -34,8 +35,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod(ImmersivePetroleum.MODID)
 public class ImmersivePetroleum{
 	public static final String MODID = "immersivepetroleum";
-
-	public static final Logger log=LogManager.getLogger(MODID);
+	
+	public static final Logger log = LogManager.getLogger(MODID);
 	
 	public static final ItemGroup creativeTab = new ItemGroup(MODID){
 		@Override
@@ -43,11 +44,11 @@ public class ImmersivePetroleum{
 			return new ItemStack(Fluids.crudeOil.getFilledBucket());
 		}
 	};
-
-	public static CommonProxy proxy=DistExecutor.runForDist(()->ClientProxy::new, ()->CommonProxy::new);
-
+	
+	public static CommonProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+	
 	public static ImmersivePetroleum INSTANCE;
-
+	
 	public ImmersivePetroleum(){
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, IPConfig.ALL);
 		
@@ -83,6 +84,7 @@ public class ImmersivePetroleum{
 		IPContent.init();
 		
 		MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
+		
 		proxy.init();
 		
 		// ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -98,8 +100,10 @@ public class ImmersivePetroleum{
 	
 	public void serverAboutToStart(FMLServerAboutToStartEvent event){
 		proxy.serverAboutToStart();
+		
+		event.getServer().getResourceManager().addReloadListener(new RecipeReloadListener());
 	}
-
+	
 	public void serverStarting(FMLServerStartingEvent event){
 		proxy.serverStarting();
 		

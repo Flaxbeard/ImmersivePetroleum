@@ -47,7 +47,7 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 		if(te instanceof CrusherTileEntity){
 			CrusherTileEntity master = ((CrusherTileEntity) te).master();
 			
-			if(master.getFacing().getOpposite() == facing){
+			if(master!=null && master.getFacing().getOpposite() == facing){
 				return master;
 			}
 		}

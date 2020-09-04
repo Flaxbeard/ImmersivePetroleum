@@ -34,11 +34,15 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	
 	@Override
 	public boolean isMachineEnabled(World world, ExcavatorTileEntity mbte){
-		BlockPos wheelPos = mbte.master().getOrigin();
+		BlockPos wheelPos = mbte.getWheelCenterPos();
 		TileEntity center = world.getTileEntity(wheelPos);
 		
 		if(center instanceof BucketWheelTileEntity){
 			BucketWheelTileEntity wheel = (BucketWheelTileEntity) center;
+			if(!wheel.offsetToMaster.equals(BlockPos.ZERO)){
+				// Just to make absolutely sure it's the master
+				wheel = wheel.master();
+			}
 			
 			return wheel.active;
 		}
@@ -47,19 +51,17 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	
 	@Override
 	public TileEntity isPlacedCorrectly(World world, AutoLubricatorTileEntity lubricator, Direction facing){
-		BlockPos initialTarget = lubricator.getPos().offset(facing);
-		ExcavatorTileEntity adjacent = (ExcavatorTileEntity) world.getTileEntity(initialTarget);
-		Direction f = adjacent.getIsMirrored() ? facing : facing.getOpposite();
-		
-		BlockPos target = lubricator.getPos().offset(facing, 2).offset(f.rotateY(), 4).up();
+		BlockPos target = lubricator.getPos().offset(facing);
 		TileEntity te = world.getTileEntity(target);
 		
 		if(te instanceof ExcavatorTileEntity){
-			ExcavatorTileEntity excavator = (ExcavatorTileEntity) te;
-			ExcavatorTileEntity master = excavator.master();
+			ExcavatorTileEntity master = ((ExcavatorTileEntity) te).master();
 			
-			if(excavator == master && excavator.getFacing().rotateY() == f){
-				return master;
+			if(master!=null){
+				Direction dir = master.getIsMirrored() ? master.getFacing().rotateY() : master.getFacing().rotateYCCW();
+				if(dir == facing){
+					return master;
+				}
 			}
 		}
 		
@@ -68,11 +70,15 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	
 	@Override
 	public void lubricate(World world, int ticks, ExcavatorTileEntity mbte){
-		BlockPos wheelPos = mbte.master().getOrigin();
+		BlockPos wheelPos = mbte.getWheelCenterPos();
 		TileEntity center = world.getTileEntity(wheelPos);
 		
 		if(center instanceof BucketWheelTileEntity){
 			BucketWheelTileEntity wheel = (BucketWheelTileEntity) center;
+			if(!wheel.offsetToMaster.equals(BlockPos.ZERO)){
+				// Just to make absolutely sure it's the master
+				wheel = wheel.master();
+			}
 			
 			if(!world.isRemote && ticks % 4 == 0){
 				int consumed = IEConfig.MACHINES.excavator_consumption.get();
@@ -84,7 +90,6 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 			}else{
 				wheel.rotation += IEConfig.MACHINES.excavator_speed.get() / 4F;
 			}
-			
 		}
 	}
 	

@@ -37,15 +37,17 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 	
 	@Override
 	public TileEntity isPlacedCorrectly(World world, AutoLubricatorTileEntity lubricator, Direction facing){
+		
 		BlockPos target = lubricator.getPos().offset(facing);
 		TileEntity te = world.getTileEntity(target);
 		
 		if(te instanceof PumpjackTileEntity){
-			PumpjackTileEntity master = ((PumpjackTileEntity)te).master();
-			
-			Direction f = master.getIsMirrored() ? facing : facing.getOpposite();
-			if(master.getFacing().rotateY() == f){
-				return master;
+			PumpjackTileEntity master = ((PumpjackTileEntity) te).master();
+			if(master!=null){
+				Direction f = master.getIsMirrored() ? facing : facing.getOpposite();
+				if(master.getFacing().rotateY() == f){
+					return master;
+				}
 			}
 		}
 		

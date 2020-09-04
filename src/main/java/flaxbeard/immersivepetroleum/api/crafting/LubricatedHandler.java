@@ -57,8 +57,9 @@ public class LubricatedHandler{
 	public static ILubricationHandler<?> getHandlerForTile(TileEntity tile){
 		if(tile != null){
 			Class<? extends TileEntity> teClass = tile.getClass();
-			if(lubricationHandlers.containsKey(teClass))
+			if(lubricationHandlers.containsKey(teClass)){
 				return lubricationHandlers.get(teClass);
+			}
 		}
 		return null;
 	}

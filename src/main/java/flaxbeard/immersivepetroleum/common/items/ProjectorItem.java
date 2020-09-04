@@ -225,23 +225,31 @@ public class ProjectorItem extends IPItemBase{
 	}
 	
 	private static BlockPos alignHit(BlockPos hit, PlayerEntity playerIn, Rotation rotation, Vec3i multiblockSize, boolean flip){
-//		int xd = (rotation.ordinal() % 2 == 0) ? multiblockSize.getX() : multiblockSize.getZ();
-//		int zd = (rotation.ordinal() % 2 == 0) ? multiblockSize.getZ() : multiblockSize.getX();
-//		
-//		Direction look = playerIn.getHorizontalFacing();
-//		
-//		if(look == Direction.NORTH || look == Direction.SOUTH){
-//			hit = hit.add(-xd / 2, 0, 0);
-//		}else if(look == Direction.EAST || look == Direction.WEST){
-//			hit = hit.add(0, 0, -zd / 2);
-//		}
-//		
-//		if(look == Direction.NORTH){
-//			hit = hit.add(0, 0, -zd + 1);
-//		}else if(look == Direction.WEST){
-//			hit = hit.add(-xd + 1, 0, 0);
-//		}
-//		
+		int xd = (rotation.ordinal() % 2 == 0) ? multiblockSize.getX() : multiblockSize.getZ();
+		int zd = (rotation.ordinal() % 2 == 0) ? multiblockSize.getZ() : multiblockSize.getX();
+		
+		Direction look = playerIn.getHorizontalFacing();
+		
+		if(multiblockSize.getZ() > 1 && (look == Direction.NORTH || look == Direction.SOUTH)){
+			int a=zd/2;
+			if(look == Direction.NORTH){
+				a+=1;
+			}
+			hit = hit.add(0, 0, a);
+		}else if(multiblockSize.getX() > 1 && (look == Direction.EAST || look == Direction.WEST)){
+			int a=xd/2;
+			if(look == Direction.WEST){
+				a+=1;
+			}
+			hit = hit.add(a, 0, 0);
+		}
+		
+		if(multiblockSize.getZ() > 1 && look == Direction.NORTH){
+			hit = hit.add(0, 0, -zd);
+		}else if(multiblockSize.getX() > 1 && look == Direction.WEST){
+			hit = hit.add(-xd, 0, 0);
+		}
+		
 		return hit;
 	}
 	
@@ -267,17 +275,24 @@ public class ProjectorItem extends IPItemBase{
 					int y = pos.getInt("y");
 					int z = pos.getInt("z");
 					tooltip.add(new TranslationTextComponent("chat.immersivepetroleum.info.schematic.center", x, y, z).applyTextStyle(TextFormatting.DARK_GRAY));
-				}else{
-					ITextComponent ctrl0=new TranslationTextComponent("chat.immersivepetroleum.info.schematic.controls1")
-							.applyTextStyle(TextFormatting.DARK_GRAY);
-					
-					ITextComponent ctrl1=new TranslationTextComponent("chat.immersivepetroleum.info.schematic.controls2",
-							ClientProxy.keybind_preview_flip.getLocalizedName())
-							.applyTextStyle(TextFormatting.DARK_GRAY);
-					
-					tooltip.add(ctrl0);
-					tooltip.add(ctrl1);
 				}
+				
+				String rotation=I18n.format("chat.immersivepetroleum.info.projector.rotated."+Direction.byHorizontalIndex(ProjectorItem.getRotation(stack).ordinal()));
+				String flipped=I18n.format("chat.immersivepetroleum.info.projector.flipped."+(ProjectorItem.getFlipped(stack)?"yes":"no"));
+				
+				tooltip.add(new StringTextComponent(rotation).applyTextStyle(TextFormatting.DARK_GRAY));
+				tooltip.add(new StringTextComponent(I18n.format("chat.immersivepetroleum.info.projector.flipped", flipped)).applyTextStyle(TextFormatting.DARK_GRAY));
+				
+				ITextComponent ctrl0=new TranslationTextComponent("chat.immersivepetroleum.info.schematic.controls1")
+						.applyTextStyle(TextFormatting.DARK_GRAY);
+				
+				ITextComponent ctrl1=new TranslationTextComponent("chat.immersivepetroleum.info.schematic.controls2",
+						ClientProxy.keybind_preview_flip.getLocalizedName())
+						.applyTextStyle(TextFormatting.DARK_GRAY);
+				
+				tooltip.add(ctrl0);
+				tooltip.add(ctrl1);
+				
 				return;
 			}
 		}
@@ -391,17 +406,17 @@ public class ProjectorItem extends IPItemBase{
 			hit=alignHit(hit, playerIn, rotation, size, flip);
 			
 			if(playerIn.isSneaking() && playerIn.isCreative()){
-				if(multiblock.getUniqueName().getPath().contains("excavator_demo")){
+				if(multiblock.getUniqueName().getPath().contains("excavator_demo") || multiblock.getUniqueName().getPath().contains("bucket_wheel")){
 					hit = hit.add(0, -2, 0);
 				}
 				
 				final BlockPos hitCopy=new BlockPos(hit);
-				processMultiblock(multiblock, rotation, flip, test->{
-					SchematicPlaceBlockEvent event=new SchematicPlaceBlockEvent(multiblock, world, test.tPos, test.getInfoPos(), test.getInfoState(), test.getInfoNBT(), rotation);
+				processMultiblock(multiblock, rotation, flip, con->{
+					SchematicPlaceBlockEvent event=new SchematicPlaceBlockEvent(multiblock, world, con.tPos, con.getInfoPos(), con.getInfoState(), con.getInfoNBT(), rotation);
 					if(!MinecraftForge.EVENT_BUS.post(event)){
-						world.setBlockState(hitCopy.add(test.tPos), test.getInfoState());
+						world.setBlockState(con.tPos.add(hitCopy), con.getInfoState());
 						
-						SchematicPlaceBlockPostEvent postevent=new SchematicPlaceBlockPostEvent(multiblock, world, test.tPos, test.getInfoPos(), test.getInfoState(), test.getInfoNBT(), rotation);
+						SchematicPlaceBlockPostEvent postevent=new SchematicPlaceBlockPostEvent(multiblock, world, con.tPos, con.getInfoPos(), con.getInfoState(), con.getInfoNBT(), rotation);
 						MinecraftForge.EVENT_BUS.post(postevent);
 					}
 					
@@ -643,7 +658,7 @@ public class ProjectorItem extends IPItemBase{
 			}
 			
 			if(hit != null){
-				if(multiblock.getUniqueName().getPath().contains("excavator_demo")){
+				if(multiblock.getUniqueName().getPath().contains("excavator_demo") || multiblock.getUniqueName().getPath().contains("bucket_wheel")){
 					hit = hit.add(0, -2, 0);
 				}
 	
@@ -653,37 +668,37 @@ public class ProjectorItem extends IPItemBase{
 				final MutableInt badBlocks=new MutableInt();
 				final MutableInt goodBlocks=new MutableInt();
 				final BlockPos hitCopy=new BlockPos(hit);
-				int blockListSize=processMultiblock(multiblock, rotation, flip, test->{
+				int blockListSize=processMultiblock(multiblock, rotation, flip, con->{
 					// Slice handling
-					if(badBlocks.getValue()==0 && test.getInfoPos().getY()>currentSlice.getValue()){
-						currentSlice.setValue(test.getInfoPos().getY());
-					}else if(test.getInfoPos().getY()!=currentSlice.getValue()){
+					if(badBlocks.getValue()==0 && con.getInfoPos().getY()>currentSlice.getValue()){
+						currentSlice.setValue(con.getInfoPos().getY());
+					}else if(con.getInfoPos().getY()!=currentSlice.getValue()){
 						return true; // breaks the internal loop
 					}
 					
 					if(placedCopy){ // Render only slices when placed
-						if(test.getInfoPos().getY()==currentSlice.getValue()){
+						if(con.getInfoPos().getY()==currentSlice.getValue()){
 							boolean skip=false;
-							BlockState toCompare=world.getBlockState(hitCopy.add(test.tPos));
-							if(test.getInfoState().getBlock()==toCompare.getBlock()){
-								toRender.add(new RenderInfo(2, test.info, test.setting, test.tPos));
+							BlockState toCompare=world.getBlockState(con.tPos.add(hitCopy));
+							if(con.getInfoState().getBlock()==toCompare.getBlock()){
+								toRender.add(new RenderInfo(2, con.info, con.setting, con.tPos));
 								goodBlocks.increment();
 								skip=true;
 							}else{
 								// Making it this far only needs an air check, the other already proved to be false.
 								if(toCompare!=Blocks.AIR.getDefaultState()){
-									toRender.add(new RenderInfo(1, test.info, test.setting, test.tPos));
+									toRender.add(new RenderInfo(1, con.info, con.setting, con.tPos));
 									skip=true;
 								}
 								badBlocks.increment();
 							}
 							
 							if(!skip){
-								toRender.add(new RenderInfo(0, test.info, test.setting, test.tPos));
+								toRender.add(new RenderInfo(0, con.info, con.setting, con.tPos));
 							}
 						}
 					}else{ // Render all when not placed
-						toRender.add(new RenderInfo(0, test.info, test.setting, test.tPos));
+						toRender.add(new RenderInfo(0, con.info, con.setting, con.tPos));
 					}
 					
 					return false;

@@ -88,6 +88,7 @@ dependencies {
 	minecraft "net.minecraftforge:forge:1.14.4-28.2.16"
 	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.14.4-4.0.0-116")
 	runtimeOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.11")
+	compileOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.11:api")
 }
 
 jar {

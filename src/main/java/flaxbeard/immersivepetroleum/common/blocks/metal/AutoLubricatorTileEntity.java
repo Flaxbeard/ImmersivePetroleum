@@ -5,7 +5,6 @@ import java.util.List;
 
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.EventHandler;
-import blusunrize.immersiveengineering.common.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
@@ -173,6 +172,8 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	@Override
 	protected void invalidateCaps(){
 		super.invalidateCaps();
+		if(this.outputHandler!=null)
+			this.outputHandler.invalidate();
 	}
 	
 	public Direction getFacing(){
@@ -225,7 +226,7 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public double getMaxRenderDistanceSquared(){
-		return super.getMaxRenderDistanceSquared() * IEConfig.GENERAL.increasedTileRenderdistance.get();
+		return super.getMaxRenderDistanceSquared();
 	}
 	
 	int count = 0;
@@ -242,14 +243,14 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 		}
 		
 		if(isMaster()){
-			if(this.tank.getFluid() != null && this.tank.getFluid() != FluidStack.EMPTY && this.tank.getFluidAmount() >= LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid()) && LubricantHandler.isValidLube(this.tank.getFluid().getFluid())){
+			if((this.tank.getFluid() != null && this.tank.getFluid() != FluidStack.EMPTY) && this.tank.getFluidAmount() >= LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid()) && LubricantHandler.isValidLube(this.tank.getFluid().getFluid())){
 				BlockPos target = this.pos.offset(this.facing);
 				TileEntity te = this.world.getTileEntity(target);
 				
-				ILubricationHandler<TileEntity> handler = (ILubricationHandler<TileEntity>)LubricatedHandler.getHandlerForTile(te);
+				ILubricationHandler<TileEntity> handler = (ILubricationHandler<TileEntity>) LubricatedHandler.getHandlerForTile(te);
 				if(handler != null){
 					TileEntity master = handler.isPlacedCorrectly(this.world, this, this.facing);
-					if(handler.isMachineEnabled(this.world, master)){
+					if(master!=null && handler.isMachineEnabled(this.world, master)){
 						this.count++;
 						handler.lubricate(this.world, this.count, master);
 						

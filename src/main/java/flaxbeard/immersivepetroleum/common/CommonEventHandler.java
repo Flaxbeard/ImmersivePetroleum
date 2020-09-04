@@ -61,12 +61,16 @@ public class CommonEventHandler{
 	
 	@SubscribeEvent
 	public void onSave(WorldEvent.Save event){
-		IPSaveData.setDirty();
+		if(!event.getWorld().isRemote()){
+			IPSaveData.setDirty();
+		}
 	}
 	
 	@SubscribeEvent
 	public void onUnload(WorldEvent.Unload event){
-		IPSaveData.setDirty();
+		if(!event.getWorld().isRemote()){
+			IPSaveData.setDirty();
+		}
 	}
 	
 	@SubscribeEvent(priority = EventPriority.LOWEST)

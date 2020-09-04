@@ -226,7 +226,7 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public double getMaxRenderDistanceSquared(){
-		return super.getMaxRenderDistanceSquared();
+		return 1024.0D;//super.getMaxRenderDistanceSquared();
 	}
 	
 	int count = 0;

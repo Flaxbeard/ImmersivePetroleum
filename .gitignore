@@ -27,6 +27,8 @@ eclipse/
 bin/
 *.launch
 run/
+Blender-Files/
+libs/
 *.project
 *.classpath
 .settings/

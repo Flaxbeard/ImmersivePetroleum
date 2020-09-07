@@ -23,7 +23,6 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -44,7 +43,6 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<DistillationTowerTileEntity, DistillationRecipe> implements IInteractionObjectIE, IBlockBounds{
 	/** Do not Touch! Taken care of by {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)} */
@@ -85,7 +83,6 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 	public MultiFluidTank[] tanks = new MultiFluidTank[]{new MultiFluidTank(24000), new MultiFluidTank(24000)};
-	public Fluid lastFluidOut = null;
 	private int cooldownTicks = 0;
 	private boolean wasActive = false;
 	
@@ -105,13 +102,6 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		tanks[1].readFromNBT(nbt.getCompound("tank1"));
 		cooldownTicks = nbt.getInt("cooldownTicks");
 		
-		String lastFluidName = nbt.getString("lastFluidOut");
-		if(lastFluidName.length() > 0){
-			lastFluidOut = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(lastFluidName));
-		}else{
-			lastFluidOut = null;
-		}
-		
 		if(!descPacket){
 			this.inventory = readInventory(nbt.getCompound("inventory"));
 		}
@@ -123,7 +113,6 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		nbt.put("tank0", tanks[TANK_INPUT].writeToNBT(new CompoundNBT()));
 		nbt.put("tank1", tanks[TANK_OUTPUT].writeToNBT(new CompoundNBT()));
 		nbt.putInt("cooldownTicks", cooldownTicks);
-		nbt.putString("lastFluidOut", lastFluidOut == null ? "" : lastFluidOut.getRegistryName().toString());
 		if(!descPacket){
 			nbt.put("inventory", writeInventory(this.inventory));
 		}

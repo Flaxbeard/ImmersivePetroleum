@@ -9,6 +9,7 @@ import org.lwjgl.glfw.GLFW;
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
+import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
@@ -16,6 +17,7 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
@@ -146,8 +148,37 @@ public class DebugItem extends IPItemBase{
 		
 		TileEntity te=context.getWorld().getTileEntity(context.getPos());
 		switch(mode){
+			case INFO_TE_DISTILLATION_TOWER:{
+				if(te instanceof DistillationTowerTileEntity && !context.getWorld().isRemote){
+					DistillationTowerTileEntity tower=(DistillationTowerTileEntity)te;
+					if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
+						tower=tower.master();
+					}
+					
+					ITextComponent tankInText=new StringTextComponent("\nInputFluids: ");
+					{
+						MultiFluidTank tank=tower.tanks[DistillationTowerTileEntity.TANK_OUTPUT];
+						for(int i=0;i<tank.fluids.size();i++){
+							FluidStack fstack=tank.fluids.get(i);
+							tankInText.appendText(" ").appendSibling(fstack.getDisplayName()).appendText(" "+fstack.getAmount()+"mB,");
+						}
+					}
+					
+					ITextComponent tankOutText=new StringTextComponent("\nOutputFluids: ");
+					{
+						MultiFluidTank tank=tower.tanks[DistillationTowerTileEntity.TANK_INPUT];
+						for(int i=0;i<tank.fluids.size();i++){
+							FluidStack fstack=tank.fluids.get(i);
+							tankOutText.appendText(" ").appendSibling(fstack.getDisplayName()).appendText(" "+fstack.getAmount()+"mB,");
+						}
+					}
+					
+					player.sendMessage(new StringTextComponent("DistillationTower:\n").appendSibling(tankInText).appendSibling(tankOutText));
+				}
+				return ActionResultType.SUCCESS;
+			}
 			case INFO_TE_MULTIBLOCK:{
-				if(te instanceof PoweredMultiblockTileEntity){ // Generic
+				if(te instanceof PoweredMultiblockTileEntity && !context.getWorld().isRemote){ // Generic
 					PoweredMultiblockTileEntity<?,?> poweredMultiblock=(PoweredMultiblockTileEntity<?,?>)te;
 					
 					Vec3i loc=poweredMultiblock.posInMultiblock;
@@ -340,6 +371,7 @@ public class DebugItem extends IPItemBase{
 		INFO_TE_AUTOLUBE("Info: AutoLubricator."),
 		INFO_TE_GASGEN("Info: Portable Generator."),
 		INFO_TE_MULTIBLOCK("Info: Powered Multiblock."),
+		INFO_TE_DISTILLATION_TOWER("Info: Distillation Tower."),
 		RESERVOIR("Create/Get Reservoir"),
 		CLEAR_RESERVOIR_CACHE("Clear Reservoir Cache"),
 		;

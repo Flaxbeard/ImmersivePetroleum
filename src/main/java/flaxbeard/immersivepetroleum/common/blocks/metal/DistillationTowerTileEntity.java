@@ -133,11 +133,12 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		NonNullList<ItemStack> list=NonNullList.create();
 		ItemStackHelper.loadAllItems(nbt, list);
 		
-		if(list.size()==0) // Incase it loaded none
+		if(list.size()==0){ // Incase it loaded none
 			list=this.inventory.size()==4?this.inventory:NonNullList.withSize(4, ItemStack.EMPTY);
-		else if(list.size()<4) // Padding incase it loaded less than 4
+		}else if(list.size()<4){ // Padding incase it loaded less than 4
 			while(list.size()<4)
 				list.add(ItemStack.EMPTY);
+		}
 		return list;
 	}
 	
@@ -148,12 +149,16 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	@Override
 	public void tick(){
 		super.tick();
-		if(this.world.isRemote || isDummy())
-			return;
-		if(this.cooldownTicks > 0)
-			this.cooldownTicks--;
 		
-		boolean update=false;
+		if(this.world.isRemote || isDummy()){
+			return;
+		}
+		
+		if(this.cooldownTicks > 0){
+			this.cooldownTicks--;
+		}
+		
+		boolean update = false;
 		if(this.energyStorage.getEnergyStored() > 0 && this.processQueue.size() < getProcessQueueMaxLength()){
 			if(this.tanks[TANK_INPUT].getFluidAmount() > 0){
 				DistillationRecipe recipe = DistillationRecipe.findRecipe(this.tanks[TANK_INPUT].getFluid());
@@ -167,78 +172,83 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			}
 		}
 		
-		if(this.processQueue.size()>0){
-			this.wasActive=true;
-			this.cooldownTicks=6;
+		if(this.processQueue.size() > 0){
+			this.wasActive = true;
+			this.cooldownTicks = 6;
 		}else if(this.wasActive){
-			this.wasActive=false;
-			update=true;
+			this.wasActive = false;
+			update = true;
 		}
 		
-		if(this.tanks[TANK_OUTPUT].getFluidAmount()>0){
-			if(this.inventory.get(INV_2)!=ItemStack.EMPTY){
-				ItemStack filledContainer=Utils.fillFluidContainer(this.tanks[TANK_OUTPUT], this.inventory.get(INV_2), this.inventory.get(INV_3), null);
+		if(this.inventory.get(INV_0) != ItemStack.EMPTY && this.tanks[TANK_INPUT].getFluidAmount() < this.tanks[TANK_INPUT].getCapacity()){
+			ItemStack emptyContainer = Utils.drainFluidContainer(this.tanks[TANK_INPUT], this.inventory.get(INV_0), this.inventory.get(INV_1), null);
+			if(!emptyContainer.isEmpty()){
+				if(!this.inventory.get(INV_1).isEmpty() && ItemHandlerHelper.canItemStacksStack(this.inventory.get(INV_1), emptyContainer)){
+					this.inventory.get(INV_1).grow(emptyContainer.getCount());
+				}else if(this.inventory.get(INV_1).isEmpty()){
+					this.inventory.set(INV_1, emptyContainer.copy());
+				}
+				
+				this.inventory.get(INV_0).shrink(1);
+				if(this.inventory.get(INV_0).getCount() <= 0){
+					this.inventory.set(INV_0, ItemStack.EMPTY);
+				}
+				update = true;
+			}
+		}
+		
+		if(this.tanks[TANK_OUTPUT].getFluidAmount() > 0){
+			if(this.inventory.get(INV_2) != ItemStack.EMPTY){
+				ItemStack filledContainer = Utils.fillFluidContainer(this.tanks[TANK_OUTPUT], this.inventory.get(INV_2), this.inventory.get(INV_3), null);
 				if(!filledContainer.isEmpty()){
 					
-					if(this.inventory.get(INV_3).getCount()==1 && !Utils.isFluidContainerFull(filledContainer)){
+					if(this.inventory.get(INV_3).getCount() == 1 && !Utils.isFluidContainerFull(filledContainer)){
 						this.inventory.set(INV_3, filledContainer.copy());
 					}else{
-						if (!this.inventory.get(INV_3).isEmpty() && ItemHandlerHelper.canItemStacksStack(this.inventory.get(INV_3), filledContainer))
+						if(!this.inventory.get(INV_3).isEmpty() && ItemHandlerHelper.canItemStacksStack(this.inventory.get(INV_3), filledContainer)){
 							this.inventory.get(INV_3).grow(filledContainer.getCount());
-						else if (this.inventory.get(INV_3).isEmpty())
+						}else if(this.inventory.get(INV_3).isEmpty()){
 							this.inventory.set(INV_3, filledContainer.copy());
+						}
 						
 						this.inventory.get(INV_2).shrink(1);
-						if (this.inventory.get(INV_2).getCount() <= 0)
+						if(this.inventory.get(INV_2).getCount() <= 0){
 							this.inventory.set(INV_2, ItemStack.EMPTY);
+						}
 					}
 					
 					update = true;
 				}
 			}
 			
-			update|=FluidUtil.getFluidHandler(this.world, getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite()), getFacing().getOpposite()).map(output->{
-				boolean ret=false;
-				if(this.tanks[TANK_OUTPUT].fluids.size()>0){
-					List<FluidStack> toDrain=new ArrayList<>();
+			update |= FluidUtil.getFluidHandler(this.world, getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite()), getFacing().getOpposite()).map(output -> {
+				boolean ret = false;
+				if(this.tanks[TANK_OUTPUT].fluids.size() > 0){
+					List<FluidStack> toDrain = new ArrayList<>();
 					
 					// Tries to Output the output-fluids in parallel
 					for(FluidStack target:this.tanks[TANK_OUTPUT].fluids){
-						FluidStack outStack=Utils.copyFluidStackWithAmount(target, Math.min(target.getAmount(), 100), false);
-						int accepted=output.fill(outStack, FluidAction.SIMULATE);
-						if(accepted>0){
-							int drained=output.fill(Utils.copyFluidStackWithAmount(outStack, Math.min(outStack.getAmount(), accepted), false), FluidAction.EXECUTE);
+						FluidStack outStack = Utils.copyFluidStackWithAmount(target, Math.min(target.getAmount(), 100), false);
+						
+						int accepted = output.fill(outStack, FluidAction.SIMULATE);
+						if(accepted > 0){
+							int drained = output.fill(Utils.copyFluidStackWithAmount(outStack, Math.min(outStack.getAmount(), accepted), false), FluidAction.EXECUTE);
+							
 							toDrain.add(new FluidStack(target.getFluid(), drained));
-							ret|=true;
+							ret |= true;
 						}
 					}
 					
 					// If this were to be done in the for-loop it would throw a concurrent exception
-					toDrain.forEach(fluid->this.tanks[TANK_OUTPUT].drain(fluid, FluidAction.EXECUTE));
+					toDrain.forEach(fluid -> this.tanks[TANK_OUTPUT].drain(fluid, FluidAction.EXECUTE));
 				}
 				
 				return ret;
 			}).orElse(false);
 		}
 		
-		if(this.inventory.get(INV_0)!=ItemStack.EMPTY && this.tanks[TANK_INPUT].getFluidAmount()<this.tanks[TANK_INPUT].getCapacity()){
-			ItemStack emptyContainer=Utils.drainFluidContainer(this.tanks[TANK_INPUT], this.inventory.get(INV_0), this.inventory.get(INV_1), null);
-			if(!emptyContainer.isEmpty()){
-				if (!this.inventory.get(INV_1).isEmpty() && ItemHandlerHelper.canItemStacksStack(this.inventory.get(INV_1), emptyContainer))
-					this.inventory.get(INV_1).grow(emptyContainer.getCount());
-				else if (this.inventory.get(INV_1).isEmpty())
-					this.inventory.set(INV_1, emptyContainer.copy());
-				
-				this.inventory.get(INV_0).shrink(1);
-				if (this.inventory.get(INV_0).getCount() <= 0)
-					this.inventory.set(INV_0, ItemStack.EMPTY);
-				update = true;
-			}
-		}
-		
 		if(update){
-			markDirty();
-			markContainingBlockForUpdate(null);
+			updateMasterBlock(null, true);
 		}
 	}
 	
@@ -259,8 +269,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	
 	@Override
 	public void doGraphicalUpdates(int slot){
-		markDirty();
-		markContainingBlockForUpdate(null);
+		updateMasterBlock(null, true);
 	}
 	
 	@Override
@@ -285,8 +294,9 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	
 	@Override
 	public IOSideConfig getEnergySideConfig(Direction facing){
-		if(this.formed && this.isEnergyPos() && (facing==null || facing==Direction.UP))
+		if(this.formed && this.isEnergyPos() && (facing==null || facing==Direction.UP)){
 			return IOSideConfig.INPUT;
+		}
 		
 		return IOSideConfig.NONE;
 	}
@@ -346,7 +356,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	
 	@Override
 	public float getMinProcessDistance(MultiblockProcess<DistillationRecipe> process){
-		return 0;
+		return 1.0F;
 	}
 	
 	@Override

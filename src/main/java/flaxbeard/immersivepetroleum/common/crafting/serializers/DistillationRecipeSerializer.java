@@ -84,19 +84,19 @@ public class DistillationRecipeSerializer extends IERecipeSerializer<Distillatio
 	
 	@Override
 	public void write(PacketBuffer buffer, DistillationRecipe recipe){
-		buffer.writeInt(recipe.fluidOutput.length);
-		for(FluidStack stack:recipe.fluidOutput)
+		buffer.writeInt(recipe.getFluidOutputs().size());
+		for(FluidStack stack:recipe.getFluidOutputs())
 			buffer.writeFluidStack(stack);
 		
-		buffer.writeInt(recipe.itemOutput.length);
-		for(ItemStack stack:recipe.itemOutput)
+		buffer.writeInt(recipe.getItemOutputs().size());
+		for(ItemStack stack:recipe.getItemOutputs())
 			buffer.writeItemStack(stack);
 		
-		buffer.writeInt(recipe.chances.length);
-		for(double d:recipe.chances)
+		buffer.writeInt(recipe.chances().length);
+		for(double d:recipe.chances())
 			buffer.writeDouble(d);
 		
-		recipe.input.write(buffer);
+		recipe.getInputFluid().write(buffer);
 		buffer.writeInt(recipe.getTotalProcessEnergy());
 		buffer.writeInt(recipe.getTotalProcessTime());
 	}

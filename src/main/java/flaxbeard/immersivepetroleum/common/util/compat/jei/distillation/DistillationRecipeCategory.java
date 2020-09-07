@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.common.util.compat.jei.distillation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
@@ -33,12 +32,12 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRec
 	@Override
 	public void setIngredients(DistillationRecipe recipe, IIngredients ingredients){
 		List<FluidStack> out=new ArrayList<>();
-		for(FluidStack fluid:recipe.fluidOutput){
+		for(FluidStack fluid:recipe.getFluidOutputs()){
 			if(fluid!=null)
 				out.add(fluid);
 		}
 		
-		ingredients.setInputs(VanillaTypes.FLUID, recipe.input.getMatchingFluidStacks());
+		ingredients.setInputs(VanillaTypes.FLUID, recipe.getInputFluid().getMatchingFluidStacks());
 		ingredients.setOutputs(VanillaTypes.FLUID, out);
 	}
 	
@@ -46,12 +45,12 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRec
 	public void setRecipe(IRecipeLayout recipeLayout, DistillationRecipe recipe, IIngredients ingredients){
 		IGuiFluidStackGroup guiFluidStacks=recipeLayout.getFluidStacks();
 		
-		if(recipe.input!=null){
+		if(recipe.getInputFluid()!=null){
 			guiFluidStacks.init(0, true, 9, 19, 20, 51, 100, false, this.tankOverlay);
-			guiFluidStacks.set(0, recipe.input.getMatchingFluidStacks());
+			guiFluidStacks.set(0, recipe.getInputFluid().getMatchingFluidStacks());
 		}
 		
 		guiFluidStacks.init(1, false, 61, 21, 16, 47, 100, false, null);
-		guiFluidStacks.set(1, Arrays.asList(recipe.fluidOutput));
+		guiFluidStacks.set(1, recipe.getFluidOutputs());
 	}
 }

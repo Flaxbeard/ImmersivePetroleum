@@ -271,11 +271,11 @@ public class ClientProxy extends CommonProxy{
 			List<ITextComponent[]> l = new ArrayList<ITextComponent[]>();
 			for(DistillationRecipe recipe:recipeList){
 				boolean first = true;
-				for(FluidStack output:recipe.fluidOutput){
-					String inputName = recipe.input.getMatchingFluidStacks().get(0).getDisplayName().getUnformattedComponentText();
+				for(FluidStack output:recipe.getFluidOutputs()){
+					String inputName = recipe.getInputFluid().getMatchingFluidStacks().get(0).getDisplayName().getUnformattedComponentText();
 					String outputName = output.getDisplayName().getUnformattedComponentText();
 					ITextComponent[] array = new ITextComponent[]{
-							new StringTextComponent(first ? recipe.input.getAmount()+"mB "+inputName : ""),
+							new StringTextComponent(first ? recipe.getInputFluid().getAmount()+"mB "+inputName : ""),
 							new StringTextComponent(output.getAmount()+"mB "+outputName)
 					};
 					l.add(array);

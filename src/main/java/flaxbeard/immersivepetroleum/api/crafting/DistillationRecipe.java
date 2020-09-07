@@ -40,22 +40,24 @@ public class DistillationRecipe extends MultiblockRecipe{
 		return findRecipe(input);
 	}
 	
-	public final FluidTagInput input;
-	public final FluidStack[] fluidOutput;
-	public final ItemStack[] itemOutput;
-	public final double[] chances;
+	protected final FluidTagInput input;
+	protected final FluidStack[] fluidOutput;
+	protected final ItemStack[] itemOutput;
+	protected final double[] chances;
 	
 	public DistillationRecipe(ResourceLocation id, FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidTagInput input, int energy, int time, double[] chances){
 		super(ItemStack.EMPTY, TYPE, id);
 		this.fluidOutput = fluidOutput;
 		this.itemOutput = itemOutput;
+		this.chances = chances;
+		
 		this.input = input;
-		this.totalProcessEnergy = (int) Math.floor(energy * IPConfig.REFINING.distillationTower_energyModifier.get());
-		this.totalProcessTime = (int) Math.floor(time * IPConfig.REFINING.distillationTower_timeModifier.get());
 		this.fluidInputList = Collections.singletonList(input);
 		this.fluidOutputList = Arrays.asList(this.fluidOutput);
 		this.outputList = NonNullList.from(ItemStack.EMPTY, itemOutput);
-		this.chances = chances;
+		
+		this.totalProcessEnergy = (int) Math.floor(energy * IPConfig.REFINING.distillationTower_energyModifier.get());
+		this.totalProcessTime = (int) Math.floor(time * IPConfig.REFINING.distillationTower_timeModifier.get());
 	}
 	
 	/**
@@ -99,5 +101,13 @@ public class DistillationRecipe extends MultiblockRecipe{
 			}
 		}
 		return output;
+	}
+	
+	public FluidTagInput getInputFluid(){
+		return this.input;
+	}
+	
+	public double[] chances(){
+		return this.chances;
 	}
 }

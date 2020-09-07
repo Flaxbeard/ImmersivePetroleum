@@ -64,7 +64,7 @@ public class IPConfig{
 			
 			reservoir_chance=builder
 					.comment("The chance that a chunk contains a fluid reservoir, default=0.5")
-					.define("reservoir_chance", Double.valueOf(0.5F));
+					.define("reservoir_chance", Double.valueOf(0.5));
 			
 			pumpjack_consumption=builder
 					.comment("The Flux the Pumpjack requires each tick to pump, default=1024")
@@ -94,11 +94,11 @@ public class IPConfig{
 			
 			distillationTower_energyModifier=builder
 					.comment("A modifier to apply to the energy costs of every Distillation Tower recipe, default=1")
-					.define("distillationTower_energyModifier", Double.valueOf(1.0F));
+					.define("distillationTower_energyModifier", Double.valueOf(1.0));
 			
 			distillationTower_timeModifier=builder
 					.comment("A modifier to apply to the time of every Distillation recipe. Can't be lower than 1, default=1")
-					.define("distillationTower_timeModifier", Double.valueOf(1.0F));
+					.define("distillationTower_timeModifier", Double.valueOf(1.0));
 			
 			builder.pop();
 		}

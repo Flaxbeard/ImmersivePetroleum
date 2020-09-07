@@ -76,12 +76,6 @@ public class DistillationRecipe extends MultiblockRecipe{
 		return 0;
 	}
 	
-	@Deprecated
-	public CompoundNBT writeToNBT(CompoundNBT nbt){
-//		nbt.put("input", this.input.writeToNBT(new CompoundNBT()));
-		return nbt;
-	}
-	
 	int totalProcessTime;
 	
 	@Override

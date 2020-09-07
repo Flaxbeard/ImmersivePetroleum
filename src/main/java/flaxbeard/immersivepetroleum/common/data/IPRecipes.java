@@ -54,11 +54,6 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void reservoirs(){
-		// name, fluid_name, min_mb_fluid, max_mb_fluid, mb_per_tick_replenish, weight, [dim_blacklist], [dim_whitelist], [biome_dict_blacklist], [biome_dict_whitelist]
-		// aquifer, water, 5000000, 10000000, 6, 30, [], [0], [], []
-		// lava, lava, 250000, 1000000, 0, 30, [1], [], [], []
-		// oil, oil, 2500000, 15000000, 6, 40, [1], [], [], []
-		
 		ReservoirTypeBuilder.builder("aquifer")
 			.setFluid(Fluids.WATER)
 			.min(5000.000)
@@ -81,12 +76,6 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void distillationRecipes(){
-		// power_cost, input_name, input_mb -> output1_name, output1_mb, output2_name, output2_mb
-		// 2048, oil, 75 -> lubricant, 9, diesel, 27, gasoline, 39
-		
-		// item_name, stack_size, percent_chance
-		// immersivepetroleum:bitumen, 1, 7
-		
 		// setEnergy and setTime are 2048 and 1 by default. But still allows to be customized.
 		
 		DistillationRecipeBuilder.builder(new FluidStack[]{

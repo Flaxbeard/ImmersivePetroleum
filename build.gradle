@@ -19,8 +19,8 @@ group = 'flaxbeard.immersivepetroleum'
 archivesBaseName = 'immersivepetroleum'
 
 repositories {
-	maven {	name = "BlameJared";	url = "https://maven.blamejared.com/" }	   // IE files
-	maven { name = "DVS1 Maven FS"; url "https://dvs1.progwml6.com/files/maven" } // JEI & Tinkers
+	maven {	name = "BlameJared";	url = "https://maven.blamejared.com/" }       // IE & CT Files
+	maven { name = "DVS1 Maven FS"; url "https://dvs1.progwml6.com/files/maven" } // JEI & Tinkers Files
 }
 
 sourceSets {
@@ -82,9 +82,12 @@ minecraft {
 
 dependencies {
 	minecraft "net.minecraftforge:forge:1.14.4-28.2.16"
+	
 	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.14.4-4.0.0-116")
-	runtimeOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.11")
 	compileOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.11:api")
+	
+	runtimeOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.14.4:5.0.1.187")
+	runtimeOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.11")
 }
 
 processResources {

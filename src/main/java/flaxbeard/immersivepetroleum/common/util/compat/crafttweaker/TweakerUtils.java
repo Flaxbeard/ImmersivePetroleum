@@ -87,4 +87,8 @@ public class TweakerUtils{
 		
 		return split;
 	}
+	
+	public static ResourceLocation ctLoc(String name){
+		return new ResourceLocation("crafttweaker", name);
+	}
 }

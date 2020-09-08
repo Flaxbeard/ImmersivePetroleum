@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum.client;
 
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,6 +25,7 @@ import blusunrize.immersiveengineering.common.items.DrillItem;
 import blusunrize.immersiveengineering.common.items.IEItems;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import blusunrize.lib.manual.ManualEntry;
 import blusunrize.lib.manual.SpecialManualElement;
 import blusunrize.lib.manual.gui.ManualScreen;
@@ -35,6 +37,7 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
@@ -66,6 +69,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
@@ -361,6 +365,62 @@ public class ClientEventHandler{
 						tooltip.add(tipPos+1, info);
 					}else{
 						tooltip.add(tipPos, new StringTextComponent(I18n.format("chat.immersivepetroleum.info.coresample.noOil")).applyTextStyle(TextFormatting.GRAY));
+					}
+				}
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void renderDebuggingOverlay(RenderGameOverlayEvent.Post event){
+		if(ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
+			PlayerEntity player = ClientUtils.mc().player;
+			
+			ItemStack main=player.getHeldItem(Hand.MAIN_HAND);
+			ItemStack off=player.getHeldItem(Hand.OFF_HAND);
+			
+			if((main!=ItemStack.EMPTY && main.getItem()==IPContent.debugItem) || (off!=ItemStack.EMPTY && off.getItem()==IPContent.debugItem)){
+				if(ClientUtils.mc().objectMouseOver != null){
+					RayTraceResult rt = ClientUtils.mc().objectMouseOver;
+					
+					if(rt.getType()==RayTraceResult.Type.BLOCK && rt instanceof BlockRayTraceResult){
+						BlockRayTraceResult result=(BlockRayTraceResult)rt;
+						
+						World world=player.world;
+						
+						TileEntity te=world.getTileEntity(result.getPos());
+						if(te instanceof DistillationTowerTileEntity){
+							DistillationTowerTileEntity tower=(DistillationTowerTileEntity)te;
+							if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
+								tower=tower.master();
+							}
+							
+							List<String> strings=new ArrayList<>();
+							strings.add("Distillation Tower");
+							strings.add(tower.energyStorage.getEnergyStored()+"/"+tower.energyStorage.getMaxEnergyStored()+"RF");
+							
+							{
+								strings.add("Input");
+								MultiFluidTank tank=tower.tanks[DistillationTowerTileEntity.TANK_INPUT];
+								for(int i=0;i<tank.fluids.size();i++){
+									FluidStack fstack=tank.fluids.get(i);
+									strings.add("  "+fstack.getDisplayName().getFormattedText()+" "+fstack.getAmount()+"mB");
+								}
+							}
+							
+							{
+								strings.add("Output");
+								MultiFluidTank tank=tower.tanks[DistillationTowerTileEntity.TANK_OUTPUT];
+								for(int i=0;i<tank.fluids.size();i++){
+									FluidStack fstack=tank.fluids.get(i);
+									strings.add("  "+fstack.getDisplayName().getFormattedText()+" "+fstack.getAmount()+"mB");
+								}
+							}
+							
+							for(int i=0;i<strings.size();i++){
+								ClientUtils.font().drawStringWithShadow(strings.get(i), 1, 1+(i * ClientUtils.font().FONT_HEIGHT), 0xffffff);
+							}
+						}
 					}
 				}
 			}

@@ -175,7 +175,24 @@ public class DebugItem extends IPItemBase{
 					
 					player.sendMessage(new StringTextComponent("DistillationTower:\n").appendSibling(tankInText).appendSibling(tankOutText));
 				}
-				return ActionResultType.SUCCESS;
+				return ActionResultType.PASS;
+			}
+			case INFO_TE_DISTILLATION_TOWER_STEP:{
+				if(te instanceof DistillationTowerTileEntity && !context.getWorld().isRemote){
+					DistillationTowerTileEntity tower=(DistillationTowerTileEntity)te;
+					if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
+						tower=tower.master();
+					}
+					
+					if(!tower.enableStepping){
+						tower.enableStepping=true;
+						player.sendMessage(new StringTextComponent("Enabled Stepping."));
+					}else{
+						tower.step++;
+						player.sendMessage(new StringTextComponent("Ticked."));
+					}
+				}
+				return ActionResultType.PASS;
 			}
 			case INFO_TE_MULTIBLOCK:{
 				if(te instanceof PoweredMultiblockTileEntity && !context.getWorld().isRemote){ // Generic
@@ -372,6 +389,7 @@ public class DebugItem extends IPItemBase{
 		INFO_TE_GASGEN("Info: Portable Generator."),
 		INFO_TE_MULTIBLOCK("Info: Powered Multiblock."),
 		INFO_TE_DISTILLATION_TOWER("Info: Distillation Tower."),
+		INFO_TE_DISTILLATION_TOWER_STEP("Info: Manual DT Ticking."),
 		RESERVOIR("Create/Get Reservoir"),
 		CLEAR_RESERVOIR_CACHE("Clear Reservoir Cache"),
 		;

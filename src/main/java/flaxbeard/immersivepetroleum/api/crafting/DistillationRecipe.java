@@ -45,6 +45,9 @@ public class DistillationRecipe extends MultiblockRecipe{
 	protected final ItemStack[] itemOutput;
 	protected final double[] chances;
 	
+	protected int totalProcessTime;
+	protected int totalProcessEnergy;
+	
 	public DistillationRecipe(ResourceLocation id, FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidTagInput input, int energy, int time, double[] chances){
 		super(ItemStack.EMPTY, TYPE, id);
 		this.fluidOutput = fluidOutput;
@@ -60,14 +63,6 @@ public class DistillationRecipe extends MultiblockRecipe{
 		this.totalProcessTime = (int) Math.floor(time * IPConfig.REFINING.distillationTower_timeModifier.get());
 	}
 	
-	/**
-	 * @deprecated <pre>in favour of JSON Recipes. See {@link DistillationRecipeBuilder}</pre>
-	 */
-	@Deprecated
-	public static DistillationRecipe addRecipe(FluidStack[] fluidOutputs, ItemStack[] itemOutputs, FluidStack input, int energy, int time, double[] chances){
-		return null;
-	}
-	
 	@Override
 	protected IERecipeSerializer<DistillationRecipe> getIESerializer(){
 		return Serializers.DISTILLATION_SERIALIZER.get();
@@ -78,14 +73,10 @@ public class DistillationRecipe extends MultiblockRecipe{
 		return 0;
 	}
 	
-	int totalProcessTime;
-	
 	@Override
 	public int getTotalProcessTime(){
 		return this.totalProcessTime;
 	}
-	
-	int totalProcessEnergy;
 	
 	@Override
 	public int getTotalProcessEnergy(){

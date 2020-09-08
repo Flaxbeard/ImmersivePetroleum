@@ -9,6 +9,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
 
+import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.DirectionalBlockPos;
 import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
@@ -34,10 +35,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -135,11 +139,26 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		return ItemStackHelper.saveAllItems(new CompoundNBT(), list);
 	}
 	
+	// DEBUGGING
+	public boolean enableStepping=false;
+	public int step=0;
+	public boolean step(){
+		if(this.step>0){
+			this.step--;
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public void tick(){
-		super.tick();
+		if(this.enableStepping && !step()){
+			return;
+		}
 		
-		if(this.world.isRemote || isDummy()){
+		ApiUtils.checkForNeedlessTicking(this);
+		
+		if(this.world.isRemote || isDummy() || isRSDisabled()){
 			return;
 		}
 		
@@ -151,7 +170,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		if(this.energyStorage.getEnergyStored() > 0 && this.processQueue.size() < getProcessQueueMaxLength()){
 			if(this.tanks[TANK_INPUT].getFluidAmount() > 0){
 				DistillationRecipe recipe = DistillationRecipe.findRecipe(this.tanks[TANK_INPUT].getFluid());
-				if(recipe != null && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()){
+				if(recipe != null && this.tanks[TANK_INPUT].getFluidAmount()>=recipe.getInputFluid().getAmount() && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()){
 					MultiblockProcessInMachine<DistillationRecipe> process = new MultiblockProcessInMachine<DistillationRecipe>(recipe).setInputTanks(TANK_INPUT);
 					if(addProcessToQueue(process, true)){
 						addProcessToQueue(process, false);
@@ -160,6 +179,8 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 				}
 			}
 		}
+		
+		super.tick();
 		
 		if(this.processQueue.size() > 0){
 			this.wasActive = true;
@@ -349,11 +370,6 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	}
 	
 	@Override
-	public boolean isInWorldProcessingMachine(){
-		return false;
-	}
-	
-	@Override
 	public int getMaxProcessPerTick(){
 		return 1;
 	}
@@ -361,6 +377,11 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	@Override
 	public int getProcessQueueMaxLength(){
 		return 1;
+	}
+	
+	@Override
+	public boolean isInWorldProcessingMachine(){
+		return false;
 	}
 	
 	@Override

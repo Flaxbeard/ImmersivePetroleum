@@ -322,9 +322,9 @@ public class ClientEventHandler{
 	public void handleItemTooltip(ItemTooltipEvent event){
 		ItemStack stack = event.getItemStack();
 		if(stack.getItem() instanceof CoresampleItem){
-			if(ItemNBTHelper.hasKey(stack, "oil")){
+			if(ItemNBTHelper.hasKey(stack, "resAmount")){
 				String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
-				if(ItemNBTHelper.hasKey(stack, "oil") && resName == null){
+				if(ItemNBTHelper.hasKey(stack, "resAmount") && resName == null){
 					resName = "";
 				}
 				
@@ -336,7 +336,7 @@ public class ClientEventHandler{
 				}
 				
 				List<ITextComponent> tooltip = event.getToolTip();
-				int amnt = ItemNBTHelper.getInt(stack, "oil");
+				int amnt = ItemNBTHelper.getInt(stack, "resAmount");
 				int tipPos = Math.max(0, tooltip.size() - 5);
 				
 				if(res != null && amnt > 0){
@@ -447,9 +447,9 @@ public class ClientEventHandler{
 									String[] text = overlayBlock.getOverlayText(player, mop, hammer);
 									ItemStack coresample = ((CoresampleTileEntity) tileEntity).coresample;
 									
-									if(ItemNBTHelper.hasKey(coresample, "oil") && text != null && text.length > 0){
+									if(ItemNBTHelper.hasKey(coresample, "resAmount") && text != null && text.length > 0){
 										String resName = ItemNBTHelper.hasKey(coresample, "resType") ? ItemNBTHelper.getString(coresample, "resType") : "";
-										int amnt = ItemNBTHelper.getInt(coresample, "oil");
+										int amnt = ItemNBTHelper.getInt(coresample, "resAmount");
 										int i = text.length;
 										
 										ReservoirType res = null;

@@ -455,7 +455,7 @@ public class PumpjackHandler{
 		public CompoundNBT writeToNBT(){
 			CompoundNBT tag = new CompoundNBT();
 			tag.putInt("capacity", capacity);
-			tag.putInt("oil", current);
+			tag.putInt("resAmount", current);
 			if(type != null){
 				tag.putString("type", type.name);
 			}
@@ -468,7 +468,7 @@ public class PumpjackHandler{
 		public static OilWorldInfo readFromNBT(CompoundNBT tag){
 			OilWorldInfo info = new OilWorldInfo();
 			info.capacity = tag.getInt("capacity");
-			info.current = tag.getInt("oil");
+			info.current = tag.getInt("resAmount");
 			
 			if(tag.contains("type")){
 				String s = tag.getString("type");
@@ -477,7 +477,7 @@ public class PumpjackHandler{
 				}
 			}else if(info.current > 0){
 				for(ReservoirType res:reservoirs.values()){
-					if(res.name.equalsIgnoreCase("oil")) info.type = res;
+					if(res.name.equalsIgnoreCase("resAmount")) info.type = res;
 				}
 				
 				if(info.type == null){

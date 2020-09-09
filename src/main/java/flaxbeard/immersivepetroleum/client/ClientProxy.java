@@ -134,7 +134,7 @@ public class ClientProxy extends CommonProxy{
 					int oil_min = 1000000;
 					int oil_max = 5000000;
 					for(ReservoirType type:PumpjackHandler.reservoirs.values()){
-						if(type.name.equals("oil")){
+						if(type.name.equals("resAmount")){
 							oil_min = type.minSize;
 							oil_max = type.maxSize;
 							break;
@@ -400,7 +400,7 @@ public class ClientProxy extends CommonProxy{
 		if(resEntry != null){
 			resEntry.setPages(items);
 		}else{
-			resEntry = man.addEntry(ipCat, modLoc("oil"), ep++);
+			resEntry = man.addEntry(ipCat, modLoc("resAmount"), ep++);
 		}
 		*/
 		

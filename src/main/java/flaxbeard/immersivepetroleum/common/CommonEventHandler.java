@@ -95,9 +95,9 @@ public class CommonEventHandler{
 							OilWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(world, coords, false);
 							if(info!=null && info.getType() != null){
 								ItemNBTHelper.putString(drill.sample, "resType", info.getType().name);
-								ItemNBTHelper.putInt(drill.sample, "oil", info.current);
+								ItemNBTHelper.putInt(drill.sample, "resAmount", info.current);
 							}else{
-								ItemNBTHelper.putInt(drill.sample, "oil", 0);
+								ItemNBTHelper.putInt(drill.sample, "resAmount", 0);
 							}
 							
 						}catch(Exception e){

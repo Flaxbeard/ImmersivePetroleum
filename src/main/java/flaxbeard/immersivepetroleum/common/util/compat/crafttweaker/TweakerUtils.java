@@ -76,13 +76,13 @@ public class TweakerUtils{
 			split=str.split(", {0,}");
 			if(split.length==1){
 				split=new String[]{split[0], "1000"};
-				log.warn("\"{}\" has seperator, but does not have an amount. Defaulting to 1000mB!");
+				log.warn("\"{}\" has seperator, but does not have an amount. Defaulting to 1000mB!", str);
 			}
 		}
 		
 		if(split==null){
 			split=new String[]{str, "1000"};
-			log.info("\"{}\" has no amount. Defaulting to 1000mB.");
+			log.info("\"{}\" has no amount. Defaulting to 1000mB.", str);
 		}
 		
 		return split;
@@ -90,5 +90,13 @@ public class TweakerUtils{
 	
 	public static ResourceLocation ctLoc(String name){
 		return new ResourceLocation("crafttweaker", name);
+	}
+	
+	public static ResourceLocation ipLoc(String name){
+		return new ResourceLocation(ImmersivePetroleum.MODID, name);
+	}
+	
+	public static ResourceLocation mcLoc(String name){
+		return new ResourceLocation("minecraft", name);
 	}
 }

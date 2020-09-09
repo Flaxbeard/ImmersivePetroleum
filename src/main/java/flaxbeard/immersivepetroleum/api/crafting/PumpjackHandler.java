@@ -279,7 +279,6 @@ public class PumpjackHandler{
 		private Fluid fluid;
 		
 		/**
-		 * <pre>This constructor should not be called manualy! ReservoirTypeSerializer does that.</pre>
 		 * Creates a new reservoir.
 		 * 
 		 * @param name          The name of this reservoir type

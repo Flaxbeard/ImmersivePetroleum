@@ -3,14 +3,12 @@ package flaxbeard.immersivepetroleum.client.model;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Vector2f;
 
 import com.google.common.cache.Cache;
-import com.google.common.collect.Lists;
 
 import blusunrize.immersiveengineering.api.excavator.MineralMix;
 import blusunrize.immersiveengineering.client.models.ModelCoresample;
@@ -36,14 +34,9 @@ import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 @SuppressWarnings("unused")
 public class ModelCoresampleExtended extends ModelCoresample{
 	private Fluid fluid;
-
-	Set<BakedQuad> bakedQuads;
-	static List<BakedQuad> emptyQuads = Lists.newArrayList();
-	MineralMix[] mineral;
-
+	
 	public ModelCoresampleExtended(@Nullable MineralMix[] mineral, VertexFormat format, @Nullable Fluid fluid){
 		super(mineral, format);
-		this.mineral = mineral;
 		this.fluid = fluid;
 	}
 	
@@ -52,6 +45,63 @@ public class ModelCoresampleExtended extends ModelCoresample{
 		List<BakedQuad> bakedQuads=super.getQuads(coreState, side, rand, extraData);
 		return bakedQuads;
 	}
+	
+	protected final void putVertexDataSpr(List<BakedQuad> bakedQuads, Vector3f normal, Vector3f[] vertices, Vector2f[] uvs, TextureAtlasSprite sprite)
+	{
+		UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.ITEM);
+		builder.setQuadOrientation(Direction.getFacingFromVector(normal.getX(), normal.getY(), normal.getZ()));
+		builder.setTexture(sprite);
+//		builder.setQuadColored();
+		for (int i = 0; i < vertices.length; i++)
+		{
+			builder.put(0, vertices[i].getX(), vertices[i].getY(), vertices[i].getZ(), 1);//Pos
+			float d = LightUtil.diffuseLight(normal.getX(), normal.getY(), normal.getZ());
+			builder.put(1, d, d, d, 1);//Colour
+			builder.put(2, uvs[i].getX(), uvs[i].getY(), 0, 1);//UV
+			builder.put(3, normal.getX(), normal.getY(), normal.getZ(), 0);//Normal
+			builder.put(4);//padding
+		}
+		bakedQuads.add(builder.build());
+	}
+	
+	@Override
+	public ItemOverrideList getOverrides(){
+		return overrideList2;
+	}
+	
+	ItemOverrideList overrideList2 = new ItemOverrideList(){
+		@Override
+		public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, World worldIn, LivingEntity entityIn){
+			String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
+			if(ItemNBTHelper.hasKey(stack, "resAmount") && resName == null && ItemNBTHelper.getInt(stack, "resAmount") > 0){
+				resName = "resAmount";
+			}
+			
+			MineralMix[] minerals = CoresampleItem.getMineralMixes(stack);
+			if(minerals.length > 0){
+				try{
+					String cacheKey = "";
+					for(int i = 0;i < minerals.length;i++){
+						cacheKey += (i > 0 ? "_" : "") + minerals[i].getId().toString();
+					}
+					
+					return getSampleCache().get(cacheKey, () -> {
+						VertexFormat format;
+						if(originalModel instanceof ModelCoresample){
+							format = getVertexFormat((ModelCoresample) originalModel);
+						}else{
+							format = DefaultVertexFormats.BLOCK;
+						}
+						return new ModelCoresampleExtended(minerals, format, null);
+					});
+				}catch(ExecutionException e){
+					throw new RuntimeException(e);
+				}
+			}
+			
+			return originalModel;
+		}
+	};
 	
 	/*
 	@Override
@@ -161,67 +211,14 @@ public class ModelCoresampleExtended extends ModelCoresample{
 		}
 		return emptyQuads;
 	}//*/
-
-	protected final void putVertexDataSpr(Vector3f normal, Vector3f[] vertices, Vector2f[] uvs, TextureAtlasSprite sprite)
-	{
-		UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.ITEM);
-		builder.setQuadOrientation(Direction.getFacingFromVector(normal.getX(), normal.getY(), normal.getZ()));
-		builder.setTexture(sprite);
-//		builder.setQuadColored();
-		for (int i = 0; i < vertices.length; i++)
-		{
-			builder.put(0, vertices[i].getX(), vertices[i].getY(), vertices[i].getZ(), 1);//Pos
-			float d = LightUtil.diffuseLight(normal.getX(), normal.getY(), normal.getZ());
-			builder.put(1, d, d, d, 1);//Colour
-			builder.put(2, uvs[i].getX(), uvs[i].getY(), 0, 1);//UV
-			builder.put(3, normal.getX(), normal.getY(), normal.getZ(), 0);//Normal
-			builder.put(4);//padding
-		}
-		bakedQuads.add(builder.build());
-	}
-	
-	@Override
-	public ItemOverrideList getOverrides(){
-		return overrideList2;
-	}
-	
-	ItemOverrideList overrideList2 = new ItemOverrideList(){
-		@Override
-		public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, World worldIn, LivingEntity entityIn){
-			String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
-			if(ItemNBTHelper.hasKey(stack, "oil") && resName == null && ItemNBTHelper.getInt(stack, "oil") > 0){
-				resName = "oil";
-			}
-			
-			MineralMix[] minerals = CoresampleItem.getMineralMixes(stack);
-			if(minerals.length > 0){
-				try{
-					String cacheKey = "";
-					for(int i = 0;i < minerals.length;i++)
-						cacheKey += (i > 0 ? "_" : "") + minerals[i].getId().toString();
-					return getSampleCache().get(cacheKey, () -> {
-						VertexFormat format;
-						if(originalModel instanceof ModelCoresample)
-							format = getVertexFormat((ModelCoresample) originalModel);
-						else
-							format = DefaultVertexFormats.BLOCK;
-						return new ModelCoresampleExtended(minerals, format, null);
-					});
-				}catch(ExecutionException e){
-					throw new RuntimeException(e);
-				}
-			}
-			return originalModel;
-		}
-	};
 	
 	/*
 	ItemOverrideList overrideList = new ItemOverrideList(){
 		@Override
 		public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, World world, LivingEntity entity){
 			String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
-			if(ItemNBTHelper.hasKey(stack, "oil") && resName == null && ItemNBTHelper.getInt(stack, "oil") > 0){
-				resName = "oil";
+			if(ItemNBTHelper.hasKey(stack, "resAmount") && resName == null && ItemNBTHelper.getInt(stack, "resAmount") > 0){
+				resName = "resAmount";
 			}
 			
 			if(ItemNBTHelper.hasKey(stack, "mineral")){

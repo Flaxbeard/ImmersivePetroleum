@@ -331,14 +331,22 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 		}
 		
 		if(Utils.isFluidRelatedItemStack(stack)){
-			FluidTank tank = new FluidTank(getMaxFuel());
-			
-			FluidStack fs = getContainedFluid();
-			tank.setFluid(fs);
-			
-			FluidUtil.interactWithFluidHandler(player, hand, tank);
-			
-			setContainedFluid(tank.getFluid());
+			FluidStack fstack=FluidUtil.getFluidContained(stack).orElse(null);
+			if(fstack!=null){
+				FluidTank tank = new FluidTank(getMaxFuel()){
+					@Override
+					public boolean isFluidValid(FluidStack stack){
+						return FuelHandler.isValidBoatFuel(stack.getFluid());
+					}
+				};
+				
+				FluidStack fs = getContainedFluid();
+				tank.setFluid(fs);
+				
+				FluidUtil.interactWithFluidHandler(player, hand, tank);
+				
+				setContainedFluid(tank.getFluid());
+			}
 			return true;
 		}
 		

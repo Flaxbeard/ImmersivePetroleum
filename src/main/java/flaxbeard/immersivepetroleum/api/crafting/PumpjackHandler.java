@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.annotation.Nonnull;
+
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
@@ -31,6 +33,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.ModDimension;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class PumpjackHandler{
@@ -151,14 +154,14 @@ public class PumpjackHandler{
 			double size = r.nextDouble();
 			int query = r.nextInt();
 			
-			ImmersivePetroleum.log.info("Empty? {}. Forced? {}. Size: {}, Query: {}", empty?"Yes":"No", force?"Yes":"No", size, query);
+			ImmersivePetroleum.log.debug("Empty? {}. Forced? {}. Size: {}, Query: {}", empty?"Yes":"No", force?"Yes":"No", size, query);
 			
 			if(!empty || force){
 				ResourceLocation biome = world.getBiomeBody(new BlockPos(coords.x << 4, 64, coords.z << 4)).getRegistryName();
 				ResourceLocation dimension=world.getDimension().getType().getRegistryName();
 				
 				int totalWeight = getTotalWeight(dimension, biome);
-				ImmersivePetroleum.log.info("Total Weight: "+totalWeight);
+				ImmersivePetroleum.log.debug("Total Weight: "+totalWeight);
 				if(totalWeight > 0){
 					int weight = Math.abs(query % totalWeight);
 					for(ReservoirType type:reservoirs.values()){
@@ -176,19 +179,19 @@ public class PumpjackHandler{
 			int capacity = 0;
 			
 			if(res != null){
-				ImmersivePetroleum.log.info("Using: {}", res.name);
+				ImmersivePetroleum.log.debug("Using: {}", res.name);
 				
 				capacity = (int) ((res.maxSize - res.minSize) * size + res.minSize);
 			}
 			
-			ImmersivePetroleum.log.info("Capacity: {}", capacity);
+			ImmersivePetroleum.log.debug("Capacity: {}", capacity);
 			
 			worldInfo = new OilWorldInfo();
 			worldInfo.capacity = capacity;
 			worldInfo.current = capacity;
 			worldInfo.type = res;
 			
-			ImmersivePetroleum.log.info("Storing {} for {}", worldInfo, coords);
+			ImmersivePetroleum.log.debug("Storing {} for {}", worldInfo, coords);
 			reservoirsCache.put(coords, worldInfo);
 		}
 		
@@ -313,11 +316,11 @@ public class PumpjackHandler{
 			this.maxSize = nbt.getInt("maxSize");
 			this.replenishRate = nbt.getInt("replenishRate");
 			
-			this.dimWhitelist = toList((ListNBT)nbt.get("dimensionWhitelist"));
-			this.dimBlacklist = toList((ListNBT)nbt.get("dimensionBlacklist"));
+			this.dimWhitelist = toList(nbt.getList("dimensionWhitelist", NBT.TAG_STRING));
+			this.dimBlacklist = toList(nbt.getList("dimensionBlacklist", NBT.TAG_STRING));
 			
-			this.bioWhitelist = toList((ListNBT)nbt.get("biomeWhitelist"));
-			this.bioBlacklist = toList((ListNBT)nbt.get("biomeBlacklist"));
+			this.bioWhitelist = toList(nbt.getList("biomeWhitelist", NBT.TAG_STRING));
+			this.bioBlacklist = toList(nbt.getList("biomeBlacklist", NBT.TAG_STRING));
 		}
 		
 		public boolean addDimension(boolean blacklist, ResourceLocation...names){
@@ -344,40 +347,38 @@ public class PumpjackHandler{
 			}
 		}
 		
-		public boolean isValidDimension(DimensionType dim){
+		public boolean isValidDimension(@Nonnull DimensionType dim){
 			if(dim==null) return false;
 			
 			return isValidDimension(dim.getRegistryName());
 		}
 		
-		public boolean isValidDimension(ModDimension dim){
-			if(dim==null) return false;
-			
+		public boolean isValidDimension(@Nonnull ModDimension dim){
 			return isValidDimension(dim.getRegistryName());
 		}
 		
-		public boolean isValidDimension(ResourceLocation rl){
-			if(rl!=null && this.dimWhitelist.size()>0 && this.dimWhitelist.contains(rl))
-				return true;
-			
-			else if(rl!=null && this.dimBlacklist.size()>0 && this.dimBlacklist.contains(rl))
-				return false;
+		public boolean isValidDimension(@Nonnull ResourceLocation rl){
+			if(this.dimWhitelist.size()>0){
+				return this.dimWhitelist.contains(rl);
+				
+			}else if(this.dimBlacklist.size()>0){
+				return !this.dimBlacklist.contains(rl);
+			}
 			
 			return true;
 		}
 		
-		public boolean isValidBiome(Biome biome){
-			if(biome==null) return false;
-			
+		public boolean isValidBiome(@Nonnull Biome biome){
 			return isValidBiome(biome.getRegistryName());
 		}
 		
-		public boolean isValidBiome(ResourceLocation rl){
-			if(this.bioWhitelist.size()>0 && this.bioWhitelist.contains(rl))
-				return true;
-			
-			else if(this.bioBlacklist.size()>0 && this.bioBlacklist.contains(rl))
-				return false;
+		public boolean isValidBiome(@Nonnull ResourceLocation rl){
+			if(this.bioWhitelist.size()>0){
+				return this.bioWhitelist.contains(rl);
+				
+			}else if(this.bioBlacklist.size()>0){
+				return !this.bioBlacklist.contains(rl);
+			}
 			
 			return true;
 		}

@@ -65,7 +65,7 @@ public class IPRecipes extends RecipeProvider{
 //			.addBiomes(false, new ResourceLocation[]{}) // Just for demonstration purposes.
 			.build(this.out, rl("reservoirs/aquifer"));
 		
-		// Shorthand for the above. (name   fluid                           min       max        trace  weight)
+		// Shorthand for the above. (name   fluid                      min       max        trace  weight)
 		ReservoirTypeBuilder.builder("oil", IPContent.Fluids.crudeOil, 2500.000, 15000.000, 0.006, 40)
 			.addDimensions(true, DimensionType.THE_END.getRegistryName()) // false = Whitelist, true = blacklist
 			.build(this.out, rl("reservoirs/oil"));

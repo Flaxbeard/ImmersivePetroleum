@@ -80,7 +80,44 @@ public class DebugItem extends IPItemBase{
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn){
 		if(!worldIn.isRemote){
 			Modes mode=DebugItem.getMode(playerIn.getHeldItem(handIn));
+			
 			switch(mode){
+				case RESERVOIR_BIG_SCAN:{
+					BlockPos pos=playerIn.getPosition();
+					int r=5;
+					int cx=(pos.getX() >> 4);
+					int cz=(pos.getZ() >> 4);
+					ImmersivePetroleum.log.info(worldIn.dimension.getType());
+					for(int i = -r;i <= r;i++){
+						for(int j = -r;j <= r;j++){
+							int x=cx+i;
+							int z=cz+j;
+							
+							DimensionChunkCoords coords=new DimensionChunkCoords(worldIn.dimension.getType(), x, z);
+							
+							OilWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
+							if(info != null && info.getType() != null){
+								ReservoirType type = info.getType();
+								
+								int cap = info.capacity;
+								int cur = info.current;
+								
+								String out = String.format(Locale.ENGLISH,
+										"%s %s:\t%.3f/%.3f Buckets of %s",
+										coords.x,
+										coords.z,
+										cur/1000D,
+										cap/1000D,
+										type.name
+								);
+								
+								ImmersivePetroleum.log.info(out);
+							}
+						}
+					}
+					
+					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+				}
 				case CLEAR_RESERVOIR_CACHE:{
 					int contentSize = PumpjackHandler.reservoirsCache.size();
 					
@@ -391,6 +428,7 @@ public class DebugItem extends IPItemBase{
 		INFO_TE_DISTILLATION_TOWER("Info: Distillation Tower."),
 		INFO_TE_DISTILLATION_TOWER_STEP("Info: Manual DT Ticking."),
 		RESERVOIR("Create/Get Reservoir"),
+		RESERVOIR_BIG_SCAN("Scan 5 Block Radius Area"),
 		CLEAR_RESERVOIR_CACHE("Clear Reservoir Cache"),
 		;
 		

@@ -8,6 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -29,47 +30,63 @@ public class ReservoirTypeSerializer extends IERecipeSerializer<ReservoirType>{
 		if(JSONUtils.hasField(json, "dimension")){
 			JsonObject dimension=JSONUtils.getJsonObject(json, "dimension");
 			
-			List<ResourceLocation> names=new ArrayList<>();
-			boolean blacklist=false;
+			List<ResourceLocation> whitelist=new ArrayList<>();
+			List<ResourceLocation> blacklist=new ArrayList<>();
+			
 			if(JSONUtils.hasField(dimension, "whitelist")){
-				blacklist=false;
 				JsonArray array=JSONUtils.getJsonArray(dimension, "whitelist");
 				for(JsonElement obj:array){
-					names.add(new ResourceLocation(obj.getAsString()));
+					whitelist.add(new ResourceLocation(obj.getAsString()));
 				}
-				
-			}else if(JSONUtils.hasField(dimension, "blacklist")){
-				blacklist=true;
+			}
+			
+			if(JSONUtils.hasField(dimension, "blacklist")){
 				JsonArray array=JSONUtils.getJsonArray(dimension, "blacklist");
 				for(JsonElement obj:array){
-					names.add(new ResourceLocation(obj.getAsString()));
+					blacklist.add(new ResourceLocation(obj.getAsString()));
 				}
-				
 			}
 			
-			type.addDimension(blacklist, names);
-			
-		}else if(JSONUtils.hasField(json, "biome")){
+			if(whitelist.size()>0){
+				ImmersivePetroleum.log.info("- Adding these to dimension-whitelist -");
+				whitelist.forEach(ins->ImmersivePetroleum.log.info(ins));
+				type.addDimension(false, whitelist);
+			}else if(blacklist.size()>0){
+				ImmersivePetroleum.log.info("- Adding these to dimension-blacklist -");
+				blacklist.forEach(ins->ImmersivePetroleum.log.info(ins));
+				type.addDimension(true, blacklist);
+			}
+		}
+		
+		if(JSONUtils.hasField(json, "biome")){
 			JsonObject biome=JSONUtils.getJsonObject(json, "biome");
 			
-			List<ResourceLocation> names=new ArrayList<>();
-			boolean blacklist=false;
+			List<ResourceLocation> whitelist=new ArrayList<>();
+			List<ResourceLocation> blacklist=new ArrayList<>();
+			
 			if(JSONUtils.hasField(biome, "whitelist")){
-				blacklist=true;
 				JsonArray array=JSONUtils.getJsonArray(biome, "whitelist");
 				for(JsonElement obj:array){
-					names.add(new ResourceLocation(obj.getAsString()));
-				}
-				
-			}else if(JSONUtils.hasField(biome, "blacklist")){
-				blacklist=true;
-				JsonArray array=JSONUtils.getJsonArray(biome, "blacklist");
-				for(JsonElement obj:array){
-					names.add(new ResourceLocation(obj.getAsString()));
+					whitelist.add(new ResourceLocation(obj.getAsString()));
 				}
 			}
 			
-			type.addBiome(blacklist, names);
+			if(JSONUtils.hasField(biome, "blacklist")){
+				JsonArray array=JSONUtils.getJsonArray(biome, "blacklist");
+				for(JsonElement obj:array){
+					blacklist.add(new ResourceLocation(obj.getAsString()));
+				}
+			}
+			
+			if(whitelist.size()>0){
+				ImmersivePetroleum.log.info("- Adding these to biome-whitelist -");
+				whitelist.forEach(ins->ImmersivePetroleum.log.info(ins));
+				type.addBiome(false, whitelist);
+			}else if(blacklist.size()>0){
+				ImmersivePetroleum.log.info("- Adding these to biome-blacklist -");
+				blacklist.forEach(ins->ImmersivePetroleum.log.info(ins));
+				type.addBiome(true, blacklist);
+			}
 		}
 		
 		return type;

@@ -16,7 +16,7 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 
 version = '2.0.0'
 group = 'flaxbeard.immersivepetroleum'
-archivesBaseName = 'immersivepetroleum'
+archivesBaseName = 'ImmersivePetroleum-1.14.4'
 
 repositories {
 	maven {	name = "BlameJared";	url = "https://maven.blamejared.com/" }       // IE & CT Files

@@ -84,8 +84,9 @@ dependencies {
 	minecraft "net.minecraftforge:forge:1.14.4-28.2.16"
 	
 	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.14.4-4.0.0-116")
+	compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.14.4:5.0.1.201")
+	
 	compileOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.11:api")
-	compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.14.4:5.0.1.187")
 	
 	runtimeOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.11")
 }

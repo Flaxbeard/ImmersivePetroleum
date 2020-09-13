@@ -293,15 +293,29 @@ public class PumpjackHandler{
 		 * @param weight        The weight for this reservoir
 		 */
 		public ReservoirType(String name, ResourceLocation id, ResourceLocation fluidLocation, int minSize, int maxSize, int traceAmount, int weight){
+			this(name, id, ForgeRegistries.FLUIDS.getValue(fluidLocation), minSize, maxSize, traceAmount, weight);
+		}
+		
+		/**
+		 * Creates a new reservoir.
+		 * 
+		 * @param name          The name of this reservoir type
+		 * @param id            The "recipeId" of this reservoir
+		 * @param fluid         The fluid this reservoir is containing
+		 * @param minSize       Minimum amount of fluid in this reservoir
+		 * @param maxSize       Maximum amount of fluid in this reservoir
+		 * @param traceAmount   Leftover fluid amount after depletion
+		 * @param weight        The weight for this reservoir
+		 */
+		public ReservoirType(String name, ResourceLocation id, Fluid fluid, int minSize, int maxSize, int traceAmount, int weight){
 			super(ItemStack.EMPTY, TYPE, id);
 			this.name = name;
-			this.fluidLocation = fluidLocation;
+			this.fluidLocation = fluid.getRegistryName();
+			this.fluid=fluid;
 			this.replenishRate = traceAmount;
 			this.minSize = minSize;
 			this.maxSize = maxSize;
 			this.weight = weight;
-			
-			this.fluid=ForgeRegistries.FLUIDS.getValue(fluidLocation);
 		}
 		
 		public ReservoirType(CompoundNBT nbt){

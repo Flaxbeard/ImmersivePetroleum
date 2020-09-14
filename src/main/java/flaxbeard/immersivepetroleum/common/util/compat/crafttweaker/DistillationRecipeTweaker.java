@@ -37,7 +37,7 @@ public class DistillationRecipeTweaker{
 		
 		if(test.size() > 1){
 			CraftTweakerAPI.logError("§cMultiple results for \"%s\"§r", recipeName);
-		}else if(test.size()==1){
+		}else if(test.size() == 1){
 			ResourceLocation id = test.get(0);
 			if(DistillationRecipe.recipes.containsKey(id)){
 				DistillationRecipe.recipes.remove(id);
@@ -56,24 +56,22 @@ public class DistillationRecipeTweaker{
 	public static void removeAll(){
 		DistillationRecipe.recipes.clear();
 	}
-
+	
 	@ZenRegister
 	@Name("mods.immersivepetroleum.DistillationBuilder")
 	public static class DistillationRecipeBuilder{
 		
 		private boolean isValid = true;
 		
-		private final String recipeName;
 		private List<Tuple<ItemStack, Double>> byproducts = new ArrayList<>();
 		private List<FluidStack> fluidOutputs = new ArrayList<>();
 		private Tag<Fluid> inputFluidTag = null;
-		private int inputFluidAmount=1;
+		private int inputFluidAmount = 1;
 		private int fluxEnergy = 2048;
 		private int timeTicks = 1;
 		
 		@Constructor
-		public DistillationRecipeBuilder(String recipeName){
-			this.recipeName = recipeName;
+		public DistillationRecipeBuilder(){
 		}
 		
 		@Method
@@ -92,7 +90,7 @@ public class DistillationRecipeTweaker{
 			if(tag.getFluidTag() == null){
 				CraftTweakerAPI.logError("§cDistillationBuilder expected fluidtag as input fluid!§r");
 				this.isValid = false;
-			}else if(amount<=0){
+			}else if(amount <= 0){
 				CraftTweakerAPI.logError("§ccDistillationBuilder fluidtag amount must atleast be 1mB!§r");
 				this.isValid = false;
 			}else{
@@ -151,8 +149,8 @@ public class DistillationRecipeTweaker{
 		}
 		
 		@Method
-		public void build(){
-			ResourceLocation id = TweakerUtils.ctLoc("distillationtower/" + this.recipeName);
+		public void build(String recipeName){
+			ResourceLocation id = TweakerUtils.ctLoc("distillationtower/" + recipeName);
 			
 			FluidStack[] fluidOutStacks = this.fluidOutputs.toArray(new FluidStack[0]);
 			FluidTagInput fluidInTag = null;

@@ -150,6 +150,11 @@ public class DistillationRecipeTweaker{
 		
 		@Method
 		public void build(String recipeName){
+			if(recipeName.isEmpty()){
+				CraftTweakerAPI.logError("§cDistillation name can not be empty string!§r");
+				this.isValid = false;
+			}
+			
 			FluidTagInput fluidInTag = null;
 			if(this.inputFluidTag != null){
 				fluidInTag = new FluidTagInput(Lazy.of(() -> this.inputFluidTag), this.inputFluidAmount, null);

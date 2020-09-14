@@ -150,9 +150,6 @@ public class DistillationRecipeTweaker{
 		
 		@Method
 		public void build(String recipeName){
-			ResourceLocation id = TweakerUtils.ctLoc("distillationtower/" + recipeName);
-			
-			FluidStack[] fluidOutStacks = this.fluidOutputs.toArray(new FluidStack[0]);
 			FluidTagInput fluidInTag = null;
 			if(this.inputFluidTag != null){
 				fluidInTag = new FluidTagInput(Lazy.of(() -> this.inputFluidTag), this.inputFluidAmount, null);
@@ -161,16 +158,23 @@ public class DistillationRecipeTweaker{
 				this.isValid = false;
 			}
 			
-			ItemStack[] outStacks = new ItemStack[this.byproducts.size()];
-			double[] chances = new double[this.byproducts.size()];
-			if(!this.byproducts.isEmpty()){
-				for(int i = 0;i < this.byproducts.size();i++){
-					outStacks[i] = this.byproducts.get(i).getA();
-					chances[i] = this.byproducts.get(i).getB().doubleValue();
-				}
-			}
-			
 			if(this.isValid){
+				ItemStack[] outStacks = new ItemStack[this.byproducts.size()];
+				double[] chances = new double[this.byproducts.size()];
+				if(!this.byproducts.isEmpty()){
+					for(int i = 0;i < this.byproducts.size();i++){
+						outStacks[i] = this.byproducts.get(i).getA();
+						chances[i] = this.byproducts.get(i).getB().doubleValue();
+					}
+				}
+				
+				FluidStack[] fluidOutStacks = new FluidStack[0];
+				if(!this.fluidOutputs.isEmpty()){
+					fluidOutStacks = this.fluidOutputs.toArray(new FluidStack[0]);
+				}
+				
+				ResourceLocation id = TweakerUtils.ctLoc("distillationtower/" + recipeName);
+				
 				DistillationRecipe recipe = new DistillationRecipe(id, fluidOutStacks, outStacks, fluidInTag, this.fluxEnergy, this.timeTicks, chances);
 				DistillationRecipe.recipes.put(id, recipe);
 			}

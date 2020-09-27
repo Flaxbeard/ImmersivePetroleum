@@ -8,7 +8,12 @@ public enum EnumStoneDecorationType implements IStringSerializable{
 	ASPHALT;
 	
 	@Override
-	public String getName(){
+	public String getString(){
 		return this.toString().toLowerCase(Locale.ENGLISH);
+	}
+	
+	@Deprecated
+	public String getName(){
+		return getString();
 	}
 }

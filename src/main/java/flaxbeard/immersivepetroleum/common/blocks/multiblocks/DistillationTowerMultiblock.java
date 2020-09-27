@@ -1,20 +1,22 @@
 package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Multiblock;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-@SuppressWarnings("deprecation")
 public class DistillationTowerMultiblock extends IETemplateMultiblock{
 	public static final DistillationTowerMultiblock INSTANCE = new DistillationTowerMultiblock();
 	
@@ -39,22 +41,21 @@ public class DistillationTowerMultiblock extends IETemplateMultiblock{
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderFormedStructure(){
-		if(renderStack==null)
-			renderStack=new ItemStack(Multiblock.distillationtower);
+	public void renderFormedStructure(MatrixStack transform, IRenderTypeBuffer buffer){
+		if(renderStack == null)
+			renderStack = new ItemStack(Multiblock.distillationtower);
 		
-		GlStateManager.pushMatrix();
-		{
-			// "Undo" the GUI Perspective Transform
-			GlStateManager.scaled(16.0, 16.0, 16.0);
-			GlStateManager.translated(0.030, 0.355, 0.300);
-			GlStateManager.rotated(-225, 0, 1, 0);
-			GlStateManager.rotated(-30, 1, 0, 0);
-			
-			GlStateManager.disableCull();
-			ClientUtils.mc().getItemRenderer().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
-			GlStateManager.enableCull();
-		}
-		GlStateManager.popMatrix();
+		// "Undo" the GUI Perspective Transform
+		transform.scale(16.0F, 16.0F, 16.0F);
+		transform.translate(0.030, 0.355, 0.300);
+		transform.rotate(new Quaternion(0, -225, 0, true));
+		transform.rotate(new Quaternion(-30, 0, 0, true));
+		
+		ClientUtils.mc().getItemRenderer().renderItem(
+				renderStack,
+				ItemCameraTransforms.TransformType.GUI,
+				0xf000f0,
+				OverlayTexture.NO_OVERLAY,
+				transform, buffer);
 	}
 }

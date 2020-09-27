@@ -19,8 +19,10 @@ public class IPDataGenerator{
 		if(event.includeServer()){
 			DataGenerator generator=event.getGenerator();
 			
+			IPBlockTags blockTags=new IPBlockTags(generator);
+			
 			generator.addProvider(new IPBlockTags(generator));
-			generator.addProvider(new IPItemTags(generator));
+			generator.addProvider(new IPItemTags(generator, blockTags));
 			generator.addProvider(new IPFluidTags(generator));
 			generator.addProvider(new IPRecipes(generator));
 			

@@ -14,7 +14,7 @@ import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -86,7 +86,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 		return super.setEnergy(energy);
 	}
 	
-	public DistillationRecipeBuilder addInput(Tag<Fluid> fluidTag, int amount){
+	public DistillationRecipeBuilder addInput(ITag.INamedTag<Fluid> fluidTag, int amount){
 		return addFluidTag("input", fluidTag, amount);
 	}
 	

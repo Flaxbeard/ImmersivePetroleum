@@ -21,11 +21,14 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameterSets;
+import net.minecraft.loot.LootParameters;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -36,13 +39,10 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootParameterSets;
-import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.common.ToolType;
 
 public class AutoLubricatorBlock extends IPBlockBase{
-	private static final Material material=new Material(MaterialColor.IRON, false, true, true, false, true, false, false, PushReaction.BLOCK);
+	private static final Material material=new Material(MaterialColor.IRON, false, true, true, false, false, false, PushReaction.BLOCK);
 	
 	public static final DirectionProperty FACING=DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
 	public static final BooleanProperty SLAVE=BooleanProperty.create("slave");
@@ -83,6 +83,8 @@ public class AutoLubricatorBlock extends IPBlockBase{
 		return te;
 	}
 	
+	// TODO Block Render Layer
+	/*
 	@Override
 	public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer){
 		return layer==BlockRenderLayer.CUTOUT;
@@ -92,7 +94,7 @@ public class AutoLubricatorBlock extends IPBlockBase{
 	public BlockRenderLayer getRenderLayer(){
 		return BlockRenderLayer.CUTOUT;
 	}
-	
+	*/
 	@Override
 	public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player){
 		if(state.get(SLAVE)){
@@ -105,14 +107,16 @@ public class AutoLubricatorBlock extends IPBlockBase{
 	}
 	
 	@Override
-	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit){
+	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit){
 		if(!worldIn.isRemote){
 			TileEntity te=worldIn.getTileEntity(pos);
 			if(te instanceof IPlayerInteraction){
-				return ((IPlayerInteraction)te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), (float)hit.getHitVec().x, (float)hit.getHitVec().y, (float)hit.getHitVec().z);
+				if(((IPlayerInteraction)te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), (float)hit.getHitVec().x, (float)hit.getHitVec().y, (float)hit.getHitVec().z)){
+					return ActionResultType.SUCCESS;
+				}
 			}
 		}
-		return true;
+		return ActionResultType.FAIL;
 	}
 	
 	@Override
@@ -133,9 +137,8 @@ public class AutoLubricatorBlock extends IPBlockBase{
 		if(te instanceof AutoLubricatorTileEntity){
 			if(((AutoLubricatorTileEntity) te).isSlave){
 				ServerWorld world = builder.getWorld();
-				BlockPos pos = builder.get(LootParameters.POSITION);
 				
-				te = world.getTileEntity(pos.offset(Direction.DOWN));
+				te = world.getTileEntity(te.getPos().offset(Direction.DOWN));
 			}
 		}
 		

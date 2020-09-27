@@ -23,6 +23,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -53,8 +54,8 @@ public class OilCanItem extends IPItemBase{
 				FluidAttributes att = fluid.getFluid().getAttributes();
 				TextFormatting rarity = att.getRarity() == Rarity.COMMON ? TextFormatting.GRAY : att.getRarity().color;
 				
-				ITextComponent out=fluid.getDisplayName().applyTextStyle(rarity)
-					.appendSibling(new StringTextComponent(": " + fluid.getAmount() + "/8000mB").applyTextStyle(TextFormatting.GRAY));
+				ITextComponent out=((IFormattableTextComponent)fluid.getDisplayName()).mergeStyle(rarity)
+					.append(new StringTextComponent(": " + fluid.getAmount() + "/8000mB").mergeStyle(TextFormatting.GRAY));
 				tooltip.add(out);
 			}else{
 				tooltip.add(new StringTextComponent(I18n.format(Lib.DESC_FLAVOUR + "drill.empty")));
@@ -63,7 +64,7 @@ public class OilCanItem extends IPItemBase{
 	}
 	
 	@Override
-	public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand){
+	public ActionResultType itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand){
 		if(target instanceof IronGolemEntity){
 			IronGolemEntity golem = (IronGolemEntity) target;
 			
@@ -86,9 +87,9 @@ public class OilCanItem extends IPItemBase{
 				}
 			});
 			
-			return true;
+			return ActionResultType.SUCCESS;
 		}else
-			return false;
+			return ActionResultType.FAIL;
 	}
 	
 	@Override

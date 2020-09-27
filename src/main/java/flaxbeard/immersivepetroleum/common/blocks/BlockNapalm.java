@@ -13,10 +13,10 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.FireBlock;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.fluid.IFluidState;
-import net.minecraft.state.IProperty;
-import net.minecraft.state.IStateHolder;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.state.Property;
 import net.minecraft.state.StateContainer.Builder;
+import net.minecraft.state.StateHolder;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -34,19 +34,19 @@ public class BlockNapalm extends IPFluid{
 			@Override
 			protected void fillStateContainer(Builder<Block, BlockState> builder){
 				super.fillStateContainer(builder);
-				builder.add(this.getStateContainer().getProperties().toArray(new IProperty[0]));
+				builder.add(this.getStateContainer().getProperties().toArray(new Property[0]));
 			}
 			
 			@Override
-			public IFluidState getFluidState(BlockState state){
-				IFluidState baseState=super.getFluidState(state);
-				for(IProperty<?> prop: this.getStateContainer().getProperties())
+			public FluidState getFluidState(BlockState state){
+				FluidState baseState=super.getFluidState(state);
+				for(Property<?> prop: this.getStateContainer().getProperties())
 					if(prop!=FlowingFluidBlock.LEVEL)
 						baseState = withCopiedValue(prop, baseState, state);
 				return baseState;
 			}
 			
-			private <T extends IStateHolder<T>, S extends Comparable<S>> T withCopiedValue(IProperty<S> prop, T oldState, IStateHolder<?> copyFrom){
+			private <T extends StateHolder<?, T>, S extends Comparable<S>> T withCopiedValue(Property<S> prop, T oldState, StateHolder<?, ?> copyFrom){
 				return oldState.with(prop, copyFrom.get(prop));
 			}
 			
@@ -65,7 +65,7 @@ public class BlockNapalm extends IPFluid{
 			@Override
 			public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
 				if(worldIn.getBlockState(fromPos).getBlock() instanceof FireBlock || worldIn.getBlockState(fromPos).getMaterial() == Material.FIRE){
-					int d = worldIn.getDimension().getType().getId();
+					ResourceLocation d = worldIn.getDimensionKey().getRegistryName();
 					if(!CommonEventHandler.napalmPositions.containsKey(d) || !CommonEventHandler.napalmPositions.get(d).contains(fromPos)){
 						processFire(worldIn, pos);
 					}
@@ -78,7 +78,7 @@ public class BlockNapalm extends IPFluid{
 	}
 	
 	public void processFire(World world, BlockPos pos){
-		int d = world.getDimension().getType().getId();
+		ResourceLocation d = world.getDimensionKey().getRegistryName();
 		if(!CommonEventHandler.napalmPositions.containsKey(d)){
 			CommonEventHandler.napalmPositions.put(d, new ArrayList<>());
 		}

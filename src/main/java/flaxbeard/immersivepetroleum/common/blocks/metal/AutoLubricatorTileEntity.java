@@ -13,10 +13,11 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameters;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -27,8 +28,9 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootParameters;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
@@ -58,7 +60,9 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	}
 	
 	@Override
-	public void read(CompoundNBT compound){
+	public void read(BlockState state, CompoundNBT compound){
+		super.read(state, compound);
+		
 		this.isSlave = compound.getBoolean("slave");
 		this.isActive = compound.getBoolean("active");
 		this.predictablyDraining = compound.getBoolean("predictablyDraining");
@@ -69,22 +73,22 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 		this.facing=facing;
 		
 		this.tank.readFromNBT(compound.getCompound("tank"));
-		
-		super.read(compound);
 	}
 	
 	@Override
 	public CompoundNBT write(CompoundNBT compound){
+		super.write(compound);
+		
 		compound.putBoolean("slave", this.isSlave);
 		compound.putBoolean("active", this.isActive);
 		compound.putBoolean("predictablyDraining", this.predictablyDraining);
-		compound.putString("facing", this.facing.getName());
+		compound.putString("facing", this.facing.getName2());
 		compound.putInt("count", this.count);
 		
 		CompoundNBT tank = this.tank.writeToNBT(new CompoundNBT());
 		compound.put("tank", tank);
 		
-		return super.write(compound);
+		return compound;
 	}
 	
 	@Override
@@ -93,8 +97,8 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	}
 	
 	@Override
-	public void handleUpdateTag(CompoundNBT tag){
-		read(tag);
+	public void handleUpdateTag(BlockState state, CompoundNBT tag){
+		read(state, tag);
 	}
 	
 	@Override
@@ -104,7 +108,7 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	
 	@Override
 	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt){
-		read(pkt.getNbtCompound());
+		read(getBlockState(), pkt.getNbtCompound());
 	}
 	
 	public void readTank(CompoundNBT nbt){
@@ -185,18 +189,18 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	}
 	
 	@Override
-	public String[] getOverlayText(PlayerEntity player, RayTraceResult mop, boolean hammer){
+	public ITextComponent[] getOverlayText(PlayerEntity player, RayTraceResult mop, boolean hammer){
 		if(Utils.isFluidRelatedItemStack(player.getHeldItem(Hand.MAIN_HAND))){
 			TileEntity master = this.world.getTileEntity(getPos().add(0, this.isSlave ? -1 : 0, 0));
 			if(master != null && master instanceof AutoLubricatorTileEntity){
 				AutoLubricatorTileEntity lube = (AutoLubricatorTileEntity) master;
-				String s = null;
+				ITextComponent s = null;
 				if(!lube.tank.isEmpty()){
-					s = lube.tank.getFluid().getDisplayName().getFormattedText() + ": " + lube.tank.getFluidAmount() + "mB";
+					s = ((IFormattableTextComponent)lube.tank.getFluid().getDisplayName()).appendString(": " + lube.tank.getFluidAmount() + "mB");
 				}else{
-					s = I18n.format(Lib.GUI + "empty");
+					s = new TranslationTextComponent(Lib.GUI + "empty");
 				}
-				return new String[]{s};
+				return new ITextComponent[]{s};
 			}
 		}
 		return null;

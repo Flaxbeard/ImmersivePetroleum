@@ -9,30 +9,37 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.RecipeManager;
+import net.minecraft.resources.DataPackRegistries;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.thread.EffectiveSide;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 @SuppressWarnings("deprecation")
 public class RecipeReloadListener implements IResourceManagerReloadListener{
+	private final DataPackRegistries dataPackRegistries;
+	public RecipeReloadListener(DataPackRegistries dataPackRegistries){
+		this.dataPackRegistries=dataPackRegistries;
+	}
+
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager){
-		if(EffectiveSide.get().isServer()){
-			lists(ServerLifecycleHooks.getCurrentServer().getRecipeManager());
+		if(dataPackRegistries!=null){
+			lists(dataPackRegistries.getRecipeManager());
 		}
 	}
 	
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void recipesUpdated(RecipesUpdatedEvent event){
-		lists(event.getRecipeManager());
+		if(!Minecraft.getInstance().isSingleplayer()){
+			lists(event.getRecipeManager());
+		}
 	}
 	
 	static void lists(RecipeManager recipeManager){

@@ -18,9 +18,11 @@ import flaxbeard.immersivepetroleum.common.util.commands.ReservoirCommand;
 import net.minecraft.command.Commands;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -45,7 +47,7 @@ public class ImmersivePetroleum{
 		}
 	};
 	
-	public static CommonProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+	public static CommonProxy proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
 	
 	public static ImmersivePetroleum INSTANCE;
 	
@@ -58,6 +60,8 @@ public class ImmersivePetroleum{
 		MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
 		MinecraftForge.EVENT_BUS.addListener(this::serverAboutToStart);
 		MinecraftForge.EVENT_BUS.addListener(this::serverStarted);
+		MinecraftForge.EVENT_BUS.addListener(this::registerCommand);
+		MinecraftForge.EVENT_BUS.addListener(this::addReloadListeners);
 		
 		Serializers.RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
 		
@@ -100,20 +104,24 @@ public class ImmersivePetroleum{
 	
 	public void serverAboutToStart(FMLServerAboutToStartEvent event){
 		proxy.serverAboutToStart();
-		
-		event.getServer().getResourceManager().addReloadListener(new RecipeReloadListener());
 	}
 	
 	public void serverStarting(FMLServerStartingEvent event){
 		proxy.serverStarting();
-		
-		event.getCommandDispatcher().register(Commands.literal("ip").then(ReservoirCommand.create()));
+	}
+	
+	public void registerCommand(RegisterCommandsEvent event){
+		event.getDispatcher().register(Commands.literal("ip").then(ReservoirCommand.create()));
+	}
+	
+	public void addReloadListeners(AddReloadListenerEvent event){
+		event.addListener(new RecipeReloadListener(event.getDataPackRegistries()));
 	}
 	
 	public void serverStarted(FMLServerStartedEvent event){
 		proxy.serverStarted();
 		
-		ServerWorld world = event.getServer().getWorld(DimensionType.OVERWORLD);
+		ServerWorld world = event.getServer().getWorld(World.OVERWORLD);
 		if(!world.isRemote){
 			IPSaveData worldData = world.getSavedData().getOrCreate(IPSaveData::new, IPSaveData.dataName);
 			IPSaveData.setInstance(worldData);

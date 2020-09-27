@@ -11,9 +11,6 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.realmsclient.gui.ChatFormatting;
-
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
@@ -34,6 +31,7 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageRotateSchematic;
+import flaxbeard.immersivepetroleum.dummy.GlStateManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -43,7 +41,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -64,10 +61,10 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.MutableBlockPos;
+import net.minecraft.util.math.BlockPos.Mutable;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -149,7 +146,7 @@ public class ProjectorItem extends IPItemBase{
 		if(multiblock==null)
 			return 0;
 		
-		Vec3i size=multiblock.getSize();
+		Vector3i size=multiblock.getSize();
 		int mWidth = size.getX();
 		int mDepth = size.getZ();
 		
@@ -212,7 +209,7 @@ public class ProjectorItem extends IPItemBase{
 		}
 		
 		Template multiblockTemplate=getMultiblockTemplate(multiblock);
-		List<Template.BlockInfo> blocks=multiblockTemplate.blocks.get(0);
+		List<Template.BlockInfo> blocks=multiblockTemplate.blocks.get(0).func_237157_a_();
 		for(int i=0;i<blocks.size();i++){
 			Template.BlockInfo info=blocks.get(i);
 			BlockPos transformedPos=Template.transformedBlockPos(setting, info.pos).subtract(offset);
@@ -224,7 +221,7 @@ public class ProjectorItem extends IPItemBase{
 		return blocks.size();
 	}
 	
-	private static BlockPos alignHit(BlockPos hit, PlayerEntity playerIn, Rotation rotation, Vec3i multiblockSize, boolean flip){
+	private static BlockPos alignHit(BlockPos hit, PlayerEntity playerIn, Rotation rotation, Vector3i multiblockSize, boolean flip){
 		int xd = (rotation.ordinal() % 2 == 0) ? multiblockSize.getX() : multiblockSize.getZ();
 		int zd = (rotation.ordinal() % 2 == 0) ? multiblockSize.getZ() : multiblockSize.getX();
 		
@@ -266,29 +263,29 @@ public class ProjectorItem extends IPItemBase{
 				tooltip.add(new StringTextComponent(build0));
 				tooltip.add(new StringTextComponent(build1));
 				
-				Vec3i size = mb.getSize();
-				tooltip.add(new StringTextComponent(size.getX() + " x " + size.getY() + " x " + size.getZ()).applyTextStyle(TextFormatting.DARK_GRAY));
+				Vector3i size = mb.getSize();
+				tooltip.add(new StringTextComponent(size.getX() + " x " + size.getY() + " x " + size.getZ()).mergeStyle(TextFormatting.DARK_GRAY));
 				
 				if(ItemNBTHelper.hasKey(stack, "pos")){
 					CompoundNBT pos = ItemNBTHelper.getTagCompound(stack, "pos");
 					int x = pos.getInt("x");
 					int y = pos.getInt("y");
 					int z = pos.getInt("z");
-					tooltip.add(new TranslationTextComponent("chat.immersivepetroleum.info.schematic.center", x, y, z).applyTextStyle(TextFormatting.DARK_GRAY));
+					tooltip.add(new TranslationTextComponent("chat.immersivepetroleum.info.schematic.center", x, y, z).mergeStyle(TextFormatting.DARK_GRAY));
 				}
 				
 				String rotation=I18n.format("chat.immersivepetroleum.info.projector.rotated."+Direction.byHorizontalIndex(ProjectorItem.getRotation(stack).ordinal()));
 				String flipped=I18n.format("chat.immersivepetroleum.info.projector.flipped."+(ProjectorItem.getFlipped(stack)?"yes":"no"));
 				
-				tooltip.add(new StringTextComponent(rotation).applyTextStyle(TextFormatting.DARK_GRAY));
-				tooltip.add(new StringTextComponent(I18n.format("chat.immersivepetroleum.info.projector.flipped", flipped)).applyTextStyle(TextFormatting.DARK_GRAY));
+				tooltip.add(new StringTextComponent(rotation).mergeStyle(TextFormatting.DARK_GRAY));
+				tooltip.add(new StringTextComponent(I18n.format("chat.immersivepetroleum.info.projector.flipped", flipped)).mergeStyle(TextFormatting.DARK_GRAY));
 				
 				ITextComponent ctrl0=new TranslationTextComponent("chat.immersivepetroleum.info.schematic.controls1")
-						.applyTextStyle(TextFormatting.DARK_GRAY);
+						.mergeStyle(TextFormatting.DARK_GRAY);
 				
 				ITextComponent ctrl1=new TranslationTextComponent("chat.immersivepetroleum.info.schematic.controls2",
-						ClientProxy.keybind_preview_flip.getLocalizedName())
-						.applyTextStyle(TextFormatting.DARK_GRAY);
+						I18n.format(ClientProxy.keybind_preview_flip.getTranslationKey()))
+						.mergeStyle(TextFormatting.DARK_GRAY);
 				
 				tooltip.add(ctrl0);
 				tooltip.add(ctrl1);
@@ -296,7 +293,7 @@ public class ProjectorItem extends IPItemBase{
 				return;
 			}
 		}
-		tooltip.add(new StringTextComponent(ChatFormatting.DARK_GRAY + I18n.format("chat.immersivepetroleum.info.schematic.noMultiblock")));
+		tooltip.add(new StringTextComponent(TextFormatting.DARK_GRAY + I18n.format("chat.immersivepetroleum.info.schematic.noMultiblock")));
 	}
 	
 	@Override
@@ -395,7 +392,7 @@ public class ProjectorItem extends IPItemBase{
 				hit = hit.add(0, 1, 0);
 			}
 			
-			Vec3i size=multiblock.getSize();
+			Vector3i size=multiblock.getSize();
 			int mHeight = size.getY();
 			int mWidth = size.getX();
 			int mDepth = size.getZ();
@@ -492,9 +489,9 @@ public class ProjectorItem extends IPItemBase{
 		ItemStack stack=playerIn.getHeldItem(handIn);
 		if(ItemNBTHelper.hasKey(stack, "pos") && playerIn.isSneaking()){
 			ItemNBTHelper.remove(stack, "pos");
-			return ActionResult.newResult(ActionResultType.SUCCESS, stack);
+			return ActionResult.resultSuccess(stack);
 		}
-		return ActionResult.newResult(ActionResultType.SUCCESS, stack);
+		return ActionResult.resultSuccess(stack);
 	}
 	
 	@SubscribeEvent
@@ -630,7 +627,7 @@ public class ProjectorItem extends IPItemBase{
 				return;
 			
 			BlockPos hit = null;
-			Vec3i size=multiblock.getSize();
+			Vector3i size=multiblock.getSize();
 			Rotation rotation = ProjectorItem.getRotation(target);
 			boolean flip = ProjectorItem.getFlipped(target);
 			boolean isPlaced = false;
@@ -715,9 +712,13 @@ public class ProjectorItem extends IPItemBase{
 					return 0;
 				});
 				
-				double px = TileEntityRendererDispatcher.staticPlayerX;
-				double py = TileEntityRendererDispatcher.staticPlayerY;
-				double pz = TileEntityRendererDispatcher.staticPlayerZ;
+				// TODO TileEntityRendererDispatcher.staticPlayer is not a thing, see if using player.getPos works aswell.
+				double px = player.getPosX();
+				double py = player.getPosY();
+				double pz = player.getPosZ();
+//				double px = TileEntityRendererDispatcher.staticPlayerX;
+//				double py = TileEntityRendererDispatcher.staticPlayerY;
+//				double pz = TileEntityRendererDispatcher.staticPlayerZ;
 				
 				GlStateManager.translated(hit.getX() - px, hit.getY() - py, hit.getZ() - pz);
 				GlStateManager.disableLighting();
@@ -726,8 +727,8 @@ public class ProjectorItem extends IPItemBase{
 				ClientUtils.bindAtlas();
 				final float flicker = (world.rand.nextInt(10) == 0) ? 0.75F : (world.rand.nextInt(20) == 0 ? 0.5F : 1F);
 				ItemStack heldStack = player.getHeldItemMainhand();
-				final MutableBlockPos min=new MutableBlockPos(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
-				final MutableBlockPos max=new MutableBlockPos(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
+				final Mutable min=new Mutable(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+				final Mutable max=new Mutable(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
 				toRender.forEach(rInfo->{
 					Template.BlockInfo info=rInfo.blockInfo;
 					float alpha = heldStack.getItem()==info.state.getBlock().asItem() ? 1.0F : .5F;
@@ -812,12 +813,12 @@ public class ProjectorItem extends IPItemBase{
 			SchematicRenderBlockEvent renderEvent = new SchematicRenderBlockEvent(multiblock, world, wPos, info.pos, info.state, info.nbt, rotation);
 			if(!MinecraftForge.EVENT_BUS.post(renderEvent)){
 				ItemStack toRender = new ItemStack(renderEvent.getState().getBlock());
-				itemRenderer.renderItem(toRender, itemRenderer.getModelWithOverrides(toRender));
+				//itemRenderer.renderItem(toRender, itemRenderer.getItemModelWithOverrides(toRender, null, null)); // TODO renderPhantom Preview
 			}
 			ShaderUtil.releaseShader();
 		}
 		
-		private static void renderOutlineBox(Vec3i min, Vec3i max, float r, float g, float b, float flicker){
+		private static void renderOutlineBox(Vector3i min, Vector3i max, float r, float g, float b, float flicker){
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder buffer = tessellator.getBuffer();
 			
@@ -873,11 +874,11 @@ public class ProjectorItem extends IPItemBase{
 			GlStateManager.enableTexture();
 		}
 		
-		private static void renderCenteredOutlineBox(Vec3i position, float r, float g, float b, float flicker, float xyzScale){
+		private static void renderCenteredOutlineBox(Vector3i position, float r, float g, float b, float flicker, float xyzScale){
 			renderCenteredOutlineBox(position, r, g, b, flicker, xyzScale, xyzScale, xyzScale);
 		}
 		
-		private static void renderCenteredOutlineBox(Vec3i position, float r, float g, float b, float flicker, float xScale, float yScale, float zScale){
+		private static void renderCenteredOutlineBox(Vector3i position, float r, float g, float b, float flicker, float xScale, float yScale, float zScale){
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder buffer = tessellator.getBuffer();
 			

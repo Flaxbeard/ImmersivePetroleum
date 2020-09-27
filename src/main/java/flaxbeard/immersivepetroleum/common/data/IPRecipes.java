@@ -27,7 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -49,7 +49,7 @@ public class IPRecipes extends RecipeProvider{
 		distillationRecipes();
 		reservoirs();
 		
-		CustomRecipeBuilder.func_218656_a(Serializers.PROJECTOR_SERIALIZER.get())
+		CustomRecipeBuilder.customRecipe(Serializers.PROJECTOR_SERIALIZER.get())
 			.build(out, rl("projector_manual").toString());
 	}
 	
@@ -193,7 +193,7 @@ public class IPRecipes extends RecipeProvider{
 			.key('B', Items.BUCKET)
 			.patternLine(" R ")
 			.patternLine("PBP")
-			.addCriterion("has_rose_red", this.hasItem(Items.RED_DYE))
+			.addCriterion("has_rose_red", hasItem(Items.RED_DYE))
 			.addCriterion("has_iron_plate", hasItem(IETags.getTagsFor(EnumMetals.IRON).plate))
 			.build(out);
 		

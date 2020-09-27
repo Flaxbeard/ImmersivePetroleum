@@ -14,15 +14,15 @@ import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.IProperty;
-import net.minecraft.state.IStateHolder;
+import net.minecraft.state.Property;
 import net.minecraft.state.StateContainer.Builder;
+import net.minecraft.state.StateHolder;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -108,7 +108,7 @@ public class IPFluid extends FlowingFluid{
 	protected IPFluid createFlowing(){
 		IPFluid flowing=new IPFluid(this.fluidName, this.stillTexture, this.flowingTexture, this.buildAttributes, false){
 			@Override
-			protected void fillStateContainer(Builder<Fluid, IFluidState> builder){
+			protected void fillStateContainer(Builder<Fluid, FluidState> builder){
 				super.fillStateContainer(builder);
 				builder.add(LEVEL_1_8);
 			}
@@ -121,19 +121,19 @@ public class IPFluid extends FlowingFluid{
 			@Override
 			protected void fillStateContainer(Builder<Block, BlockState> builder){
 				super.fillStateContainer(builder);
-				builder.add(IPFluid.this.getStateContainer().getProperties().toArray(new IProperty[0]));
+				builder.add(IPFluid.this.getStateContainer().getProperties().toArray(new Property[0]));
 			}
 			
 			@Override
-			public IFluidState getFluidState(BlockState state){
-				IFluidState baseState=super.getFluidState(state);
-				for(IProperty<?> prop: IPFluid.this.getStateContainer().getProperties())
+			public FluidState getFluidState(BlockState state){
+				FluidState baseState=super.getFluidState(state);
+				for(Property<?> prop: IPFluid.this.getStateContainer().getProperties())
 					if(prop!=FlowingFluidBlock.LEVEL)
 						baseState = withCopiedValue(prop, baseState, state);
 				return baseState;
 			}
 			
-			private <T extends IStateHolder<T>, S extends Comparable<S>> T withCopiedValue(IProperty<S> prop, T oldState, IStateHolder<?> copyFrom){
+			private <T extends StateHolder<?, T>, S extends Comparable<S>> T withCopiedValue(Property<S> prop, T oldState, StateHolder<?, ?> copyFrom){
 				return oldState.with(prop, copyFrom.get(prop));
 			}
 		};
@@ -180,7 +180,7 @@ public class IPFluid extends FlowingFluid{
 	}
 	
 	@Override
-	protected boolean canDisplace(IFluidState p_215665_1_, IBlockReader p_215665_2_, BlockPos p_215665_3_, Fluid p_215665_4_, Direction p_215665_5_){
+	protected boolean canDisplace(FluidState p_215665_1_, IBlockReader p_215665_2_, BlockPos p_215665_3_, Fluid p_215665_4_, Direction p_215665_5_){
 		return p_215665_5_ == Direction.DOWN && !isEquivalentTo(p_215665_4_);
 	}
 	
@@ -195,17 +195,17 @@ public class IPFluid extends FlowingFluid{
 	}
 	
 	@Override
-	protected BlockState getBlockState(IFluidState state){
+	protected BlockState getBlockState(FluidState state){
 		return block.getDefaultState().with(FlowingFluidBlock.LEVEL, getLevelFromState(state));
 	}
 	
 	@Override
-	public boolean isSource(IFluidState state){
+	public boolean isSource(FluidState state){
 		return state.getFluid() == source;
 	}
 	
 	@Override
-	public int getLevel(IFluidState state){
+	public int getLevel(FluidState state){
 		if(isSource(state))
 			return 8;
 		else

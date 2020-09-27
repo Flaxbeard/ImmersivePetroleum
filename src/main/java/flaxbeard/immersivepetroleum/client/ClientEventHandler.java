@@ -8,7 +8,7 @@ import java.util.Locale;
 
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.multiblocks.ManualElementMultiblock;
@@ -42,6 +42,7 @@ import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageCloseBook;
+import flaxbeard.immersivepetroleum.dummy.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -64,7 +65,8 @@ import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -157,12 +159,15 @@ public class ClientEventHandler{
 	@SubscribeEvent
 	@SuppressWarnings("unchecked")
 	public void renderLast(RenderWorldLastEvent event){
+		float partialTicks=event.getPartialTicks();
+		MatrixStack transform=event.getMatrixStack();
+		
 		Minecraft mc = Minecraft.getInstance();
 		
 		if(IPConfig.MISCELLANEOUS.sample_displayBorder.get() && mc.player != null){
 			PlayerEntity player = mc.player;
 			
-			GlStateManager.pushMatrix();
+			transform.push();
 			{
 				boolean chunkBorders = false;
 				for(Hand hand:Hand.values()){
@@ -184,14 +189,14 @@ public class ClientEventHandler{
 				if(!chunkBorders && (main || off)){
 					ColumnPos pos=CoresampleItem.getCoords(target);
 					if(pos!=null){
-						renderChunkBorder(pos.x >> 4 << 4, pos.z >> 4 << 4);
+						renderChunkBorder(transform, pos.x >> 4 << 4, pos.z >> 4 << 4);
 					}
 				}
 			}
-			GlStateManager.popMatrix();
+			transform.pop();
 		}
 		
-		GlStateManager.pushMatrix();
+		transform.push();
 		{
 			if(mc.player != null){
 				ItemStack mainItem = mc.player.getHeldItemMainhand();
@@ -220,42 +225,42 @@ public class ClientEventHandler{
 											BlockState targetState=mc.player.world.getBlockState(targetPos);
 											BlockState targetStateUp=mc.player.world.getBlockState(targetPos.up());
 											if(targetState.getMaterial().isReplaceable() && targetStateUp.getMaterial().isReplaceable()){
-												GlStateManager.pushMatrix();
+												transform.push();
 												{
 													float alpha = .5f;
 													ShaderUtil.alpha_static(alpha, mc.player.ticksExisted);
-													double px = TileEntityRendererDispatcher.staticPlayerX;
-													double py = TileEntityRendererDispatcher.staticPlayerY;
-													double pz = TileEntityRendererDispatcher.staticPlayerZ;
+													double px = mc.player.getPosX();
+													double py = mc.player.getPosY();
+													double pz = mc.player.getPosZ();
 													
-													GlStateManager.translated(targetPos.getX() - px, targetPos.getY() - py, targetPos.getZ() - pz);
-													GlStateManager.translated(0.5, -.5, .5);
+													transform.translate(targetPos.getX() - px, targetPos.getY() - py, targetPos.getZ() - pz);
+													transform.translate(0.5, -.5, .5);
 													
 													switch(targetFacing){
 														case SOUTH:
-															GlStateManager.rotated(270, 0, 1, 0);
+															transform.rotate(new Quaternion(0, 270, 0, true));
 															break;
 														case NORTH:
-															GlStateManager.rotated(90, 0, 1, 0);
+															transform.rotate(new Quaternion(0, 90, 0, true));
 															break;
 														case WEST:
-															GlStateManager.rotated(180, 0, 1, 0);
+															transform.rotate(new Quaternion(0, 180, 0, true));
 															break;
 														case EAST:
 															break;
 														default:
 													}
-													GlStateManager.translated(0.02, 0, .019);
+													transform.translate(0.02, 0, .019);
 													
-													GlStateManager.scaled(1, 1, 1);
+													transform.scale(1, 1, 1);
 													//GlStateManager.scaled(2, 2, 2);
 													
 													ItemStack toRender = new ItemStack(IPContent.Blocks.auto_lubricator);
-													itemRenderer.renderItem(toRender, itemRenderer.getModelWithOverrides(toRender));
+//													itemRenderer.renderItem(toRender, itemRenderer.getModelWithOverrides(toRender)); // FIXME
 													
 													ShaderUtil.releaseShader();
 												}
-												GlStateManager.popMatrix();
+												transform.pop();
 											}
 										}
 									}
@@ -266,10 +271,10 @@ public class ClientEventHandler{
 				}
 			}
 		}
-		GlStateManager.popMatrix();
+		transform.pop();
 	}
 	
-	public void renderChunkBorder(int chunkX, int chunkZ){
+	public void renderChunkBorder(MatrixStack transform, int chunkX, int chunkZ){
 		PlayerEntity player = ClientUtils.mc().player;
 		
 		double px = TileEntityRendererDispatcher.staticPlayerX;
@@ -280,16 +285,16 @@ public class ClientEventHandler{
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vertexbuffer = tessellator.getBuffer();
 		
-		GlStateManager.disableTexture();
-		GlStateManager.enableBlend();
-		GlStateManager.disableCull();
-		GlStateManager.blendFuncSeparate(770, 771, 1, 0);
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
+		transform.disableTexture();
+		transform.enableBlend();
+		transform.disableCull();
+		transform.blendFuncSeparate(770, 771, 1, 0);
+		transform.shadeModel(GL11.GL_SMOOTH);
 		float r = Lib.COLOUR_F_ImmersiveOrange[0];
 		float g = Lib.COLOUR_F_ImmersiveOrange[1];
 		float b = Lib.COLOUR_F_ImmersiveOrange[2];
 		vertexbuffer.setTranslation(chunkX - px, y + 2 - py, chunkZ - pz);
-		GlStateManager.lineWidth(5f);
+		transform.lineWidth(5f);
 		vertexbuffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 		vertexbuffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
 		vertexbuffer.pos(0, h, 0).color(r, g, b, .375f).endVertex();
@@ -310,10 +315,10 @@ public class ClientEventHandler{
 		vertexbuffer.pos(16, 2, 16).color(r, g, b, .375f).endVertex();
 		tessellator.draw();
 		vertexbuffer.setTranslation(0, 0, 0);
-		GlStateManager.shadeModel(GL11.GL_FLAT);
-		GlStateManager.enableCull();
-		GlStateManager.disableBlend();
-		GlStateManager.enableTexture();
+		transform.shadeModel(GL11.GL_FLAT);
+		transform.enableCull();
+		transform.disableBlend();
+		transform.enableTexture();
 	}
 	
 	static final DecimalFormat FORMATTER = new DecimalFormat("#,###.##");
@@ -562,7 +567,7 @@ public class ClientEventHandler{
 						{
 							FontRenderer font=Minecraft.getInstance().fontRenderer;
 							if(font!=null){
-								Vec3d vec=boat.getMotion();
+								Vector3d vec=boat.getMotion();
 								
 								float speed=(float)(Math.sqrt(vec.x*vec.x + vec.z*vec.z));
 								

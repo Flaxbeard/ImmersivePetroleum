@@ -9,7 +9,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.DirectionalBlockPos;
 import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
@@ -153,7 +152,8 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			return;
 		}
 		
-		ApiUtils.checkForNeedlessTicking(this);
+		// TODO checkForNeedlessTicking
+		//ApiUtils.checkForNeedlessTicking(this);
 		
 		if(this.world.isRemote || isDummy() || isRSDisabled()){
 			return;

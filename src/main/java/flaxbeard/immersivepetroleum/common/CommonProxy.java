@@ -3,10 +3,14 @@ package flaxbeard.immersivepetroleum.common;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+
 import blusunrize.immersiveengineering.common.gui.GuiHandler;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.DistillationTowerContainer;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -56,13 +60,13 @@ public class CommonProxy{
 	public void serverStarted(){
 	}
 	
-	public void renderTile(TileEntity te){
+	public void renderTile(TileEntity te, IVertexBuilder iVertexBuilder, MatrixStack transform, IRenderTypeBuffer buffer){
 	}
 	
 	public void handleEntitySound(SoundEvent soundEvent, Entity e, boolean active, float volume, float pitch){
 	}
 	
-	public void drawUpperHalfSlab(ItemStack stack){
+	public void drawUpperHalfSlab(MatrixStack transform, ItemStack stack){
 	}
 	
 	public World getClientWorld(){

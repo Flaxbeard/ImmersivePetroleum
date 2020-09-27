@@ -10,7 +10,12 @@ public enum EnumDummyType implements IStringSerializable{
 	OIL_DEPOSIT;
 	
 	@Override
-	public String getName(){
+	public String getString(){
 		return this.toString().toLowerCase(Locale.ENGLISH);
+	}
+	
+	@Deprecated
+	public String getName(){
+		return getString();
 	}
 }

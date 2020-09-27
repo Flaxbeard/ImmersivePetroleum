@@ -17,8 +17,13 @@ public enum EnumIPMetalMultiblockType implements IStringSerializable{
 	}
 	
 	@Override
-	public String getName(){
+	public String getString(){
 		return this.toString().toLowerCase(Locale.ENGLISH);
+	}
+	
+	@Deprecated
+	public String getName(){
+		return getString();
 	}
 	
 	public boolean needsCustomState(){
@@ -26,7 +31,7 @@ public enum EnumIPMetalMultiblockType implements IStringSerializable{
 	}
 	
 	public String getCustomState(){
-		String[] split = getName().split("_");
+		String[] split = getString().split("_");
 		String s = split[0].toLowerCase(Locale.ENGLISH);
 		for(int i = 1;i < split.length;i++){
 			s += split[i].substring(0, 1).toUpperCase(Locale.ENGLISH) + split[i].substring(1).toLowerCase(Locale.ENGLISH);

@@ -13,24 +13,26 @@ import blusunrize.immersiveengineering.api.wires.ConnectionPoint;
 import blusunrize.immersiveengineering.api.wires.ImmersiveConnectableTileEntity;
 import blusunrize.immersiveengineering.api.wires.WireType;
 import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler.EnergyConnector;
-import blusunrize.immersiveengineering.common.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
+import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IEForgeEnergyWrapper;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxConnector;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 import blusunrize.immersiveengineering.common.util.IESounds;
 import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameters;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -40,10 +42,11 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootParameters;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -68,11 +71,11 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	}
 	
 	public int getMaxInput(){
-		return IEConfig.MACHINES.capacitorLvInput.get();
+		return IEServerConfig.MACHINES.lvCapConfig.input.getAsInt();
 	}
 	
 	public int getMaxOutput(){
-		return IEConfig.MACHINES.capacitorLvOutput.get();
+		return IEServerConfig.MACHINES.lvCapConfig.output.getAsInt();
 	}
 	
 	private int getMaxStorage(){
@@ -103,8 +106,8 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	}
 	
 	@Override
-	public void handleUpdateTag(CompoundNBT tag){
-		read(tag);
+	public void handleUpdateTag(BlockState state, CompoundNBT tag){
+		read(state, tag);
 	}
 	
 	@Override
@@ -114,7 +117,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	
 	@Override
 	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt){
-		read(pkt.getNbtCompound());
+		read(getBlockState(), pkt.getNbtCompound());
 	}
 	
 	@Override
@@ -154,7 +157,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	}
 	
 	@Override
-	public boolean canConnectCable(WireType cableType, ConnectionPoint target, Vec3i offset){
+	public boolean canConnectCable(WireType cableType, ConnectionPoint target, Vector3i offset){
 		return cableType.getCategory().equals(WireType.LV_CATEGORY) || cableType.getCategory().equals(WireType.MV_CATEGORY);
 	}
 	
@@ -169,10 +172,10 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	}
 	
 	@Override
-	public Vec3d getConnectionOffset(Connection con, ConnectionPoint here){
+	public Vector3d getConnectionOffset(Connection con, ConnectionPoint here){
 		float xo = facing.getDirectionVec().getX() * .5f + .5f;
 		float zo = facing.getDirectionVec().getZ() * .5f + .5f;
-		return new Vec3d(xo, .5f, zo);
+		return new Vector3d(xo, .5f, zo);
 	}
 	
 	@Override
@@ -221,14 +224,14 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	}
 	
 	@Override
-	public String[] getOverlayText(PlayerEntity player, RayTraceResult mop, boolean hammer){
+	public ITextComponent[] getOverlayText(PlayerEntity player, RayTraceResult mop, boolean hammer){
 		if(Utils.isFluidRelatedItemStack(player.getHeldItem(Hand.MAIN_HAND))){
-			String s = null;
+			ITextComponent s = null;
 			if(tank.getFluid().getAmount()>0)
-				s = tank.getFluid().getDisplayName().getFormattedText() + ": " + tank.getFluidAmount() + "mB";
+				s = ((IFormattableTextComponent)tank.getFluid().getDisplayName()).appendString(": " + tank.getFluidAmount() + "mB");
 			else
-				s = I18n.format(Lib.GUI + "empty");
-			return new String[]{s};
+				s = new TranslationTextComponent(Lib.GUI + "empty");
+			return new ITextComponent[]{s};
 		}
 		return null;
 	}
@@ -282,7 +285,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	}
 	
 	@Override
-	public boolean canHammerRotate(Direction side, Vec3d hit, LivingEntity entity){
+	public boolean canHammerRotate(Direction side, Vector3d hit, LivingEntity entity){
 		return true;
 	}
 	

@@ -21,7 +21,6 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationH
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
-import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.BlockNapalm;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
@@ -30,7 +29,8 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
@@ -42,7 +42,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColumnPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -90,7 +90,7 @@ public class CommonEventHandler{
 					if(cPos!=null){
 						try{
 							World world = event.getWorld();
-							DimensionChunkCoords coords=new DimensionChunkCoords(world.getDimension().getType(), cPos.x >> 4, cPos.z >> 4);
+							DimensionChunkCoords coords=new DimensionChunkCoords(world.getDimensionKey(), cPos.x >> 4, cPos.z >> 4);
 							
 							OilWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(world, coords, false);
 							if(info!=null && info.getType() != null){
@@ -156,8 +156,8 @@ public class CommonEventHandler{
 				SpeedboatEntity boat = (SpeedboatEntity) event.getEntityBeingMounted();
 				
 				if(boat.isFireproof){
-					IFluidState fluidstate=event.getWorldObj().getBlockState(new BlockPos(boat.getPositionVec().add(0.5, 0, 0.5))).getFluidState();
-					if(fluidstate!=net.minecraft.fluid.Fluids.EMPTY && fluidstate.isTagged(FluidTags.LAVA)){
+					FluidState fluidstate=event.getWorldObj().getBlockState(new BlockPos(boat.getPositionVec().add(0.5, 0, 0.5))).getFluidState();
+					if(fluidstate!=Fluids.EMPTY.getDefaultState() && fluidstate.isTagged(FluidTags.LAVA)){
 						LivingEntity living = (LivingEntity) event.getEntityMounting();
 						
 						living.addPotionEffect(new EffectInstance(IPEffects.ANTI_DISMOUNT_FIRE, 1, 0, false, false));
@@ -180,7 +180,7 @@ public class CommonEventHandler{
 	public static void handleLubricatingMachines(World world){
 		Set<LubricatedTileInfo> toRemove = new HashSet<LubricatedTileInfo>();
 		for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
-			if(info.world == world.getDimension().getType() && world.isAreaLoaded(info.pos, 0)){
+			if(info.world == world.getDimensionKey() && world.isAreaLoaded(info.pos, 0)){
 				TileEntity te = world.getTileEntity(info.pos);
 				ILubricationHandler lubeHandler = LubricatedHandler.getHandlerForTile(te);
 				if(lubeHandler != null){
@@ -192,8 +192,8 @@ public class CommonEventHandler{
 						if(te instanceof MultiblockPartTileEntity){
 							MultiblockPartTileEntity<?> part = (MultiblockPartTileEntity<?>) te;
 							
-							BlockParticleData lubeParticle=new BlockParticleData(ParticleTypes.FALLING_DUST, Fluids.lubricant.block.getDefaultState());
-							Vec3i size=lubeHandler.getStructureDimensions();
+							BlockParticleData lubeParticle=new BlockParticleData(ParticleTypes.FALLING_DUST, IPContent.Fluids.lubricant.block.getDefaultState());
+							Vector3i size=lubeHandler.getStructureDimensions();
 							
 							int numBlocks = (int)(size.getX()*size.getY()*size.getZ()*0.25F);
 							
@@ -207,7 +207,7 @@ public class CommonEventHandler{
 									if(((MultiblockPartTileEntity<?>) te2).master() == part.master()){
 										for(Direction facing:Direction.Plane.HORIZONTAL){
 											if(world.rand.nextInt(30) == 0){// && world.getBlockState(pos.offset(facing)).getBlock().isReplaceable(world, pos.offset(facing))){
-												Vec3i direction = facing.getDirectionVec();
+												Vector3i direction = facing.getDirectionVec();
 												world.addParticle(lubeParticle,
 														pos.getX() + .5f + direction.getX() * .65f,
 														pos.getY() + 1,
@@ -263,12 +263,12 @@ public class CommonEventHandler{
 		}
 	}
 	
-	public static Map<Integer, List<BlockPos>> napalmPositions = new HashMap<>();
-	public static Map<Integer, List<BlockPos>> toRemove = new HashMap<>();
+	public static Map<ResourceLocation, List<BlockPos>> napalmPositions = new HashMap<>();
+	public static Map<ResourceLocation, List<BlockPos>> toRemove = new HashMap<>();
 	
 	@SubscribeEvent
 	public void handleNapalm(WorldTickEvent event){
-		int d = event.world.getDimension().getType().getId();
+		ResourceLocation d = event.world.getDimensionKey().getRegistryName();
 		
 		if(event.phase == Phase.START){
 			toRemove.put(d, new ArrayList<>());
@@ -276,8 +276,8 @@ public class CommonEventHandler{
 				List<BlockPos> iterate = new ArrayList<>(napalmPositions.get(d));
 				for(BlockPos position:iterate){
 					BlockState state = event.world.getBlockState(position);
-					if(state.getBlock() instanceof FlowingFluidBlock && state.getBlock() == Fluids.napalm.block){
-						((BlockNapalm) Fluids.napalm).processFire(event.world, position);
+					if(state.getBlock() instanceof FlowingFluidBlock && state.getBlock() == IPContent.Fluids.napalm.block){
+						((BlockNapalm) IPContent.Fluids.napalm).processFire(event.world, position);
 					}
 					toRemove.get(d).add(position);
 				}

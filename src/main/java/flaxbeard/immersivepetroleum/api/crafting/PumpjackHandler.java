@@ -29,10 +29,9 @@ import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -106,7 +105,7 @@ public class PumpjackHandler{
 		if(info == null || info.getType() == null || info.getType().fluidLocation == null || (info.capacity == 0) || (info.current == 0 && info.getType().replenishRate == 0))
 			return 0;
 		
-		DimensionChunkCoords coords = new DimensionChunkCoords(world.getDimension().getType(), chunkX / depositSize, chunkZ / depositSize);
+		DimensionChunkCoords coords = new DimensionChunkCoords(world.getDimensionKey(), chunkX / depositSize, chunkZ / depositSize);
 		
 		Long l = timeCache.get(coords);
 		if(l == null){
@@ -128,7 +127,7 @@ public class PumpjackHandler{
 	 * @return The OilWorldInfo corresponding w/ given chunk
 	 */
 	public static OilWorldInfo getOrCreateOilWorldInfo(World world, int chunkX, int chunkZ){
-		return getOrCreateOilWorldInfo(world, new DimensionChunkCoords(world.getDimension().getType(), chunkX, chunkZ), false);
+		return getOrCreateOilWorldInfo(world, new DimensionChunkCoords(world.getDimensionKey(), chunkX, chunkZ), false);
 	}
 	
 	/**
@@ -149,7 +148,7 @@ public class PumpjackHandler{
 		if(worldInfo == null){
 			ReservoirType res = null;
 			
-			Random r = SharedSeedRandom.seedSlimeChunk(coords.x, coords.z, world.getSeed(), 90210L);
+			Random r = SharedSeedRandom.seedSlimeChunk(coords.x, coords.z, ((ISeedReader)world).getSeed(), 90210L);
 			boolean empty = (r.nextDouble() > IPConfig.EXTRACTION.reservoir_chance.get());
 			double size = r.nextDouble();
 			int query = r.nextInt();
@@ -157,8 +156,8 @@ public class PumpjackHandler{
 			ImmersivePetroleum.log.debug("Empty? {}. Forced? {}. Size: {}, Query: {}", empty?"Yes":"No", force?"Yes":"No", size, query);
 			
 			if(!empty || force){
-				ResourceLocation biome = world.getBiomeBody(new BlockPos(coords.x << 4, 64, coords.z << 4)).getRegistryName();
-				ResourceLocation dimension=world.getDimension().getType().getRegistryName();
+				ResourceLocation biome = world.getBiome(new BlockPos(coords.x << 4, 64, coords.z << 4)).getRegistryName();
+				ResourceLocation dimension=world.getDimensionKey().getRegistryName();
 				
 				int totalWeight = getTotalWeight(dimension, biome);
 				ImmersivePetroleum.log.debug("Total Weight: "+totalWeight);
@@ -361,14 +360,10 @@ public class PumpjackHandler{
 			}
 		}
 		
-		public boolean isValidDimension(@Nonnull DimensionType dim){
-			if(dim==null) return false;
+		public boolean isValidDimension(@Nonnull World world){
+			if(world==null) return false;
 			
-			return isValidDimension(dim.getRegistryName());
-		}
-		
-		public boolean isValidDimension(@Nonnull ModDimension dim){
-			return isValidDimension(dim.getRegistryName());
+			return isValidDimension(world.getDimensionKey().getRegistryName());
 		}
 		
 		public boolean isValidDimension(@Nonnull ResourceLocation rl){
@@ -451,7 +446,7 @@ public class PumpjackHandler{
 		private ListNBT toNbt(List<ResourceLocation> list){
 			ListNBT nbtList = new ListNBT();
 			for(ResourceLocation rl:list){
-				nbtList.add(new StringNBT(rl.toString()));
+				nbtList.add(StringNBT.valueOf(rl.toString()));
 			}
 			return nbtList;
 		}

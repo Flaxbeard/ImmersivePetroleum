@@ -11,7 +11,8 @@ import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
 import com.electronwill.nightconfig.core.Config;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.multiblocks.ManualElementMultiblock;
@@ -47,7 +48,6 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEnt
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
-import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -56,7 +56,9 @@ import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.gui.ScreenManager.IScreenFactory;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
@@ -71,12 +73,14 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -100,7 +104,7 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void setup(){
-		RenderingRegistry.registerEntityRenderingHandler(SpeedboatEntity.class, SpeedboatRenderer::new);
+		RenderingRegistry.registerEntityRenderingHandler(SpeedboatEntity.TYPE, SpeedboatRenderer::new);
 	}
 	
 	@Override
@@ -185,7 +189,6 @@ public class ClientProxy extends CommonProxy{
 		//ShaderUtil.init(); // Get's initialized befor the first time it's actualy used.
 		
 		MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-		MinecraftForge.EVENT_BUS.register(new RecipeReloadListener());
 		
 		keybind_preview_flip.setKeyConflictContext(KeyConflictContext.IN_GAME);
 		ClientRegistry.registerKeyBinding(keybind_preview_flip);
@@ -361,14 +364,14 @@ public class ClientProxy extends CommonProxy{
 				String validBiomes = "";
 				for(ResourceLocation rl:type.bioWhitelist){
 					Biome bio=ForgeRegistries.BIOMES.getValue(rl);
-					validBiomes += (!validBiomes.isEmpty() ? ", " : "") + (bio != null ? bio.getDisplayName().getFormattedText() : rl);
+					validBiomes += (!validBiomes.isEmpty() ? ", " : "") + (bio != null ? bio.toString() : rl);
 				}
 				bioBLWL = I18n.format("ie.manual.entry.reservoirs.bio.valid", validBiomes);
 			}else if(type.bioBlacklist != null && type.bioBlacklist.size() > 0){
 				String invalidBiomes = "";
 				for(ResourceLocation rl:type.bioBlacklist){
 					Biome bio=ForgeRegistries.BIOMES.getValue(rl);
-					invalidBiomes += (!invalidBiomes.isEmpty() ? ", " : "") + (bio != null ? bio.getDisplayName().getFormattedText() : rl);
+					invalidBiomes += (!invalidBiomes.isEmpty() ? ", " : "") + (bio != null ? bio.toString() : rl);
 				}
 				bioBLWL = I18n.format("ie.manual.entry.reservoirs.bio.invalid", invalidBiomes);
 			}else{
@@ -412,9 +415,9 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void postInit(){
-		ClientRegistry.bindTileEntitySpecialRenderer(DistillationTowerTileEntity.class, new MultiblockDistillationTowerRenderer());
-		ClientRegistry.bindTileEntitySpecialRenderer(PumpjackTileEntity.class, new MultiblockPumpjackRenderer());
-		ClientRegistry.bindTileEntitySpecialRenderer(AutoLubricatorTileEntity.class, new AutoLubricatorRenderer());
+		ClientRegistry.bindTileEntityRenderer(DistillationTowerTileEntity.TYPE, MultiblockDistillationTowerRenderer::new);
+		ClientRegistry.bindTileEntityRenderer(PumpjackTileEntity.TYPE, MultiblockPumpjackRenderer::new);
+		ClientRegistry.bindTileEntityRenderer(AutoLubricatorTileEntity.TYPE, AutoLubricatorRenderer::new);
 	}
 	
 	@SubscribeEvent(priority = EventPriority.LOWEST)
@@ -422,16 +425,19 @@ public class ClientProxy extends CommonProxy{
 		ModelResourceLocation mLoc = new ModelResourceLocation(IEBlocks.StoneDecoration.coresample.getRegistryName(), "inventory");
 		IBakedModel model=event.getModelRegistry().get(mLoc);
 		if(model instanceof ModelCoresample){
+			// It'll be a while until that is in working conditions again
 			//event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
 		}
 	}
 	
-	public void renderTile(TileEntity te){
+	@Override
+	public void renderTile(TileEntity te, IVertexBuilder iVertexBuilder, MatrixStack transform, IRenderTypeBuffer buffer){
+		TileEntityRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer((TileEntity) te);
 		
 		if(te instanceof PumpjackTileEntity){
-			GlStateManager.pushMatrix();
-			GlStateManager.rotatef(-90, 0, 1, 0);
-			GlStateManager.translatef(1, 1, -2);
+			transform.push();
+			transform.rotate(new Quaternion(0, -90, 0, true));
+			transform.translate(1, 1, -2);
 			
 			float pt = 0;
 			if(Minecraft.getInstance().player != null){
@@ -439,44 +445,32 @@ public class ClientProxy extends CommonProxy{
 				pt = Minecraft.getInstance().getRenderPartialTicks();
 			}
 			
-			TileEntityRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer((TileEntity) te);
-			
-			tesr.render((TileEntity) te, 0, 0, 0, pt, 0);
-			GlStateManager.popMatrix();
+			tesr.render(te, pt, transform, buffer, -1, 0);
+			transform.pop();
 		}else{
-			GlStateManager.pushMatrix();
-			GlStateManager.rotatef(-90, 0, 1, 0);
-			GlStateManager.translatef(0, 1, -4);
+			transform.push();
+			transform.rotate(new Quaternion(0, -90, 0, true));
+			transform.translate(0, 1, -4);
 			
-			TileEntityRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer((TileEntity) te);
-			
-			tesr.render((TileEntity) te, 0, 0, 0, 0, 0);
-			GlStateManager.popMatrix();
+			tesr.render(te, 0, transform, buffer, -1, 0);
+			transform.pop();
 		}
 	}
-
+	
 	@Override
-	public void drawUpperHalfSlab(ItemStack stack){
+	public void drawUpperHalfSlab(MatrixStack transform, ItemStack stack){
 		
 		// Render slabs on top half
 		BlockRendererDispatcher blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
 		BlockState state = IEBlocks.MetalDecoration.steelScaffolding.get(MetalScaffoldingType.STANDARD).getDefaultState();
 		IBakedModel model = blockRenderer.getBlockModelShapes().getModel(state);
 		
-		GlStateManager.pushMatrix();
-		GlStateManager.translatef(0.0F, 0.5F, 1.0F);
-		RenderHelper.disableStandardItemLighting();
-		GlStateManager.blendFunc(770, 771);
-		GlStateManager.enableBlend();
-		GlStateManager.disableCull();
-		if(Minecraft.isAmbientOcclusionEnabled()){
-			GlStateManager.shadeModel(7425);
-		}else{
-			GlStateManager.shadeModel(7424);
-		}
+		IRenderTypeBuffer.Impl buffers = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
 		
-		blockRenderer.getBlockModelRenderer().renderModelBrightness(model, state, 0.75F, false);
-		GlStateManager.popMatrix();
+		transform.push();
+		transform.translate(0.0F, 0.5F, 1.0F);
+		blockRenderer.getBlockModelRenderer().renderModel(transform.getLast(), buffers.getBuffer(RenderType.getSolid()), state, model, 1.0F, 1.0F, 1.0F, -1, -1, EmptyModelData.INSTANCE);
+		transform.pop();
 	}
 	
 	@Override

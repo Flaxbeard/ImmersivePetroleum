@@ -2,8 +2,6 @@ package flaxbeard.immersivepetroleum.common.lubehandlers;
 
 import java.util.Iterator;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-
 import blusunrize.immersiveengineering.api.crafting.CrusherRecipe;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity.MultiblockProcess;
@@ -12,6 +10,7 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationH
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
+import flaxbeard.immersivepetroleum.dummy.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
@@ -21,16 +20,16 @@ import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.Direction.AxisDirection;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class CrusherLubricationHandler implements ILubricationHandler<CrusherTileEntity>{
-	private static Vec3i size=new Vec3i(3,3,5);
+	private static Vector3i size=new Vector3i(3,3,5);
 	
 	@Override
-	public Vec3i getStructureDimensions(){
+	public Vector3i getStructureDimensions(){
 		return size;
 	}
 	
@@ -121,7 +120,7 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 		}
 		
 		GlStateManager.translatef(0, -1, 0);
-		Vec3i offset = mbte.getPos().subtract(lubricator.getPos());
+		Vector3i offset = mbte.getPos().subtract(lubricator.getPos());
 		GlStateManager.translatef(offset.getX(), offset.getY(), offset.getZ());
 		
 		Direction rotation = mbte.getFacing();

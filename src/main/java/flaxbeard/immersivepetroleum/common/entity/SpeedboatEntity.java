@@ -2,8 +2,6 @@ package flaxbeard.immersivepetroleum.common.entity;
 
 import java.util.List;
 
-import javax.vecmath.Vector2f;
-
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.util.IESounds;
 import blusunrize.immersiveengineering.common.util.Utils;
@@ -30,7 +28,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -42,6 +40,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.play.client.CSteerBoatPacket;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.Hand;
@@ -52,7 +51,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
@@ -285,7 +285,7 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 						if(isPlayer){
 							PlayerEntity player = (PlayerEntity) source.getImmediateSource();
 							if(!player.addItemStackToInventory(stack)){
-								ItemEntity itemEntity = new ItemEntity(this.world, player.posX, player.posY, player.posZ, stack);
+								ItemEntity itemEntity = new ItemEntity(this.world, player.getPosX(), player.getPosY(), player.getPosZ(), stack);
 								itemEntity.setNoPickupDelay();
 								this.world.addEntity(itemEntity);
 							}
@@ -322,12 +322,12 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	}
 	
 	@Override
-	public boolean processInitialInteract(PlayerEntity player, Hand hand){
+	public ActionResultType processInitialInteract(PlayerEntity player, Hand hand){
 		ItemStack stack = player.getHeldItem(hand);
 		
 		if(stack!=ItemStack.EMPTY && stack.getItem() instanceof DebugItem){
 			((DebugItem)stack.getItem()).onSpeedboatClick(this, player, stack);
-			return true;
+			return ActionResultType.SUCCESS;
 		}
 		
 		if(Utils.isFluidRelatedItemStack(stack)){
@@ -347,15 +347,15 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 				
 				setContainedFluid(tank.getFluid());
 			}
-			return true;
+			return ActionResultType.SUCCESS;
 		}
 		
 		if(!this.world.isRemote && !player.isSneaking() && this.outOfControlTicks < 60.0F && !player.isRidingOrBeingRiddenBy(this)){
 			player.startRiding(this);
-			return true;
+			return ActionResultType.SUCCESS;
 		}
 		
-		return false;
+		return ActionResultType.FAIL;
 	}
 	
 	@Override
@@ -387,9 +387,9 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 			this.setDamageTaken(this.getDamageTaken() - 1.0F);
 		}
 		
-		this.prevPosX = this.posX;
-		this.prevPosY = this.posY;
-		this.prevPosZ = this.posZ;
+		this.prevPosX = this.getPosX();
+		this.prevPosY = this.getPosY();
+		this.prevPosZ = this.getPosZ();
 		
 		{ // From Entity.tick()
 			if(!this.world.isRemote){
@@ -412,7 +412,7 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 			
 			this.move(MoverType.SELF, this.getMotion());
 		}else{
-			this.setMotion(Vec3d.ZERO);
+			this.setMotion(Vector3d.ZERO);
 		}
 		
 		this.updateRocking();
@@ -427,26 +427,26 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 				lastMoving = moving;
 				
 				if(this.forwardInputDown && this.world.rand.nextInt(2) == 0){
-					if(inLava){
+					if(isInLava()){
 						if(this.world.rand.nextInt(3) == 0){
 							float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
 							float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
 							float yO = .4F + (world.rand.nextFloat() - .5F) * .3F;
-							Vec3d motion=getMotion();
-							world.addParticle(ParticleTypes.LAVA, posX - xO * 1.5F, posY + yO, posZ - zO * 1.5F, -2 * motion.getX(), 0, -2 * motion.getZ());
+							Vector3d motion=getMotion();
+							world.addParticle(ParticleTypes.LAVA, getPosX() - xO * 1.5F, getPosY() + yO, getPosZ() - zO * 1.5F, -2 * motion.getX(), 0, -2 * motion.getZ());
 						}
 					}else{
 						float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
 						float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
 						float yO = .1F + (world.rand.nextFloat() - .5F) * .3F;
-						world.addParticle(ParticleTypes.BUBBLE, posX - xO * 1.5F, posY + yO, posZ - zO * 1.5F, 0, 0, 0);
+						world.addParticle(ParticleTypes.BUBBLE, getPosX() - xO * 1.5F, getPosY() + yO, getPosZ() - zO * 1.5F, 0, 0, 0);
 					}
 				}
 				if(isBoosting && this.world.rand.nextInt(2) == 0){
 					float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
 					float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
 					float yO = .8F + (world.rand.nextFloat() - .5F) * .3F;
-					world.addParticle(ParticleTypes.SMOKE, posX - xO * 1.3F, posY + yO, posZ - zO * 1.3F, 0, 0, 0);
+					world.addParticle(ParticleTypes.SMOKE, getPosX() - xO * 1.3F, getPosY() + yO, getPosZ() - zO * 1.3F, 0, 0, 0);
 				}
 			}else{
 				ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, false, .5f, 0.5F);
@@ -471,14 +471,14 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 		
 		float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F));
 		float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F));
-		Vector2f vec = new Vector2f(xO, zO);
+		Vector3f vec = new Vector3f(xO, zO, 0.0F);
 		vec.normalize();
 		
 		if(this.hasIcebreaker && !isEmergency()){
 			AxisAlignedBB bb=getBoundingBox().grow(0.1);
-			BlockPos.PooledMutableBlockPos mutableBlockPos0 = BlockPos.PooledMutableBlockPos.retain(bb.minX + 0.001D, bb.minY + 0.001D, bb.minZ + 0.001D);
-			BlockPos.PooledMutableBlockPos mutableBlockPos1 = BlockPos.PooledMutableBlockPos.retain(bb.maxX - 0.001D, bb.maxY - 0.001D, bb.maxZ - 0.001D);
-			BlockPos.PooledMutableBlockPos mutableBlockPos2 = BlockPos.PooledMutableBlockPos.retain();
+			BlockPos.Mutable mutableBlockPos0 = new BlockPos.Mutable(bb.minX + 0.001D, bb.minY + 0.001D, bb.minZ + 0.001D);
+			BlockPos.Mutable mutableBlockPos1 = new BlockPos.Mutable(bb.maxX - 0.001D, bb.maxY - 0.001D, bb.maxZ - 0.001D);
+			BlockPos.Mutable mutableBlockPos2 = new BlockPos.Mutable();
 			
 			if(this.world.isAreaLoaded(mutableBlockPos0, mutableBlockPos1)){
 				for(int i = mutableBlockPos0.getX();i <= mutableBlockPos1.getX();++i){
@@ -487,7 +487,7 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 							mutableBlockPos2.setPos(i, j, k);
 							BlockState BlockState = this.world.getBlockState(mutableBlockPos2);
 							
-							Vector2f vec2 = new Vector2f((float) (i + 0.5f - posX), (float) (k + 0.5f - posZ));
+							Vector3f vec2 = new Vector3f((float) (i + 0.5f - getPosX()), (float) (k + 0.5f - getPosZ()), 0.0F);
 							vec2.normalize();
 							
 							float sim = vec2.dot(vec);
@@ -518,15 +518,15 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 						
 						if(this.hasIcebreaker){
 							if(entity instanceof LivingEntity && !(entity instanceof PlayerEntity) && this.getControllingPassenger() instanceof PlayerEntity){
-								Vector2f vec2 = new Vector2f((float) (entity.posX - posX), (float) (entity.posZ - posZ));
+								Vector3f vec2 = new Vector3f((float) (entity.getPosX() - getPosX()), (float) (entity.getPosZ() - getPosZ()), 0.0F);
 								vec2.normalize();
 								
 								float sim = vec2.dot(vec);
 								
 								if(sim > .5f){
-									Vec3d motion=entity.getMotion();
+									Vector3d motion=entity.getMotion();
 									entity.attackEntityFrom(DamageSource.causePlayerDamage((PlayerEntity) this.getControllingPassenger()), 4);
-									entity.setMotion(new Vec3d(motion.x+(vec2.x * .75F), motion.y, motion.z+(vec2.y * .75F)));
+									entity.setMotion(new Vector3d(motion.x+(vec2.getX() * .75F), motion.y, motion.z+(vec2.getY() * .75F)));
 								}
 							}
 						}
@@ -597,7 +597,7 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 					setPaddleState(false, false);
 				}
 				
-				Vec3d motion=this.getMotion().add((double) (MathHelper.sin(-this.rotationYaw * ((float) Math.PI / 180F)) * f), 0.0D, (double) (MathHelper.cos(this.rotationYaw * ((float) Math.PI / 180F)) * f));
+				Vector3d motion=this.getMotion().add((double) (MathHelper.sin(-this.rotationYaw * ((float) Math.PI / 180F)) * f), 0.0D, (double) (MathHelper.cos(this.rotationYaw * ((float) Math.PI / 180F)) * f));
 				
 				if(this.leftInputDown || this.rightInputDown){
 					float speed = (float)Math.sqrt(motion.x * motion.x + motion.z * motion.z);
@@ -670,7 +670,7 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 			String s = null;
 			FluidStack stack = getContainedFluid();
 			if(stack != FluidStack.EMPTY){
-				s = stack.getDisplayName().getFormattedText() + ": " + stack.getAmount() + "mB";
+				s = stack.getDisplayName().getString() + ": " + stack.getAmount() + "mB";
 			}else{
 				s = I18n.format(Lib.GUI + "empty");
 			}
@@ -689,34 +689,31 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 		int l = MathHelper.ceil(axisalignedbb.maxY - this.lastYd);
 		int i1 = MathHelper.floor(axisalignedbb.minZ);
 		int j1 = MathHelper.ceil(axisalignedbb.maxZ);
+		BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
 		
-		try(BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain()){
-			label161: for(int k1 = k;k1 < l;++k1){
-				float f = 0.0F;
-				
-				for(int l1 = i;l1 < j;++l1){
-					for(int i2 = i1;i2 < j1;++i2){
-						blockpos$pooledmutableblockpos.setPos(l1, k1, i2);
-						IFluidState ifluidstate = this.world.getFluidState(blockpos$pooledmutableblockpos);
-						if(ifluidstate.isTagged(FluidTags.WATER) || (this.isFireproof && ifluidstate.isTagged(FluidTags.LAVA))){
-							f = Math.max(f, ifluidstate.getActualHeight(this.world, blockpos$pooledmutableblockpos));
-						}
-						
-						if(f >= 1.0F){
-							continue label161;
-						}
+		label39: for(int k1 = k;k1 < l;++k1){
+			float f = 0.0F;
+			
+			for(int l1 = i;l1 < j;++l1){
+				for(int i2 = i1;i2 < j1;++i2){
+					blockpos$mutable.setPos(l1, k1, i2);
+					FluidState fluidstate = this.world.getFluidState(blockpos$mutable);
+					if(fluidstate.isTagged(FluidTags.WATER) || (this.isFireproof && fluidstate.isTagged(FluidTags.LAVA))){
+						f = Math.max(f, fluidstate.getActualHeight(this.world, blockpos$mutable));
 					}
-				}
-				
-				if(f < 1.0F){
-					float f2 = (float) blockpos$pooledmutableblockpos.getY() + f;
-					return f2;
+					
+					if(f >= 1.0F){
+						continue label39;
+					}
 				}
 			}
 			
-			float f1 = (float) (l + 1);
-			return f1;
+			if(f < 1.0F){
+				return (float) blockpos$mutable.getY() + f;
+			}
 		}
+		
+		return (float) (l + 1);
 	}
 	
 	@Override
@@ -730,18 +727,17 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 		int j1 = MathHelper.ceil(axisalignedbb.maxZ);
 		boolean flag = false;
 		this.waterLevel = Double.MIN_VALUE;
+		BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
 		
-		try(BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain()){
-			for(int k1 = i;k1 < j;++k1){
-				for(int l1 = k;l1 < l;++l1){
-					for(int i2 = i1;i2 < j1;++i2){
-						blockpos$pooledmutableblockpos.setPos(k1, l1, i2);
-						IFluidState ifluidstate = this.world.getFluidState(blockpos$pooledmutableblockpos);
-						if(ifluidstate.isTagged(FluidTags.WATER) || (this.isFireproof && ifluidstate.isTagged(FluidTags.LAVA))){
-							float f = (float) l1 + ifluidstate.getActualHeight(this.world, blockpos$pooledmutableblockpos);
-							this.waterLevel = Math.max((double) f, this.waterLevel);
-							flag |= axisalignedbb.minY < (double) f;
-						}
+		for(int k1 = i;k1 < j;++k1){
+			for(int l1 = k;l1 < l;++l1){
+				for(int i2 = i1;i2 < j1;++i2){
+					blockpos$mutable.setPos(k1, l1, i2);
+					FluidState fluidstate = this.world.getFluidState(blockpos$mutable);
+					if(fluidstate.isTagged(FluidTags.WATER) || (this.isFireproof && fluidstate.isTagged(FluidTags.LAVA))){
+						float f = (float) l1 + fluidstate.getActualHeight(this.world, blockpos$mutable);
+						this.waterLevel = Math.max((double) f, this.waterLevel);
+						flag |= axisalignedbb.minY < (double) f;
 					}
 				}
 			}
@@ -761,21 +757,19 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 		int i1 = MathHelper.floor(axisalignedbb.minZ);
 		int j1 = MathHelper.ceil(axisalignedbb.maxZ);
 		boolean flag = false;
+		BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
 		
-		try(BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain()){
-			for(int k1 = i;k1 < j;++k1){
-				for(int l1 = k;l1 < l;++l1){
-					for(int i2 = i1;i2 < j1;++i2){
-						blockpos$pooledmutableblockpos.setPos(k1, l1, i2);
-						IFluidState ifluidstate = this.world.getFluidState(blockpos$pooledmutableblockpos);
-						if((ifluidstate.isTagged(FluidTags.WATER) || ((this.isFireproof && ifluidstate.isTagged(FluidTags.LAVA)))) && d0 < (double) ((float) blockpos$pooledmutableblockpos.getY() + ifluidstate.getActualHeight(this.world, blockpos$pooledmutableblockpos))){
-							if(!ifluidstate.isSource()){
-								BoatEntity.Status boatentity$status = BoatEntity.Status.UNDER_FLOWING_WATER;
-								return boatentity$status;
-							}
-							
-							flag = true;
+		for(int k1 = i;k1 < j;++k1){
+			for(int l1 = k;l1 < l;++l1){
+				for(int i2 = i1;i2 < j1;++i2){
+					blockpos$mutable.setPos(k1, l1, i2);
+					FluidState fluidstate = this.world.getFluidState(blockpos$mutable);
+					if((fluidstate.isTagged(FluidTags.WATER) || ((this.isFireproof && fluidstate.isTagged(FluidTags.LAVA)))) && d0 < (double) ((float) blockpos$mutable.getY() + fluidstate.getActualHeight(this.world, blockpos$mutable))){
+						if(!fluidstate.isSource()){
+							return BoatEntity.Status.UNDER_FLOWING_WATER;
 						}
+						
+						flag = true;
 					}
 				}
 			}

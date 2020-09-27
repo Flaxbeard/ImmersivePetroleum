@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;
@@ -15,6 +15,8 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -52,7 +54,7 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 	List<BakedQuad> list;
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderFormedStructure(){
+	public void renderFormedStructure(MatrixStack transform, IRenderTypeBuffer buffer){
 		if(this.te == null){
 			this.te = new PumpjackTileEntity();
 			this.te.setOverrideState(IPContent.Multiblock.pumpjack.getDefaultState().with(IEProperties.FACING_HORIZONTAL, Direction.WEST));
@@ -71,24 +73,20 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 				BufferBuilder buf=tes.getBuffer();
 				
 				buf.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-				ClientUtils.renderModelTESRFast(this.list, buf, world, te.getPos(), -1);
+				//buffer.getBuffer(RenderType.getSolid());
+				//ClientUtils.renderModelTESRFast(this.list, buf, world, te.getPos(), -1);
+				ClientUtils.renderModelTESRFast(this.list, buffer.getBuffer(RenderType.getSolid()), transform, 15);
 				
-				GlStateManager.pushMatrix();
-				{
-					GlStateManager.disableCull();
-					GlStateManager.disableLighting();
-					
-					GlStateManager.translated(0.0, -1.0, -1);
-					ImmersivePetroleum.proxy.renderTile(this.te);
-					
-					GlStateManager.translated(1.0, 1.0, 1.0);
-					ClientUtils.bindAtlas();
-					tes.draw();
-					
-					GlStateManager.enableLighting();
-					GlStateManager.enableCull();
-				}
-				GlStateManager.popMatrix();
+				transform.push();
+				transform.translate(0.0, -1.0, -1);
+				ImmersivePetroleum.proxy.renderTile(this.te, buffer.getBuffer(RenderType.getSolid()), transform, buffer);
+				transform.pop();
+				
+				transform.push();
+				transform.translate(1.0, 1.0, 1.0);
+				ClientUtils.bindAtlas();
+				tes.draw();
+				transform.pop();
 			}
 		}
 	}

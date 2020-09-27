@@ -7,8 +7,9 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -60,7 +61,7 @@ public class IPPacketHandler
 	}
 	
 	/** Sends a packet to everyone in the specified dimension. <pre>Server -> Client</pre> */
-	public static <MSG> void sendToDimension(DimensionType dim, MSG message){
+	public static <MSG> void sendToDimension(RegistryKey<World> dim, MSG message){
 		if(message == null) return;
 		
 		INSTANCE.send(PacketDistributor.DIMENSION.with(() -> dim), message);

@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
-public class IPBlockInterfaces
-{
-
+public class IPBlockInterfaces{
+	
 }

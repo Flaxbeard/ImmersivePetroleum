@@ -9,7 +9,12 @@ public enum EnumIPMetalDevice implements IStringSerializable{
 	AUTOMATIC_LUBRICATOR;
 	
 	@Override
-	public String getName(){
+	public String getString(){
 		return this.toString().toLowerCase(Locale.ENGLISH);
+	}
+	
+	@Deprecated
+	public String getName(){
+		return getString();
 	}
 }

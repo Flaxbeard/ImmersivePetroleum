@@ -35,8 +35,10 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -55,21 +57,21 @@ public class DebugItem extends IPItemBase{
 	
 	@Override
 	public ITextComponent getDisplayName(ItemStack stack){
-		return new StringTextComponent("IP Debugging Tool").applyTextStyle(TextFormatting.LIGHT_PURPLE);
+		return new StringTextComponent("IP Debugging Tool").mergeStyle(TextFormatting.LIGHT_PURPLE);
 	}
 	
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		tooltip.add(new StringTextComponent("[Shift + Scroll-UP/DOWN] Change mode.").applyTextStyle(TextFormatting.GRAY));
+		tooltip.add(new StringTextComponent("[Shift + Scroll-UP/DOWN] Change mode.").mergeStyle(TextFormatting.GRAY));
 		Modes mode=getMode(stack);
 		if(mode==Modes.DISABLED){
-			tooltip.add(new StringTextComponent("  Disabled.").applyTextStyle(TextFormatting.DARK_GRAY));
+			tooltip.add(new StringTextComponent("  Disabled.").mergeStyle(TextFormatting.DARK_GRAY));
 		}else{
-			tooltip.add(new StringTextComponent("  "+mode.display).applyTextStyle(TextFormatting.DARK_GRAY));
+			tooltip.add(new StringTextComponent("  "+mode.display).mergeStyle(TextFormatting.DARK_GRAY));
 		}
 		
-		tooltip.add(new StringTextComponent("You're not supposed to have this.").applyTextStyle(TextFormatting.DARK_RED));
+		tooltip.add(new StringTextComponent("You're not supposed to have this.").mergeStyle(TextFormatting.DARK_RED));
 		super.addInformation(stack, worldIn, tooltip, flagIn);
 	}
 	
@@ -87,13 +89,13 @@ public class DebugItem extends IPItemBase{
 					int r=5;
 					int cx=(pos.getX() >> 4);
 					int cz=(pos.getZ() >> 4);
-					ImmersivePetroleum.log.info(worldIn.dimension.getType());
+					ImmersivePetroleum.log.info(worldIn.getDimensionKey());
 					for(int i = -r;i <= r;i++){
 						for(int j = -r;j <= r;j++){
 							int x=cx+i;
 							int z=cz+j;
 							
-							DimensionChunkCoords coords=new DimensionChunkCoords(worldIn.dimension.getType(), x, z);
+							DimensionChunkCoords coords=new DimensionChunkCoords(worldIn.getDimensionKey(), x, z);
 							
 							OilWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
 							if(info != null && info.getType() != null){
@@ -132,7 +134,7 @@ public class DebugItem extends IPItemBase{
 				}
 				case RESERVOIR:{
 					BlockPos pos=playerIn.getPosition();
-					DimensionChunkCoords coords=new DimensionChunkCoords(worldIn.dimension.getType(), (pos.getX() >> 4), (pos.getZ() >> 4));
+					DimensionChunkCoords coords=new DimensionChunkCoords(worldIn.getDimensionKey(), (pos.getX() >> 4), (pos.getZ() >> 4));
 					
 					int last=PumpjackHandler.reservoirsCache.size();
 					OilWorldInfo info=PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
@@ -192,25 +194,25 @@ public class DebugItem extends IPItemBase{
 						tower=tower.master();
 					}
 					
-					ITextComponent tankInText=new StringTextComponent("\nInputFluids: ");
+					IFormattableTextComponent tankInText=new StringTextComponent("\nInputFluids: ");
 					{
 						MultiFluidTank tank=tower.tanks[DistillationTowerTileEntity.TANK_OUTPUT];
 						for(int i=0;i<tank.fluids.size();i++){
 							FluidStack fstack=tank.fluids.get(i);
-							tankInText.appendText(" ").appendSibling(fstack.getDisplayName()).appendText(" "+fstack.getAmount()+"mB,");
+							tankInText.appendString(" ").append(fstack.getDisplayName()).appendString(" "+fstack.getAmount()+"mB,");
 						}
 					}
 					
-					ITextComponent tankOutText=new StringTextComponent("\nOutputFluids: ");
+					IFormattableTextComponent tankOutText=new StringTextComponent("\nOutputFluids: ");
 					{
 						MultiFluidTank tank=tower.tanks[DistillationTowerTileEntity.TANK_INPUT];
 						for(int i=0;i<tank.fluids.size();i++){
 							FluidStack fstack=tank.fluids.get(i);
-							tankOutText.appendText(" ").appendSibling(fstack.getDisplayName()).appendText(" "+fstack.getAmount()+"mB,");
+							tankOutText.appendString(" ").append(fstack.getDisplayName()).appendString(" "+fstack.getAmount()+"mB,");
 						}
 					}
 					
-					player.sendMessage(new StringTextComponent("DistillationTower:\n").appendSibling(tankInText).appendSibling(tankOutText));
+					player.sendMessage(new StringTextComponent("DistillationTower:\n").append(tankInText).append(tankOutText), Util.DUMMY_UUID);
 				}
 				return ActionResultType.PASS;
 			}
@@ -223,10 +225,10 @@ public class DebugItem extends IPItemBase{
 					
 					if(!tower.enableStepping){
 						tower.enableStepping=true;
-						player.sendMessage(new StringTextComponent("Enabled Stepping."));
+						player.sendMessage(new StringTextComponent("Enabled Stepping."), Util.DUMMY_UUID);
 					}else{
 						tower.step++;
-						player.sendMessage(new StringTextComponent("Ticked."));
+						player.sendMessage(new StringTextComponent("Ticked."), Util.DUMMY_UUID);
 					}
 				}
 				return ActionResultType.PASS;
@@ -235,29 +237,29 @@ public class DebugItem extends IPItemBase{
 				if(te instanceof PoweredMultiblockTileEntity && !context.getWorld().isRemote){ // Generic
 					PoweredMultiblockTileEntity<?,?> poweredMultiblock=(PoweredMultiblockTileEntity<?,?>)te;
 					
-					Vec3i loc=poweredMultiblock.posInMultiblock;
+					Vector3i loc=poweredMultiblock.posInMultiblock;
 					Set<BlockPos> energyInputs=poweredMultiblock.getEnergyPos();
 					Set<BlockPos> redstoneInputs=poweredMultiblock.getRedstonePos();
 					
-					ITextComponent out=new StringTextComponent("["+loc.getX()+" "+loc.getY()+" "+loc.getZ()+"]: ");
+					IFormattableTextComponent out=new StringTextComponent("["+loc.getX()+" "+loc.getY()+" "+loc.getZ()+"]: ");
 					
 					for(BlockPos pos:energyInputs){
 						if(pos.equals(loc)){
-							out.appendText("Energy Port.");
+							out.appendString("Energy Port.");
 						}
 					}
 					
 					for(BlockPos pos:redstoneInputs){
 						if(pos.equals(loc)){
-							out.appendText("Redstone Port.");
+							out.appendString("Redstone Port.");
 						}
 					}
 					
 					if(poweredMultiblock.offsetToMaster.equals(BlockPos.ZERO)){
-						out.appendText("Master.");
+						out.appendString("Master.");
 					}
 					
-					out.appendText(" (Facing: "+poweredMultiblock.getFacing()+", Block-Face: "+context.getFace()+")");
+					out.appendString(" (Facing: "+poweredMultiblock.getFacing()+", Block-Face: "+context.getFace()+")");
 					
 					player.sendStatusMessage(out, true);
 					return ActionResultType.SUCCESS;
@@ -268,18 +270,18 @@ public class DebugItem extends IPItemBase{
 				if(te instanceof AutoLubricatorTileEntity){
 					AutoLubricatorTileEntity lube=(AutoLubricatorTileEntity)te;
 					
-					ITextComponent out=new StringTextComponent(context.getWorld().isRemote?"CLIENT: ":"SERVER: ");
-					out.appendText(lube.facing+", ");
-					out.appendText((lube.isActive?"Active":"Inactive")+", ");
-					out.appendText((lube.isSlave?"Slave":"Master")+", ");
-					out.appendText((lube.predictablyDraining?"Predictably Draining, ":""));
+					IFormattableTextComponent out=new StringTextComponent(context.getWorld().isRemote?"CLIENT: ":"SERVER: ");
+					out.appendString(lube.facing+", ");
+					out.appendString((lube.isActive?"Active":"Inactive")+", ");
+					out.appendString((lube.isSlave?"Slave":"Master")+", ");
+					out.appendString((lube.predictablyDraining?"Predictably Draining, ":""));
 					if(!lube.tank.isEmpty()){
-						out.appendSibling(lube.tank.getFluid().getDisplayName()).appendText(" "+lube.tank.getFluidAmount()+"/"+lube.tank.getCapacity()+"mB");
+						out.append(lube.tank.getFluid().getDisplayName()).appendString(" "+lube.tank.getFluidAmount()+"/"+lube.tank.getCapacity()+"mB");
 					}else{
-						out.appendText("Empty");
+						out.appendString("Empty");
 					}
 					
-					player.sendMessage(out);
+					player.sendMessage(out, Util.DUMMY_UUID);
 					
 					return ActionResultType.SUCCESS;
 				}
@@ -289,12 +291,12 @@ public class DebugItem extends IPItemBase{
 				if(te instanceof GasGeneratorTileEntity){
 					GasGeneratorTileEntity gas=(GasGeneratorTileEntity)te;
 					
-					ITextComponent out=new StringTextComponent(context.getWorld().isRemote?"CLIENT: ":"SERVER: ");
-					out.appendText(gas.getFacing()+", ");
-					out.appendText(gas.getEnergyStored(null)+", ");
-					out.appendText(gas.getMaxEnergyStored(null)+", ");
+					IFormattableTextComponent out=new StringTextComponent(context.getWorld().isRemote?"CLIENT: ":"SERVER: ");
+					out.appendString(gas.getFacing()+", ");
+					out.appendString(gas.getEnergyStored(null)+", ");
+					out.appendString(gas.getMaxEnergyStored(null)+", ");
 					
-					player.sendMessage(out);
+					player.sendMessage(out, Util.DUMMY_UUID);
 					
 					return ActionResultType.SUCCESS;
 				}
@@ -311,28 +313,28 @@ public class DebugItem extends IPItemBase{
 			return;
 		}
 		
-		ITextComponent textOut = new StringTextComponent("-- Speedboat --\n");
+		IFormattableTextComponent textOut = new StringTextComponent("-- Speedboat --\n");
 		
 		FluidStack fluid = speedboatEntity.getContainedFluid();
 		if(fluid == FluidStack.EMPTY){
-			textOut.appendText("Tank: Empty");
+			textOut.appendString("Tank: Empty");
 		}else{
-			textOut.appendText("Tank: " + fluid.getAmount() + "/" + speedboatEntity.getMaxFuel() + "mB of ").appendSibling(fluid.getDisplayName());
+			textOut.appendString("Tank: " + fluid.getAmount() + "/" + speedboatEntity.getMaxFuel() + "mB of ").append(fluid.getDisplayName());
 		}
 		
-		ITextComponent upgradesText = new StringTextComponent("\n");
+		IFormattableTextComponent upgradesText = new StringTextComponent("\n");
 		NonNullList<ItemStack> upgrades = speedboatEntity.getUpgrades();
 		int i = 0;
 		for(ItemStack upgrade:upgrades){
 			if(upgrade == null || upgrade == ItemStack.EMPTY){
-				upgradesText.appendText("Upgrade " + (++i) + ": Empty\n");
+				upgradesText.appendString("Upgrade " + (++i) + ": Empty\n");
 			}else{
-				upgradesText.appendText("Upgrade " + (i++) + ": ").appendSibling(upgrade.getDisplayName()).appendText("\n");
+				upgradesText.appendString("Upgrade " + (i++) + ": ").append(upgrade.getDisplayName()).appendString("\n");
 			}
 		}
-		textOut.appendSibling(upgradesText);
+		textOut.append(upgradesText);
 		
-		player.sendMessage(textOut);
+		player.sendMessage(textOut, Util.DUMMY_UUID);
 	}
 
 	@SuppressWarnings("unused")

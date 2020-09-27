@@ -1,17 +1,18 @@
 package flaxbeard.immersivepetroleum.client.render;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.client.model.ModelSpeedboat;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;;
-
 
 @OnlyIn(Dist.CLIENT)
 public class SpeedboatRenderer extends EntityRenderer<SpeedboatEntity>{
@@ -27,23 +28,19 @@ public class SpeedboatRenderer extends EntityRenderer<SpeedboatEntity>{
 	}
 	
 	@Override
-	public void doRender(SpeedboatEntity entity, double x, double y, double z, float entityYaw, float partialTicks){
-		GlStateManager.pushMatrix();
+	public void render(SpeedboatEntity entity, float entityYaw, float partialTicks, MatrixStack transform, IRenderTypeBuffer bufferIn, int packedLightIn){
+		transform.push();
 		{
-			this.setupTranslation(x, y, z);
+			transform.translate(entity.getPositionVec().x, entity.getPositionVec().y, entity.getPositionVec().z);
 			
-			this.setupRotation(entity, entityYaw, partialTicks);
+			this.setupRotation(entity, entityYaw, partialTicks, transform);
 			ClientUtils.bindTexture(entity.isFireproof ? textureArmor : texture);
 			if(entity.isInLava()){
-				GlStateManager.translatef(0, -3.9F / 16F, 0);
+				transform.translate(0, -3.9F / 16F, 0);
 			}
 			
-			if(this.renderOutlines){
-				GlStateManager.enableColorMaterial();
-				//GlStateManager.enableOutlineMode(this.getTeamColor(entity));
-			}
-			
-			this.modelBoat.render(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+			//this.modelBoat.render(entityIn, transform, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+			//this.modelBoat.render(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
 			
 			if(entity.hasIcebreaker){
 				ClientUtils.bindTexture(textureArmor);
@@ -64,43 +61,32 @@ public class SpeedboatRenderer extends EntityRenderer<SpeedboatEntity>{
 				ClientUtils.bindTexture(texture);
 				this.modelBoat.renderPaddles(entity, 0.0625F, partialTicks);
 			}
-			
-			if(this.renderOutlines){
-				//GlStateManager.disableOutlineMode();
-				GlStateManager.disableColorMaterial();
-			}
 		}
-		GlStateManager.popMatrix();
+		transform.pop();
 		
-		super.doRender(entity, x, y, z, entityYaw, partialTicks);
+		super.render(entity, entityYaw, partialTicks, transform, bufferIn, packedLightIn);
 	}
 	
-	@Override
-	public boolean isMultipass(){
-		return true;
-	}
-	
-	@Override
-	public void renderMultipass(SpeedboatEntity entity, double x, double y, double z, float yaw, float partialTicks){
-		GlStateManager.pushMatrix();
+	public void renderMultipass(SpeedboatEntity entity, double x, double y, double z, float yaw, float partialTicks, MatrixStack transform){
+		transform.push();
 		{
-			this.setupTranslation(x, y, z);
-			this.setupRotation(entity, yaw, partialTicks);
+			transform.translate(x, y + 0.375F, z);
+			this.setupRotation(entity, yaw, partialTicks, transform);
 			
 			ClientUtils.bindTexture(texture);
 			
 			modelBoat.renderMultipass(0.0625F);
 		}
-		GlStateManager.popMatrix();
+		transform.pop();
 	}
 	
 	@Override
-	protected ResourceLocation getEntityTexture(SpeedboatEntity entity){
+	public ResourceLocation getEntityTexture(SpeedboatEntity entity){
 		return new ResourceLocation(texture);
 	}
 	
-	public void setupRotation(SpeedboatEntity boat, float yaw, float partialTicks){
-		GlStateManager.rotatef(180.0F - yaw, 0.0F, 1.0F, 0.0F);
+	public void setupRotation(SpeedboatEntity boat, float yaw, float partialTicks, MatrixStack transform){
+		transform.rotate(new Quaternion(0.0F, 180.0F - yaw, 0.0F, true));
 		float f = (float) boat.getTimeSinceHit() - partialTicks;
 		float f1 = boat.getDamageTaken() - partialTicks;
 		
@@ -109,17 +95,17 @@ public class SpeedboatRenderer extends EntityRenderer<SpeedboatEntity>{
 		}
 		
 		if(f > 0.0F){
-			GlStateManager.rotatef(MathHelper.sin(f) * f * f1 / 10.0F * (float) boat.getForwardDirection(), 1.0F, 0.0F, 0.0F);
+			transform.rotate(new Quaternion(MathHelper.sin(f) * f * f1 / 10.0F * (float) boat.getForwardDirection(), 0.0F, 0.0F, true));
 		}
 		
 		if(boat.isBoosting){
-			GlStateManager.rotatef(3, 1, 0, 0);
+			transform.rotate(new Quaternion(3, 0, 0, true));
 		}
 		
-		GlStateManager.scalef(-1.0F, -1.0F, 1.0F);
+		transform.scale(-1.0F, -1.0F, 1.0F);
 	}
 	
-	public void setupTranslation(double x, double y, double z){
-		GlStateManager.translated(x, y + 0.375F, z);
+	public void setupTranslation(MatrixStack transform, double x, double y, double z){
+		transform.translate(x, y + 0.375F, z);
 	}
 }

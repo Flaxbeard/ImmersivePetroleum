@@ -17,6 +17,7 @@ import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.ColumnPosArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -58,7 +59,7 @@ public class ReservoirCommand{
 			s += ((i++) > 0 ? ", " : "") + res.name;
 		}
 		
-		playerEntity.sendMessage(new StringTextComponent(s));
+		playerEntity.sendMessage(new StringTextComponent(s), Util.DUMMY_UUID);
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -71,7 +72,7 @@ public class ReservoirCommand{
 				TextFormatting.GOLD + (info.current + "/" + info.capacity + " mB") + TextFormatting.RESET);
 		
 		for(String g:h.split("<br>")){
-			playerEntity.sendMessage(new StringTextComponent(g));
+			playerEntity.sendMessage(new StringTextComponent(g), Util.DUMMY_UUID);
 		}
 		
 		return Command.SINGLE_SUCCESS;
@@ -127,12 +128,12 @@ public class ReservoirCommand{
 				reservoir = res;
 		
 		if(reservoir == null){
-			playerEntity.sendMessage(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.set.invalidReservoir", name));
+			playerEntity.sendMessage(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.set.invalidReservoir", name), Util.DUMMY_UUID);
 			return Command.SINGLE_SUCCESS;
 		}
 		
 		info.overrideType = reservoir;
-		playerEntity.sendMessage(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.set.sucess", reservoir.name));
+		playerEntity.sendMessage(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.set.sucess", reservoir.name), Util.DUMMY_UUID);
 		IPSaveData.setDirty();
 		
 		return Command.SINGLE_SUCCESS;
@@ -146,7 +147,7 @@ public class ReservoirCommand{
 		// TODO Maybe add a message to inform the player that the value has been clamped?
 		
 		info.current = amount;
-		playerEntity.sendMessage(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.setAmount.sucess", Integer.toString(amount)));
+		playerEntity.sendMessage(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.setAmount.sucess", Integer.toString(amount)), Util.DUMMY_UUID);
 		IPSaveData.setDirty();
 		
 		return Command.SINGLE_SUCCESS;
@@ -158,7 +159,7 @@ public class ReservoirCommand{
 		amount = Math.max(0, amount);
 		
 		info.capacity = amount;
-		playerEntity.sendMessage(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.setCapacity.sucess", Integer.toString(amount)));
+		playerEntity.sendMessage(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.setCapacity.sucess", Integer.toString(amount)), Util.DUMMY_UUID);
 		IPSaveData.setDirty();
 		
 		return Command.SINGLE_SUCCESS;

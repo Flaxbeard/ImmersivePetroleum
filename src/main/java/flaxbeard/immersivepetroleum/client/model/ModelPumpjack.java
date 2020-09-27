@@ -1,19 +1,23 @@
 package flaxbeard.immersivepetroleum.client.model;
 
-import net.minecraft.client.renderer.entity.model.RendererModel;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+
 import net.minecraft.client.renderer.model.Model;
+import net.minecraft.client.renderer.model.ModelRenderer;
 
 public class ModelPumpjack extends Model{
-	public RendererModel base;
-	public RendererModel swingy;
-	public RendererModel connector;
-	public RendererModel arm;
-	public RendererModel wellConnector;
-	public RendererModel wellConnector2;
+	public ModelRenderer base;
+	public ModelRenderer swingy;
+	public ModelRenderer connector;
+	public ModelRenderer arm;
+	public ModelRenderer wellConnector;
+	public ModelRenderer wellConnector2;
 	
 	public float ticks = 0;
 	
 	public ModelPumpjack(){
+		super(null); // FIXME Needs a Type!
 		this.textureWidth = 190;
 		this.textureHeight = 58;
 		
@@ -21,58 +25,63 @@ public class ModelPumpjack extends Model{
 	}
 	
 	public void refresh(){
-		this.base = new RendererModel(this, 0, 0);
+		this.base = new ModelRenderer(this, 0, 0);
 		this.base.addBox(8, 1, 8, 1, 1, 1);
 		
-		arm = new RendererModel(this, 0, 40);
+		arm = new ModelRenderer(this, 0, 40);
 		arm.addBox(-24 - 16, 0, -4, 70, 10, 8);
 		arm.setRotationPoint(56, 48, 24);
 		this.base.addChild(arm);
 		
-		RendererModel head = new RendererModel(this, 0, 0);
+		ModelRenderer head = new ModelRenderer(this, 0, 0);
 		head.addBox(30, -15, -5, 12, 30, 10);
 		this.arm.addChild(head);
 		
-		RendererModel barBack = new RendererModel(this, 138, 0);
+		ModelRenderer barBack = new ModelRenderer(this, 138, 0);
 		barBack.addBox(-35F, 3F, -11F, 4, 4, 22);
 		this.arm.addChild(barBack);
 		
-		swingy = new RendererModel(this, 44, 14);
+		swingy = new ModelRenderer(this, 44, 14);
 		swingy.addBox(-4F, -2F, -14F, 8, 10, 4);
 		swingy.setRotationPoint(24, 30, 30);
 		this.base.addChild(swingy);
 		
-		RendererModel swingy2 = new RendererModel(this, 44, 14);
+		ModelRenderer swingy2 = new ModelRenderer(this, 44, 14);
 		swingy2.addBox(-4F, -2F, -2F, 8, 10, 4);
 		this.swingy.addChild(swingy2);
 		
-		RendererModel counter = new RendererModel(this, 44, 0);
+		ModelRenderer counter = new ModelRenderer(this, 44, 0);
 		counter.addBox(-12F, 8F, -14F, 24, 10, 4);
 		this.swingy.addChild(counter);
 		
-		RendererModel counter2 = new RendererModel(this, 44, 0);
+		ModelRenderer counter2 = new ModelRenderer(this, 44, 0);
 		counter2.addBox(-12F, 8F, -2F, 24, 10, 4);
 		this.swingy.addChild(counter2);
 		
-		connector = new RendererModel(this, 108, 0);
+		connector = new ModelRenderer(this, 108, 0);
 		connector.addBox(-1F, -1F, -12F, 2, 24, 2);
 		this.base.addChild(connector);
 		
-		RendererModel connector2 = new RendererModel(this, 100, 0);
+		ModelRenderer connector2 = new ModelRenderer(this, 100, 0);
 		connector2.addBox(-1F, -1F, 6F, 2, 24, 2);
 		this.connector.addChild(connector2);
 		
-		wellConnector = new RendererModel(this, 108, 0);
+		wellConnector = new ModelRenderer(this, 108, 0);
 		wellConnector.addBox(-1F, 0F, -1F, 2, 30, 2);
 		
-		wellConnector2 = new RendererModel(this, 108, 0);
+		wellConnector2 = new ModelRenderer(this, 108, 0);
 		wellConnector2.addBox(-1F, 0F, -1F, 2, 16, 2);
 		
 		this.base.addChild(wellConnector);
 		this.base.addChild(wellConnector2);
 	}
 	
-	public void render(float f5){
+	@Override
+	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
+		// TODO
+	}
+	
+	public void render(float f5){ // FIXME
 		arm.rotateAngleZ = (float) Math.toRadians(15 * Math.sin(ticks / 25D));
 		swingy.rotateAngleZ = (float) (2 * (Math.PI / 4) + (ticks / 25D));
 		
@@ -120,13 +129,13 @@ public class ModelPumpjack extends Model{
 		wellConnector2.rotateAngleZ = (float) (3F * (Math.PI / 2) + Math.atan2(ty2 - y2, tx2 - x2));
 		
 		if(Math.sqrt((tx2 - x2) * (tx2 - x2) + (ty2 - y2) * (ty2 - y2)) <= 16){
-			wellConnector.isHidden = true;
-			wellConnector2.isHidden = false;
+			wellConnector.showModel = true;
+			wellConnector2.showModel = false;
 		}else{
-			wellConnector2.isHidden = true;
-			wellConnector.isHidden = false;
+			wellConnector2.showModel = true;
+			wellConnector.showModel = false;
 		}
 		
-		this.base.render(f5);
+//		this.base.render(f5);
 	}
 }

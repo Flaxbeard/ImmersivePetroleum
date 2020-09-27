@@ -18,10 +18,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameterSets;
+import net.minecraft.loot.LootParameters;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -31,13 +34,10 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootParameterSets;
-import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.common.ToolType;
 
 public class GasGeneratorBlock extends IPBlockBase{
-	private static final Material material=new Material(MaterialColor.IRON, false, true, true, false, false, false, false, PushReaction.BLOCK);
+	private static final Material material=new Material(MaterialColor.IRON, false, true, true, false, false, false, PushReaction.BLOCK);
 	
 	public static final DirectionProperty FACING=DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
 	
@@ -52,6 +52,8 @@ public class GasGeneratorBlock extends IPBlockBase{
 		builder.add(FACING);
 	}
 	
+	// TODO Block Render Layer
+	/*
 	@Override
 	public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer){
 		return layer==BlockRenderLayer.CUTOUT || layer==BlockRenderLayer.SOLID;
@@ -61,7 +63,7 @@ public class GasGeneratorBlock extends IPBlockBase{
 	public BlockRenderLayer getRenderLayer(){
 		return BlockRenderLayer.CUTOUT;
 	}
-	
+	*/
 	@Override
 	public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos){
 		return 0;
@@ -77,10 +79,11 @@ public class GasGeneratorBlock extends IPBlockBase{
 		return true;
 	}
 	
-	@Override
-	public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos){
-		return false;
-	}
+	// TODO
+//	@Override
+//	public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos){
+//		return false;
+//	}
 	
 	// Fixes black faces apearing when a solid block is placed next to the generator
 	// at the cost of not being able to put a lever on the generator anymore.
@@ -97,14 +100,16 @@ public class GasGeneratorBlock extends IPBlockBase{
 	}
 	
 	@Override
-	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit){
+	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit){
 		if(!worldIn.isRemote){
 			TileEntity te=worldIn.getTileEntity(pos);
 			if(te instanceof IPlayerInteraction){
-				return ((IPlayerInteraction)te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), (float)hit.getHitVec().x, (float)hit.getHitVec().y, (float)hit.getHitVec().z);
+				if(((IPlayerInteraction)te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), (float)hit.getHitVec().x, (float)hit.getHitVec().y, (float)hit.getHitVec().z)){
+					return ActionResultType.SUCCESS;
+				}
 			}
 		}
-		return true;
+		return ActionResultType.FAIL;
 	}
 	
 	@Override

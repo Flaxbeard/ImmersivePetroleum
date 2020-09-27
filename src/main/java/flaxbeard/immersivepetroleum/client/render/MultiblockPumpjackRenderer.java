@@ -1,12 +1,15 @@
 package flaxbeard.immersivepetroleum.client.render;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.client.model.ModelPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -16,28 +19,32 @@ public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileE
 	
 	private static String texture = "immersivepetroleum:textures/models/pumpjack_armature.png";
 	
+	public MultiblockPumpjackRenderer(TileEntityRendererDispatcher dispatcher){
+		super(dispatcher);
+	}
+	
 	@Override
-	public void render(PumpjackTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
+	public void render(PumpjackTileEntity te, float partialTicks, MatrixStack transform, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn){
 		if(te != null && !te.isDummy()){
-			GlStateManager.pushMatrix();
-			GlStateManager.translated(x, y, z);
+			transform.push();
+			transform.translate(te.getPos().getX(), te.getPos().getY(), te.getPos().getZ());
 			
 			Direction rotation = te.getFacing();
 			switch(rotation){
 				case NORTH:
-					GlStateManager.rotated(90F, 0, 1, 0);
-					GlStateManager.translated(-6, 0, -1);
+					transform.rotate(new Quaternion(0, 90F, 0, true));
+					transform.translate(-6, 0, -1);
 					break;
 				case EAST:
-					GlStateManager.translated(-5, 0, -1);
+					transform.translate(-5, 0, -1);
 					break;
 				case SOUTH:
-					GlStateManager.rotated(270F, 0, 1, 0);
-					GlStateManager.translated(-5, 0, -2);
+					transform.rotate(new Quaternion(0, 270F, 0, true));
+					transform.translate(-5, 0, -2);
 					break;
 				case WEST:
-					GlStateManager.rotated(180F, 0, 1, 0);
-					GlStateManager.translated(-6, 0, -2);
+					transform.rotate(new Quaternion(0, 180F, 0, true));
+					transform.translate(-6, 0, -2);
 					break;
 				default:
 					break;
@@ -49,7 +56,7 @@ public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileE
 			
 			ClientUtils.bindTexture(texture);
 			model.render(0.0625F);
-			GlStateManager.popMatrix();
+			transform.pop();
 		}
 	}
 }

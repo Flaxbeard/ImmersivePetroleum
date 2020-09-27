@@ -12,7 +12,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -30,10 +31,10 @@ public class AsphaltBlock extends IPBlockBase{
 	@Override
 	public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		if(IPConfig.MISCELLANEOUS.asphalt_speed.get()){
-			ITextComponent out = new TranslationTextComponent(
+			IFormattableTextComponent out = new TranslationTextComponent(
 					"desc.immersivepetroleum.flavour.asphalt",
 					String.format(Locale.ENGLISH, "%.1f", (SPEED_MULTIPLIER * 100 - 100)) + "%"
-			).applyTextStyle(TextFormatting.GRAY);
+			).mergeStyle(TextFormatting.GRAY);
 			
 			tooltip.add(out);
 		}
@@ -46,9 +47,9 @@ public class AsphaltBlock extends IPBlockBase{
 		if(IPConfig.MISCELLANEOUS.asphalt_speed.get()){
 			if(entityIn instanceof PlayerEntity){
 				PlayerEntity player = (PlayerEntity) entityIn;
-				Vec3d motion = player.getMotion();
+				Vector3d motion = player.getMotion();
 				double speedMultiplier = SPEED_MULTIPLIER;
-				player.setMotion(new Vec3d(motion.x * speedMultiplier, motion.y * speedMultiplier, motion.z * speedMultiplier));
+				player.setMotion(new Vector3d(motion.x * speedMultiplier, motion.y * speedMultiplier, motion.z * speedMultiplier));
 			}
 		}
 	}

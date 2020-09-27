@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect;
-import blusunrize.immersiveengineering.common.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
+import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
@@ -19,14 +19,14 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.Dimension;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -45,7 +45,7 @@ public class LubricatedHandler{
 		
 		Tuple<BlockPos, Direction> getGhostBlockPosition(World world, E mbte);
 		
-		Vec3i getStructureDimensions();
+		Vector3i getStructureDimensions();
 	}
 	
 	static final Map<Class<? extends TileEntity>, ILubricationHandler<?>> lubricationHandlers = new HashMap<>();
@@ -67,11 +67,11 @@ public class LubricatedHandler{
 	public static class LubricatedTileInfo{
 		public BlockPos pos;
 		// TODO Use a more general way? (ie Combined use of ModDimension and DimensionType)
-		public DimensionType world;
+		public RegistryKey<World> world;
 		public int ticks;
 		
-		public LubricatedTileInfo(Dimension dimension, BlockPos pos, int ticks){
-			this.world = dimension.getType();
+		public LubricatedTileInfo(RegistryKey<World> registryKey, BlockPos pos, int ticks){
+			this.world = registryKey;
 			this.pos = pos;
 			this.ticks = ticks;
 		}
@@ -83,7 +83,7 @@ public class LubricatedHandler{
 			int z = tag.getInt("z");
 			String name = tag.getString("world");
 			
-			this.world = DimensionType.byName(new ResourceLocation(name));
+			this.world = RegistryKey.func_240903_a_(Registry.WORLD_KEY, new ResourceLocation(name));
 			this.pos = new BlockPos(x, y, z);
 			this.ticks = ticks;
 		}
@@ -114,7 +114,7 @@ public class LubricatedHandler{
 			BlockPos pos = tile.getPos();
 			for(int i = 0;i < lubricatedTiles.size();i++){
 				LubricatedTileInfo info = lubricatedTiles.get(i);
-				if(info.pos.equals(pos) && info.world == tile.getWorld().getDimension().getType()){
+				if(info.pos.equals(pos) && info.world == tile.getWorld().getDimensionKey()){
 					if(info.ticks >= ticks){
 						if(additive){
 							if(cap == -1){
@@ -132,7 +132,7 @@ public class LubricatedHandler{
 					return true;
 				}
 			}
-			LubricatedTileInfo lti = new LubricatedTileInfo(tile.getWorld().getDimension(), tile.getPos(), ticks);
+			LubricatedTileInfo lti = new LubricatedTileInfo(tile.getWorld().getDimensionKey(), tile.getPos(), ticks);
 			lubricatedTiles.add(lti);
 			return true;
 		}
@@ -144,7 +144,7 @@ public class LubricatedHandler{
 		public void applyToEntity(LivingEntity target, PlayerEntity shooter, ItemStack thrower, Fluid fluid){
 			if(target instanceof IronGolemEntity){
 				if(LubricantHandler.isValidLube(fluid)){
-					int amount = (Math.max(1, IEConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 4) / 3;
+					int amount = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 4) / 3;
 					
 					EffectInstance activeSpeed = target.getActivePotionEffect(Effects.SPEED);
 					int ticksSpeed = amount;
@@ -168,7 +168,7 @@ public class LubricatedHandler{
 		@Override
 		public void applyToBlock(World world, RayTraceResult mop, PlayerEntity shooter, ItemStack thrower, Fluid fluid){
 			if(LubricantHandler.isValidLube(fluid)){
-				int amount = (Math.max(1, IEConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 2) / 3;
+				int amount = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 2) / 3;
 				LubricatedHandler.lubricateTile(world.getTileEntity(new BlockPos(mop.getHitVec())), amount, true, 20 * 60);
 			}
 		}

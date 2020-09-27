@@ -1,15 +1,14 @@
 package flaxbeard.immersivepetroleum.common.lubehandlers;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-
 import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.metal.BucketWheelTileEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.ExcavatorTileEntity;
+import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
+import flaxbeard.immersivepetroleum.dummy.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
@@ -19,16 +18,16 @@ import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.Direction.AxisDirection;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ExcavatorLubricationHandler implements ILubricationHandler<ExcavatorTileEntity>{
-	private static Vec3i size=new Vec3i(3, 6, 3);
+	private static Vector3i size=new Vector3i(3, 6, 3);
 	
 	@Override
-	public Vec3i getStructureDimensions(){
+	public Vector3i getStructureDimensions(){
 		return size;
 	}
 	
@@ -81,14 +80,14 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 			}
 			
 			if(!world.isRemote && ticks % 4 == 0){
-				int consumed = IEConfig.MACHINES.excavator_consumption.get();
+				int consumed = IEServerConfig.MACHINES.excavator_consumption.get();
 				int extracted = mbte.energyStorage.extractEnergy(consumed, true);
 				if(extracted >= consumed){
 					mbte.energyStorage.extractEnergy(extracted, false);
-					wheel.rotation += IEConfig.MACHINES.excavator_speed.get() / 4F;
+					wheel.rotation += IEServerConfig.MACHINES.excavator_speed.get() / 4F;
 				}
 			}else{
-				wheel.rotation += IEConfig.MACHINES.excavator_speed.get() / 4F;
+				wheel.rotation += IEServerConfig.MACHINES.excavator_speed.get() / 4F;
 			}
 		}
 	}
@@ -138,7 +137,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		}
 		
 		GlStateManager.translatef(0, -1, 0);
-		Vec3i offset = mbte.getPos().subtract(lubricator.getPos());
+		Vector3i offset = mbte.getPos().subtract(lubricator.getPos());
 		GlStateManager.translatef(offset.getX(), offset.getY(), offset.getZ());
 		
 		Direction rotation = mbte.getFacing();

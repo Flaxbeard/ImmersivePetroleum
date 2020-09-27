@@ -2,18 +2,17 @@ package flaxbeard.immersivepetroleum.common.blocks;
 
 import java.util.function.Supplier;
 
+import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalMultiblockBlock;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import net.minecraft.block.BlockState;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
 
-public class IPMetalMultiblock extends MetalMultiblockBlock{
-	public IPMetalMultiblock(String name, Supplier<TileEntityType<?>> type, IProperty<?>... additionalProperties){
-		super(name, type, additionalProperties);
-		setBlockLayer(BlockRenderLayer.TRANSLUCENT);
+public class IPMetalMultiblock<T extends MultiblockPartTileEntity<T>> extends MetalMultiblockBlock<T>{
+	public IPMetalMultiblock(String name, Supplier<TileEntityType<T>> te, Property<?>... additionalProperties){
+		super(name, te, additionalProperties);
+		//setBlockLayer(BlockRenderLayer.TRANSLUCENT);
 	}
 	
 	@Override
@@ -21,6 +20,8 @@ public class IPMetalMultiblock extends MetalMultiblockBlock{
 		return new ResourceLocation(ImmersivePetroleum.MODID, name);
 	}
 	
+	// TODO Block Render Layer
+	/*
 	@Override
 	public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer){
 		return layer==BlockRenderLayer.CUTOUT;
@@ -30,4 +31,5 @@ public class IPMetalMultiblock extends MetalMultiblockBlock{
 	public BlockRenderLayer getRenderLayer(){
 		return BlockRenderLayer.CUTOUT;
 	}
+	*/
 }

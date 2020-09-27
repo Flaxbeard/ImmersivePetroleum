@@ -1,6 +1,7 @@
 modLoader="javafml"
 loaderVersion="[28,)"
 issueTrackerURL="https://github.com/Flaxbeard/ImmersivePetroleum/issues"
+license="All rights reserved"
 
 [[mods]] #mandatory
 modId="immersivepetroleum"
@@ -16,20 +17,20 @@ description="Adds oil and oil processing features to Immersive Engineering."
 [[dependencies.immersiveengineering]]
 	modId="immersiveengineering"
 	mandatory=true
-	versionRange="[1.14.4-4.0.0-116,)"
+	versionRange="[1.16.3-4.0.1-121,)"
 	ordering="BEFOR"
 	side="BOTH"
 
 [[dependencies.immersivepetroleum]]
-    modId="forge" #mandatory
-    mandatory=true #mandatory
-    versionRange="[28,)" #mandatory
-    ordering="NONE"
-    side="BOTH"
+	modId="forge"
+	mandatory=true
+	versionRange="[34.0.2,)"
+	ordering="NONE"
+	side="BOTH"
 
 [[dependencies.immersivepetroleum]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="[1.14.4]"
-    ordering="NONE"
-    side="BOTH"
+	modId="minecraft"
+	mandatory=true
+	versionRange="[1.16.3]"
+	ordering="NONE"
+	side="BOTH"

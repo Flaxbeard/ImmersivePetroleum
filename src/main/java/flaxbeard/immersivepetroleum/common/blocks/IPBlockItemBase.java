@@ -8,6 +8,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -28,15 +29,15 @@ public class IPBlockItemBase extends BlockItem{
 				
 				FluidStack fluidstack=FluidStack.loadFluidStackFromNBT(tank);
 				if(fluidstack.getAmount()>0){
-					tooltip.add(fluidstack.getDisplayName().appendText(" "+fluidstack.getAmount()+"mB").applyTextStyle(TextFormatting.GRAY));
+					tooltip.add(((IFormattableTextComponent)fluidstack.getDisplayName()).appendString(" "+fluidstack.getAmount()+"mB").mergeStyle(TextFormatting.GRAY));
 				}else{
-					tooltip.add(new TranslationTextComponent(Lib.GUI + "empty").applyTextStyle(TextFormatting.GRAY));
+					tooltip.add(new TranslationTextComponent(Lib.GUI + "empty").mergeStyle(TextFormatting.GRAY));
 				}
 			}
 			if(stack.getTag().contains("energy")){ // Display Stored Energy Information
 				CompoundNBT energy=stack.getTag().getCompound("energy");
 				int flux=energy.getInt("ifluxEnergy");
-				tooltip.add(new StringTextComponent(flux+"RF").applyTextStyle(TextFormatting.GRAY));
+				tooltip.add(new StringTextComponent(flux+"RF").mergeStyle(TextFormatting.GRAY));
 			}
 		}
 		

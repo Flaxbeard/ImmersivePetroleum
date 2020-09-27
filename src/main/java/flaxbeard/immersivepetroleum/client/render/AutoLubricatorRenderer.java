@@ -1,20 +1,28 @@
 package flaxbeard.immersivepetroleum.client.render;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.ShaderUtil;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
 
 public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTileEntity>{
+	
+	public AutoLubricatorRenderer(TileEntityRendererDispatcher dispatcher){
+		super(dispatcher);
+	}
 	
 	@Override
 	public boolean isGlobalRenderer(AutoLubricatorTileEntity te){
@@ -24,7 +32,7 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 	@SuppressWarnings("unchecked")
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void render(AutoLubricatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
+	public void render(AutoLubricatorTileEntity te, float partialTicks, MatrixStack transform, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn){
 		if(te == null){
 			return;
 		}
@@ -40,52 +48,40 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 		}
 		float scale = 0.0625f;
 		
-		if(level>0){
-			GlStateManager.pushMatrix();
+		if(level > 0){
+			transform.push();
 			{
-				GlStateManager.translated(x + .5, y + .5, z + .5);
-				GlStateManager.translated(-0.25F, 0.375F, -0.25F);
-				GlStateManager.scaled(scale, scale, scale);
+				transform.translate(te.getPos().getX() + .5, te.getPos().getY() + .5, te.getPos().getZ() + .5);
+				transform.translate(-0.25F, 0.375F, -0.25F);
+				transform.scale(scale, scale, scale);
 				
 				ClientUtils.bindAtlas();
 				
-//				GlStateManager.depthMask(false);
-				GlStateManager.disableLighting();
-				GlStateManager.disableCull();
-				GlStateManager.enableBlend();
-				GlStateManager.blendFuncSeparate(770, 771, 1, 0);
 				ShaderUtil.alpha_static(0.35f, 1);
 				
 				float h = height * level;
-				ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 8, h);
-				GlStateManager.rotated(90, 0, 1, 0);
-				GlStateManager.translated(-7.98, 0, 0);
-				ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 8, h);
-				GlStateManager.rotated(90, 0, 1, 0);
-				GlStateManager.translated(-7.98, 0, 0);
-				ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 8, h);
-				GlStateManager.rotated(90, 0, 1, 0);
-				GlStateManager.translated(-7.98, 0, 0);
-				ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 8, h);
-				GlStateManager.rotated(90, 1, 0, 0);
-				GlStateManager.translated(0, 0, -h);
-				ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 8, 8);
-//				GlStateManager.rotated(180, 1, 0, 0);
-//				GlStateManager.translated(0, -9, -h);
-//				ClientUtils.drawRepeatedFluidSprite(fs, 0, 0, 8, 8); // Causes Z-Fighting
+				ClientUtils.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.getTranslucent()), transform, fs, 0, 0, 8, h);
+				transform.rotate(new Quaternion(0, 90, 0, true));
+				transform.translate(-7.98, 0, 0);
+				ClientUtils.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.getTranslucent()), transform, fs, 0, 0, 8, h);
+				transform.rotate(new Quaternion(0, 90, 0, true));
+				transform.translate(-7.98, 0, 0);
+				ClientUtils.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.getTranslucent()), transform, fs, 0, 0, 8, h);
+				transform.rotate(new Quaternion(0, 90, 0, true));
+				transform.translate(-7.98, 0, 0);
+				ClientUtils.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.getTranslucent()), transform, fs, 0, 0, 8, h);
+				transform.rotate(new Quaternion(90, 0, 0, true));
+				transform.translate(0, 0, -h);
+				ClientUtils.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.getTranslucent()), transform, fs, 0, 0, 8, 8);
 				
 				ShaderUtil.releaseShader();
-				GlStateManager.disableBlend();
-				GlStateManager.enableCull();
-				GlStateManager.enableLighting();
-//				GlStateManager.depthMask(true);
 			}
-			GlStateManager.popMatrix();
+			transform.pop();
 		}
 		
-		GlStateManager.pushMatrix();
+		transform.push();
 		{
-			GlStateManager.translated(x, y, z);
+			transform.translate(te.getPos().getX(), te.getPos().getY(), te.getPos().getZ());
 			
 			BlockPos target = te.getPos().offset(te.getFacing());
 			TileEntity test = te.getWorld().getTileEntity(target);
@@ -98,7 +94,7 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 				}
 			}
 		}
-		GlStateManager.popMatrix();
+		transform.pop();
 		
 		/*
 		GlStateManager.pushMatrix();

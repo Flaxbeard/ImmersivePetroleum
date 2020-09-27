@@ -17,12 +17,9 @@ import com.blamejared.crafttweaker.impl.tag.MCTag;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 
 @ZenRegister
@@ -65,7 +62,7 @@ public class DistillationRecipeTweaker{
 		
 		private List<Tuple<ItemStack, Double>> byproducts = new ArrayList<>();
 		private List<FluidStack> fluidOutputs = new ArrayList<>();
-		private Tag<Fluid> inputFluidTag = null;
+		private MCTag inputFluidTag = null;
 		private int inputFluidAmount = 1;
 		private int fluxEnergy = 2048;
 		private int timeTicks = 1;
@@ -94,7 +91,7 @@ public class DistillationRecipeTweaker{
 				CraftTweakerAPI.logError("§ccDistillationBuilder fluidtag amount must atleast be 1mB!§r");
 				this.isValid = false;
 			}else{
-				this.inputFluidTag = tag.getFluidTag();
+				this.inputFluidTag = tag;
 				this.inputFluidAmount = amount;
 			}
 			return this;
@@ -157,7 +154,7 @@ public class DistillationRecipeTweaker{
 			
 			FluidTagInput fluidInTag = null;
 			if(this.inputFluidTag != null){
-				fluidInTag = new FluidTagInput(Lazy.of(() -> this.inputFluidTag), this.inputFluidAmount, null);
+				fluidInTag = new FluidTagInput(this.inputFluidTag.getId().getInternal(), this.inputFluidAmount);
 			}else{
 				CraftTweakerAPI.logError("§cOutput fluid tag should not be null!§r");
 				this.isValid = false;

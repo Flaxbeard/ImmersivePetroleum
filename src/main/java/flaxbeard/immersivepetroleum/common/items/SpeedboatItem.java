@@ -30,7 +30,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -108,23 +109,24 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 		ItemStack itemstack = playerIn.getHeldItem(handIn);
 		float f1 = playerIn.prevRotationPitch + (playerIn.rotationPitch - playerIn.prevRotationPitch) * 1.0F;
 		float f2 = playerIn.prevRotationYaw + (playerIn.rotationYaw - playerIn.prevRotationYaw) * 1.0F;
-		double d0 = playerIn.prevPosX + (playerIn.posX - playerIn.prevPosX) * 1.0D;
-		double d1 = playerIn.prevPosY + (playerIn.posY - playerIn.prevPosY) * 1.0D + (double) playerIn.getEyeHeight();
-		double d2 = playerIn.prevPosZ + (playerIn.posZ - playerIn.prevPosZ) * 1.0D;
-		Vec3d vec3d = new Vec3d(d0, d1, d2);
+		double d0 = playerIn.prevPosX + (playerIn.getPosX() - playerIn.prevPosX) * 1.0D;
+		double d1 = playerIn.prevPosY + (playerIn.getPosY() - playerIn.prevPosY) * 1.0D + (double) playerIn.getEyeHeight();
+		double d2 = playerIn.prevPosZ + (playerIn.getPosZ() - playerIn.prevPosZ) * 1.0D;
+		Vector3d vec3d = new Vector3d(d0, d1, d2);
 		float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
 		float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
 		float f5 = -MathHelper.cos(-f1 * 0.017453292F);
 		float f6 = MathHelper.sin(-f1 * 0.017453292F);
 		float f7 = f4 * f5;
 		float f8 = f3 * f5;
-		Vec3d vec3d1 = vec3d.add((double) f7 * 5.0D, (double) f6 * 5.0D, (double) f8 * 5.0D);
+		
+		Vector3d vec3d1 = vec3d.add((double) f7 * 5.0D, (double) f6 * 5.0D, (double) f8 * 5.0D);
 		RayTraceResult raytraceresult = worldIn.rayTraceBlocks(new RayTraceContext(vec3d, vec3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.ANY, playerIn));
 		
 		if(raytraceresult != null){
-			Vec3d vec3d2 = playerIn.getLook(1.0F);
+			Vector3d vec3d2 = playerIn.getLook(1.0F);
 			boolean flag = false;
-			AxisAlignedBB bb=playerIn.getCollisionBoundingBox();
+			AxisAlignedBB bb=playerIn.getBoundingBox();
 			if(bb==null)
 				bb=playerIn.getBoundingBox();
 			
@@ -134,7 +136,7 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 					Entity entity = (Entity) list.get(i);
 					
 					if(entity.canBeCollidedWith()){
-						AxisAlignedBB axisalignedbb = entity.getCollisionBoundingBox();
+						AxisAlignedBB axisalignedbb = entity.getBoundingBox();
 						if(axisalignedbb!=null && axisalignedbb.grow((double) entity.getCollisionBorderSize()).contains(vec3d)){
 							flag = true;
 						}
@@ -147,7 +149,7 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 			}else if(raytraceresult.getType() != RayTraceResult.Type.BLOCK){
 				return new ActionResult<ItemStack>(ActionResultType.PASS, itemstack);
 			}else{
-				Vec3d hit=raytraceresult.getHitVec();
+				Vector3d hit=raytraceresult.getHitVec();
 				Block block = worldIn.getBlockState(new BlockPos(hit.add(0, .5, 0))).getBlock();
 				boolean flag1 = block == Blocks.WATER;
 				SpeedboatEntity entityboat = new SpeedboatEntity(worldIn, hit.x, flag1 ? hit.y - 0.12D : hit.y, hit.z);
@@ -157,7 +159,7 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 					entityboat.readTank(itemstack.getTag());
 				}
 				
-				if(worldIn.getCollisionShapes(entityboat, entityboat.getCollisionBoundingBox().grow(-0.1D)).findFirst().isPresent()){
+				if(worldIn.getCollisionShapes(entityboat, entityboat.getBoundingBox().grow(-0.1D)).findFirst().isPresent()){
 					return new ActionResult<ItemStack>(ActionResultType.FAIL, itemstack);
 				}else{
 					if(!worldIn.isRemote){
@@ -220,7 +222,7 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 		if(ItemNBTHelper.hasKey(stack, "tank")){
 			FluidStack fs = FluidStack.loadFluidStackFromNBT(ItemNBTHelper.getTagCompound(stack, "tank"));
 			if(fs != null){
-				tooltip.add(fs.getDisplayName().appendText(": " + fs.getAmount() + "mB").applyTextStyle(TextFormatting.GRAY));
+				tooltip.add(((IFormattableTextComponent)fs.getDisplayName()).appendString(": " + fs.getAmount() + "mB").mergeStyle(TextFormatting.GRAY));
 			}
 		}
 		
@@ -231,9 +233,9 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 				ItemStack upgrade=handler.getStackInSlot(i);
 				if(upgrade!=null && upgrade!=ItemStack.EMPTY){
 					if(first){
-						tooltip.add(new TranslationTextComponent("desc.immersivepetroleum.flavour.speedboat0").applyTextStyle(TextFormatting.GRAY));
+						tooltip.add(new TranslationTextComponent("desc.immersivepetroleum.flavour.speedboat0").mergeStyle(TextFormatting.GRAY));
 					}
-					tooltip.add(new StringTextComponent("  ").appendSibling(upgrade.getDisplayName()).applyTextStyle(TextFormatting.DARK_GRAY));
+					tooltip.add(new StringTextComponent("  ").append(upgrade.getDisplayName()).mergeStyle(TextFormatting.DARK_GRAY));
 					first=false;
 				}
 			}

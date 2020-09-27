@@ -19,6 +19,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class IPEntitySound implements ITickableSound{
 	protected Sound sound;
@@ -91,18 +93,18 @@ public class IPEntitySound implements ITickableSound{
 	}
 	
 	@Override
-	public float getX(){
-		return (float) entity.posX;
+	public double getX(){
+		return (float) entity.getPosX();
 	}
 	
 	@Override
-	public float getY(){
-		return (float) entity.posY;
+	public double getY(){
+		return (float) entity.getPosY();
 	}
 	
 	@Override
-	public float getZ(){
-		return (float) entity.posZ;
+	public double getZ(){
+		return (float) entity.getPosZ();
 	}
 	
 	@Override
@@ -130,13 +132,14 @@ public class IPEntitySound implements ITickableSound{
 			if(stack != null && IEItems.Misc.earmuffs.equals(stack.getItem())) volumeAjustment = EarmuffsItem.getVolumeMod(stack);
 		}
 		
-		if(volumeAjustment > .1f) for(int dx = (int) Math.floor(entity.posX - 8) >> 4;dx <= (int) Math.floor(entity.posX + 8) >> 4;dx++){
-			for(int dz = (int) Math.floor(entity.posZ - 8) >> 4;dz <= (int) Math.floor(entity.posZ + 8) >> 4;dz++){
+		if(volumeAjustment > .1f) for(int dx = (int) Math.floor(entity.getPosX() - 8) >> 4;dx <= (int) Math.floor(entity.getPosX() + 8) >> 4;dx++){
+			for(int dz = (int) Math.floor(entity.getPosZ() - 8) >> 4;dz <= (int) Math.floor(entity.getPosZ() + 8) >> 4;dz++){
 				Iterator<TileEntity> it = ClientUtils.mc().player.world.getChunk(dx, dz).getTileEntityMap().values().iterator();
 				while(it.hasNext()){
 					TileEntity tile = it.next();
 					if(tile != null && tile.getClass().getName().contains("SoundMuffler")){
-						double d = tile.getDistanceSq(entity.posX, entity.posY, entity.posZ);
+						BlockPos tPos=tile.getPos();
+						double d = entity.getPositionVec().distanceTo(new Vector3d(tPos.getX()+.5, tPos.getY()+.5, tPos.getZ()+.5));
 						if(d <= 64 && d > 0){
 							volumeAjustment = .1f;
 						}

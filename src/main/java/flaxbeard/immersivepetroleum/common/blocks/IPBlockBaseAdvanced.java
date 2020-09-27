@@ -1,38 +1,16 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import com.google.common.base.Preconditions;
-
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.IPContent;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.PushReaction;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.IProperty;
-import net.minecraft.state.StateContainer.Builder;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
+@Deprecated
 public class IPBlockBaseAdvanced extends IPBlockBase{
-	protected static IProperty<?>[] tempProperties;
+	@Deprecated
+	public IPBlockBaseAdvanced(String name, Properties props){
+		super(name, props);
+	}
+	
+	/*
+	protected static Property<?>[] tempProperties;
 	public final String name;
-	public final IProperty<?>[] additionalProperties;
+	public final Property<?>[] additionalProperties;
 	boolean isHidden;
 	boolean hasFlavour;
 	protected List<BlockRenderLayer> renderLayers;
@@ -41,12 +19,12 @@ public class IPBlockBaseAdvanced extends IPBlockBase{
 	protected boolean canHammerHarvest;
 	protected boolean notNormalBlock;
 	
-	public IPBlockBaseAdvanced(String name, Properties blockProps, @Nullable Class<? extends BlockItem> itemBlock, IProperty<?>... additionalProperties){
+	public IPBlockBaseAdvanced(String name, Properties blockProps, @Nullable Class<? extends BlockItem> itemBlock, Property<?>... additionalProperties){
 		super(name, setTempProperties(blockProps, additionalProperties));
 		this.renderLayers = Collections.singletonList(BlockRenderLayer.SOLID);
 		this.mobilityFlag = PushReaction.NORMAL;
 		this.name = name;
-		this.additionalProperties = (IProperty[]) Arrays.copyOf(tempProperties, tempProperties.length);
+		this.additionalProperties = (Property[]) Arrays.copyOf(tempProperties, tempProperties.length);
 		this.setDefaultState(getInitDefaultState());
 		if(itemBlock != null){
 			try{
@@ -62,22 +40,22 @@ public class IPBlockBaseAdvanced extends IPBlockBase{
 	}
 	
 	protected static Properties setTempProperties(Properties blockProps, Object[] additionalProperties){
-		List<IProperty<?>> propList = new ArrayList<>();
+		List<Property<?>> propList = new ArrayList<>();
 		Object[] var3 = additionalProperties;
 		int var4 = additionalProperties.length;
 		
 		for(int var5 = 0;var5 < var4;++var5){
 			Object o = var3[var5];
-			if(o instanceof IProperty){
-				propList.add((IProperty<?>) o);
+			if(o instanceof Property){
+				propList.add((Property<?>) o);
 			}
 			
-			if(o instanceof IProperty[]){
-				propList.addAll(Arrays.asList((IProperty<?>[]) ((IProperty<?>[]) o)));
+			if(o instanceof Property[]){
+				propList.addAll(Arrays.asList((Property<?>[]) ((Property<?>[]) o)));
 			}
 		}
 		
-		tempProperties = (IProperty[]) propList.toArray(new IProperty[0]);
+		tempProperties = (Property[]) propList.toArray(new Property[0]);
 		return blockProps.variableOpacity();
 	}
 	
@@ -169,7 +147,7 @@ public class IPBlockBaseAdvanced extends IPBlockBase{
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected <V extends Comparable<V>> BlockState applyProperty(BlockState in, IProperty<V> prop, Object val){
+	protected <V extends Comparable<V>> BlockState applyProperty(BlockState in, Property<V> prop, Object val){
 		return (BlockState) in.with(prop, (V) val);
 	}
 	
@@ -193,4 +171,5 @@ public class IPBlockBaseAdvanced extends IPBlockBase{
 			return false;
 		}
 	}
+	*/
 }

@@ -19,18 +19,18 @@ import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.state.EnumProperty;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.ExistingModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class IPBlockStates extends BlockStateProvider{
 	/** ResourceLocation("forge","obj") */
@@ -53,13 +53,13 @@ public class IPBlockStates extends BlockStateProvider{
 		itemModelWithParent(IPContent.Blocks.dummyOilOre, dummyOilOreModel);
 		
 		// Dummy Pipe
-		ModelFile dummyPipeModel=getExistingFile(modLoc("block/dummy_pipe"));
+		ModelFile dummyPipeModel=new ExistingModelFile(modLoc("block/dummy_pipe"), this.exFileHelper);
 		getVariantBuilder(IPContent.Blocks.dummyPipe).partialState()
 			.setModels(new ConfiguredModel(dummyPipeModel));
 		itemModelWithParent(IPContent.Blocks.dummyPipe, dummyPipeModel);
 		
 		// Dummy Conveyor
-		ModelFile dummyConveyorModel=getExistingFile(modLoc("block/dummy_conveyor"));
+		ModelFile dummyConveyorModel=new ExistingModelFile(modLoc("block/dummy_conveyor"), this.exFileHelper);
 		getVariantBuilder(IPContent.Blocks.dummyConveyor).partialState()
 			.setModels(new ConfiguredModel(dummyConveyorModel));
 		getItemBuilder(IPContent.Blocks.dummyConveyor)
@@ -79,7 +79,7 @@ public class IPBlockStates extends BlockStateProvider{
 		// Fluids
 		for(IPFluid f:IPFluid.LIST){
 			ResourceLocation still=f.getAttributes().getStillTexture();
-			ModelFile model = getBuilder("block/fluid/"+f.getRegistryName().getPath()).texture("particle", still);
+			ModelFile model = this.loadedModels.getBuilder("block/fluid/"+f.getRegistryName().getPath()).texture("particle", still);
 			
 			getVariantBuilder(f.block).partialState().setModels(new ConfiguredModel(model));
 		}
@@ -123,7 +123,7 @@ public class IPBlockStates extends BlockStateProvider{
 	private void autolubricator(){
 		ResourceLocation texture=modLoc("models/lubricator");
 		
-		BlockModelBuilder lube_empty=withExistingParent("lube_empty", new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty"))
+		LoadedModelBuilder lube_empty=this.loadedModels.withExistingParent("lube_empty", new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty"))
 				.texture("particle", texture);
 		
 		LoadedModelBuilder lubeModel=this.loadedModels.withExistingParent(getPath(IPContent.Blocks.auto_lubricator),
@@ -177,9 +177,7 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	/** Used basicly for every multiblock-block */
-	private final ConfiguredModel EMPTY_MODEL = new ConfiguredModel(
-			new ExistingModelFile(new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty"), existingFileHelper)
-	);
+	private ConfiguredModel EMPTY_MODEL = null;
 	
 	/** From {@link blusunrize.immersiveengineering.common.data.BlockStates} 
 	 * @param idleTexture */
@@ -188,13 +186,20 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	/** From {@link blusunrize.immersiveengineering.common.data.BlockStates} */
-	private void createMultiblock(Block b, ModelFile masterModel, @Nullable ModelFile mirroredModel, IProperty<Boolean> isSlave, EnumProperty<Direction> facing, @Nullable IProperty<Boolean> mirroredState, int rotationOffset, ResourceLocation particleTex){
+	private void createMultiblock(Block b, ModelFile masterModel, @Nullable ModelFile mirroredModel, Property<Boolean> isSlave, EnumProperty<Direction> facing, @Nullable Property<Boolean> mirroredState, int rotationOffset, ResourceLocation particleTex){
 		Preconditions.checkArgument((mirroredModel == null) == (mirroredState == null));
 		VariantBlockStateBuilder builder = getVariantBuilder(b);
+		
+		if(EMPTY_MODEL==null){
+			EMPTY_MODEL = new ConfiguredModel(
+					new ExistingModelFile(new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty"), this.exFileHelper)
+			);
+		}
+		
 		builder.partialState()
 			.with(isSlave, true)
 			.setModels(new ConfiguredModel(
-					withExistingParent(getMultiblockPath(b)+"_empty", EMPTY_MODEL.model.getLocation())
+					this.loadedModels.withExistingParent(getMultiblockPath(b)+"_empty", EMPTY_MODEL.model.getLocation())
 					.texture("particle", particleTex)));
 		
 		boolean[] possibleMirrorStates;
@@ -255,7 +260,7 @@ public class IPBlockStates extends BlockStateProvider{
 		itemModelWithParent(block, file);
 	}
 	
-	private BlockModelBuilder getItemBuilder(Block block){
-		return getBuilder(modLoc("item/"+getPath(block)).toString());
+	private ItemModelBuilder getItemBuilder(Block block){
+		return itemModels().getBuilder(modLoc("item/"+getPath(block)).toString());
 	}
 }

@@ -33,7 +33,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraftforge.event.RegistryEvent;
@@ -163,9 +162,8 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 				float r1 = (this.world.rand.nextFloat() - .5F) * 2F;
 				float r2 = (this.world.rand.nextFloat() - .5F) * 2F;
 				
-				Vec3d particlePos = new Vec3d(getPos()).add(0.5, 0.0, 0.5);
 				this.world.addParticle(ParticleTypes.SMOKE,
-						particlePos.getX(), particlePos.getY(), particlePos.getZ(),
+						this.pos.getX()+.5, this.pos.getY()+.5, this.pos.getZ()+.5,
 						r1 * 0.04D, 0.25D, r2 * 0.025D);
 			}
 			

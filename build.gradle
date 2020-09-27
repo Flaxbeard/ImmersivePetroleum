@@ -71,7 +71,7 @@ minecraft {
 			property 'forge.logging.console.level', 'info'
 			property 'fml.earlyprogresswindow', 'false'
 			
-			args '--mod', 'immersivepetroleum', '--all', '--output', file('src/generated/resources/'), '--validate', '--existing', sourceSets.main.resources.srcDirs[0], '--existing', 'C:/Users/TwistedGate/.gradle/caches/forge_gradle/deobf_dependencies/blusunrize/immersiveengineering/ImmersiveEngineering/1.16.3-4.0.0-121_mapped_snapshot_20200912-1.16.2/ImmersiveEngineering-1.16.3-4.0.0-121_mapped_snapshot_20200912-1.16.2.jar'
+			args '--mod', 'immersivepetroleum', '--all', '--output', file('src/generated/resources/'), '--validate', '--existing', sourceSets.main.resources.srcDirs[0], '--existing', 'C:/Users/TwistedGate/.gradle/caches/forge_gradle/deobf_dependencies/blusunrize/immersiveengineering/ImmersiveEngineering/1.16.3-4.0.1-121_mapped_snapshot_20200912-1.16.2/ImmersiveEngineering-1.16.3-4.0.1-121_mapped_snapshot_20200912-1.16.2.jar'
 			
 			mods {
 				immersivepetroleum {
@@ -88,10 +88,10 @@ dependencies {
 	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.3-4.0.1-121")
 	compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.3:7.0.0.45")
 	
-	compileOnly fg.deobf("mezz.jei:jei-1.16.3:7.3.2.34:api")
+	compileOnly fg.deobf("mezz.jei:jei-1.16.2:7.3.2.25:api")
+	//compileOnly fg.deobf('com.feed_the_beast.mods:ftb-gui-library:1.0.0.18')
 	
-	runtimeOnly fg.deobf('com.feed_the_beast.mods:ftb-gui-library:1.0.0.18')
-	runtimeOnly fg.deobf("mezz.jei:jei-1.16.3:7.3.2.34")
+	//runtimeOnly fg.deobf("mezz.jei:jei-1.16.3:7.3.2.34")
 }
 
 processResources {

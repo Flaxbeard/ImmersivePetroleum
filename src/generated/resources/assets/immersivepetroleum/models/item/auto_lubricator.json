@@ -27,8 +27,9 @@
         0.0,
         0.0,
         0.0,
-        1.0
-      ]
+        0.99830717
+      ],
+      "origin": "corner"
     },
     "thirdperson_lefthand": {
       "translation": [
@@ -51,8 +52,9 @@
         0.0,
         0.0,
         0.0,
-        1.0
-      ]
+        0.99830717
+      ],
+      "origin": "corner"
     },
     "firstperson_righthand": {
       "translation": [
@@ -75,8 +77,9 @@
         0.0,
         0.0,
         0.0,
-        1.0
-      ]
+        0.99830717
+      ],
+      "origin": "corner"
     },
     "firstperson_lefthand": {
       "translation": [
@@ -99,8 +102,9 @@
         0.0,
         0.0,
         0.0,
-        1.0
-      ]
+        0.99830717
+      ],
+      "origin": "corner"
     },
     "head": {
       "translation": [
@@ -123,8 +127,9 @@
         0.0,
         0.0,
         0.0,
-        1.0
-      ]
+        0.99830717
+      ],
+      "origin": "corner"
     },
     "gui": {
       "translation": [
@@ -147,8 +152,9 @@
         0.0,
         0.0,
         0.0,
-        1.0
-      ]
+        0.99830717
+      ],
+      "origin": "corner"
     },
     "ground": {
       "translation": [
@@ -171,8 +177,9 @@
         0.0,
         0.0,
         0.0,
-        1.0
-      ]
+        0.99830717
+      ],
+      "origin": "corner"
     },
     "fixed": {
       "translation": [
@@ -195,8 +202,9 @@
         0.0,
         0.0,
         0.0,
-        1.0
-      ]
+        0.99830717
+      ],
+      "origin": "corner"
     }
   }
 }

@@ -9,6 +9,7 @@ import java.util.Locale;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.multiblocks.ManualElementMultiblock;
@@ -42,14 +43,17 @@ import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageCloseBook;
-import flaxbeard.immersivepetroleum.dummy.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
@@ -78,14 +82,29 @@ import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public class ClientEventHandler{
+	
+	@SubscribeEvent
+	public void clientSetup(FMLClientSetupEvent event){
+		RenderTypeLookup.setRenderLayer(IPContent.Blocks.auto_lubricator, RenderType.getCutout());
+		RenderTypeLookup.setRenderLayer(IPContent.Blocks.gas_generator, RenderType.getCutout());
+		RenderTypeLookup.setRenderLayer(IPContent.Blocks.dummyConveyor, RenderType.getCutout());
+		RenderTypeLookup.setRenderLayer(IPContent.Blocks.dummyOilOre, RenderType.getCutout());
+		RenderTypeLookup.setRenderLayer(IPContent.Blocks.dummyPipe, RenderType.getCutout());
+		
+		RenderTypeLookup.setRenderLayer(IPContent.Multiblock.distillationtower, RenderType.getCutout());
+		RenderTypeLookup.setRenderLayer(IPContent.Multiblock.pumpjack, RenderType.getCutout());
+	}
+	
 	private static Object lastGui = null;
 	private static Field FIELD_PAGES;
 	private static Field FIELD_SPECIAL;
@@ -189,7 +208,7 @@ public class ClientEventHandler{
 				if(!chunkBorders && (main || off)){
 					ColumnPos pos=CoresampleItem.getCoords(target);
 					if(pos!=null){
-						renderChunkBorder(transform, pos.x >> 4 << 4, pos.z >> 4 << 4);
+						//renderChunkBorder(transform, pos.x >> 4 << 4, pos.z >> 4 << 4); // FIXME
 					}
 				}
 			}
@@ -206,7 +225,8 @@ public class ClientEventHandler{
 				boolean off = (secondItem != null && !secondItem.isEmpty()) && secondItem.getItem() == IPContent.Blocks.auto_lubricator.asItem();
 				
 				if(main || off){
-					ItemRenderer itemRenderer=ClientUtils.mc().getItemRenderer();
+					BlockRendererDispatcher blockDispatcher=ClientUtils.mc().getBlockRendererDispatcher();
+					IRenderTypeBuffer.Impl buffer=IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
 					
 					BlockPos base = mc.player.getPosition();
 					for(int x = -16;x <= 16;x++){
@@ -225,6 +245,7 @@ public class ClientEventHandler{
 											BlockState targetState=mc.player.world.getBlockState(targetPos);
 											BlockState targetStateUp=mc.player.world.getBlockState(targetPos.up());
 											if(targetState.getMaterial().isReplaceable() && targetStateUp.getMaterial().isReplaceable()){
+												IVertexBuilder vBuilder=buffer.getBuffer(RenderType.getCutout());
 												transform.push();
 												{
 													float alpha = .5f;
@@ -255,12 +276,15 @@ public class ClientEventHandler{
 													transform.scale(1, 1, 1);
 													//GlStateManager.scaled(2, 2, 2);
 													
-													ItemStack toRender = new ItemStack(IPContent.Blocks.auto_lubricator);
-//													itemRenderer.renderItem(toRender, itemRenderer.getModelWithOverrides(toRender)); // FIXME
+													BlockState state=IPContent.Blocks.auto_lubricator.getDefaultState();
+													IBakedModel model=blockDispatcher.getModelForState(state);
+													blockDispatcher.getBlockModelRenderer()
+														.renderModel(transform.getLast(), vBuilder, state, model, 1.0F, 1.0F, 1.0F, -1, -1, EmptyModelData.INSTANCE);
 													
 													ShaderUtil.releaseShader();
 												}
 												transform.pop();
+												buffer.finish();
 											}
 										}
 									}
@@ -277,24 +301,19 @@ public class ClientEventHandler{
 	public void renderChunkBorder(MatrixStack transform, int chunkX, int chunkZ){
 		PlayerEntity player = ClientUtils.mc().player;
 		
-		double px = TileEntityRendererDispatcher.staticPlayerX;
-		double py = TileEntityRendererDispatcher.staticPlayerY;
-		double pz = TileEntityRendererDispatcher.staticPlayerZ;
-		int y = Math.min((int) player.posY - 2, player.getEntityWorld().getChunk(chunkX, chunkZ).getHeight());
-		float h = (float) Math.max(32, player.posY - y + 4);
+		double px = player.getPosX();
+		double py = player.getPosY();
+		double pz = player.getPosZ();
+		int y = Math.min((int) py - 2, player.getEntityWorld().getChunk(chunkX, chunkZ).getHeight());
+		float h = (float) Math.max(32, py - y + 4);
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vertexbuffer = tessellator.getBuffer();
 		
-		transform.disableTexture();
-		transform.enableBlend();
-		transform.disableCull();
-		transform.blendFuncSeparate(770, 771, 1, 0);
-		transform.shadeModel(GL11.GL_SMOOTH);
 		float r = Lib.COLOUR_F_ImmersiveOrange[0];
 		float g = Lib.COLOUR_F_ImmersiveOrange[1];
 		float b = Lib.COLOUR_F_ImmersiveOrange[2];
-		vertexbuffer.setTranslation(chunkX - px, y + 2 - py, chunkZ - pz);
-		transform.lineWidth(5f);
+		transform.translate(chunkX - px, y + 2 - py, chunkZ - pz);
+		//transform.lineWidth(5f);
 		vertexbuffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 		vertexbuffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
 		vertexbuffer.pos(0, h, 0).color(r, g, b, .375f).endVertex();
@@ -314,11 +333,6 @@ public class ClientEventHandler{
 		vertexbuffer.pos(16, 2, 0).color(r, g, b, .375f).endVertex();
 		vertexbuffer.pos(16, 2, 16).color(r, g, b, .375f).endVertex();
 		tessellator.draw();
-		vertexbuffer.setTranslation(0, 0, 0);
-		transform.shadeModel(GL11.GL_FLAT);
-		transform.enableCull();
-		transform.disableBlend();
-		transform.enableTexture();
 	}
 	
 	static final DecimalFormat FORMATTER = new DecimalFormat("#,###.##");
@@ -349,10 +363,10 @@ public class ClientEventHandler{
 					String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
 					
 					ITextComponent header=new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oil", fluidName)
-							.applyTextStyle(TextFormatting.GRAY);
+							.mergeStyle(TextFormatting.GRAY);
 					
 					ITextComponent info=new StringTextComponent("  "+FORMATTER.format(est)+" mB")
-							.applyTextStyle(TextFormatting.DARK_GRAY);
+							.mergeStyle(TextFormatting.DARK_GRAY);
 					
 					tooltip.add(tipPos, header);
 					tooltip.add(tipPos+1, info);
@@ -361,15 +375,15 @@ public class ClientEventHandler{
 						String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
 						
 						ITextComponent header=new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oil", fluidName)
-								.applyTextStyle(TextFormatting.GRAY);
+								.mergeStyle(TextFormatting.GRAY);
 						
 						ITextComponent info=new StringTextComponent("  "+I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName))
-								.applyTextStyle(TextFormatting.GRAY);
+								.mergeStyle(TextFormatting.GRAY);
 						
 						tooltip.add(tipPos, header);
 						tooltip.add(tipPos+1, info);
 					}else{
-						tooltip.add(tipPos, new StringTextComponent(I18n.format("chat.immersivepetroleum.info.coresample.noOil")).applyTextStyle(TextFormatting.GRAY));
+						tooltip.add(tipPos, new StringTextComponent(I18n.format("chat.immersivepetroleum.info.coresample.noOil")).mergeStyle(TextFormatting.GRAY));
 					}
 				}
 			}
@@ -409,7 +423,7 @@ public class ClientEventHandler{
 								MultiFluidTank tank=tower.tanks[DistillationTowerTileEntity.TANK_INPUT];
 								for(int i=0;i<tank.fluids.size();i++){
 									FluidStack fstack=tank.fluids.get(i);
-									strings.add("  "+fstack.getDisplayName().getFormattedText()+" "+fstack.getAmount()+"mB");
+									strings.add("  "+fstack.getDisplayName()+" "+fstack.getAmount()+"mB");
 								}
 							}
 							
@@ -418,12 +432,12 @@ public class ClientEventHandler{
 								MultiFluidTank tank=tower.tanks[DistillationTowerTileEntity.TANK_OUTPUT];
 								for(int i=0;i<tank.fluids.size();i++){
 									FluidStack fstack=tank.fluids.get(i);
-									strings.add("  "+fstack.getDisplayName().getFormattedText()+" "+fstack.getAmount()+"mB");
+									strings.add("  "+fstack.getDisplayName()+" "+fstack.getAmount()+"mB");
 								}
 							}
 							
 							for(int i=0;i<strings.size();i++){
-								ClientUtils.font().drawStringWithShadow(strings.get(i), 1, 1+(i * ClientUtils.font().FONT_HEIGHT), 0xffffff);
+								//ClientUtils.font().drawStringWithShadow(strings.get(i), 1, 1+(i * ClientUtils.font().FONT_HEIGHT), 0xffffff);
 							}
 						}
 					}
@@ -449,7 +463,7 @@ public class ClientEventHandler{
 								
 								if(tileEntity instanceof CoresampleTileEntity){
 									IBlockOverlayText overlayBlock = (IBlockOverlayText) tileEntity;
-									String[] text = overlayBlock.getOverlayText(player, mop, hammer);
+									ITextComponent[] text = overlayBlock.getOverlayText(player, mop, hammer);
 									ItemStack coresample = ((CoresampleTileEntity) tileEntity).coresample;
 									
 									if(ItemNBTHelper.hasKey(coresample, "resAmount") && text != null && text.length > 0){
@@ -476,7 +490,7 @@ public class ClientEventHandler{
 										
 										int fx = event.getWindow().getScaledWidth() / 2 + 8;
 										int fy = event.getWindow().getScaledHeight() / 2 + 8 + i * ClientUtils.font().FONT_HEIGHT;
-										ClientUtils.font().drawStringWithShadow(s, fx, fy, 0xffffff);
+										ClientUtils.font().drawStringWithShadow(event.getMatrixStack(), s, fx, fy, 0xFFFFFF);
 									}
 								}
 							}
@@ -494,7 +508,7 @@ public class ClientEventHandler{
 										if(text[i] != null){
 											int fx = event.getWindow().getScaledWidth() / 2 + 8;
 											int fy = event.getWindow().getScaledHeight() / 2 + 8 + i * font.FONT_HEIGHT;
-											font.drawStringWithShadow(text[i], fx, fy, col);
+											font.drawStringWithShadow(event.getMatrixStack(), text[i], fx, fy, col);
 										}
 									}
 								}
@@ -513,6 +527,7 @@ public class ClientEventHandler{
 	public void onRenderOverlayPost(RenderGameOverlayEvent.Post event){
 		if(ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
 			PlayerEntity player = ClientUtils.mc().player;
+			MatrixStack transform=event.getMatrixStack();
 			
 			if(player.getRidingEntity() instanceof SpeedboatEntity){
 				int offset = 0;
@@ -529,7 +544,7 @@ public class ClientEventHandler{
 					}
 				}
 				
-				GlStateManager.pushMatrix();
+				transform.push();
 				{
 					float dx = event.getWindow().getScaledWidth()-16;
 					float dy = event.getWindow().getScaledHeight();
@@ -542,9 +557,9 @@ public class ClientEventHandler{
 					double vMax = 71 / 256f;
 					
 					ClientUtils.bindTexture("immersivepetroleum:textures/gui/hud_elements.png");
-					GlStateManager.color4f(1, 1, 1, 1);
-					GlStateManager.translated(dx, dy + offset, 0);
-					ClientUtils.drawTexturedRect(-24, -68, w, h, uMin, uMax, vMin, vMax);
+					//transform.color4f(1, 1, 1, 1);
+					transform.translate(dx, dy + offset, 0);
+					//ClientUtils.drawTexturedRect(-24, -68, w, h, uMin, uMax, vMin, vMax); // FIXME
 					
 					GL11.glTranslated(-23, -37, 0);
 					SpeedboatEntity boat = (SpeedboatEntity) player.getRidingEntity();
@@ -555,15 +570,15 @@ public class ClientEventHandler{
 					
 					float cap = (float) capacity;
 					float angle = 83 - (166 * amount / cap);
-					GlStateManager.rotatef(angle, 0, 0, 1);
-					ClientUtils.drawTexturedRect(6, -2, 24, 4, 91 / 256f, 123 / 256f, 80 / 256f, 87 / 256f);
-					GlStateManager.rotatef(-angle, 0, 0, 1);
+					transform.rotate(new Quaternion(0, 0, angle, true));
+					//ClientUtils.drawTexturedRect(6, -2, 24, 4, 91 / 256f, 123 / 256f, 80 / 256f, 87 / 256f); // FIXME
+					transform.rotate(new Quaternion(0, 0, -angle, true));
 					
-					GlStateManager.translated(23, 37, 0);
-					ClientUtils.drawTexturedRect(-41, -73, 53, 72, 8 / 256f, 61 / 256f, 4 / 256f, 76 / 256f);
+					transform.translate(23, 37, 0);
+					//ClientUtils.drawTexturedRect(-41, -73, 53, 72, 8 / 256f, 61 / 256f, 4 / 256f, 76 / 256f); // FIXME
 					
 					if(holdingDebugItem){
-						GlStateManager.pushMatrix();
+						transform.push();
 						{
 							FontRenderer font=Minecraft.getInstance().fontRenderer;
 							if(font!=null){
@@ -573,14 +588,14 @@ public class ClientEventHandler{
 								
 								String out0=String.format(Locale.US, "Fuel: %s/%sMB", amount,capacity);
 								String out1=String.format(Locale.US, "Speed: %.2f", speed);
-								font.drawStringWithShadow(out0, -65, -94, 0xFFFFFFFF);
-								font.drawStringWithShadow(out1, -65, -85, 0xFFFFFFFF);
+								font.drawStringWithShadow(transform, out0, -65, -94, 0xFFFFFFFF);
+								font.drawStringWithShadow(transform, out1, -65, -85, 0xFFFFFFFF);
 							}
 						}
-						GlStateManager.popMatrix();
+						transform.pop();
 					}
 				}
-				GlStateManager.popMatrix();
+				transform.pop();
 			}
 		}
 	}

@@ -42,13 +42,17 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
 
 public class AutoLubricatorBlock extends IPBlockBase{
-	private static final Material material=new Material(MaterialColor.IRON, false, true, true, false, false, false, PushReaction.BLOCK);
+	private static final Material material=new Material(MaterialColor.IRON, false, false, true, true, false, false, PushReaction.BLOCK);
 	
 	public static final DirectionProperty FACING=DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
 	public static final BooleanProperty SLAVE=BooleanProperty.create("slave");
 	
 	public AutoLubricatorBlock(String name){
-		super(name, Block.Properties.create(material).hardnessAndResistance(5.0F, 6.0F).harvestTool(ToolType.AXE).sound(SoundType.METAL));
+		super(name, Block.Properties.create(material)
+				.hardnessAndResistance(5.0F, 6.0F)
+				.harvestTool(ToolType.AXE)
+				.sound(SoundType.METAL)
+				.notSolid());
 		
 		setDefaultState(getStateContainer().getBaseState()
 				.with(FACING, Direction.NORTH)

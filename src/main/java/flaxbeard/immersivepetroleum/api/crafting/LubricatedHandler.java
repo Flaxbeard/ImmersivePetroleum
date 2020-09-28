@@ -94,7 +94,7 @@ public class LubricatedHandler{
 			tag.putInt("x", pos.getX());
 			tag.putInt("y", pos.getY());
 			tag.putInt("z", pos.getZ());
-			tag.putString("world", world.getRegistryName().toString());
+			tag.putString("world", world.func_240901_a_().toString());
 			
 			return tag;
 		}

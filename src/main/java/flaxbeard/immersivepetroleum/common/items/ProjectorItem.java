@@ -11,6 +11,8 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
@@ -598,9 +600,10 @@ public class ProjectorItem extends IPItemBase{
 		public static void renderLast(RenderWorldLastEvent event){
 			Minecraft mc = ClientUtils.mc();
 			
-			GlStateManager.pushMatrix();
-			{
-				if(mc.player != null){
+			if(mc.player != null){
+				MatrixStack transform = event.getMatrixStack();
+				transform.push();
+				{
 					ItemStack secondItem = mc.player.getHeldItemOffhand();
 					
 					boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.projector && ItemNBTHelper.hasKey(secondItem, "multiblock");
@@ -608,19 +611,19 @@ public class ProjectorItem extends IPItemBase{
 					for(int i = 0;i <= 10;i++){
 						ItemStack stack = (i == 10 ? secondItem : mc.player.inventory.getStackInSlot(i));
 						if(!stack.isEmpty() && stack.getItem() == Items.projector && ItemNBTHelper.hasKey(stack, "multiblock")){
-							GlStateManager.pushMatrix();
+							transform.push();
 							{
-								renderSchematic(stack, mc.player, mc.player.world, event.getPartialTicks(), i == mc.player.inventory.currentItem || (i == 10 && off));
+								renderSchematic(transform, stack, mc.player, mc.player.world, event.getPartialTicks(), i == mc.player.inventory.currentItem || (i == 10 && off));
 							}
-							GlStateManager.popMatrix();
+							transform.pop();
 						}
 					}
 				}
+				transform.pop();
 			}
-			GlStateManager.popMatrix();
 		}
 		
-		public static void renderSchematic(ItemStack target, PlayerEntity player, World world, float partialTicks, boolean shouldRenderMoving){
+		public static void renderSchematic(MatrixStack transform, ItemStack target, PlayerEntity player, World world, float partialTicks, boolean shouldRenderMoving){
 			Minecraft mc = ClientUtils.mc();
 			IMultiblock multiblock = ProjectorItem.getMultiblock(target);
 			if(multiblock==null)
@@ -720,10 +723,7 @@ public class ProjectorItem extends IPItemBase{
 //				double py = TileEntityRendererDispatcher.staticPlayerY;
 //				double pz = TileEntityRendererDispatcher.staticPlayerZ;
 				
-				GlStateManager.translated(hit.getX() - px, hit.getY() - py, hit.getZ() - pz);
-				GlStateManager.disableLighting();
-				GlStateManager.shadeModel(Minecraft.isAmbientOcclusionEnabled() ? GL11.GL_SMOOTH : GL11.GL_FLAT);
-				GlStateManager.enableBlend();
+				transform.translate(hit.getX() - px, hit.getY() - py, hit.getZ() - pz);
 				ClientUtils.bindAtlas();
 				final float flicker = (world.rand.nextInt(10) == 0) ? 0.75F : (world.rand.nextInt(20) == 0 ? 0.5F : 1F);
 				ItemStack heldStack = player.getHeldItemMainhand();
@@ -734,21 +734,19 @@ public class ProjectorItem extends IPItemBase{
 					float alpha = heldStack.getItem()==info.state.getBlock().asItem() ? 1.0F : .5F;
 					switch(rInfo.layer){
 						case 0:{ // All / Slice
-							GlStateManager.pushMatrix();
+							transform.push();
 							{
 								renderPhantom(multiblock, world, info, rInfo.worldPos, flicker, alpha, partialTicks, flip, rInfo.settings.getRotation());
 							}
-							GlStateManager.popMatrix();
+							transform.pop();
 							break;
 						}
 						case 1:{ // Bad block
-							GlStateManager.pushMatrix();
+							transform.push();
 							{
-								GlStateManager.disableDepthTest();
 								renderCenteredOutlineBox(rInfo.worldPos, 1.0F, 0.0F, 0.0F, flicker, 1.005F);
-								GlStateManager.enableDepthTest();
 							}
-							GlStateManager.popMatrix();
+							transform.pop();
 							break;
 						}
 						case 2:{ // Correct Block, used in "if(perfect)" below
@@ -769,21 +767,21 @@ public class ProjectorItem extends IPItemBase{
 				if(perfect){
 					// Debugging Stuff
 					/*
-					GlStateManager.pushMatrix();
+					transform.push();
 					{
 						// Min (Magenta/Purple)
 						renderCenteredOutlineBox(min, 1.0F, 0.0F, 1.0F, flicker, 1.0F);
 					}
-					GlStateManager.popMatrix();
+					transform.pop();
 					
-					GlStateManager.pushMatrix();
+					transform.push();
 					{
 						// Max (Yellow)
 						renderCenteredOutlineBox(max, 1.0F, 1.0F, 0.0F, flicker, 1.0F);
 					}
-					GlStateManager.popMatrix();
+					transform.pop();
 					
-					GlStateManager.pushMatrix();
+					transform.push();
 					{
 						// Center (White)
 						MutableBlockPos center=new MutableBlockPos(min.toImmutable().add(max));
@@ -791,15 +789,15 @@ public class ProjectorItem extends IPItemBase{
 						
 						renderCenteredOutlineBox(center, 1.0F, 1.0F, 1.0F, flicker, 1.0F);
 					}
-					GlStateManager.popMatrix();
+					transform.pop();
 					//*/
 					
-					GlStateManager.pushMatrix();
+					transform.push();
 					{
 						//renderPerfectBox(size, rotation);
 						renderOutlineBox(min, max, 0.0F, 0.75F, 0.0F, flicker);
 					}
-					GlStateManager.popMatrix();
+					transform.pop();
 				}
 			}
 		}

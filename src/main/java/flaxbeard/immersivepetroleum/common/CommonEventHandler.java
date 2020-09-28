@@ -268,7 +268,7 @@ public class CommonEventHandler{
 	
 	@SubscribeEvent
 	public void handleNapalm(WorldTickEvent event){
-		ResourceLocation d = event.world.getDimensionKey().getRegistryName();
+		ResourceLocation d = event.world.getDimensionKey().func_240901_a_();
 		
 		if(event.phase == Phase.START){
 			toRemove.put(d, new ArrayList<>());

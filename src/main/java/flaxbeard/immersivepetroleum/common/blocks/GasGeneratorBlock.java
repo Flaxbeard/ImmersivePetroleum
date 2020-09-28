@@ -37,12 +37,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 
 public class GasGeneratorBlock extends IPBlockBase{
-	private static final Material material=new Material(MaterialColor.IRON, false, true, true, false, false, false, PushReaction.BLOCK);
+	private static final Material material=new Material(MaterialColor.IRON, false, false, true, true, false, false, PushReaction.BLOCK);
 	
 	public static final DirectionProperty FACING=DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
 	
 	public GasGeneratorBlock(){
-		super("gas_generator", Block.Properties.create(material).hardnessAndResistance(5.0F, 6.0F).harvestTool(ToolType.PICKAXE).sound(SoundType.METAL));
+		super("gas_generator", Block.Properties.create(material)
+				.hardnessAndResistance(5.0F, 6.0F)
+				.harvestTool(ToolType.PICKAXE)
+				.sound(SoundType.METAL)
+				.notSolid());
 		
 		setDefaultState(getStateContainer().getBaseState().with(FACING, Direction.NORTH));
 	}
@@ -64,6 +68,7 @@ public class GasGeneratorBlock extends IPBlockBase{
 		return BlockRenderLayer.CUTOUT;
 	}
 	*/
+	
 	@Override
 	public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos){
 		return 0;
@@ -79,7 +84,6 @@ public class GasGeneratorBlock extends IPBlockBase{
 		return true;
 	}
 	
-	// TODO
 //	@Override
 //	public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos){
 //		return false;

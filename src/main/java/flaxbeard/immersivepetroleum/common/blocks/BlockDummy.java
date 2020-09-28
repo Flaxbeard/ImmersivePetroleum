@@ -11,10 +11,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
 public class BlockDummy extends IPBlockBase{
-	private static final Material Material = new Material(MaterialColor.IRON, false, true, true, false, false, false, PushReaction.BLOCK);
+	private static final Material Material = new Material(MaterialColor.IRON, false, false, true, true, false, false, PushReaction.BLOCK);
 	
 	public BlockDummy(String name){
-		super(name, Block.Properties.create(Material));
+		super(name, Block.Properties.create(Material).notSolid());
 	}
 	
 	@Override
@@ -23,9 +23,7 @@ public class BlockDummy extends IPBlockBase{
 	}
 	
 	@Override
-	public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items){
-		
-	}
+	public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items){}
 	
 	// TODO Block Render Layer
 	/*

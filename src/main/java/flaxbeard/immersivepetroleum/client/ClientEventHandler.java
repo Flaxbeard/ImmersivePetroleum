@@ -43,13 +43,13 @@ import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageCloseBook;
+import malte0811.modelsplitter.math.Vec3d;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.Tessellator;
@@ -228,6 +228,9 @@ public class ClientEventHandler{
 					BlockRendererDispatcher blockDispatcher=ClientUtils.mc().getBlockRendererDispatcher();
 					IRenderTypeBuffer.Impl buffer=IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
 					
+					Vector3d renderView = ClientUtils.mc().gameRenderer.getActiveRenderInfo().getProjectedView();
+					transform.translate(-renderView.x, -renderView.y, -renderView.z);
+					
 					BlockPos base = mc.player.getPosition();
 					for(int x = -16;x <= 16;x++){
 						for(int z = -16;z <= 16;z++){
@@ -250,12 +253,8 @@ public class ClientEventHandler{
 												{
 													float alpha = .5f;
 													ShaderUtil.alpha_static(alpha, mc.player.ticksExisted);
-													double px = mc.player.getPosX();
-													double py = mc.player.getPosY();
-													double pz = mc.player.getPosZ();
 													
-													transform.translate(targetPos.getX() - px, targetPos.getY() - py, targetPos.getZ() - pz);
-													transform.translate(0.5, -.5, .5);
+													transform.translate(targetPos.getX(), targetPos.getY()-1, targetPos.getZ());
 													
 													switch(targetFacing){
 														case SOUTH:
@@ -279,7 +278,7 @@ public class ClientEventHandler{
 													BlockState state=IPContent.Blocks.auto_lubricator.getDefaultState();
 													IBakedModel model=blockDispatcher.getModelForState(state);
 													blockDispatcher.getBlockModelRenderer()
-														.renderModel(transform.getLast(), vBuilder, state, model, 1.0F, 1.0F, 1.0F, -1, -1, EmptyModelData.INSTANCE);
+														.renderModel(transform.getLast(), vBuilder, state, model, 1.0F, 1.0F, 1.0F, -1, 0, EmptyModelData.INSTANCE);
 													
 													ShaderUtil.releaseShader();
 												}

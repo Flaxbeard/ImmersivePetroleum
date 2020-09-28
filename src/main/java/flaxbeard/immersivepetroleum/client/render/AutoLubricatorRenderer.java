@@ -90,7 +90,7 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 			if(handler != null){
 				TileEntity master = handler.isPlacedCorrectly(te.getWorld(), te, te.getFacing());
 				if(master != null){
-					handler.renderPipes(te.getWorld(), te, te.getFacing(), master);
+//					handler.renderPipes(te.getWorld(), te, te.getFacing(), master); // FIXME
 				}
 			}
 		}

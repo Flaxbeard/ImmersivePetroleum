@@ -54,6 +54,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
@@ -248,42 +249,42 @@ public class ClientEventHandler{
 											BlockState targetState=mc.player.world.getBlockState(targetPos);
 											BlockState targetStateUp=mc.player.world.getBlockState(targetPos.up());
 											if(targetState.getMaterial().isReplaceable() && targetStateUp.getMaterial().isReplaceable()){
-												IVertexBuilder vBuilder=buffer.getBuffer(RenderType.getCutout());
+												IVertexBuilder vBuilder=buffer.getBuffer(RenderType.getTranslucent());
 												transform.push();
 												{
-													float alpha = .5f;
-													ShaderUtil.alpha_static(alpha, mc.player.ticksExisted);
-													
 													transform.translate(targetPos.getX(), targetPos.getY()-1, targetPos.getZ());
 													
 													switch(targetFacing){
 														case SOUTH:
-															transform.rotate(new Quaternion(0, 270, 0, true));
+															transform.rotate(new Quaternion(0, 180, 0, true));
+															transform.translate(-1.0, 0.0, -1.0);
 															break;
 														case NORTH:
-															transform.rotate(new Quaternion(0, 90, 0, true));
+															transform.rotate(new Quaternion(0, 0, 0, true));
 															break;
 														case WEST:
-															transform.rotate(new Quaternion(0, 180, 0, true));
+															transform.rotate(new Quaternion(0, 90, 0, true));
+															transform.translate(-1.0, 0.0, 0.0);
 															break;
 														case EAST:
+															transform.rotate(new Quaternion(0, 270, 0, true));
+															transform.translate(0.0, 0.0, -1.0);
 															break;
 														default:
 													}
-													transform.translate(0.02, 0, .019);
-													
-													transform.scale(1, 1, 1);
-													//GlStateManager.scaled(2, 2, 2);
 													
 													BlockState state=IPContent.Blocks.auto_lubricator.getDefaultState();
 													IBakedModel model=blockDispatcher.getModelForState(state);
 													blockDispatcher.getBlockModelRenderer()
-														.renderModel(transform.getLast(), vBuilder, state, model, 1.0F, 1.0F, 1.0F, -1, 0, EmptyModelData.INSTANCE);
+														.renderModel(transform.getLast(), vBuilder, null, model, 1.0F, 1.0F, 1.0F, 0xF000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
 													
-													ShaderUtil.releaseShader();
 												}
 												transform.pop();
+												
+												float alpha = .5f;
+												ShaderUtil.alpha_static(alpha, mc.player.ticksExisted);
 												buffer.finish();
+												ShaderUtil.releaseShader();
 											}
 										}
 									}

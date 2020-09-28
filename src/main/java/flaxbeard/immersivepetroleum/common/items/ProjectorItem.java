@@ -736,7 +736,8 @@ public class ProjectorItem extends IPItemBase{
 						case 0:{ // All / Slice
 							transform.push();
 							{
-								renderPhantom(multiblock, world, info, rInfo.worldPos, flicker, alpha, partialTicks, flip, rInfo.settings.getRotation());
+								// FIXME
+								//renderPhantom(multiblock, world, info, rInfo.worldPos, flicker, alpha, partialTicks, flip, rInfo.settings.getRotation());
 							}
 							transform.pop();
 							break;
@@ -744,7 +745,8 @@ public class ProjectorItem extends IPItemBase{
 						case 1:{ // Bad block
 							transform.push();
 							{
-								renderCenteredOutlineBox(rInfo.worldPos, 1.0F, 0.0F, 0.0F, flicker, 1.005F);
+								// FIXME
+								//renderCenteredOutlineBox(rInfo.worldPos, 1.0F, 0.0F, 0.0F, flicker, 1.005F);
 							}
 							transform.pop();
 							break;
@@ -794,8 +796,8 @@ public class ProjectorItem extends IPItemBase{
 					
 					transform.push();
 					{
-						//renderPerfectBox(size, rotation);
-						renderOutlineBox(min, max, 0.0F, 0.75F, 0.0F, flicker);
+						// FIXME
+						//renderOutlineBox(min, max, 0.0F, 0.75F, 0.0F, flicker);
 					}
 					transform.pop();
 				}

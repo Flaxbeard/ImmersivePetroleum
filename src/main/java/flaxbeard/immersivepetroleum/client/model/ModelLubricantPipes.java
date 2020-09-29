@@ -3,60 +3,74 @@ package flaxbeard.immersivepetroleum.client.model;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import net.minecraft.client.renderer.model.Model;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.ResourceLocation;
 
 public class ModelLubricantPipes{
 	
-	public static class Crusher extends Model{
+	public static class Crusher extends IPModel{
+		public static final String ID="crusher_pipes";
+		
 		private ModelRenderer base;
 		
-		public Crusher(boolean mirror){
-			super(null); // FIXME Needs a Type!
-			
-			this.textureWidth = 16;
-			this.textureHeight = 16;
-			
-			this.base = new ModelRenderer(this, 0, 0);
+		public Crusher(){
+			super(RenderType::getEntitySolid);
+		}
+		
+		@Override
+		public String id(){
+			return ID;
+		}
+		
+		@Override
+		public ResourceLocation textureLocation(){
+			return new ResourceLocation(ImmersivePetroleum.MODID, "textures/block/lube_pipe12.png");
+		}
+		
+		@Override
+		public void init(){
+			this.base = createRenderer(this, 0, 0);
 			base.addBox(20, 8, 9, 12, 2, 2);
 			
-			ModelRenderer p1 = new ModelRenderer(this, 0, 0);
+			ModelRenderer p1 = createRenderer(this, 0, 0);
 			p1.setRotationPoint(20, 9, 10);
 			p1.addBox(-1, -1, 0, 12, 2, 2);
 			p1.rotateAngleY = (float) Math.toRadians(270);
 			this.base.addChild(p1);
 			
-			ModelRenderer p2 = new ModelRenderer(this, 0, 0);
+			ModelRenderer p2 = createRenderer(this, 0, 0);
 			p2.setRotationPoint(31, 9, -10);
 			p2.addBox(-1, -1, 0, 18, 2, 2);
 			p2.rotateAngleY = (float) Math.toRadians(270);
 			this.base.addChild(p2);
 			
-			ModelRenderer p3 = new ModelRenderer(this, 0, 0);
+			ModelRenderer p3 = createRenderer(this, 0, 0);
 			p3.setRotationPoint(30, 10, -10);
 			p3.addBox(0, -1, -1, 40, 2, 2);
 			p3.rotateAngleZ = (float) Math.toRadians(90);
 			this.base.addChild(p3);
 			
-			ModelRenderer p5 = new ModelRenderer(this, 0, 0);
+			ModelRenderer p5 = createRenderer(this, 0, 0);
 			p5.addBox(31, 8, 5, 1, 2, 2);
 			this.base.addChild(p5);
 			
-			ModelRenderer p6 = new ModelRenderer(this, 0, 0);
+			ModelRenderer p6 = createRenderer(this, 0, 0);
 			p6.addBox(23, 48, -11, 6, 2, 2);
 			this.base.addChild(p6);
 			
-			ModelRenderer p7 = new ModelRenderer(this, 0, 0);
+			ModelRenderer p7 = createRenderer(this, 0, 0);
 			p7.addBox(8, 8, 19, 10, 2, 2);
 			this.base.addChild(p7);
 			
-			ModelRenderer p8 = new ModelRenderer(this, 0, 0);
+			ModelRenderer p8 = createRenderer(this, 0, 0);
 			p8.setRotationPoint(8, 9, 17);
 			p8.addBox(-1, -1, 0, 5, 2, 2);
 			p8.rotateAngleY = (float) Math.toRadians(270);
 			this.base.addChild(p8);
 			
-			ModelRenderer p9 = new ModelRenderer(this, 0, 0);
+			ModelRenderer p9 = createRenderer(this, 0, 0);
 			p9.setRotationPoint(7, 10, 17);
 			p9.addBox(0, -1, -1, 14, 2, 2);
 			p9.rotateAngleZ = (float) Math.toRadians(90);
@@ -67,21 +81,22 @@ public class ModelLubricantPipes{
 		public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
 			this.base.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		}
-		
-		@Deprecated
-		public void render(float f){
-		}
 	}
 	
-	public static class Excavator extends Model{
-		private ModelRenderer base;
+	public static class Excavator extends IPModel{
+		public static final String ID_NORMAL="excavator_pipes";
+		public static final String ID_MIRRORED="excavator_pipes_mirrored";
 		
+		private ModelRenderer base;
+		private boolean mirrored;
 		public Excavator(boolean mirror){
-			super(null); // FIXME Needs a Type!
-			this.textureWidth = 16;
-			this.textureHeight = 16;
-			
-			if(mirror){
+			super(RenderType::getEntitySolid);
+			this.mirrored=mirror;
+		}
+		
+		@Override
+		public void init(){
+			if(this.mirrored){
 				this.base = new ModelRenderer(this, 0, 0);
 				base.addBox(51, 8, 6, 20, 2, 2);
 				
@@ -221,32 +236,38 @@ public class ModelLubricantPipes{
 				p12.rotateAngleY = (float) Math.toRadians(270);
 				this.base.addChild(p12);
 			}
-			
+		}
+		
+		@Override
+		public ResourceLocation textureLocation(){
+			return new ResourceLocation(ImmersivePetroleum.MODID, "textures/block/lube_pipe12.png");
+		}
+		
+		@Override
+		public String id(){
+			return this.mirrored ? ID_MIRRORED : ID_NORMAL;
 		}
 		
 		@Override
 		public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
 			this.base.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		}
-		
-		@Deprecated
-		public void render(float f){
-		}
-		
 	}
 	
-	public static class Pumpjack extends Model{
+	public static class Pumpjack extends IPModel{
+		public static final String ID_NORMAL="pumpjack_pipes";
+		public static final String ID_MIRRORED="pumpjack_pipes_mirrored";
+		
+		private boolean mirrored = false;
 		private ModelRenderer base;
-		
-		boolean mirror = false;
-		
 		public Pumpjack(boolean mirror){
-			super(null); // FIXME Needs a Type!
-			this.textureWidth = 16;
-			this.textureHeight = 16;
-			this.mirror = mirror;
-			
-			if(mirror){
+			super(RenderType::getEntitySolid);
+			this.mirrored = mirror;
+		}
+		
+		@Override
+		public void init(){
+			if(this.mirrored){
 				this.base = new ModelRenderer(this, 0, 0);
 				base.addBox(21, 8, 12, 15, 2, 2);
 				
@@ -378,12 +399,18 @@ public class ModelLubricantPipes{
 		}
 		
 		@Override
-		public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
-			this.base.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		public ResourceLocation textureLocation(){
+			return new ResourceLocation(ImmersivePetroleum.MODID, "textures/block/lube_pipe12.png");
 		}
 		
-		@Deprecated
-		public void render(float f){
+		@Override
+		public String id(){
+			return this.mirrored ? ID_MIRRORED : ID_NORMAL;
+		}
+		
+		@Override
+		public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
+			this.base.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		}
 	}
 }

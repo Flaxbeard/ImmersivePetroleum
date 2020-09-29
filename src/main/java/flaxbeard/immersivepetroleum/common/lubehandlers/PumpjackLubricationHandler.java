@@ -1,12 +1,12 @@
 package flaxbeard.immersivepetroleum.common.lubehandlers;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
+import flaxbeard.immersivepetroleum.client.model.IPModel;
+import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
-import flaxbeard.immersivepetroleum.dummy.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
@@ -97,17 +97,17 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 		}
 	}
 	
-	private static ModelLubricantPipes.Pumpjack pumpjackM;
-	private static ModelLubricantPipes.Pumpjack pumpjack;
+	private static IPModel pipes_normal;
+	private static IPModel pipes_mirrored;
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void renderPipes(World world, AutoLubricatorTileEntity lubricator, Direction facing, PumpjackTileEntity mbte){
-		if(pumpjackM == null){
-			pumpjackM = new ModelLubricantPipes.Pumpjack(true);
-			pumpjack = new ModelLubricantPipes.Pumpjack(false);
-		}
+		if(pipes_normal == null) pipes_normal = IPModels.getModel(ModelLubricantPipes.Pumpjack.ID_NORMAL);
+		if(pipes_mirrored == null) pipes_mirrored = IPModels.getModel(ModelLubricantPipes.Pumpjack.ID_MIRRORED);
 		
+		// TODO
+		/*
 		GlStateManager.translatef(0, -1, 0);
 		Vector3i offset = mbte.getPos().subtract(lubricator.getPos());
 		GlStateManager.translatef(offset.getX(), offset.getY(), offset.getZ());
@@ -137,12 +137,12 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 			default: break;
 		}
 		
-		ClientUtils.bindTexture("immersivepetroleum:textures/block/lube_pipe12.png");
 		if(mbte.getIsMirrored()){
-			pumpjackM.render(0.0625F);
+			pipes_mirrored.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		}else{
-			pumpjack.render(0.0625F);
+			pipes_normal.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		}
+		*/
 	}
 	
 	@Override

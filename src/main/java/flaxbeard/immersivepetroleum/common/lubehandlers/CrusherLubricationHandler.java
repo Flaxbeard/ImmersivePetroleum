@@ -3,14 +3,14 @@ package flaxbeard.immersivepetroleum.common.lubehandlers;
 import java.util.Iterator;
 
 import blusunrize.immersiveengineering.api.crafting.CrusherRecipe;
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity.MultiblockProcess;
 import blusunrize.immersiveengineering.common.blocks.metal.CrusherTileEntity;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
+import flaxbeard.immersivepetroleum.client.model.IPModel;
+import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
-import flaxbeard.immersivepetroleum.dummy.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
@@ -110,15 +110,15 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 		}
 	}
 	
-	private static ModelLubricantPipes.Crusher crusher;
+	private static IPModel pipes;
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void renderPipes(World world, AutoLubricatorTileEntity lubricator, Direction facing, CrusherTileEntity mbte){
-		if(crusher == null){
-			crusher = new ModelLubricantPipes.Crusher(false);
-		}
+		if(pipes == null) pipes = IPModels.getModel(ModelLubricantPipes.Crusher.ID);
 		
+		// TODO
+		/*
 		GlStateManager.translatef(0, -1, 0);
 		Vector3i offset = mbte.getPos().subtract(lubricator.getPos());
 		GlStateManager.translatef(offset.getX(), offset.getY(), offset.getZ());
@@ -148,8 +148,9 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 			default: break;
 		}
 		
-		ClientUtils.bindTexture("immersivepetroleum:textures/block/lube_pipe12.png");
-		crusher.render(0.0625F);
+		//ClientUtils.bindTexture("immersivepetroleum:textures/block/lube_pipe12.png");
+		pipes.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		*/
 	}
 	
 	@Override

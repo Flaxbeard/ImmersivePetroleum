@@ -22,6 +22,12 @@ public class IPModels{
 	@SubscribeEvent
 	public static void clientsetup(FMLClientSetupEvent event){
 		addModel(ModelPumpjack::new);
+		
+		addModel(ModelLubricantPipes.Crusher::new);
+		addModel(() -> new ModelLubricantPipes.Excavator(false));
+		addModel(() -> new ModelLubricantPipes.Excavator(true));
+		addModel(() -> new ModelLubricantPipes.Pumpjack(false));
+		addModel(() -> new ModelLubricantPipes.Pumpjack(true));
 	}
 	
 	public static void addModel(Supplier<? extends IPModel> constructor){

@@ -1,14 +1,14 @@
 package flaxbeard.immersivepetroleum.common.lubehandlers;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.metal.BucketWheelTileEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.ExcavatorTileEntity;
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
+import flaxbeard.immersivepetroleum.client.model.IPModel;
+import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
-import flaxbeard.immersivepetroleum.dummy.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
@@ -125,17 +125,17 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		}
 	}
 	
-	private static ModelLubricantPipes.Excavator excavator;
-	private static ModelLubricantPipes.Excavator excavatorM;
+	private static IPModel pipes_normal;
+	private static IPModel pipes_mirrored;
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void renderPipes(World world, AutoLubricatorTileEntity lubricator, Direction facing, ExcavatorTileEntity mbte){
-		if(excavator == null){
-			excavatorM = new ModelLubricantPipes.Excavator(true);
-			excavator = new ModelLubricantPipes.Excavator(false);
-		}
+		if(pipes_normal == null) pipes_normal = IPModels.getModel(ModelLubricantPipes.Excavator.ID_NORMAL);
+		if(pipes_mirrored == null) pipes_mirrored = IPModels.getModel(ModelLubricantPipes.Excavator.ID_MIRRORED);
 		
+		// TODO
+		/*
 		GlStateManager.translatef(0, -1, 0);
 		Vector3i offset = mbte.getPos().subtract(lubricator.getPos());
 		GlStateManager.translatef(offset.getX(), offset.getY(), offset.getZ());
@@ -165,12 +165,12 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 			default: break;
 		}
 		
-		ClientUtils.bindTexture("immersivepetroleum:textures/block/lube_pipe12.png");
 		if(mbte.getIsMirrored()){
-			excavatorM.render(0.0625F);
+			pipes_mirrored.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		}else{
-			excavator.render(0.0625F);
+			pipes_normal.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		}
+		*/
 	}
 	
 	@Override

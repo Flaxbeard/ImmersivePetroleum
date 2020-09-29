@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum.client.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -15,15 +16,17 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileEntity>{
-	public static ModelPumpjack model; // Set by SpriteFetcher below.
-	
 	public MultiblockPumpjackRenderer(TileEntityRendererDispatcher dispatcher){
 		super(dispatcher);
 	}
 	
+	private static ModelPumpjack pumpjackarm;
+	
 	@Override
 	public void render(PumpjackTileEntity te, float partialTicks, MatrixStack transform, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn){
 		if(te != null && !te.isDummy()){
+			if(pumpjackarm==null)pumpjackarm=(ModelPumpjack)IPModels.getModel(ModelPumpjack.ID);
+			
 			transform.push();
 			Direction rotation = te.getFacing();
 			switch(rotation){
@@ -48,9 +51,9 @@ public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileE
 			}
 			
 			float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);
-			model.ticks = 1.5F * ticks;
+			pumpjackarm.ticks = 1.5F * ticks;
 			
-			model.render(transform, buffer.getBuffer(RenderType.getTranslucent()), combinedLightIn, combinedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
+			pumpjackarm.render(transform, buffer.getBuffer(RenderType.getTranslucent()), combinedLightIn, combinedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
 			transform.pop();
 		}
 	}

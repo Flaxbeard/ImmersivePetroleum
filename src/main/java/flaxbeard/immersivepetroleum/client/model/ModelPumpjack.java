@@ -3,12 +3,14 @@ package flaxbeard.immersivepetroleum.client.model;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
 
 public class ModelPumpjack extends IPModel{
+	public static final String ID="pumpjack_arm";
+	
 	public ModelRenderer base;
 	public ModelRenderer swingy;
 	public ModelRenderer connector;
@@ -20,16 +22,6 @@ public class ModelPumpjack extends IPModel{
 	
 	public ModelPumpjack(){
 		super(RenderType::getEntitySolid);
-	}
-	
-	@Override
-	public ResourceLocation textureLocation(){
-		return new ResourceLocation("immersivepetroleum", "models/pumpjack_armature");
-	}
-	
-	@Override
-	public void postInit(){
-		MultiblockPumpjackRenderer.model=this;
 	}
 	
 	@Override
@@ -83,6 +75,16 @@ public class ModelPumpjack extends IPModel{
 		
 		this.base.addChild(this.wellConnector);
 		this.base.addChild(this.wellConnector2);
+	}
+	
+	@Override
+	public ResourceLocation textureLocation(){
+		return new ResourceLocation(ImmersivePetroleum.MODID, "models/pumpjack_armature");
+	}
+	
+	@Override
+	public String id(){
+		return ID;
 	}
 	
 	@Override

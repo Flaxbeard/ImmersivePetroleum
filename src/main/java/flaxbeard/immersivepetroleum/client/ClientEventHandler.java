@@ -38,12 +38,12 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageCloseBook;
-import malte0811.modelsplitter.math.Vec3d;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -239,26 +239,8 @@ public class ClientEventHandler{
 												{
 													transform.translate(targetPos.getX(), targetPos.getY()-1, targetPos.getZ());
 													
-													switch(targetFacing){
-														case SOUTH:
-															transform.rotate(new Quaternion(0, 180, 0, true));
-															transform.translate(-1.0, 0.0, -1.0);
-															break;
-														case NORTH:
-															transform.rotate(new Quaternion(0, 0, 0, true));
-															break;
-														case WEST:
-															transform.rotate(new Quaternion(0, 90, 0, true));
-															transform.translate(-1.0, 0.0, 0.0);
-															break;
-														case EAST:
-															transform.rotate(new Quaternion(0, 270, 0, true));
-															transform.translate(0.0, 0.0, -1.0);
-															break;
-														default:
-													}
-													
-													BlockState state=IPContent.Blocks.auto_lubricator.getDefaultState();
+													BlockState state=IPContent.Blocks.auto_lubricator.getDefaultState()
+															.with(AutoLubricatorBlock.FACING, targetFacing);
 													IBakedModel model=blockDispatcher.getModelForState(state);
 													blockDispatcher.getBlockModelRenderer()
 														.renderModel(transform.getLast(), vBuilder, null, model, 1.0F, 1.0F, 1.0F, 0xF000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
@@ -266,8 +248,7 @@ public class ClientEventHandler{
 												}
 												transform.pop();
 												
-												float alpha = .5f;
-												ShaderUtil.alpha_static(alpha, mc.player.ticksExisted);
+												ShaderUtil.alpha_static(0.5f, mc.player.ticksExisted);
 												buffer.finish();
 												ShaderUtil.releaseShader();
 											}

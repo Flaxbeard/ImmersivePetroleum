@@ -154,7 +154,7 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 					.offset(mbFacing, 4)
 					.offset(mbte.getIsMirrored() ? mbFacing.rotateY() : mbFacing.rotateYCCW(), 2);
 			
-			Direction f = mbte.getIsMirrored() ? mbte.getFacing().getOpposite() : mbte.getFacing();
+			Direction f = (mbte.getIsMirrored() ? mbte.getFacing().getOpposite() : mbte.getFacing()).rotateYCCW();
 			return new Tuple<BlockPos, Direction>(pos, f);
 		}
 		return null;

@@ -14,6 +14,8 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.client.model.ModelPumpjack;
+import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
@@ -24,6 +26,7 @@ import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
@@ -187,6 +190,13 @@ public class DebugItem extends IPItemBase{
 		
 		TileEntity te=context.getWorld().getTileEntity(context.getPos());
 		switch(mode){
+			case REFRESH_PUMPJACK:{
+				if(te instanceof PumpjackTileEntity && context.getWorld().isRemote){
+					TextureAtlasSprite sprite=MultiblockPumpjackRenderer.model.sprite;
+					MultiblockPumpjackRenderer.model=new ModelPumpjack(sprite);
+				}
+				break;
+			}
 			case INFO_TE_DISTILLATION_TOWER:{
 				if(te instanceof DistillationTowerTileEntity && !context.getWorld().isRemote){
 					DistillationTowerTileEntity tower=(DistillationTowerTileEntity)te;
@@ -432,6 +442,7 @@ public class DebugItem extends IPItemBase{
 		RESERVOIR("Create/Get Reservoir"),
 		RESERVOIR_BIG_SCAN("Scan 5 Block Radius Area"),
 		CLEAR_RESERVOIR_CACHE("Clear Reservoir Cache"),
+		REFRESH_PUMPJACK("Refresh Pumpjack Model"),
 		;
 		
 		public final String display;

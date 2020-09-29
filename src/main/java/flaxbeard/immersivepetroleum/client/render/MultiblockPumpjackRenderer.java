@@ -2,33 +2,37 @@ package flaxbeard.immersivepetroleum.client.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.model.ModelPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @OnlyIn(Dist.CLIENT)
 public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileEntity>{
-	private static ModelPumpjack model = new ModelPumpjack();
-	
-	private static String texture = "immersivepetroleum:textures/models/pumpjack_armature.png";
+	public static ModelPumpjack model; // Set by SpriteFetcher below.
 	
 	public MultiblockPumpjackRenderer(TileEntityRendererDispatcher dispatcher){
 		super(dispatcher);
 	}
 	
 	@Override
-	public void render(PumpjackTileEntity te, float partialTicks, MatrixStack transform, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn){
+	public void render(PumpjackTileEntity te, float partialTicks, MatrixStack transform, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn){
 		if(te != null && !te.isDummy()){
 			transform.push();
-			transform.translate(te.getPos().getX(), te.getPos().getY(), te.getPos().getZ());
-			
 			Direction rotation = te.getFacing();
 			switch(rotation){
 				case NORTH:
@@ -51,12 +55,37 @@ public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileE
 				
 			}
 			
-			float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);
+			boolean fakeActive=true;
+			te.activeTicks+=0.05;
+			float ticks = te.activeTicks + (fakeActive ? partialTicks : 0);
+//			float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);
 			model.ticks = 1.5F * ticks;
 			
-			ClientUtils.bindTexture(texture);
-			model.render(0.0625F);
+			model.render(transform, buffer.getBuffer(RenderType.getTranslucent()), combinedLightIn, combinedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
 			transform.pop();
+		}
+	}
+	
+
+	@SuppressWarnings("deprecation")
+	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT, bus=Bus.MOD)
+	public static class SpriteFetcher{
+		static ResourceLocation arm_texture=new ResourceLocation("immersivepetroleum", "models/pumpjack_armature");
+		
+		@SubscribeEvent
+		public static void pre(TextureStitchEvent.Pre event){
+			if(event.getMap().getTextureLocation()==AtlasTexture.LOCATION_BLOCKS_TEXTURE){
+				event.addSprite(arm_texture);
+			}
+		}
+		
+		@SubscribeEvent
+		public static void post(TextureStitchEvent.Post event){
+			if(event.getMap().getTextureLocation()==AtlasTexture.LOCATION_BLOCKS_TEXTURE){
+				TextureAtlasSprite sprite=event.getMap().getSprite(arm_texture);
+				event.getMap();
+				MultiblockPumpjackRenderer.model=new ModelPumpjack(sprite);
+			}
 		}
 	}
 }

@@ -3,14 +3,12 @@ package flaxbeard.immersivepetroleum.client.model;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
+import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.ResourceLocation;
 
-public class ModelPumpjack extends Model{
-	public TextureAtlasSprite sprite;
-	
+public class ModelPumpjack extends IPModel{
 	public ModelRenderer base;
 	public ModelRenderer swingy;
 	public ModelRenderer connector;
@@ -20,31 +18,22 @@ public class ModelPumpjack extends Model{
 	
 	public float ticks = 0;
 	
-	public ModelPumpjack(TextureAtlasSprite sprite){
+	public ModelPumpjack(){
 		super(RenderType::getEntitySolid);
-		this.sprite = sprite;
-		this.textureWidth = (int) getAtlasX();
-		this.textureHeight = (int) getAtlasY();
-		
-		refresh();
 	}
 	
-	public ModelRenderer createRenderer(Model model, int texOffX, int texOffY){
-		int uStart = (int) (this.sprite.getMinU() * model.textureWidth);
-		int vStart = (int) (this.sprite.getMinV() * model.textureHeight);
-		
-		return new ModelRenderer(model, uStart + texOffX, vStart + texOffY);
+	@Override
+	public ResourceLocation textureLocation(){
+		return new ResourceLocation("immersivepetroleum", "models/pumpjack_armature");
 	}
 	
-	private float getAtlasX(){
-		return this.sprite.getWidth() / (this.sprite.getMaxU() - this.sprite.getMinU());
+	@Override
+	public void postInit(){
+		MultiblockPumpjackRenderer.model=this;
 	}
 	
-	private float getAtlasY(){
-		return this.sprite.getHeight() / (this.sprite.getMaxV() - this.sprite.getMinV());
-	}
-	
-	public void refresh(){
+	@Override
+	public void init(){
 		this.base = createRenderer(this, 0, 0);
 		this.base.addBox(8, 1, 8, 1, 1, 1);
 		

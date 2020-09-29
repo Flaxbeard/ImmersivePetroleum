@@ -10,7 +10,7 @@
     "flip-v": true
   },
   "layers": [
-    "CUTOUT",
-    "SOLID"
+    "cutout",
+    "solid"
   ]
 }

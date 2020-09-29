@@ -55,10 +55,7 @@ public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileE
 				
 			}
 			
-			boolean fakeActive=true;
-			te.activeTicks+=0.05;
-			float ticks = te.activeTicks + (fakeActive ? partialTicks : 0);
-//			float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);
+			float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);
 			model.ticks = 1.5F * ticks;
 			
 			model.render(transform, buffer.getBuffer(RenderType.getTranslucent()), combinedLightIn, combinedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);

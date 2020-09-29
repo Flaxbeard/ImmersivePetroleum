@@ -190,7 +190,7 @@ public class DebugItem extends IPItemBase{
 		switch(mode){
 			case REFRESH_PUMPJACK:{
 				if(te instanceof PumpjackTileEntity && context.getWorld().isRemote){
-					MultiblockPumpjackRenderer.model.init();
+					MultiblockPumpjackRenderer.pumpjackarm.init();
 				}
 				break;
 			}

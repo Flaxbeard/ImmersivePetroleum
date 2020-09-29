@@ -148,8 +148,8 @@ public class ModelPumpjack extends Model{
 			wellConnector.showModel = true;
 			wellConnector2.showModel = false;
 		}else{
+			wellConnector.showModel = true;
 			wellConnector2.showModel = true;
-			wellConnector.showModel = false;
 		}
 		
 		this.base.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);

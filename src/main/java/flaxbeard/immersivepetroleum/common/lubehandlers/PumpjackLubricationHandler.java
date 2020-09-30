@@ -1,5 +1,10 @@
 package flaxbeard.immersivepetroleum.common.lubehandlers;
 
+import java.util.function.Supplier;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.model.IPModel;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
@@ -8,14 +13,17 @@ import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.Direction.AxisDirection;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -36,7 +44,6 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 	
 	@Override
 	public TileEntity isPlacedCorrectly(World world, AutoLubricatorTileEntity lubricator, Direction facing){
-		
 		BlockPos target = lubricator.getPos().offset(facing);
 		TileEntity te = world.getTileEntity(target);
 		
@@ -97,54 +104,6 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 		}
 	}
 	
-	private static IPModel pipes_normal;
-	private static IPModel pipes_mirrored;
-	
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void renderPipes(World world, AutoLubricatorTileEntity lubricator, Direction facing, PumpjackTileEntity mbte){
-		if(pipes_normal == null) pipes_normal = IPModels.getModel(ModelLubricantPipes.Pumpjack.ID_NORMAL);
-		if(pipes_mirrored == null) pipes_mirrored = IPModels.getModel(ModelLubricantPipes.Pumpjack.ID_MIRRORED);
-		
-		// TODO
-		/*
-		GlStateManager.translatef(0, -1, 0);
-		Vector3i offset = mbte.getPos().subtract(lubricator.getPos());
-		GlStateManager.translatef(offset.getX(), offset.getY(), offset.getZ());
-		
-		Direction rotation = mbte.getFacing();
-		switch(rotation){
-			case NORTH:{
-				GlStateManager.rotatef(90F, 0, 1, 0);
-				GlStateManager.translatef(-6, 1, -1);
-				break;
-			}
-			case SOUTH:{
-				GlStateManager.rotatef(270F, 0, 1, 0);
-				GlStateManager.translatef(-5, 1, -2);
-				break;
-			}
-			case EAST:{
-				GlStateManager.rotatef(0F, 0, 1, 0);
-				GlStateManager.translatef(-5, 1, -1);
-				break;
-			}
-			case WEST:{
-				GlStateManager.rotatef(180F, 0, 1, 0);
-				GlStateManager.translatef(-6, 1, -2);
-				break;
-			}
-			default: break;
-		}
-		
-		if(mbte.getIsMirrored()){
-			pipes_mirrored.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-		}else{
-			pipes_normal.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-		}
-		*/
-	}
-	
 	@Override
 	public Tuple<BlockPos, Direction> getGhostBlockPosition(World world, PumpjackTileEntity mbte){
 		if(!mbte.isDummy()){
@@ -158,5 +117,58 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 			return new Tuple<BlockPos, Direction>(pos, f);
 		}
 		return null;
+	}
+	
+	
+	@OnlyIn(Dist.CLIENT)
+	private static final ResourceLocation TEXTURE = new ResourceLocation(ImmersivePetroleum.MODID, "textures/models/lube_pipe.png");
+	
+	@OnlyIn(Dist.CLIENT)
+	private static Supplier<IPModel> pipes_normal = IPModels.getSupplier(ModelLubricantPipes.Pumpjack.ID_NORMAL);
+	
+	@OnlyIn(Dist.CLIENT)
+	private static Supplier<IPModel> pipes_mirrored = IPModels.getSupplier(ModelLubricantPipes.Pumpjack.ID_MIRRORED);
+	
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public void renderPipes(AutoLubricatorTileEntity lubricator, PumpjackTileEntity mbte, MatrixStack matrix, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay){
+		matrix.translate(0, -1, 0);
+		Vector3i offset = mbte.getPos().subtract(lubricator.getPos());
+		matrix.translate(offset.getX(), offset.getY(), offset.getZ());
+		
+		Direction rotation = mbte.getFacing();
+		switch(rotation){
+			case NORTH:{
+				matrix.rotate(new Quaternion(0, 90F, 0, true));
+				matrix.translate(-6, 1, -1);
+				break;
+			}
+			case SOUTH:{
+				matrix.rotate(new Quaternion(0, 270F, 0, true));
+				matrix.translate(-5, 1, -2);
+				break;
+			}
+			case EAST:{
+				matrix.translate(-5, 1, -1);
+				break;
+			}
+			case WEST:{
+				matrix.rotate(new Quaternion(0, 180F, 0, true));
+				matrix.translate(-6, 1, -2);
+				break;
+			}
+			default: break;
+		}
+		
+		IPModel model;
+		if(mbte.getIsMirrored()){
+			model=pipes_mirrored.get();
+		}else{
+			model=pipes_normal.get();
+		}
+		
+		if(model!=null){
+			model.render(matrix, buffer.getBuffer(model.getRenderType(TEXTURE)), combinedLight, combinedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+		}
 	}
 }

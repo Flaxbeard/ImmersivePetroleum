@@ -29,16 +29,10 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 		return true;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public void render(AutoLubricatorTileEntity te, float partialTicks, MatrixStack transform, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn){
-		if(te == null){
-			return;
-		}
-		
-		if(te.isSlave)
-			return;
+		if(te == null || te.isSlave) return;
 		
 		float height = 16;
 		FluidStack fs = te.tank.getFluid();
@@ -81,16 +75,14 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 		
 		transform.push();
 		{
-			transform.translate(te.getPos().getX(), te.getPos().getY(), te.getPos().getZ());
-			
 			BlockPos target = te.getPos().offset(te.getFacing());
 			TileEntity test = te.getWorld().getTileEntity(target);
 			
-			ILubricationHandler<TileEntity> handler = (ILubricationHandler<TileEntity>) LubricatedHandler.getHandlerForTile(test);
+			ILubricationHandler<TileEntity> handler = LubricatedHandler.getHandlerForTile(test);
 			if(handler != null){
 				TileEntity master = handler.isPlacedCorrectly(te.getWorld(), te, te.getFacing());
 				if(master != null){
-//					handler.renderPipes(te.getWorld(), te, te.getFacing(), master); // FIXME
+					handler.renderPipes(te, master, transform, bufferIn, combinedLightIn, combinedOverlayIn);
 				}
 			}
 		}

@@ -445,14 +445,14 @@ public class ClientProxy extends CommonProxy{
 				pt = Minecraft.getInstance().getRenderPartialTicks();
 			}
 			
-			tesr.render(te, pt, transform, buffer, -1, 0);
+			tesr.render(te, pt, transform, buffer, 0xF000F0, 0);
 			transform.pop();
 		}else{
 			transform.push();
 			transform.rotate(new Quaternion(0, -90, 0, true));
 			transform.translate(0, 1, -4);
 			
-			tesr.render(te, 0, transform, buffer, -1, 0);
+			tesr.render(te, 0, transform, buffer, 0xF000F0, 0);
 			transform.pop();
 		}
 	}

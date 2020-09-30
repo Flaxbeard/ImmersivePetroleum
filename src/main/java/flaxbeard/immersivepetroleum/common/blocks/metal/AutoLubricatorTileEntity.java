@@ -26,6 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -188,6 +189,14 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 		return !this.isSlave;
 	}
 	
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public AxisAlignedBB getRenderBoundingBox(){
+		BlockPos pos=getPos();
+		int size=3;
+		return new AxisAlignedBB(pos.getX()-size, pos.getY()-size, pos.getZ()-size, pos.getX()+size, pos.getY()+size, pos.getZ()+size);
+	}
+	
 	@Override
 	public ITextComponent[] getOverlayText(PlayerEntity player, RayTraceResult mop, boolean hammer){
 		if(Utils.isFluidRelatedItemStack(player.getHeldItem(Hand.MAIN_HAND))){
@@ -238,7 +247,6 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	int lastTankUpdate = 0;
 	int countClient = 0;
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void tick(){
 		if(!this.world.isRemote && this.isSlave){
@@ -251,7 +259,7 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 				BlockPos target = this.pos.offset(this.facing);
 				TileEntity te = this.world.getTileEntity(target);
 				
-				ILubricationHandler<TileEntity> handler = (ILubricationHandler<TileEntity>) LubricatedHandler.getHandlerForTile(te);
+				ILubricationHandler<TileEntity> handler = LubricatedHandler.getHandlerForTile(te);
 				if(handler != null){
 					TileEntity master = handler.isPlacedCorrectly(this.world, this, this.facing);
 					if(master!=null && handler.isMachineEnabled(this.world, master)){

@@ -14,6 +14,7 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
@@ -84,6 +85,13 @@ public class DebugItem extends IPItemBase{
 			Modes mode=DebugItem.getMode(playerIn.getHeldItem(handIn));
 			
 			switch(mode){
+				case REFRESH_ALL_IPMODELS:{
+					IPModels.getModels().forEach(m->m.init());
+					
+					playerIn.sendStatusMessage(new StringTextComponent("Models refreshed."), true);
+					
+					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+				}
 				case RESERVOIR_BIG_SCAN:{
 					BlockPos pos=playerIn.getPosition();
 					int r=5;
@@ -432,6 +440,7 @@ public class DebugItem extends IPItemBase{
 		RESERVOIR("Create/Get Reservoir"),
 		RESERVOIR_BIG_SCAN("Scan 5 Block Radius Area"),
 		CLEAR_RESERVOIR_CACHE("Clear Reservoir Cache"),
+		REFRESH_ALL_IPMODELS("Refresh all IPModels"),
 		;
 		
 		public final String display;

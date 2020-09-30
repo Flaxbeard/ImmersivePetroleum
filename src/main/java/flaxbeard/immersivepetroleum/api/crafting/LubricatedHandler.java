@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,33 +36,36 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class LubricatedHandler{
 	public interface ILubricationHandler<E extends TileEntity> {
-		TileEntity isPlacedCorrectly(World world, AutoLubricatorTileEntity lubricator, Direction direction);
-		
-		boolean isMachineEnabled(World world, E mbte);
-		
-		void lubricate(World world, int ticks, E mbte);
-		
-		void spawnLubricantParticles(World world, AutoLubricatorTileEntity lubricator, Direction direction, E mbte);
-		
-		@OnlyIn(Dist.CLIENT)
-		void renderPipes(World world, AutoLubricatorTileEntity lubricator, Direction direction, E mbte);
-		
 		Tuple<BlockPos, Direction> getGhostBlockPosition(World world, E mbte);
 		
 		Vector3i getStructureDimensions();
+		
+		boolean isMachineEnabled(World world, E mbte);
+		
+		TileEntity isPlacedCorrectly(World world, AutoLubricatorTileEntity lubricator, Direction direction);
+		
+		void lubricate(World world, int ticks, E mbte);
+		
+		@OnlyIn(Dist.CLIENT)
+		void renderPipes(AutoLubricatorTileEntity lubricator, E mbte, MatrixStack matrix, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay);
+		
+		void spawnLubricantParticles(World world, AutoLubricatorTileEntity lubricator, Direction direction, E mbte);
 	}
 	
-	static final Map<Class<? extends TileEntity>, ILubricationHandler<?>> lubricationHandlers = new HashMap<>();
+	static final Map<Class<? extends TileEntity>, ILubricationHandler<? extends TileEntity>> lubricationHandlers = new HashMap<>();
 	
-	public static void registerLubricatedTile(Class<? extends TileEntity> tileClass, ILubricationHandler<?> handler){
-		lubricationHandlers.put(tileClass, handler);
+	public static <E extends TileEntity> void registerLubricatedTile(Class<E> tileClass, Supplier<ILubricationHandler<E>> handler){
+		ILubricationHandler<E> instance = handler.get();
+		lubricationHandlers.put(tileClass, instance);
 	}
 	
-	public static ILubricationHandler<?> getHandlerForTile(TileEntity tile){
-		if(tile != null){
-			Class<? extends TileEntity> teClass = tile.getClass();
+	public static ILubricationHandler<TileEntity> getHandlerForTile(TileEntity te){
+		if(te != null){
+			Class<? extends TileEntity> teClass = te.getClass();
 			if(lubricationHandlers.containsKey(teClass)){
-				return lubricationHandlers.get(teClass);
+				@SuppressWarnings("unchecked")
+				ILubricationHandler<TileEntity> tmp=(ILubricationHandler<TileEntity>) lubricationHandlers.get(teClass);
+				return tmp;
 			}
 		}
 		return null;
@@ -66,7 +73,6 @@ public class LubricatedHandler{
 	
 	public static class LubricatedTileInfo{
 		public BlockPos pos;
-		// TODO Use a more general way? (ie Combined use of ModDimension and DimensionType)
 		public RegistryKey<World> world;
 		public int ticks;
 		
@@ -90,11 +96,12 @@ public class LubricatedHandler{
 		
 		public CompoundNBT writeToNBT(){
 			CompoundNBT tag = new CompoundNBT();
-			tag.putInt("ticks", ticks);
-			tag.putInt("x", pos.getX());
-			tag.putInt("y", pos.getY());
-			tag.putInt("z", pos.getZ());
-			tag.putString("world", world.func_240901_a_().toString());
+			
+			tag.putInt("ticks", this.ticks);
+			tag.putInt("x", this.pos.getX());
+			tag.putInt("y", this.pos.getY());
+			tag.putInt("z", this.pos.getZ());
+			tag.putString("world", this.world.func_240901_a_().toString());
 			
 			return tag;
 		}
@@ -110,6 +117,7 @@ public class LubricatedHandler{
 		if(tile instanceof MultiblockPartTileEntity){
 			tile = ((MultiblockPartTileEntity<?>) tile).master();
 		}
+		
 		if(getHandlerForTile(tile) != null){
 			BlockPos pos = tile.getPos();
 			for(int i = 0;i < lubricatedTiles.size();i++){

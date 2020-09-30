@@ -9,9 +9,10 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
 
 public class ModelPumpjack extends IPModel{
-	public static final String ID="pumpjack_arm";
+	public static final String ID="pumpjackarm";
+	public static final ResourceLocation TEXTURE=new ResourceLocation(ImmersivePetroleum.MODID, "textures/models/pumpjack_armature.png");
 	
-	public ModelRenderer base;
+	public ModelRenderer origin;
 	public ModelRenderer swingy;
 	public ModelRenderer connector;
 	public ModelRenderer arm;
@@ -22,69 +23,61 @@ public class ModelPumpjack extends IPModel{
 	
 	public ModelPumpjack(){
 		super(RenderType::getEntitySolid);
+		
+		this.textureWidth=190;
+		this.textureHeight=58;
 	}
 	
 	@Override
 	public void init(){
-		this.base = createRenderer(this, 0, 0);
-		this.base.addBox(8, 1, 8, 1, 1, 1);
+		this.origin = new ModelRenderer(this, 0, 0);
 		
-		this.arm = createRenderer(this, 0, 40);
+		this.arm = new ModelRenderer(this, 0, 40);
 		this.arm.addBox(-24 - 16, 0, -4, 70, 10, 8);
 		this.arm.setRotationPoint(56, 48, 24);
-		this.base.addChild(this.arm);
+		this.origin.addChild(this.arm);
 		
-		ModelRenderer head = createRenderer(this, 0, 0);
+		ModelRenderer head = new ModelRenderer(this, 0, 0);
 		head.addBox(30, -15, -5, 12, 30, 10);
 		this.arm.addChild(head);
 		
-		ModelRenderer barBack = createRenderer(this, 138, 0);
+		ModelRenderer barBack = new ModelRenderer(this, 138, 0);
 		barBack.addBox(-35F, 3F, -11F, 4, 4, 22);
 		this.arm.addChild(barBack);
 		
-		this.swingy = createRenderer(this, 44, 14);
+		this.swingy = new ModelRenderer(this, 44, 14);
 		this.swingy.addBox(-4F, -2F, -14F, 8, 10, 4);
 		this.swingy.setRotationPoint(24, 30, 30);
-		this.base.addChild(this.swingy);
+		this.origin.addChild(this.swingy);
 		
-		ModelRenderer swingy2 = createRenderer(this, 44, 14);
+		ModelRenderer swingy2 = new ModelRenderer(this, 44, 14);
 		swingy2.addBox(-4F, -2F, -2F, 8, 10, 4);
 		this.swingy.addChild(swingy2);
 		
-		ModelRenderer counter = createRenderer(this, 44, 0);
+		ModelRenderer counter = new ModelRenderer(this, 44, 0);
 		counter.addBox(-12F, 8F, -14F, 24, 10, 4);
 		this.swingy.addChild(counter);
 		
-		ModelRenderer counter2 = createRenderer(this, 44, 0);
+		ModelRenderer counter2 = new ModelRenderer(this, 44, 0);
 		counter2.addBox(-12F, 8F, -2F, 24, 10, 4);
 		this.swingy.addChild(counter2);
 		
-		this.connector = createRenderer(this, 108, 0);
+		this.connector = new ModelRenderer(this, 108, 0);
 		this.connector.addBox(-1F, -1F, -12F, 2, 24, 2);
-		this.base.addChild(this.connector);
+		this.origin.addChild(this.connector);
 		
-		ModelRenderer connector2 = createRenderer(this, 100, 0);
+		ModelRenderer connector2 = new ModelRenderer(this, 100, 0);
 		connector2.addBox(-1F, -1F, 6F, 2, 24, 2);
 		this.connector.addChild(connector2);
 		
-		this.wellConnector = createRenderer(this, 108, 0);
+		this.wellConnector = new ModelRenderer(this, 108, 0);
 		this.wellConnector.addBox(-1F, 0F, -1F, 2, 30, 2);
 		
-		this.wellConnector2 = createRenderer(this, 108, 0);
+		this.wellConnector2 = new ModelRenderer(this, 108, 0);
 		this.wellConnector2.addBox(-1F, 0F, -1F, 2, 16, 2);
 		
-		this.base.addChild(this.wellConnector);
-		this.base.addChild(this.wellConnector2);
-	}
-	
-	@Override
-	public ResourceLocation textureLocation(){
-		return new ResourceLocation(ImmersivePetroleum.MODID, "models/pumpjack_armature");
-	}
-	
-	@Override
-	public String id(){
-		return ID;
+		this.origin.addChild(this.wellConnector);
+		this.origin.addChild(this.wellConnector2);
 	}
 	
 	@Override
@@ -143,6 +136,6 @@ public class ModelPumpjack extends IPModel{
 			wellConnector2.showModel = true;
 		}
 		
-		this.base.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		this.origin.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 	}
 }

@@ -1,12 +1,14 @@
 package flaxbeard.immersivepetroleum.client.render;
 
+import java.util.function.Supplier;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import flaxbeard.immersivepetroleum.client.model.IPModel;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
@@ -20,13 +22,11 @@ public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileE
 		super(dispatcher);
 	}
 	
-	private static ModelPumpjack pumpjackarm;
+	private static Supplier<IPModel> pumpjackarm = IPModels.getSupplier(ModelPumpjack.ID);
 	
 	@Override
 	public void render(PumpjackTileEntity te, float partialTicks, MatrixStack transform, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn){
 		if(te != null && !te.isDummy()){
-			if(pumpjackarm==null)pumpjackarm=(ModelPumpjack)IPModels.getModel(ModelPumpjack.ID);
-			
 			transform.push();
 			Direction rotation = te.getFacing();
 			switch(rotation){
@@ -50,10 +50,13 @@ public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileE
 				
 			}
 			
-			float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);
-			pumpjackarm.ticks = 1.5F * ticks;
-			
-			pumpjackarm.render(transform, buffer.getBuffer(RenderType.getTranslucent()), combinedLightIn, combinedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
+			ModelPumpjack model;
+			if((model=(ModelPumpjack)pumpjackarm.get())!=null){
+				float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);
+				model.ticks = 1.5F * ticks;
+				
+				model.render(transform, buffer.getBuffer(model.getRenderType(ModelPumpjack.TEXTURE)), combinedLightIn, combinedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
+			}
 			transform.pop();
 		}
 	}

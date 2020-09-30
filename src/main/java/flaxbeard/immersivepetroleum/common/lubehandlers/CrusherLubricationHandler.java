@@ -1,10 +1,14 @@
 package flaxbeard.immersivepetroleum.common.lubehandlers;
 
 import java.util.Iterator;
+import java.util.function.Supplier;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.api.crafting.CrusherRecipe;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity.MultiblockProcess;
 import blusunrize.immersiveengineering.common.blocks.metal.CrusherTileEntity;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.model.IPModel;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
@@ -12,14 +16,17 @@ import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.Direction.AxisDirection;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -110,49 +117,6 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 		}
 	}
 	
-	private static IPModel pipes;
-	
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void renderPipes(World world, AutoLubricatorTileEntity lubricator, Direction facing, CrusherTileEntity mbte){
-		if(pipes == null) pipes = IPModels.getModel(ModelLubricantPipes.Crusher.ID);
-		
-		// TODO
-		/*
-		GlStateManager.translatef(0, -1, 0);
-		Vector3i offset = mbte.getPos().subtract(lubricator.getPos());
-		GlStateManager.translatef(offset.getX(), offset.getY(), offset.getZ());
-		
-		Direction rotation = mbte.getFacing();
-		switch(rotation){
-			case NORTH:{
-				GlStateManager.rotatef(90F, 0, 1, 0);
-				GlStateManager.translatef(-1, 0, 0);
-				break;
-			}
-			case SOUTH:{
-				GlStateManager.rotatef(270F, 0, 1, 0);
-				GlStateManager.translatef(0, 0, -1);
-				break;
-			}
-			case EAST:{
-				GlStateManager.rotatef(0F, 0, 1, 0);
-				GlStateManager.translatef(0, 0, 0);
-				break;
-			}
-			case WEST:{
-				GlStateManager.rotatef(180F, 0, 1, 0);
-				GlStateManager.translatef(-1, 0, -1);
-				break;
-			}
-			default: break;
-		}
-		
-		//ClientUtils.bindTexture("immersivepetroleum:textures/block/lube_pipe12.png");
-		pipes.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-		*/
-	}
-	
 	@Override
 	public Tuple<BlockPos, Direction> getGhostBlockPosition(World world, CrusherTileEntity mbte){
 		if(!mbte.isDummy()){
@@ -161,5 +125,48 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 			return new Tuple<BlockPos, Direction>(pos, f);
 		}
 		return null;
+	}
+	
+	
+	@OnlyIn(Dist.CLIENT)
+	private static final ResourceLocation TEXTURE = new ResourceLocation(ImmersivePetroleum.MODID, "textures/models/lube_pipe.png");
+	
+	@OnlyIn(Dist.CLIENT)
+	private static Supplier<IPModel> pipes = IPModels.getSupplier(ModelLubricantPipes.Crusher.ID);
+	
+	@Override
+	public void renderPipes(AutoLubricatorTileEntity lubricator, CrusherTileEntity mbte, MatrixStack matrix, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay){
+		matrix.translate(0, -1, 0);
+		Vector3i offset = mbte.getPos().subtract(lubricator.getPos());
+		matrix.translate(offset.getX(), offset.getY(), offset.getZ());
+		
+		Direction rotation = mbte.getFacing();
+		switch(rotation){
+			case NORTH:{
+				matrix.rotate(new Quaternion(0, 90F, 0, true));
+				matrix.translate(-1, 0, 0);
+				break;
+			}
+			case SOUTH:{
+				matrix.rotate(new Quaternion(0, 270F, 0, true));
+				matrix.translate(0, 0, -1);
+				break;
+			}
+			case EAST:{
+				matrix.translate(0, 0, 0);
+				break;
+			}
+			case WEST:{
+				matrix.rotate(new Quaternion(0, 180F, 0, true));
+				matrix.translate(-1, 0, -1);
+				break;
+			}
+			default: break;
+		}
+		
+		IPModel model;
+		if((model=pipes.get())!=null){
+			model.render(matrix, buffer.getBuffer(model.getRenderType(TEXTURE)), combinedLight, combinedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+		}
 	}
 }

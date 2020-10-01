@@ -16,8 +16,6 @@ import blusunrize.immersiveengineering.api.multiblocks.ManualElementMultiblock;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
-import blusunrize.immersiveengineering.common.blocks.IEBlocks;
-import blusunrize.immersiveengineering.common.blocks.metal.SampleDrillTileEntity;
 import blusunrize.immersiveengineering.common.blocks.stone.CoresampleTileEntity;
 import blusunrize.immersiveengineering.common.items.BuzzsawItem;
 import blusunrize.immersiveengineering.common.items.ChemthrowerItem;
@@ -36,7 +34,6 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationH
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
-import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
@@ -65,10 +62,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
@@ -162,13 +157,11 @@ public class ClientEventHandler{
 	}
 	
 	@SubscribeEvent
-	@SuppressWarnings("unchecked")
 	public void renderLast(RenderWorldLastEvent event){
-		float partialTicks=event.getPartialTicks();
 		MatrixStack transform=event.getMatrixStack();
-		
 		Minecraft mc = Minecraft.getInstance();
 		
+		/*
 		if(IPConfig.MISCELLANEOUS.sample_displayBorder.get() && mc.player != null){
 			PlayerEntity player = mc.player;
 			
@@ -200,6 +193,7 @@ public class ClientEventHandler{
 			}
 			transform.pop();
 		}
+		*/
 		
 		transform.push();
 		{
@@ -214,6 +208,7 @@ public class ClientEventHandler{
 					BlockRendererDispatcher blockDispatcher=ClientUtils.mc().getBlockRendererDispatcher();
 					IRenderTypeBuffer.Impl buffer=IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
 					
+					// Anti-Jiggle when moving
 					Vector3d renderView = ClientUtils.mc().gameRenderer.getActiveRenderInfo().getProjectedView();
 					transform.translate(-renderView.x, -renderView.y, -renderView.z);
 					

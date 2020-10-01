@@ -55,7 +55,7 @@ public class IPItemModels extends LoadedModelProvider{
 		getBuilder(IPContent.Items.projector)
 			.parent(getExistingFile(modLoc("item/mb_projector")));
 		
-		for(IPFluid f:IPFluid.LIST)
+		for(IPFluid f:IPFluid.FLUIDS)
 			createBucket(f);
 	}
 	

@@ -77,7 +77,7 @@ public class IPBlockStates extends BlockStateProvider{
 		autolubricator();
 		
 		// Fluids
-		for(IPFluid f:IPFluid.LIST){
+		for(IPFluid f:IPFluid.FLUIDS){
 			ResourceLocation still=f.getAttributes().getStillTexture();
 			ModelFile model = this.loadedModels.getBuilder("block/fluid/"+f.getRegistryName().getPath()).texture("particle", still);
 			

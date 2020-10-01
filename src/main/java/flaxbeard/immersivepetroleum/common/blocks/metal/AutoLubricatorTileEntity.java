@@ -222,16 +222,12 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	
 	@Override
 	public boolean interact(Direction side, PlayerEntity player, Hand hand, ItemStack heldItem, float hitX, float hitY, float hitZ){
-		TileEntity master=this;
-		if(this.isSlave){
-			master = this.world.getTileEntity(getPos().add(0, -1, 0));
-		}
-		
-		if(master!=null && master instanceof AutoLubricatorTileEntity){
-			if(FluidUtil.interactWithFluidHandler(player, hand, ((AutoLubricatorTileEntity)master).tank)){
+		TileEntity master = this.isSlave ? this.world.getTileEntity(getPos().add(0, -1, 0)) : this;
+		if(master != null && master instanceof AutoLubricatorTileEntity){
+			if(!getWorld().isRemote && FluidUtil.interactWithFluidHandler(player, hand, ((AutoLubricatorTileEntity) master).tank)){
 				markDirty();
-				return true;
 			}
+			return true;
 		}
 		return false;
 	}

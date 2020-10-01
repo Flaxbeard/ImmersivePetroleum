@@ -1,55 +1,26 @@
-package flaxbeard.immersivepetroleum.common.blocks;
+package flaxbeard.immersivepetroleum.common.util.fluids;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
-
-import javax.annotation.Nullable;
 
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
-import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FireBlock;
-import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.state.Property;
-import net.minecraft.state.StateContainer.Builder;
-import net.minecraft.state.StateHolder;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidAttributes;
 
-public class BlockNapalm extends IPFluid{
-	public BlockNapalm(String name, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidAttributes.Builder> buildAttributes){
-		super(name, stillTexture, flowingTexture, buildAttributes);
+public class NapalmFluid extends IPFluid{
+	public NapalmFluid(){
+		super("napalm", 1000, 4000);
 	}
 	
 	@Override
-	protected FlowingFluidBlock createBlock(){
-		FlowingFluidBlock block=new FlowingFluidBlock(()->this.source, Block.Properties.create(Material.WATER)){
-			@Override
-			protected void fillStateContainer(Builder<Block, BlockState> builder){
-				super.fillStateContainer(builder);
-				builder.add(this.getStateContainer().getProperties().toArray(new Property[0]));
-			}
-			
-			@Override
-			public FluidState getFluidState(BlockState state){
-				FluidState baseState=super.getFluidState(state);
-				for(Property<?> prop: this.getStateContainer().getProperties())
-					if(prop!=FlowingFluidBlock.LEVEL)
-						baseState = withCopiedValue(prop, baseState, state);
-				return baseState;
-			}
-			
-			private <T extends StateHolder<?, T>, S extends Comparable<S>> T withCopiedValue(Property<S> prop, T oldState, StateHolder<?, ?> copyFrom){
-				return oldState.with(prop, copyFrom.get(prop));
-			}
-			
+	protected IPFluidBlock createFluidBlock(){
+		IPFluidBlock block = new IPFluidBlock(this.source, this.fluidName){
 			@Override
 			public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving){
 				for(Direction facing:Direction.values()){

@@ -56,7 +56,6 @@ import net.minecraft.item.Item;
 import net.minecraft.potion.Effect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -115,25 +114,11 @@ public class IPContent{
 	public static void populate(){
 		IPContent.debugItem=new DebugItem();
 		
-		Fluids.crudeOil = new IPFluid("oil",
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/oil_still"),
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/oil_flow"), IPFluid.createBuilder(1000, 2250));
-		
-		Fluids.diesel = new IPFluid("diesel",
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/diesel_still"),
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/diesel_flow"), IPFluid.createBuilder(789, 1750));
-		
-		Fluids.lubricant = new IPFluid("lubricant",
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/lubricant_still"),
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/lubricant_flow"), IPFluid.createBuilder(925, 1000));
-		
-		Fluids.gasoline = new IPFluid("gasoline",
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/gasoline_still"),
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/gasoline_flow"), IPFluid.createBuilder(789, 1200));
-		
-		Fluids.napalm = new IPFluid("napalm",
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/napalm_still"),
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/napalm_flow"), IPFluid.createBuilder(1000, 4000));
+		Fluids.crudeOil = new IPFluid("oil", 1000, 2250);
+		Fluids.diesel = new IPFluid("diesel", 789, 1750);
+		Fluids.lubricant = new IPFluid("lubricant", 925, 1000);
+		Fluids.gasoline = new IPFluid("gasoline", 789, 1200);
+		Fluids.napalm = new IPFluid("napalm", 1000, 4000);
 		
 		Blocks.dummyOilOre=new BlockDummy("dummy_oil_ore");
 		Blocks.dummyPipe=new BlockDummy("dummy_pipe");

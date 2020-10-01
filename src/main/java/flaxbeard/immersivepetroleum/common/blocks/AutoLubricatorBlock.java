@@ -10,7 +10,6 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
@@ -87,18 +86,6 @@ public class AutoLubricatorBlock extends IPBlockBase{
 		return te;
 	}
 	
-	// TODO Block Render Layer
-	/*
-	@Override
-	public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer){
-		return layer==BlockRenderLayer.CUTOUT;
-	}
-	
-	@Override
-	public BlockRenderLayer getRenderLayer(){
-		return BlockRenderLayer.CUTOUT;
-	}
-	*/
 	@Override
 	public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player){
 		if(state.get(SLAVE)){
@@ -112,12 +99,10 @@ public class AutoLubricatorBlock extends IPBlockBase{
 	
 	@Override
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit){
-		if(!worldIn.isRemote){
-			TileEntity te=worldIn.getTileEntity(pos);
-			if(te instanceof IPlayerInteraction){
-				if(((IPlayerInteraction)te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), (float)hit.getHitVec().x, (float)hit.getHitVec().y, (float)hit.getHitVec().z)){
-					return ActionResultType.SUCCESS;
-				}
+		TileEntity te=worldIn.getTileEntity(pos);
+		if(te instanceof IPlayerInteraction){
+			if(((IPlayerInteraction)te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), (float)hit.getHitVec().x, (float)hit.getHitVec().y, (float)hit.getHitVec().z)){
+				return ActionResultType.SUCCESS;
 			}
 		}
 		return ActionResultType.FAIL;
@@ -169,8 +154,8 @@ public class AutoLubricatorBlock extends IPBlockBase{
 		@Override
 		protected boolean canPlace(BlockItemUseContext con, BlockState state){
 			if(super.canPlace(con, state)){ // No point in checking if the second block above is empty if it can't even place on the first one
-				BlockState stateAbove=con.getWorld().getBlockState(con.getPos().add(0, 1, 0));
-				return stateAbove==Blocks.AIR.getDefaultState() || stateAbove.getMaterial()==Material.AIR;
+				BlockPos pos=con.getPos().add(0, 1, 0);
+				return con.getWorld().getBlockState(pos).isAir(con.getWorld(), pos);
 			}
 			return false;
 		}

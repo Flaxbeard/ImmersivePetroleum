@@ -23,7 +23,7 @@ public class BlockRenderLayers{
 		
 		RenderTypeLookup.setRenderLayer(IPContent.Multiblock.distillationtower, RenderType.getCutout());
 		RenderTypeLookup.setRenderLayer(IPContent.Multiblock.pumpjack, RenderType.getCutout());
-
+		
 		RenderTypeLookup.setRenderLayer(IPContent.Fluids.crudeOil, RenderType.getTranslucent());
 		RenderTypeLookup.setRenderLayer(IPContent.Fluids.diesel, RenderType.getTranslucent());
 		RenderTypeLookup.setRenderLayer(IPContent.Fluids.gasoline, RenderType.getTranslucent());

@@ -1,11 +1,11 @@
 package flaxbeard.immersivepetroleum.client.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
-import flaxbeard.immersivepetroleum.client.ShaderUtil;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -34,41 +34,39 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 	public void render(AutoLubricatorTileEntity te, float partialTicks, MatrixStack transform, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn){
 		if(te == null || te.isSlave) return;
 		
-		float height = 16;
 		FluidStack fs = te.tank.getFluid();
 		float level = 0;
 		if(fs != null && !fs.isEmpty()){
 			level = fs.getAmount() / (float) te.tank.getCapacity();
 		}
-		float scale = 0.0625f;
 		
 		if(level > 0){
+			float height = 16;
+			
 			transform.push();
 			{
-				transform.translate(te.getPos().getX() + .5, te.getPos().getY() + .5, te.getPos().getZ() + .5);
-				transform.translate(-0.25F, 0.375F, -0.25F);
+				float scale = 0.0625f;
+				transform.translate(0.25, 0.875, 0.25);
 				transform.scale(scale, scale, scale);
 				
-				ClientUtils.bindAtlas();
-				
-				ShaderUtil.alpha_static(0.35f, 1);
+				IVertexBuilder builder=bufferIn.getBuffer(RenderType.getTranslucent());
 				
 				float h = height * level;
-				ClientUtils.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.getTranslucent()), transform, fs, 0, 0, 8, h);
+				ClientUtils.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
 				transform.rotate(new Quaternion(0, 90, 0, true));
 				transform.translate(-7.98, 0, 0);
-				ClientUtils.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.getTranslucent()), transform, fs, 0, 0, 8, h);
+				ClientUtils.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
 				transform.rotate(new Quaternion(0, 90, 0, true));
 				transform.translate(-7.98, 0, 0);
-				ClientUtils.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.getTranslucent()), transform, fs, 0, 0, 8, h);
+				ClientUtils.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
 				transform.rotate(new Quaternion(0, 90, 0, true));
 				transform.translate(-7.98, 0, 0);
-				ClientUtils.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.getTranslucent()), transform, fs, 0, 0, 8, h);
-				transform.rotate(new Quaternion(90, 0, 0, true));
-				transform.translate(0, 0, -h);
-				ClientUtils.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.getTranslucent()), transform, fs, 0, 0, 8, 8);
-				
-				ShaderUtil.releaseShader();
+				ClientUtils.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
+				if(h<height){
+					transform.rotate(new Quaternion(90, 0, 0, true));
+					transform.translate(0, 0, -h);
+					ClientUtils.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, 8);
+				}
 			}
 			transform.pop();
 		}

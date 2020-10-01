@@ -16,8 +16,9 @@ public class LubricantHandler{
 	 * @param amount mB of lubricant to spend every 4 ticks
 	 */
 	public static void registerLubricant(Fluid lube, int amount){
-		if(lube != null)
-			lubricantAmounts.put(lube.getRegistryName(), amount);
+		if(lube == null) return;
+		
+		lubricantAmounts.put(lube.getRegistryName(), amount);
 	}
 	
 	/**
@@ -31,8 +32,7 @@ public class LubricantHandler{
 	public static int getLubeAmount(Fluid toCheck){
 		if(toCheck != null){
 			ResourceLocation s = toCheck.getRegistryName();
-			if(lubricantAmounts.containsKey(s))
-				return lubricantAmounts.get(s);
+			return lubricantAmounts.getOrDefault(s, 0);
 		}
 		return 0;
 	}
@@ -44,8 +44,9 @@ public class LubricantHandler{
 	 * @return Whether or not the Fluid is a lubricant
 	 */
 	public static boolean isValidLube(Fluid toCheck){
-		if(toCheck != null)
+		if(toCheck != null){
 			return lubricantAmounts.containsKey(toCheck.getRegistryName());
+		}
 		return false;
 	}
 }

@@ -21,9 +21,9 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationH
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
-import flaxbeard.immersivepetroleum.common.blocks.BlockNapalm;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
+import flaxbeard.immersivepetroleum.common.util.fluids.NapalmFluid;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
@@ -277,7 +277,7 @@ public class CommonEventHandler{
 				for(BlockPos position:iterate){
 					BlockState state = event.world.getBlockState(position);
 					if(state.getBlock() instanceof FlowingFluidBlock && state.getBlock() == IPContent.Fluids.napalm.block){
-						((BlockNapalm) IPContent.Fluids.napalm).processFire(event.world, position);
+						((NapalmFluid) IPContent.Fluids.napalm).processFire(event.world, position);
 					}
 					toRemove.get(d).add(position);
 				}

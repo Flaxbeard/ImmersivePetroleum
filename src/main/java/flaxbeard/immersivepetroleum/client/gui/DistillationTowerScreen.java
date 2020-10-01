@@ -18,6 +18,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
 public class DistillationTowerScreen extends IEContainerScreen<DistillationTowerContainer>{
 	DistillationTowerTileEntity tile;
@@ -57,8 +58,7 @@ public class DistillationTowerScreen extends IEContainerScreen<DistillationTower
 		if(mx > guiLeft + 157 && mx < guiLeft + 164 && my > guiTop + 21 && my < guiTop + 67) tooltip.add(new StringTextComponent(tile.getEnergyStored(null) + "/" + tile.getMaxEnergyStored(null) + " RF"));
 		
 		if(!tooltip.isEmpty()){
-			//ClientUtils.drawHoveringText(tooltip, mx, my, font, guiLeft + xSize, -1);
-			//RenderHelper.enableStandardItemLighting();
+			GuiUtils.drawHoveringText(transform, tooltip, mx, my, width, height, -1, font);
 		}
 	}
 	
@@ -76,7 +76,6 @@ public class DistillationTowerScreen extends IEContainerScreen<DistillationTower
 		ClientUtils.drawGradientRect(guiLeft + 158, guiTop + 22 + (46 - stored), guiLeft + 165, guiTop + 68, 0xffb51500, 0xff600b00);
 		
 		ClientUtils.handleGuiTank(matrixStack, tile.tanks[0], guiLeft + 62, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivepetroleum:textures/gui/distillation.png", null);
-		//ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+112,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivepetroleum:textures/gui/distillation.png", null);
 		
 		IRenderTypeBuffer.Impl buffers = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
 		float capacity = tile.tanks[1].getCapacity();

@@ -152,8 +152,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			return;
 		}
 		
-		// TODO checkForNeedlessTicking
-		//ApiUtils.checkForNeedlessTicking(this);
+		checkForNeedlessTicking();
 		
 		if(this.world.isRemote || isDummy() || isRSDisabled()){
 			return;
@@ -182,6 +181,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		if(this.processQueue.size() > 0){
 			this.wasActive = true;
 			this.cooldownTicks = 6;
+			update = true;
 		}else if(this.wasActive){
 			this.wasActive = false;
 			update = true;

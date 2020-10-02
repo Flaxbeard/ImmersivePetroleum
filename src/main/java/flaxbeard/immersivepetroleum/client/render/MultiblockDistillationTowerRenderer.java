@@ -35,12 +35,6 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 	
 	static final RenderType RENDERTYPE_ACTIVE=makeType();
 	private static RenderType makeType(){
-		ImmersivePetroleum.log.info(activeTexture);
-		ImmersivePetroleum.log.info(ACTIVE_TOWER_TEXTURE);
-		ImmersivePetroleum.log.info(SHADE_ENABLED);
-		ImmersivePetroleum.log.info(LIGHTMAP_ENABLED);
-		ImmersivePetroleum.log.info(OVERLAY_ENABLED);
-		
 		RenderType.State renderState=RenderType.State.getBuilder()
 				.texture(ACTIVE_TOWER_TEXTURE)
 				.shadeModel(SHADE_ENABLED)
@@ -48,10 +42,7 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 				.overlay(OVERLAY_ENABLED)
 				.build(false);
 		
-		ImmersivePetroleum.log.info(renderState);
-		
 		RenderType type=RenderType.makeType(ImmersivePetroleum.MODID+":customsolid", DefaultVertexFormats.BLOCK, GL11.GL_QUADS, 256, true, false, renderState);
-		ImmersivePetroleum.log.info(type);
 		return type;
 	}
 	

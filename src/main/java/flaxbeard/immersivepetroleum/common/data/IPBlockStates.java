@@ -1,20 +1,28 @@
 package flaxbeard.immersivepetroleum.common.data;
 
 import java.util.Arrays;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.client.models.connection.ConnectionLoader;
+import blusunrize.immersiveengineering.client.models.split.SplitModelLoader;
 import blusunrize.immersiveengineering.common.data.models.LoadedModelBuilder;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.GasGeneratorBlock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -23,6 +31,8 @@ import net.minecraft.state.Property;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
@@ -92,8 +102,8 @@ public class IPBlockStates extends BlockStateProvider{
 		ResourceLocation modelNormal=modLoc("models/multiblock/obj/distillationtower.obj");
 		ResourceLocation modelMirrored=modLoc("models/multiblock/obj/distillationtower_mirrored.obj");
 		
-		LoadedModelBuilder normal=multiblockModel(IPContent.Multiblock.distillationtower, modelNormal, idleTexture, "_idle");
-		LoadedModelBuilder mirrored=multiblockModel(IPContent.Multiblock.distillationtower, modelMirrored, idleTexture, "_mirrored_idle");
+		LoadedModelBuilder normal=multiblockModel(IPContent.Multiblock.distillationtower, modelNormal, idleTexture, "_idle", DistillationTowerMultiblock.INSTANCE, false);
+		LoadedModelBuilder mirrored=multiblockModel(IPContent.Multiblock.distillationtower, modelMirrored, idleTexture, "_mirrored_idle", DistillationTowerMultiblock.INSTANCE, true);
 		
 		createMultiblock(IPContent.Multiblock.distillationtower, normal, mirrored, idleTexture);
 	}
@@ -103,22 +113,55 @@ public class IPBlockStates extends BlockStateProvider{
 		ResourceLocation modelNormal=modLoc("models/multiblock/obj/pumpjack.obj");
 		ResourceLocation modelMirrored=modLoc("models/multiblock/obj/pumpjack_mirrored.obj");
 		
-		LoadedModelBuilder normal=multiblockModel(IPContent.Multiblock.pumpjack, modelNormal, texture, "");
-		LoadedModelBuilder mirrored=multiblockModel(IPContent.Multiblock.pumpjack, modelMirrored, texture, "_mirrored");
+		LoadedModelBuilder normal=multiblockModel(IPContent.Multiblock.pumpjack, modelNormal, texture, "", PumpjackMultiblock.INSTANCE, false);
+		LoadedModelBuilder mirrored=multiblockModel(IPContent.Multiblock.pumpjack, modelMirrored, texture, "_mirrored", PumpjackMultiblock.INSTANCE, true);
 		
 		createMultiblock(IPContent.Multiblock.pumpjack, normal, mirrored, texture);
 	}
 	
-	private LoadedModelBuilder multiblockModel(Block block, ResourceLocation model, ResourceLocation texture, String add){
-		LoadedModelBuilder re=this.loadedModels.withExistingParent(getMultiblockPath(block)+add, mcLoc("block"))
+	private LoadedModelBuilder multiblockModel(Block block, ResourceLocation model, ResourceLocation texture, String add, TemplateMultiblock mb, boolean mirror){
+		UnaryOperator<BlockPos> transform = UnaryOperator.identity();
+		if(mirror){
+			Vector3i size = mb.getSize();
+			transform = p -> new BlockPos(size.getX() - p.getX() - 1, p.getY(), p.getZ());
+		}
+		final Vector3i offset = mb.getMasterFromOriginOffset();
+		@SuppressWarnings("deprecation")
+		Stream<Vector3i> partsStream=mb.getStructure().stream()
+				.filter(info -> !info.state.isAir())
+				.map(info -> info.pos)
+				.map(transform)
+				.map(p -> p.subtract(offset));
+		LoadedModelBuilder out=this.loadedModels.withExistingParent(getMultiblockPath(block)+add, mcLoc("block"))
 				.texture("texture", texture)
 				.texture("particle", texture)
 				.additional("flip-v", true)
 				.additional("model", model)
 				.additional("detectCullableFaces", false)
-				.loader(FORGE_LOADER);
-		return re;
+				.additional(SplitModelLoader.BASE_LOADER, FORGE_LOADER)
+				.additional(SplitModelLoader.DYNAMIC, false)
+				.loader(SplitModelLoader.LOCATION);
+		JsonArray partsJson=partsStream.collect(POSITIONS_TO_JSON);
+		out.additional(SplitModelLoader.PARTS, partsJson);
+		return out;
 	}
+	
+	private static final Collector<Vector3i, JsonArray, JsonArray> POSITIONS_TO_JSON = Collector.of(
+			JsonArray::new,
+			(arr, vec) -> {
+				JsonArray posJson = new JsonArray();
+				posJson.add(vec.getX());
+				posJson.add(vec.getY());
+				posJson.add(vec.getZ());
+				arr.add(posJson);
+			},
+			(a, b) -> {
+				JsonArray arr = new JsonArray();
+				arr.addAll(a);
+				arr.addAll(b);
+				return arr;
+			}
+	);
 	
 	private void autolubricator(){
 		ResourceLocation texture=modLoc("models/lubricator");
@@ -176,8 +219,8 @@ public class IPBlockStates extends BlockStateProvider{
 		});
 	}
 	
-	/** Used basicly for every multiblock-block */
-	private ConfiguredModel EMPTY_MODEL = null;
+//	/** Used basicly for every multiblock-block */
+//	private ConfiguredModel EMPTY_MODEL = null;
 	
 	/** From {@link blusunrize.immersiveengineering.common.data.BlockStates} 
 	 * @param idleTexture */
@@ -190,17 +233,17 @@ public class IPBlockStates extends BlockStateProvider{
 		Preconditions.checkArgument((mirroredModel == null) == (mirroredState == null));
 		VariantBlockStateBuilder builder = getVariantBuilder(b);
 		
-		if(EMPTY_MODEL==null){
-			EMPTY_MODEL = new ConfiguredModel(
-					new ExistingModelFile(new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty"), this.exFileHelper)
-			);
-		}
-		
-		builder.partialState()
-			.with(isSlave, true)
-			.setModels(new ConfiguredModel(
-					this.loadedModels.withExistingParent(getMultiblockPath(b)+"_empty", EMPTY_MODEL.model.getLocation())
-					.texture("particle", particleTex)));
+//		if(EMPTY_MODEL==null){
+//			EMPTY_MODEL = new ConfiguredModel(
+//					new ExistingModelFile(new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty"), this.exFileHelper)
+//			);
+//		}
+//		
+//		builder.partialState()
+//			.with(isSlave, true)
+//			.setModels(new ConfiguredModel(
+//					this.loadedModels.withExistingParent(getMultiblockPath(b)+"_empty", EMPTY_MODEL.model.getLocation())
+//					.texture("particle", particleTex)));
 		
 		boolean[] possibleMirrorStates;
 		if(mirroredState != null)
@@ -224,7 +267,7 @@ public class IPBlockStates extends BlockStateProvider{
 				
 				ModelFile model = mirrored ? mirroredModel : masterModel;
 				PartialBlockstate partialState = builder.partialState()
-						.with(isSlave, false)
+//						.with(isSlave, false)
 						.with(facing, dir);
 				
 				if(mirroredState != null)

@@ -187,7 +187,7 @@ public class ClientEventHandler{
 				if(!chunkBorders && (main || off)){
 					ColumnPos pos=CoresampleItem.getCoords(target);
 					if(pos!=null){
-						//renderChunkBorder(transform, pos.x >> 4 << 4, pos.z >> 4 << 4); // FIXME
+						//renderChunkBorder(transform, pos.x >> 4 << 4, pos.z >> 4 << 4);
 					}
 				}
 			}
@@ -380,26 +380,33 @@ public class ClientEventHandler{
 							strings.add(tower.energyStorage.getEnergyStored()+"/"+tower.energyStorage.getMaxEnergyStored()+"RF");
 							
 							{
-								strings.add("Input");
 								MultiFluidTank tank=tower.tanks[DistillationTowerTileEntity.TANK_INPUT];
-								for(int i=0;i<tank.fluids.size();i++){
-									FluidStack fstack=tank.fluids.get(i);
-									strings.add("  "+fstack.getDisplayName()+" "+fstack.getAmount()+"mB");
+								if(tank.fluids.size()>0){
+									strings.add("Input");
+									for(int i=0;i<tank.fluids.size();i++){
+										FluidStack fstack=tank.fluids.get(i);
+										strings.add("  "+fstack.getDisplayName()+" "+fstack.getAmount()+"mB");
+									}
 								}
 							}
 							
 							{
-								strings.add("Output");
 								MultiFluidTank tank=tower.tanks[DistillationTowerTileEntity.TANK_OUTPUT];
-								for(int i=0;i<tank.fluids.size();i++){
-									FluidStack fstack=tank.fluids.get(i);
-									strings.add("  "+fstack.getDisplayName()+" "+fstack.getAmount()+"mB");
+								if(tank.fluids.size()>0){
+									strings.add("Output");
+									for(int i=0;i<tank.fluids.size();i++){
+										FluidStack fstack=tank.fluids.get(i);
+										strings.add("  "+fstack.getDisplayName()+" "+fstack.getAmount()+"mB");
+									}
 								}
 							}
 							
+							MatrixStack matrix=event.getMatrixStack();
+							matrix.push();
 							for(int i=0;i<strings.size();i++){
-								//ClientUtils.font().drawStringWithShadow(strings.get(i), 1, 1+(i * ClientUtils.font().FONT_HEIGHT), 0xffffff);
+								ClientUtils.mc().fontRenderer.drawStringWithShadow(matrix, strings.get(i), 1, 1+(i * ClientUtils.font().FONT_HEIGHT), 0xffffff);
 							}
+							matrix.pop();
 						}
 					}
 				}

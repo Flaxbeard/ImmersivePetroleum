@@ -1,21 +1,15 @@
 package flaxbeard.immersivepetroleum.client.render;
 
-import org.lwjgl.opengl.GL11;
-
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderState;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,26 +20,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
 public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<DistillationTowerTileEntity>{
-	static final ResourceLocation activeTexture=new ResourceLocation(ImmersivePetroleum.MODID, "textures/multiblock/distillation_tower_active.png");
-	
-	static final RenderState.TextureState ACTIVE_TOWER_TEXTURE=new RenderState.TextureState(activeTexture, false, false);
-	static final RenderState.ShadeModelState SHADE_ENABLED=new RenderState.ShadeModelState(true);
-	static final RenderState.LightmapState LIGHTMAP_ENABLED=new RenderState.LightmapState(true);
-	static final RenderState.OverlayState OVERLAY_ENABLED=new RenderState.OverlayState(false);
-	
-	static final RenderType RENDERTYPE_ACTIVE=makeType();
-	private static RenderType makeType(){
-		RenderType.State renderState=RenderType.State.getBuilder()
-				.texture(ACTIVE_TOWER_TEXTURE)
-				.shadeModel(SHADE_ENABLED)
-				.lightmap(LIGHTMAP_ENABLED)
-				.overlay(OVERLAY_ENABLED)
-				.build(false);
-		
-		RenderType type=RenderType.makeType(ImmersivePetroleum.MODID+":customsolid", DefaultVertexFormats.BLOCK, GL11.GL_QUADS, 256, true, false, renderState);
-		return type;
-	}
-	
 	public MultiblockDistillationTowerRenderer(TileEntityRendererDispatcher dispatcher){
 		super(dispatcher);
 	}
@@ -93,7 +67,7 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 					
 					// Is it the most efficient way of doing this? Probably not.
 					// Does it make me look smart af? hell yeah..
-					IVertexBuilder buf=bufferIn.getBuffer(RENDERTYPE_ACTIVE);
+					IVertexBuilder buf=bufferIn.getBuffer(IPRenderTypes.DISTILLATION_TOWER_ACTIVE);
 					if(te.getIsMirrored()){
 						transform.push();
 						{

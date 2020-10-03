@@ -19,19 +19,30 @@ public class IPRenderTypes{
 	
 	/** Intended to only be used by {@link MultiblockDistillationTowerRenderer} */
 	public static final RenderType DISTILLATION_TOWER_ACTIVE;
+	public static final RenderType TRANSLUCENT_LINES;
 	
-	static final RenderState.TextureState ACTIVE_TOWER_TEXTURE=new RenderState.TextureState(activeTexture, false, false);
+	static final RenderState.TextureState TEXTURE_ACTIVE_TOWER=new RenderState.TextureState(activeTexture, false, false);
 	static final RenderState.ShadeModelState SHADE_ENABLED=new RenderState.ShadeModelState(true);
 	static final RenderState.LightmapState LIGHTMAP_ENABLED=new RenderState.LightmapState(true);
 	static final RenderState.OverlayState OVERLAY_ENABLED=new RenderState.OverlayState(false);
+	static final RenderState.DepthTestState DEPTH_ALWAYS = new RenderState.DepthTestState("always", GL11.GL_ALWAYS);
+	static final RenderState.TransparencyState TRANSLUCENT_TRANSPARENCY = new RenderState.TransparencyState("translucent_transparency", () -> {
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+	}, RenderSystem::disableBlend);
 	
 	static {
-		RenderType.State renderState=RenderType.State.getBuilder()
-				.texture(ACTIVE_TOWER_TEXTURE)
-				.shadeModel(SHADE_ENABLED)
-				.lightmap(LIGHTMAP_ENABLED)
-				.overlay(OVERLAY_ENABLED)
-				.build(false);
+		TRANSLUCENT_LINES = RenderType.makeType(
+				ImmersivePetroleum.MODID+":translucent_lines",
+				DefaultVertexFormats.POSITION_COLOR,
+				GL11.GL_LINES,
+				256,
+				RenderType.State.getBuilder().transparency(TRANSLUCENT_TRANSPARENCY)
+					.line(new LineState(OptionalDouble.of(3.5)))
+					.texture(new TextureState())
+					.depthTest(DEPTH_ALWAYS)
+					.build(false)
+		);
 		
 		DISTILLATION_TOWER_ACTIVE = RenderType.makeType(
 				ImmersivePetroleum.MODID+":customsolid",
@@ -40,6 +51,12 @@ public class IPRenderTypes{
 				256,
 				true,
 				false,
-				renderState);
+				RenderType.State.getBuilder()
+					.texture(TEXTURE_ACTIVE_TOWER)
+					.shadeModel(SHADE_ENABLED)
+					.lightmap(LIGHTMAP_ENABLED)
+					.overlay(OVERLAY_ENABLED)
+					.build(false)
+		);
 	}
 }

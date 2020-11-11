@@ -3,17 +3,12 @@ package flaxbeard.immersivepetroleum.client.model;
 import java.util.Arrays;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
 
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
-import flaxbeard.immersivepetroleum.dummy.GlStateManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.model.SegmentedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -209,20 +204,32 @@ public class ModelSpeedboat extends SegmentedModel<SpeedboatEntity>{
 		iS2T.rotateAngleX = (float) Math.toRadians(180 + 23);
 		iS2.addChild(iS2T);
 	}
-
+	
+	ModelRenderer makePaddle(boolean left){
+		ModelRenderer model = (new ModelRenderer(this, 62, left ? 2 : 22)).setTextureSize(128, 64);
+		model.addBox(-1.0F, 0.0F, -5.0F, 2, 2, 18);
+		model.addBox(left ? -1.001F : 0.001F, -3.0F, 8.0F, 1, 6, 7);
+		return model;
+	}
+	
+	@Override
+	public void setRotationAngles(SpeedboatEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
+		SpeedboatEntity boatEntity = (SpeedboatEntity) entityIn;
+		
+		this.setPaddleRotationAngles(boatEntity, 0, limbSwing, boatEntity.isEmergency());
+		this.setPaddleRotationAngles(boatEntity, 1, limbSwing, boatEntity.isEmergency());
+	}
+	
 	@Override
 	public Iterable<ModelRenderer> getParts(){
 		return this.list;
 	}
-
-	@Override
-	public void setRotationAngles(SpeedboatEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
+	
+	public ModelRenderer noWaterRenderer(){
+		return this.noWater;
 	}
 	
-	/**
-	 * Sets the models various rotation angles then renders the model.
-	 */
-	public void renderPaddle(BoatEntity boat, int paddle, float scale, float limbSwing, boolean rowing){
+	public void setPaddleRotationAngles(BoatEntity boat, int paddle, float limbSwing, boolean rowing){
 		if(rowing){
 			float f = boat.getRowingTime(paddle, limbSwing);
 			ModelRenderer model = this.paddles[paddle];
@@ -235,8 +242,6 @@ public class ModelSpeedboat extends SegmentedModel<SpeedboatEntity>{
 				model.setRotationPoint(3.0F, -5.0F, -9.0F);
 				model.rotateAngleY = (float) Math.PI - model.rotateAngleY;
 			}
-			
-			model.render(scale);
 		}else{
 			ModelRenderer model = this.paddles[paddle];
 			model.rotateAngleX = (float) Math.toRadians(-25);
@@ -248,24 +253,11 @@ public class ModelSpeedboat extends SegmentedModel<SpeedboatEntity>{
 				model.setRotationPoint(3.0F, -2.0F, -11.0F);
 				model.rotateAngleY = (float) Math.PI - model.rotateAngleY;
 			}
-			
-			model.render(scale);
 		}
 	}
 	
-	public void renderPaddles(Entity entityIn, float scale, float partialTicks){
-		SpeedboatEntity boatEntity = (SpeedboatEntity) entityIn;
-		this.renderPaddle(boatEntity, 0, scale, partialTicks, boatEntity.isEmergency());
-		this.renderPaddle(boatEntity, 1, scale, partialTicks, boatEntity.isEmergency());
-	}
-	
-	ModelRenderer makePaddle(boolean left){
-		ModelRenderer model = (new ModelRenderer(this, 62, left ? 2 : 22)).setTextureSize(128, 64);
-		model.addBox(-1.0F, 0.0F, -5.0F, 2, 2, 18);
-		model.addBox(left ? -1.001F : 0.001F, -3.0F, 8.0F, 1, 6, 7);
-		return model;
-	}
-	
+	// TODO This whole section below; Move to SpeedboatRenderer?
+	/*
 	public void render(Entity entityIn, MatrixStack transform, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale){
 		transform.rotate(new Quaternion(0.0F, 90.0F, 0.0F, true));
 		SpeedboatEntity BoatEntity = (SpeedboatEntity) entityIn;
@@ -341,4 +333,5 @@ public class ModelSpeedboat extends SegmentedModel<SpeedboatEntity>{
 		this.noWater.render(scale);
 		GlStateManager.colorMask(true, true, true, true);
 	}
+	*/
 }

@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
@@ -29,8 +30,8 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.pipeline.LightUtil;
-import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 
+// TODO Get the Coresample to display shit
 @SuppressWarnings("unused")
 public class ModelCoresampleExtended extends ModelCoresample{
 	private Fluid fluid;
@@ -48,6 +49,7 @@ public class ModelCoresampleExtended extends ModelCoresample{
 	
 	protected final void putVertexDataSpr(List<BakedQuad> bakedQuads, Vector3f normal, Vector3f[] vertices, Vector2f[] uvs, TextureAtlasSprite sprite)
 	{
+		/*
 		UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.ITEM);
 		builder.setQuadOrientation(Direction.getFacingFromVector(normal.getX(), normal.getY(), normal.getZ()));
 		builder.setTexture(sprite);
@@ -62,6 +64,7 @@ public class ModelCoresampleExtended extends ModelCoresample{
 			builder.put(4);//padding
 		}
 		bakedQuads.add(builder.build());
+		*/
 	}
 	
 	@Override
@@ -70,8 +73,9 @@ public class ModelCoresampleExtended extends ModelCoresample{
 	}
 	
 	ItemOverrideList overrideList2 = new ItemOverrideList(){
+		
 		@Override
-		public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, World worldIn, LivingEntity entityIn){
+		public IBakedModel func_239290_a_(IBakedModel originalModel, ItemStack stack, ClientWorld worldIn, LivingEntity entityIn){
 			String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
 			if(ItemNBTHelper.hasKey(stack, "resAmount") && resName == null && ItemNBTHelper.getInt(stack, "resAmount") > 0){
 				resName = "resAmount";

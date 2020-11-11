@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.common.blocks.EnumMetals;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
-import blusunrize.immersiveengineering.common.blocks.IEBlocks.MetalDecoration;
 import blusunrize.immersiveengineering.common.items.IEItems;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
@@ -60,18 +59,18 @@ public class IPRecipes extends RecipeProvider{
 			.max(10000.000)
 			.trace(0.006)
 			.weight(30)
-			.addDimensions(false, DimensionType.OVERWORLD.func_240901_a_()) // false = Whitelist, true = blacklist
+			.addDimensions(false, DimensionType.OVERWORLD.getRegistryName()) // false = Whitelist, true = blacklist
 //			.addDimensions(true, DimensionType.OVERWORLD.func_240901_a_()) // Will crash the generator, only one or the other but not both at the same time
 //			.addBiomes(false, new ResourceLocation[]{}) // Just for demonstration purposes.
 			.build(this.out, rl("reservoirs/aquifer"));
 		
 		// Shorthand for the above. (name   fluid                      min       max        trace  weight)
 		ReservoirTypeBuilder.builder("oil", IPContent.Fluids.crudeOil, 2500.000, 15000.000, 0.006, 40)
-			.addDimensions(true, DimensionType.THE_END.func_240901_a_()) // false = Whitelist, true = blacklist
+			.addDimensions(true, DimensionType.THE_END.getRegistryName()) // false = Whitelist, true = blacklist
 			.build(this.out, rl("reservoirs/oil"));
 		
 		ReservoirTypeBuilder.builder("lava", Fluids.LAVA, 250.000, 1000.000, 0.0, 30)
-			.addDimensions(true, DimensionType.THE_END.func_240901_a_()) // false = Whitelist, true = blacklist
+			.addDimensions(true, DimensionType.THE_END.getRegistryName()) // false = Whitelist, true = blacklist
 			.build(this.out, rl("reservoirs/lava"));
 	}
 	

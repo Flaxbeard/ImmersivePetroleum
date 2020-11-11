@@ -157,7 +157,7 @@ public class PumpjackHandler{
 			
 			if(!empty || force){
 				ResourceLocation biome = world.getBiome(new BlockPos(coords.x << 4, 64, coords.z << 4)).getRegistryName();
-				ResourceLocation dimension=world.getDimensionKey().func_240901_a_();
+				ResourceLocation dimension=world.getDimensionKey().getRegistryName();
 				
 				int totalWeight = getTotalWeight(dimension, biome);
 				ImmersivePetroleum.log.debug("Total Weight: "+totalWeight);
@@ -363,7 +363,7 @@ public class PumpjackHandler{
 		public boolean isValidDimension(@Nonnull World world){
 			if(world==null) return false;
 			
-			return isValidDimension(world.getDimensionKey().func_240901_a_());
+			return isValidDimension(world.getDimensionKey().getRegistryName());
 		}
 		
 		public boolean isValidDimension(@Nonnull ResourceLocation rl){

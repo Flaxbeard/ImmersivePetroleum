@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -75,7 +76,7 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 				buf.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 				//buffer.getBuffer(RenderType.getSolid());
 				//ClientUtils.renderModelTESRFast(this.list, buf, world, te.getPos(), -1);
-				ClientUtils.renderModelTESRFast(this.list, buffer.getBuffer(RenderType.getSolid()), transform, 15);
+				ClientUtils.renderModelTESRFast(this.list, buffer.getBuffer(RenderType.getSolid()), transform, 0xF000F0, OverlayTexture.NO_OVERLAY);
 				
 				transform.push();
 				transform.translate(0.0, -1.0, -1);

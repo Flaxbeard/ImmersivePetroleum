@@ -27,9 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.World;
 import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.pipeline.LightUtil;
 
 // TODO Get the Coresample to display shit
 @SuppressWarnings("unused")
@@ -75,7 +73,7 @@ public class ModelCoresampleExtended extends ModelCoresample{
 	ItemOverrideList overrideList2 = new ItemOverrideList(){
 		
 		@Override
-		public IBakedModel func_239290_a_(IBakedModel originalModel, ItemStack stack, ClientWorld worldIn, LivingEntity entityIn){
+		public IBakedModel getOverrideModel(IBakedModel originalModel, ItemStack stack, ClientWorld worldIn, LivingEntity entityIn){
 			String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
 			if(ItemNBTHelper.hasKey(stack, "resAmount") && resName == null && ItemNBTHelper.getInt(stack, "resAmount") > 0){
 				resName = "resAmount";

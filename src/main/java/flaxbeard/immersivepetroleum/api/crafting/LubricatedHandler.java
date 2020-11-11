@@ -89,7 +89,7 @@ public class LubricatedHandler{
 			int z = tag.getInt("z");
 			String name = tag.getString("world");
 			
-			this.world = RegistryKey.func_240903_a_(Registry.WORLD_KEY, new ResourceLocation(name));
+			this.world = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(name));
 			this.pos = new BlockPos(x, y, z);
 			this.ticks = ticks;
 		}
@@ -101,7 +101,7 @@ public class LubricatedHandler{
 			tag.putInt("x", this.pos.getX());
 			tag.putInt("y", this.pos.getY());
 			tag.putInt("z", this.pos.getZ());
-			tag.putString("world", this.world.func_240901_a_().toString());
+			tag.putString("world", this.world.getRegistryName().toString());
 			
 			return tag;
 		}

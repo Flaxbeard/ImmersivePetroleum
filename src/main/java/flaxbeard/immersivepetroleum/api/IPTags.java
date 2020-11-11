@@ -33,15 +33,15 @@ public class IPTags{
 	}
 	
 	private static ITag.INamedTag<Item> createItemWrapper(ResourceLocation name){
-		return createGenericWrapper(ItemTags.func_242177_b(), name, ItemTags::makeWrapperTag);
+		return createGenericWrapper(ItemTags.getAllTags(), name, ItemTags::makeWrapperTag);
 	}
 	
 	private static ITag.INamedTag<Block> createBlockWrapper(ResourceLocation name){
-		return createGenericWrapper(BlockTags.func_242174_b(), name, BlockTags::makeWrapperTag);
+		return createGenericWrapper(BlockTags.getAllTags(), name, BlockTags::makeWrapperTag);
 	}
 	
 	private static ITag.INamedTag<Fluid> createFluidWrapper(ResourceLocation name){
-		return createGenericWrapper(FluidTags.func_241280_c_(), name, FluidTags::makeWrapperTag);
+		return createGenericWrapper(FluidTags.getAllTags(), name, FluidTags::makeWrapperTag);
 	}
 	
 	private static <T> INamedTag<T> createGenericWrapper(List<? extends INamedTag<T>> tags, ResourceLocation name, Function<String, INamedTag<T>> createNew){

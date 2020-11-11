@@ -67,6 +67,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.LanguageMap;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -321,7 +322,7 @@ public class ClientEventHandler{
 				
 				if(res != null && amnt > 0){
 					int est = (amnt / 1000) * 1000;
-					String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
+					ITextComponent fluidName = new FluidStack(res.getFluid(), 1).getDisplayName();
 					
 					ITextComponent header=new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oil", fluidName)
 							.mergeStyle(TextFormatting.GRAY);
@@ -446,19 +447,27 @@ public class ClientEventHandler{
 											}
 										}
 										
-										String s = I18n.format("chat.immersivepetroleum.info.coresample.noOil");
+										// LanguageMap.getInstance().func_241870_a(fluidName)
+										
+										ITextComponent display = new TranslationTextComponent("chat.immersivepetroleum.info.coresample.noOil");
+										
 										if(res != null && amnt > 0){
-											String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
-											
-											s = I18n.format("chat.immersivepetroleum.info.coresample.oil", fluidName);
+											ITextComponent fluidName = new FluidStack(res.getFluid(), 1).getDisplayName();
+											display = new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oil", fluidName);
 										}else if(res != null && res.replenishRate > 0){
-											String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
-											s = I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName);
+											ITextComponent fluidName = new FluidStack(res.getFluid(), 1).getDisplayName();
+											display = new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName);
 										}
 										
 										int fx = event.getWindow().getScaledWidth() / 2 + 8;
 										int fy = event.getWindow().getScaledHeight() / 2 + 8 + i * ClientUtils.font().FONT_HEIGHT;
-										ClientUtils.font().drawStringWithShadow(event.getMatrixStack(), s, fx, fy, 0xFFFFFF);
+										
+										IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+										ClientUtils.font().func_238416_a_(LanguageMap.getInstance().func_241870_a(display),
+												fx, fy, 0xFFFFFFFF, true,
+												event.getMatrixStack().getLast().getMatrix(), buffer,
+												false, 0, 0xF000F0);
+										buffer.finish();
 									}
 								}
 							}

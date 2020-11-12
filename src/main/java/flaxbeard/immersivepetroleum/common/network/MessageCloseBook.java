@@ -24,7 +24,7 @@ public class MessageCloseBook implements IMessage{
 	public MessageCloseBook(PacketBuffer buf){
 		boolean isStrNull = buf.readByte() == 0;
 		if(!isStrNull){
-			String str=buf.readString();
+			String str=buf.readString(32767); // Because *apparently* PacketBuffer.readString() is client only?!
 			this.name = new ResourceLocation(str);
 		}else{
 			this.name = null;

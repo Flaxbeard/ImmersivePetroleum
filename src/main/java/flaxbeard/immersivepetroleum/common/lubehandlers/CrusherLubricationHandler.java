@@ -128,13 +128,11 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 	}
 	
 	
-	@OnlyIn(Dist.CLIENT)
 	private static final ResourceLocation TEXTURE = new ResourceLocation(ImmersivePetroleum.MODID, "textures/models/lube_pipe.png");
-	
-	@OnlyIn(Dist.CLIENT)
-	private static Supplier<IPModel> pipes = IPModels.getSupplier(ModelLubricantPipes.Crusher.ID);
+	private static Supplier<IPModel> pipes;
 	
 	@Override
+	@OnlyIn(Dist.CLIENT)
 	public void renderPipes(AutoLubricatorTileEntity lubricator, CrusherTileEntity mbte, MatrixStack matrix, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay){
 		matrix.translate(0, -1, 0);
 		Vector3i offset = mbte.getPos().subtract(lubricator.getPos());
@@ -163,6 +161,8 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 			}
 			default: break;
 		}
+		
+		if(pipes==null) pipes = IPModels.getSupplier(ModelLubricantPipes.Crusher.ID);
 		
 		IPModel model;
 		if((model=pipes.get())!=null){

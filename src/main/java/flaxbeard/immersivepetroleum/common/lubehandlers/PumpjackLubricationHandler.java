@@ -120,14 +120,13 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 	}
 	
 	
-	@OnlyIn(Dist.CLIENT)
 	private static final ResourceLocation TEXTURE = new ResourceLocation(ImmersivePetroleum.MODID, "textures/models/lube_pipe.png");
 	
 	@OnlyIn(Dist.CLIENT)
-	private static Supplier<IPModel> pipes_normal = IPModels.getSupplier(ModelLubricantPipes.Pumpjack.ID_NORMAL);
+	private static Supplier<IPModel> pipes_normal;
 	
 	@OnlyIn(Dist.CLIENT)
-	private static Supplier<IPModel> pipes_mirrored = IPModels.getSupplier(ModelLubricantPipes.Pumpjack.ID_MIRRORED);
+	private static Supplier<IPModel> pipes_mirrored;
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
@@ -162,8 +161,12 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 		
 		IPModel model;
 		if(mbte.getIsMirrored()){
+			if(pipes_mirrored==null) pipes_mirrored = IPModels.getSupplier(ModelLubricantPipes.Pumpjack.ID_MIRRORED);
+			
 			model=pipes_mirrored.get();
 		}else{
+			if(pipes_normal==null) pipes_normal = IPModels.getSupplier(ModelLubricantPipes.Pumpjack.ID_NORMAL);
+			
 			model=pipes_normal.get();
 		}
 		

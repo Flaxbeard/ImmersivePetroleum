@@ -146,14 +146,9 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	}
 	
 	
-	@OnlyIn(Dist.CLIENT)
 	private static final ResourceLocation TEXTURE = new ResourceLocation(ImmersivePetroleum.MODID, "textures/models/lube_pipe.png");
-	
-	@OnlyIn(Dist.CLIENT)
-	private static Supplier<IPModel> pipes_normal = IPModels.getSupplier(ModelLubricantPipes.Excavator.ID_NORMAL);
-	
-	@OnlyIn(Dist.CLIENT)
-	private static Supplier<IPModel> pipes_mirrored = IPModels.getSupplier(ModelLubricantPipes.Excavator.ID_MIRRORED);
+	private static Supplier<IPModel> pipes_normal;
+	private static Supplier<IPModel> pipes_mirrored;
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
@@ -188,8 +183,12 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		
 		IPModel model=null;
 		if(mbte.getIsMirrored()){
+			if(pipes_mirrored==null) pipes_mirrored = IPModels.getSupplier(ModelLubricantPipes.Excavator.ID_MIRRORED);
+			
 			model=pipes_mirrored.get();
 		}else{
+			if(pipes_normal==null) pipes_normal = IPModels.getSupplier(ModelLubricantPipes.Excavator.ID_NORMAL);
+			
 			model=pipes_normal.get();
 		}
 		

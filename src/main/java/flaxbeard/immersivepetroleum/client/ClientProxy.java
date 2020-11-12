@@ -259,7 +259,7 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man=ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("pumpjack0", 0, new ManualElementMultiblock(man, PumpjackMultiblock.INSTANCE));
+		builder.addSpecialElement("pumpjack0", 0, ()->new ManualElementMultiblock(man, PumpjackMultiblock.INSTANCE));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -268,7 +268,7 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man=ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("distillationtower0", 0, new ManualElementMultiblock(man, DistillationTowerMultiblock.INSTANCE));
+		builder.addSpecialElement("distillationtower0", 0, ()->new ManualElementMultiblock(man, DistillationTowerMultiblock.INSTANCE));
 		builder.addSpecialElement("distillationtower1", 0, ()->{
 			Collection<DistillationRecipe> recipeList = DistillationRecipe.recipes.values();
 			List<ITextComponent[]> l = new ArrayList<ITextComponent[]>();

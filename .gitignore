@@ -26,8 +26,8 @@ out/
 eclipse/
 bin/
 *.launch
+*.blend1
 run/
-Blender-Files/
 libs/
 *.project
 *.classpath

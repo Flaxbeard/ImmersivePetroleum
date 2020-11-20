@@ -5,8 +5,8 @@ import java.util.Map;
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
+import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
+import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.world.storage.WorldSavedData;
@@ -27,7 +27,7 @@ public class IPSaveData extends WorldSavedData{
 			CompoundNBT tag = oilList.getCompound(i);
 			DimensionChunkCoords coords = DimensionChunkCoords.readFromNBT(tag);
 			if(coords != null){
-				OilWorldInfo info = OilWorldInfo.readFromNBT(tag.getCompound("info"));
+				ReservoirWorldInfo info = ReservoirWorldInfo.readFromNBT(tag.getCompound("info"));
 				PumpjackHandler.reservoirsCache.put(coords, info);
 			}
 		}
@@ -44,7 +44,7 @@ public class IPSaveData extends WorldSavedData{
 	@Override
 	public CompoundNBT write(CompoundNBT nbt){
 		ListNBT oilList = new ListNBT();
-		for(Map.Entry<DimensionChunkCoords, OilWorldInfo> e:PumpjackHandler.reservoirsCache.entrySet()){
+		for(Map.Entry<DimensionChunkCoords, ReservoirWorldInfo> e:PumpjackHandler.reservoirsCache.entrySet()){
 			if(e.getKey() != null && e.getValue() != null){
 				CompoundNBT tag = e.getKey().writeToNBT();
 				tag.put("info", e.getValue().writeToNBT());

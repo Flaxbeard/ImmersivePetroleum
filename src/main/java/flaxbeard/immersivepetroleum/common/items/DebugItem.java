@@ -11,9 +11,9 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
+import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
+import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
@@ -105,7 +105,7 @@ public class DebugItem extends IPItemBase{
 							
 							DimensionChunkCoords coords=new DimensionChunkCoords(worldIn.getDimensionKey(), x, z);
 							
-							OilWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
+							ReservoirWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
 							if(info != null && info.getType() != null){
 								ReservoirType type = info.getType();
 								
@@ -145,7 +145,7 @@ public class DebugItem extends IPItemBase{
 					DimensionChunkCoords coords=new DimensionChunkCoords(worldIn.getDimensionKey(), (pos.getX() >> 4), (pos.getZ() >> 4));
 					
 					int last=PumpjackHandler.reservoirsCache.size();
-					OilWorldInfo info=PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
+					ReservoirWorldInfo info=PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
 					boolean isNew=PumpjackHandler.reservoirsCache.size()!=last;
 					
 					if(info != null){

@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.api.crafting;
+package flaxbeard.immersivepetroleum.api.crafting.pumpjack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +41,7 @@ public class PumpjackHandler{
 	private static Map<ResourceLocation, Map<ResourceLocation, Integer>> totalWeightMap = new HashMap<>();
 	
 	public static Map<DimensionChunkCoords, Long> timeCache = new HashMap<>();
-	public static Map<DimensionChunkCoords, OilWorldInfo> reservoirsCache = new HashMap<>();
+	public static Map<DimensionChunkCoords, ReservoirWorldInfo> reservoirsCache = new HashMap<>();
 	
 	private static int depositSize = 1;
 	
@@ -59,7 +59,7 @@ public class PumpjackHandler{
 		if(world.isRemote)
 			return 0;
 		
-		OilWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
+		ReservoirWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
 		if(info == null || (info.capacity == 0) || info.getType() == null || info.getType().fluidLocation == null || (info.current == 0 && info.getType().replenishRate == 0))
 			return 0;
 		
@@ -80,7 +80,7 @@ public class PumpjackHandler{
 		if(world.isRemote)
 			return null;
 		
-		OilWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
+		ReservoirWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
 		
 		if(info == null || info.getType() == null){
 			return null;
@@ -100,7 +100,7 @@ public class PumpjackHandler{
 	public static int getResidualFluid(World world, int chunkX, int chunkZ){
 		assert !world.isRemote;
 		
-		OilWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
+		ReservoirWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
 		
 		if(info == null || info.getType() == null || info.getType().fluidLocation == null || (info.capacity == 0) || (info.current == 0 && info.getType().replenishRate == 0))
 			return 0;
@@ -126,7 +126,7 @@ public class PumpjackHandler{
 	 * @param chunkZ Z coordinate of desired chunk
 	 * @return The OilWorldInfo corresponding w/ given chunk
 	 */
-	public static OilWorldInfo getOrCreateOilWorldInfo(World world, int chunkX, int chunkZ){
+	public static ReservoirWorldInfo getOrCreateOilWorldInfo(World world, int chunkX, int chunkZ){
 		return getOrCreateOilWorldInfo(world, new DimensionChunkCoords(world.getDimensionKey(), chunkX, chunkZ), false);
 	}
 	
@@ -138,13 +138,13 @@ public class PumpjackHandler{
 	 * @param force  Force creation on an empty chunk
 	 * @return The OilWorldInfo corresponding w/ given chunk
 	 */
-	public static OilWorldInfo getOrCreateOilWorldInfo(World world, DimensionChunkCoords coords, boolean force){
+	public static ReservoirWorldInfo getOrCreateOilWorldInfo(World world, DimensionChunkCoords coords, boolean force){
 		assert !world.isRemote;
 		
 		if(world.isRemote)
 			return null;
 		
-		OilWorldInfo worldInfo = reservoirsCache.get(coords);
+		ReservoirWorldInfo worldInfo = reservoirsCache.get(coords);
 		if(worldInfo == null){
 			ReservoirType res = null;
 			
@@ -185,7 +185,7 @@ public class PumpjackHandler{
 			
 			ImmersivePetroleum.log.debug("Capacity: {}", capacity);
 			
-			worldInfo = new OilWorldInfo();
+			worldInfo = new ReservoirWorldInfo();
 			worldInfo.capacity = capacity;
 			worldInfo.current = capacity;
 			worldInfo.type = res;
@@ -208,7 +208,7 @@ public class PumpjackHandler{
 	public static void depleteFluid(World world, int chunkX, int chunkZ, int amount){
 		assert !world.isRemote;
 		
-		OilWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
+		ReservoirWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
 		info.current = Math.max(info.current - amount, 0);
 		IPSaveData.setDirty();
 	}
@@ -449,60 +449,6 @@ public class PumpjackHandler{
 				nbtList.add(StringNBT.valueOf(rl.toString()));
 			}
 			return nbtList;
-		}
-	}
-	
-	public static class OilWorldInfo{
-		public ReservoirType type;
-		public ReservoirType overrideType;
-		public int capacity;
-		public int current;
-		
-		public ReservoirType getType(){
-			return (overrideType == null) ? type : overrideType;
-		}
-		
-		public CompoundNBT writeToNBT(){
-			CompoundNBT tag = new CompoundNBT();
-			tag.putInt("capacity", capacity);
-			tag.putInt("resAmount", current);
-			if(type != null){
-				tag.putString("type", type.name);
-			}
-			if(overrideType != null){
-				tag.putString("overrideType", overrideType.name);
-			}
-			return tag;
-		}
-		
-		public static OilWorldInfo readFromNBT(CompoundNBT tag){
-			OilWorldInfo info = new OilWorldInfo();
-			info.capacity = tag.getInt("capacity");
-			info.current = tag.getInt("resAmount");
-			
-			if(tag.contains("type")){
-				String s = tag.getString("type");
-				for(ReservoirType res:reservoirs.values()){
-					if(s.equalsIgnoreCase(res.name)) info.type = res;
-				}
-			}else if(info.current > 0){
-				for(ReservoirType res:reservoirs.values()){
-					if(res.name.equalsIgnoreCase("resAmount")) info.type = res;
-				}
-				
-				if(info.type == null){
-					return null;
-				}
-			}
-			
-			if(tag.contains("overrideType")){
-				String s = tag.getString("overrideType");
-				for(ReservoirType res:reservoirs.values()){
-					if(s.equalsIgnoreCase(res.name)) info.overrideType = res;
-				}
-			}
-			
-			return info;
 		}
 	}
 }

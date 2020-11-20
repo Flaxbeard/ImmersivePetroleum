@@ -7,9 +7,9 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
+import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
+import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.command.CommandSource;
@@ -64,7 +64,7 @@ public class ReservoirCommand{
 	}
 	
 	static int get(ServerPlayerEntity playerEntity){
-		OilWorldInfo info = getOilWorldInfo(playerEntity);
+		ReservoirWorldInfo info = getOilWorldInfo(playerEntity);
 		
 		String h = I18n.format("chat.immersivepetroleum.command.reservoir.get",
 				TextFormatting.GOLD + (info.type != null ? info.type.name : "null") + TextFormatting.RESET,
@@ -101,7 +101,7 @@ public class ReservoirCommand{
 	
 	static void setReservoir(CommandContext<CommandSource> context, int xChunk, int zChunk){
 		CommandSource sender=context.getSource();
-		OilWorldInfo info=PumpjackHandler.getOrCreateOilWorldInfo(sender.getWorld(), xChunk, zChunk);
+		ReservoirWorldInfo info=PumpjackHandler.getOrCreateOilWorldInfo(sender.getWorld(), xChunk, zChunk);
 		
 		String name=context.getArgument("name", String.class);
 		ReservoirType reservoir = null;
@@ -120,7 +120,7 @@ public class ReservoirCommand{
 	}
 	
 	static int set(ServerPlayerEntity playerEntity, String name){
-		OilWorldInfo info = getOilWorldInfo(playerEntity);
+		ReservoirWorldInfo info = getOilWorldInfo(playerEntity);
 		
 		ReservoirType reservoir = null;
 		for(ReservoirType res:PumpjackHandler.reservoirs.values())
@@ -140,7 +140,7 @@ public class ReservoirCommand{
 	}
 	
 	static int setAmount(ServerPlayerEntity playerEntity, int amount){
-		OilWorldInfo info = getOilWorldInfo(playerEntity);
+		ReservoirWorldInfo info = getOilWorldInfo(playerEntity);
 		
 		amount = Math.min(info.capacity, Math.max(0, amount)); // Clamping action; Prevents amount from going negative or over the capacity.
 		
@@ -154,7 +154,7 @@ public class ReservoirCommand{
 	}
 	
 	static int setCapacity(ServerPlayerEntity playerEntity, int amount){
-		OilWorldInfo info = getOilWorldInfo(playerEntity);
+		ReservoirWorldInfo info = getOilWorldInfo(playerEntity);
 		
 		amount = Math.max(0, amount);
 		
@@ -165,7 +165,7 @@ public class ReservoirCommand{
 		return Command.SINGLE_SUCCESS;
 	}
 	
-	static OilWorldInfo getOilWorldInfo(ServerPlayerEntity playerEntity){
+	static ReservoirWorldInfo getOilWorldInfo(ServerPlayerEntity playerEntity){
 		ChunkPos coords=new ChunkPos(playerEntity.getPosition());
 		return PumpjackHandler.getOrCreateOilWorldInfo(playerEntity.getEntityWorld(), coords.x, coords.z);
 	}

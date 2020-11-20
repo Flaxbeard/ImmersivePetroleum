@@ -19,8 +19,8 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.OilWorldInfo;
+import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
+import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import flaxbeard.immersivepetroleum.common.util.fluids.NapalmFluid;
@@ -92,7 +92,7 @@ public class CommonEventHandler{
 							World world = event.getWorld();
 							DimensionChunkCoords coords=new DimensionChunkCoords(world.getDimensionKey(), cPos.x >> 4, cPos.z >> 4);
 							
-							OilWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(world, coords, false);
+							ReservoirWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(world, coords, false);
 							if(info!=null && info.getType() != null){
 								ItemNBTHelper.putString(drill.sample, "resType", info.getType().name);
 								ItemNBTHelper.putInt(drill.sample, "resAmount", info.current);

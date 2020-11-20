@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "slave=false": {
+      "model": "immersivepetroleum:block/flarestack"
+    },
+    "slave=true": {
+      "model": "immersivepetroleum:block/flare_empty"
+    }
+  }
+}

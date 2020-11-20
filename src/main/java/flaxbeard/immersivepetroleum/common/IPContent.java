@@ -28,11 +28,13 @@ import flaxbeard.immersivepetroleum.common.blocks.AsphaltBlock;
 import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.BlockDummy;
 import flaxbeard.immersivepetroleum.common.blocks.DistillationTowerBlock;
+import flaxbeard.immersivepetroleum.common.blocks.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.blocks.PumpjackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.FlarestackTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
@@ -88,6 +90,7 @@ public class IPContent{
 		
 		public static IPBlockBase gas_generator;
 		public static IPBlockBase auto_lubricator;
+		public static IPBlockBase flarestack;
 		
 		public static BlockDummy dummyOilOre;
 		public static BlockDummy dummyPipe;
@@ -132,6 +135,7 @@ public class IPContent{
 		Blocks.gas_generator=new GasGeneratorBlock();
 		
 		Blocks.auto_lubricator=new AutoLubricatorBlock("auto_lubricator");
+		Blocks.flarestack = new FlarestackBlock();
 		
 		Items.bitumen = new IPItemBase("bitumen");
 		Items.oil_can = new OilCanItem("oil_can");
@@ -184,6 +188,7 @@ public class IPContent{
 		registerTile(event, DistillationTowerTileEntity.class, Multiblock.distillationtower);
 		registerTile(event, PumpjackTileEntity.class, Multiblock.pumpjack);
 		registerTile(event, AutoLubricatorTileEntity.class, Blocks.auto_lubricator);
+		registerTile(event, FlarestackTileEntity.class, Blocks.flarestack);
 		
 		registerTile(event, GasGeneratorTileEntity.class, Blocks.gas_generator);
 	}

@@ -20,6 +20,7 @@ import blusunrize.immersiveengineering.common.data.models.LoadedModelBuilder;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
+import flaxbeard.immersivepetroleum.common.blocks.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
@@ -85,6 +86,7 @@ public class IPBlockStates extends BlockStateProvider{
 		gasGenerator();
 		
 		autolubricator();
+		flarestack();
 		
 		// Fluids
 		for(IPFluid f:IPFluid.FLUIDS){
@@ -191,6 +193,31 @@ public class IPBlockStates extends BlockStateProvider{
 				.with(AutoLubricatorBlock.FACING, dir)
 				.setModels(new ConfiguredModel(lube_empty));
 		}
+	}
+	
+	private void flarestack(){
+		ResourceLocation texture = modLoc("block/obj/flarestack");
+		ConfiguredModel emptyModel = new ConfiguredModel(this.loadedModels.withExistingParent("flare_empty",
+				new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty"))
+				.texture("particle", texture));
+		
+		LoadedModelBuilder flarestackModel = this.loadedModels.withExistingParent(getPath(IPContent.Blocks.flarestack),
+				mcLoc("block"))
+				.loader(FORGE_LOADER)
+				.additional("model", modLoc("models/block/obj/flarestack.obj"))
+				.additional("flip-v", true)
+				.texture("texture", texture)
+				.texture("particle", texture);
+		
+		VariantBlockStateBuilder flarestackBuilder = getVariantBuilder(IPContent.Blocks.flarestack);
+		
+		flarestackBuilder.partialState()
+			.with(FlarestackBlock.SLAVE, false)
+			.setModels(new ConfiguredModel(flarestackModel, 0, 0, false));
+		
+		flarestackBuilder.partialState()
+			.with(FlarestackBlock.SLAVE, true)
+			.setModels(emptyModel);
 	}
 	
 	private void gasGenerator(){

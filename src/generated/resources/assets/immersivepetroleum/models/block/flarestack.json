@@ -1,0 +1,10 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "texture": "immersivepetroleum:block/obj/flarestack",
+    "particle": "immersivepetroleum:block/obj/flarestack"
+  },
+  "loader": "forge:obj",
+  "model": "immersivepetroleum:models/block/obj/flarestack.obj",
+  "flip-v": true
+}

@@ -36,7 +36,7 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import net.minecraft.block.BlockState;

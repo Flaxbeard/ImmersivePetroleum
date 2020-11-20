@@ -1,15 +1,15 @@
 package flaxbeard.immersivepetroleum.common.gui;
 
-import static flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.INV_0;
-import static flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.INV_1;
-import static flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.INV_2;
-import static flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.INV_3;
-import static flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity.TANK_INPUT;
+import static flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity.INV_0;
+import static flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity.INV_1;
+import static flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity.INV_2;
+import static flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity.INV_3;
+import static flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity.TANK_INPUT;
 
 import blusunrize.immersiveengineering.common.gui.IEBaseContainer;
 import blusunrize.immersiveengineering.common.gui.IESlot;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;

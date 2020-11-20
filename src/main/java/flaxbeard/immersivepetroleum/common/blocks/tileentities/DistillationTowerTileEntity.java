@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.blocks.metal;
+package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +20,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
+import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.ItemStackHelper;

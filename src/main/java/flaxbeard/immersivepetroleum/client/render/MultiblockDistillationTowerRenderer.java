@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;

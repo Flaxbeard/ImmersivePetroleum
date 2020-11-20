@@ -7,7 +7,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import flaxbeard.immersivepetroleum.client.model.IPModel;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelPumpjack;
-import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;

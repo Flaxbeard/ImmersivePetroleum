@@ -11,7 +11,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.IronGolemEntity;

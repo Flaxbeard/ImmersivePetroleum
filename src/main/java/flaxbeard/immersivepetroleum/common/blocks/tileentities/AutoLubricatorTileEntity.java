@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.blocks.metal;
+package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
 import java.util.Arrays;
 import java.util.List;

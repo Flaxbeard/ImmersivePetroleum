@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
+package flaxbeard.immersivepetroleum.common.multiblocks;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 

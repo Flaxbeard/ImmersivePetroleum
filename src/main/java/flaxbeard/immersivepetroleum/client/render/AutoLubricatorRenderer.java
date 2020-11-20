@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;

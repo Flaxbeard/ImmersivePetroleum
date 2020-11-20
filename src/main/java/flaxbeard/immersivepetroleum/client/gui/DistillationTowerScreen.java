@@ -9,7 +9,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.DistillationTowerContainer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Tessellator;

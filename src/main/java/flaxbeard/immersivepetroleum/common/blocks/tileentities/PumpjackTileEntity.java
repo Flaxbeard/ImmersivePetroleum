@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.blocks.metal;
+package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +19,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
+import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;

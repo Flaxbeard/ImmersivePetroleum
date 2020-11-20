@@ -24,17 +24,4 @@ public class BlockDummy extends IPBlockBase{
 	
 	@Override
 	public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items){}
-	
-	// TODO Block Render Layer
-	/*
-	@Override
-	public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer){
-		return layer==BlockRenderLayer.CUTOUT;
-	}
-	
-	@Override
-	public BlockRenderLayer getRenderLayer(){
-		return BlockRenderLayer.SOLID;
-	}
-	*/
 }

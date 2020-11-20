@@ -7,7 +7,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBaseTileEntity;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IReadOnPlacement;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
-import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;

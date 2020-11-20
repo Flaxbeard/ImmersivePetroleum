@@ -1,6 +1,6 @@
-package flaxbeard.immersivepetroleum.common.blocks.metal;
+package flaxbeard.immersivepetroleum.common.blocks;
 
-import flaxbeard.immersivepetroleum.common.blocks.IPMetalMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;

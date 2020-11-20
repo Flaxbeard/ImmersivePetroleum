@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.api.crafting;
+package flaxbeard.immersivepetroleum.api.crafting.builders;
 
 import java.util.ArrayList;
 import java.util.List;

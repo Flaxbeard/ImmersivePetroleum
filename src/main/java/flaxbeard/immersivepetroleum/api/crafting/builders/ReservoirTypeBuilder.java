@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.api.crafting;
+package flaxbeard.immersivepetroleum.api.crafting.builders;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

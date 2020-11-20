@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.common.network;
 
 import java.util.function.Supplier;
 
-import blusunrize.immersiveengineering.common.network.IMessage;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -11,7 +10,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 
-public class MessageDebugSync implements IMessage{
+public class MessageDebugSync implements INetMessage{
 	
 	CompoundNBT nbt;
 	public MessageDebugSync(CompoundNBT nbt){

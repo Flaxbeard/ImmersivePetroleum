@@ -2,8 +2,6 @@ package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.api.IEProperties;
@@ -14,14 +12,11 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -61,32 +56,20 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 			this.te.setOverrideState(IPContent.Multiblock.pumpjack.getDefaultState().with(IEProperties.FACING_HORIZONTAL, Direction.WEST));
 		}
 		
-		if(this.list==null){
-			BlockState state=IPContent.Multiblock.pumpjack.getDefaultState().with(IEProperties.FACING_HORIZONTAL, Direction.NORTH);
-			IBakedModel model=ClientUtils.mc().getBlockRendererDispatcher().getModelForState(state);
-			this.list=model.getQuads(state, null, Utils.RAND, EmptyModelData.INSTANCE);
+		if(this.list == null){
+			BlockState state = IPContent.Multiblock.pumpjack.getDefaultState().with(IEProperties.FACING_HORIZONTAL, Direction.NORTH);
+			IBakedModel model = ClientUtils.mc().getBlockRendererDispatcher().getModelForState(state);
+			this.list = model.getQuads(state, null, Utils.RAND, EmptyModelData.INSTANCE);
 		}
 		
-		if(this.list!=null && this.list.size()>0){
-			World world=ClientUtils.mc().world;
-			if(world!=null){
-				Tessellator tes=Tessellator.getInstance();
-				BufferBuilder buf=tes.getBuffer();
-				
-				buf.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-				//buffer.getBuffer(RenderType.getSolid());
-				//ClientUtils.renderModelTESRFast(this.list, buf, world, te.getPos(), -1);
+		if(this.list != null && this.list.size() > 0){
+			World world = ClientUtils.mc().world;
+			if(world != null){
 				ClientUtils.renderModelTESRFast(this.list, buffer.getBuffer(RenderType.getSolid()), transform, 0xF000F0, OverlayTexture.NO_OVERLAY);
 				
 				transform.push();
-				transform.translate(0.0, -1.0, -1);
+				transform.translate(-1, -1, -1);
 				ImmersivePetroleum.proxy.renderTile(this.te, buffer.getBuffer(RenderType.getSolid()), transform, buffer);
-				transform.pop();
-				
-				transform.push();
-				transform.translate(1.0, 1.0, 1.0);
-				ClientUtils.bindAtlas();
-				tes.draw();
 				transform.pop();
 			}
 		}

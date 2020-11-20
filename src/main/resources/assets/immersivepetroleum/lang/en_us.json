@@ -65,6 +65,42 @@
 	"_comment": "This is for the upgrade list of the speedboat tooltip",
 	"desc.immersivepetroleum.flavour.speedboat0": "Upgrade(s)",
 	
+	"desc.immersivepetroleum.info.projector.noMultiblock": "Right-Click to open Menu",
+	"desc.immersivepetroleum.info.projector.size": "Size: %d x %d x %d",
+	"desc.immersivepetroleum.info.projector.build0": "Displays instructions",
+	"desc.immersivepetroleum.info.projector.build1": "for making a %s",
+	"desc.immersivepetroleum.info.projector.center": "Centered at [%d, %d, %d]",
+	
+	"desc.immersivepetroleum.info.projector.flipped.true": "Mirrored: Yes.",
+	"desc.immersivepetroleum.info.projector.flipped.false": "Mirrored: No.",
+	
+	"desc.immersivepetroleum.info.projector.rotated.north":"Rotated North",
+	"desc.immersivepetroleum.info.projector.rotated.east":  "Rotated East",
+	"desc.immersivepetroleum.info.projector.rotated.south": "Rotated South",
+	"desc.immersivepetroleum.info.projector.rotated.west": "Rotated West",
+	
+	"desc.immersivepetroleum.info.projector.mode_0": "Selection Mode",
+	"desc.immersivepetroleum.info.projector.mode_1": "Projection Mode",
+	
+	"desc.immersivepetroleum.info.projector.holdshift": "Hold Shift",
+	"desc.immersivepetroleum.info.projector.holdshift.text": "For settings",
+	
+	"desc.immersivepetroleum.info.projector.holdctrl": "Hold Ctrl",
+	"desc.immersivepetroleum.info.projector.holdctrl.text": "For control scheme",
+	
+	"desc.immersivepetroleum.info.projector.control1": "Shift + Scroll-UP/DOWN to Rotate",
+	"desc.immersivepetroleum.info.projector.control2": "Shift + %s to Mirror",
+	"desc.immersivepetroleum.info.projector.control3": "Shift + RightClick in air to Change Mode",
+	
+	"_comment": "################## GUI ##################",
+	
+	"gui.immersivepetroleum.projector.search": "Search",
+	"gui.immersivepetroleum.projector.button.confirm": "Confirm",
+	"gui.immersivepetroleum.projector.button.cancel": "Cancel",
+	"gui.immersivepetroleum.projector.button.mirror": "Mirror",
+	"gui.immersivepetroleum.projector.button.rcw": "Rotate Clockwise",
+	"gui.immersivepetroleum.projector.button.rccw": "Rotate Counter-Clockwise",
+	
 	"_comment": "################## IE-Manual ##################",
 	
 	"effect.immersivepetroleum.anti_fire": "",
@@ -117,21 +153,6 @@
 	"chat.immersivepetroleum.info.coresample.oilRep": "Up to %d mB/tick of trace %s",
 	"chat.immersivepetroleum.info.coresample.noOil": "No Fluid Reservoir",
 	
-	"chat.immersivepetroleum.info.schematic.noMultiblock": "Craft with Engineer's Manual",
-	"chat.immersivepetroleum.info.schematic.build0": "Displays instructions",
-	"chat.immersivepetroleum.info.schematic.build1": "for making a %s",
-	"chat.immersivepetroleum.info.schematic.center": "Centered at (%d, %d, %d)",
-	"chat.immersivepetroleum.info.schematic.controls1": "Shift + Scroll-UP/DOWN to Rotate",
-	"chat.immersivepetroleum.info.schematic.controls2": "Shift + %s to Flip",
-	
-	"chat.immersivepetroleum.info.projector.flipped": "Flipped: %s",
-	"chat.immersivepetroleum.info.projector.flipped.yes": "Yes.",
-	"chat.immersivepetroleum.info.projector.flipped.no": "No.",
-	
-	"chat.immersivepetroleum.info.projector.rotated.north":"Rotated North",
-	"chat.immersivepetroleum.info.projector.rotated.east":  "Rotated East",
-	"chat.immersivepetroleum.info.projector.rotated.south": "Rotated South",
-	"chat.immersivepetroleum.info.projector.rotated.west": "Rotated West",
-	
-	"key.immersivepetroleum.projector.flip":"Flip Projector-Preview"
+	"key.categories.immersivepetroleum": "Immersive Petroleum",
+	"key.immersivepetroleum.projector.flip": "Mirror Projection"
 }

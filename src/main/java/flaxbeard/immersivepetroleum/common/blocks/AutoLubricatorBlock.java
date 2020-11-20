@@ -155,7 +155,10 @@ public class AutoLubricatorBlock extends IPBlockBase{
 		protected boolean canPlace(BlockItemUseContext con, BlockState state){
 			if(super.canPlace(con, state)){ // No point in checking if the second block above is empty if it can't even place on the first one
 				BlockPos pos=con.getPos().add(0, 1, 0);
-				return con.getWorld().getBlockState(pos).isAir(con.getWorld(), pos);
+				BlockState otherState=con.getWorld().getBlockState(pos);
+				otherState.getBlock().isAir(otherState, con.getWorld(), pos);
+				return otherState.getBlock().isAir(otherState, con.getWorld(), pos);
+//				return con.getWorld().getBlockState(pos).isAir(con.getWorld(), pos);
 			}
 			return false;
 		}

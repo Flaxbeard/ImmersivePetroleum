@@ -39,8 +39,6 @@ import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
-import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
-import flaxbeard.immersivepetroleum.common.network.MessageCloseBook;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -87,11 +85,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
 
 public class ClientEventHandler{
-	private static Object lastGui = null;
-	private static Field FIELD_PAGES;
-	private static Field FIELD_SPECIAL;
-	private static Field FIELD_MULTIBLOCK;
-	@SubscribeEvent
+	@Deprecated private static Object lastGui = null;
+	@Deprecated private static Field FIELD_PAGES;
+	@Deprecated private static Field FIELD_SPECIAL;
+	@Deprecated private static Field FIELD_MULTIBLOCK;
+	@Deprecated
 	public void guiOpen(GuiOpenEvent event){
 		if(event.getGui() == null && lastGui instanceof ManualScreen){
 			ManualScreen gui = (ManualScreen) lastGui;
@@ -142,7 +140,7 @@ public class ClientEventHandler{
 			ItemStack target = main ? mainItem : offItem;
 			
 			if(main || off){
-				IPPacketHandler.sendToServer(new MessageCloseBook(name));
+				//IPPacketHandler.sendToServer(new MessageCloseBook(name));
 				
 				if(name == null && ItemNBTHelper.hasKey(target, "lastMultiblock")){
 					ItemNBTHelper.remove(target, "lastMultiblock");
@@ -500,6 +498,7 @@ public class ClientEventHandler{
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public void onRenderOverlayPost(RenderGameOverlayEvent.Post event){
 		if(ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){

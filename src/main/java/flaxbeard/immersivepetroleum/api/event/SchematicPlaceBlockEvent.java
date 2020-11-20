@@ -9,57 +9,53 @@ import net.minecraft.world.World;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
+/**
+ * @deprecated Use {@link flaxbeard.immersivepetroleum.api.event.ProjectorEvent.PlaceBlock}
+ */
+@Deprecated
 @Cancelable
 public class SchematicPlaceBlockEvent extends Event{
-	private World world;
-	private Rotation rotation;
-	private IMultiblock multiblock;
-	private BlockPos worldPos;
-	private BlockPos templatePos;
-	private BlockState state;
-	private CompoundNBT nbt;
-	
+	@Deprecated
 	public SchematicPlaceBlockEvent(IMultiblock multiblock, World world, BlockPos worldPos, BlockPos templatePos, BlockState state, CompoundNBT nbt, Rotation rotation){
-		super();
-		this.world = world;
-		this.multiblock = multiblock;
-		this.worldPos=worldPos;
-		this.templatePos=templatePos;
-		this.state=state;
-		this.nbt=nbt;
-		this.rotation=rotation;
 	}
 	
+	@Deprecated
 	public void setBlockState(BlockState state){
-		this.state = state;
 	}
 	
+	@Deprecated
 	public World getWorld(){
-		return this.world;
+		return null;
 	}
 	
+	@Deprecated
 	public IMultiblock getMultiblock(){
-		return this.multiblock;
+		return null;
 	}
 	
+	@Deprecated
 	public Rotation getRotate(){
-		return this.rotation;
+		return null;
 	}
 	
+	@Deprecated
 	public BlockPos getWorldPos(){
-		return this.worldPos;
+		return null;
 	}
 	
+	@Deprecated
 	public BlockPos getTemplatePos(){
-		return this.templatePos;
+		return null;
 	}
 	
+	@Deprecated
 	public BlockState getState(){
-		return this.state;
+		return null;
 	}
 	
+	@Deprecated
 	public CompoundNBT getNBT(){
-		return this.nbt;
+		return null;
 	}
 	
 	@Deprecated

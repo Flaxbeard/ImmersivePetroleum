@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import net.minecraft.client.renderer.RenderType;
+import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
 
@@ -22,7 +22,7 @@ public class ModelPumpjack extends IPModel{
 	public float ticks = 0;
 	
 	public ModelPumpjack(){
-		super(RenderType::getEntitySolid);
+		super(IPRenderTypes::getEntitySolid);
 		
 		this.textureWidth=190;
 		this.textureHeight=58;

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import blusunrize.immersiveengineering.common.network.IMessage;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
@@ -13,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 
-public class MessageSyncReservoirs implements IMessage{
+public class MessageSyncReservoirs implements INetMessage{
 	final Map<ResourceLocation, ReservoirType> map = new HashMap<>();
 	
 	public MessageSyncReservoirs(HashMap<ResourceLocation, ReservoirType> map){

@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.common.network;
 
 import java.util.function.Function;
 
-import blusunrize.immersiveengineering.common.network.IMessage;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -26,15 +25,14 @@ public class IPPacketHandler
 	
 	public static void preInit(){
 		registerMessage(MessageDebugSync.class, MessageDebugSync::new);
-		registerMessage(MessageCloseBook.class, MessageCloseBook::new);
-		registerMessage(MessageRotateSchematic.class, MessageRotateSchematic::new);
 		registerMessage(MessageSyncReservoirs.class, MessageSyncReservoirs::new);
 		registerMessage(MessageConsumeBoatFuel.class, MessageConsumeBoatFuel::new);
+		registerMessage(MessageProjectorSync.class, MessageProjectorSync::new);
 	}
 	
 	private static int id=0;
-	public static <T extends IMessage> void registerMessage(Class<T> type, Function<PacketBuffer, T> decoder){
-		INSTANCE.registerMessage(id++, type, IMessage::toBytes, decoder, (t, ctx) -> {
+	public static <T extends INetMessage> void registerMessage(Class<T> type, Function<PacketBuffer, T> decoder){
+		INSTANCE.registerMessage(id++, type, INetMessage::toBytes, decoder, (t, ctx) -> {
 			t.process(ctx);
 			ctx.get().setPacketHandled(true);
 		});

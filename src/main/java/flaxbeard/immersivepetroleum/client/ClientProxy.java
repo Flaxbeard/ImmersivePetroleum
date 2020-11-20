@@ -97,7 +97,7 @@ public class ClientProxy extends CommonProxy{
 	private static final Logger log=LogManager.getLogger(ImmersivePetroleum.MODID+"/ClientProxy");
 	public static final String CAT_IP = "ip";
 	
-	public static final KeyBinding keybind_preview_flip = new KeyBinding("key.immersivepetroleum.projector.flip", InputMappings.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_3, "key.categories.gameplay");
+	public static final KeyBinding keybind_preview_flip = new KeyBinding("key.immersivepetroleum.projector.flip", InputMappings.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_3, "key.categories.immersivepetroleum");
 	
 	@Override
 	public void construct(){}

@@ -71,7 +71,7 @@ minecraft {
 			property 'forge.logging.console.level', 'info'
 			property 'fml.earlyprogresswindow', 'false'
 			
-			args '--mod', 'immersivepetroleum', '--all', '--output', file('src/generated/resources/'), '--validate', '--existing', sourceSets.main.resources.srcDirs[0], '--existing', 'C:/Users/TwistedGate/.gradle/caches/forge_gradle/deobf_dependencies/blusunrize/immersiveengineering/ImmersiveEngineering/1.16.3-4.0.1-121_mapped_snapshot_20200912-1.16.2/ImmersiveEngineering-1.16.3-4.0.1-121_mapped_snapshot_20200912-1.16.2.jar'
+			args '--mod', 'immersivepetroleum', '--all', '--output', file('src/generated/resources/'), '--validate', '--existing', sourceSets.main.resources.srcDirs[0], '--existing', 'C:/Users/TwistedGate/.gradle/caches/forge_gradle/deobf_dependencies/blusunrize/immersiveengineering/ImmersiveEngineering/1.16.3-4.1.1-127_mapped_snapshot_20200916-1.16.2/ImmersiveEngineering-1.16.3-4.1.1-127_mapped_snapshot_20200916-1.16.2.jar'
 			
 			mods {
 				immersivepetroleum {

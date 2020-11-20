@@ -152,14 +152,14 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			return;
 		}
 		
+		if(this.cooldownTicks > 0){
+			this.cooldownTicks--;
+		}
+		
 		checkForNeedlessTicking();
 		
 		if(this.world.isRemote || isDummy() || isRSDisabled()){
 			return;
-		}
-		
-		if(this.cooldownTicks > 0){
-			this.cooldownTicks--;
 		}
 		
 		boolean update = false;
@@ -176,9 +176,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			}
 		}
 		
-		super.tick();
-		
-		if(this.processQueue.size() > 0){
+		if(!this.processQueue.isEmpty()){
 			this.wasActive = true;
 			this.cooldownTicks = 6;
 			update = true;
@@ -186,6 +184,8 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			this.wasActive = false;
 			update = true;
 		}
+		
+		super.tick();
 		
 		if(this.inventory.get(INV_0) != ItemStack.EMPTY && this.tanks[TANK_INPUT].getFluidAmount() < this.tanks[TANK_INPUT].getCapacity()){
 			ItemStack emptyContainer = Utils.drainFluidContainer(this.tanks[TANK_INPUT], this.inventory.get(INV_0), this.inventory.get(INV_1), null);

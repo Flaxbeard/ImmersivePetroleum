@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.common.network;
 
 import java.util.function.Supplier;
 
-import blusunrize.immersiveengineering.common.network.IMessage;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
@@ -10,7 +9,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 
-public class MessageConsumeBoatFuel implements IMessage{
+public class MessageConsumeBoatFuel implements INetMessage{
 	public int amount;
 	
 	public MessageConsumeBoatFuel(int amount){

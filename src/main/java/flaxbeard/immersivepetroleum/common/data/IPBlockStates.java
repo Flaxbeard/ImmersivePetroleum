@@ -122,12 +122,12 @@ public class IPBlockStates extends BlockStateProvider{
 	private LoadedModelBuilder multiblockModel(Block block, ResourceLocation model, ResourceLocation texture, String add, TemplateMultiblock mb, boolean mirror){
 		UnaryOperator<BlockPos> transform = UnaryOperator.identity();
 		if(mirror){
-			Vector3i size = mb.getSize();
+			Vector3i size = mb.getSize(null);
 			transform = p -> new BlockPos(size.getX() - p.getX() - 1, p.getY(), p.getZ());
 		}
 		final Vector3i offset = mb.getMasterFromOriginOffset();
 		@SuppressWarnings("deprecation")
-		Stream<Vector3i> partsStream=mb.getStructure().stream()
+		Stream<Vector3i> partsStream=mb.getStructure(null).stream()
 				.filter(info -> !info.state.isAir())
 				.map(info -> info.pos)
 				.map(transform)

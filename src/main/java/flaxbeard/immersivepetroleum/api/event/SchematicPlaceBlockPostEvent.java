@@ -9,59 +9,54 @@ import net.minecraft.world.World;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
+/**
+ * @deprecated Use {@link flaxbeard.immersivepetroleum.api.event.ProjectorEvent.PlaceBlockPost}
+ */
+@Deprecated
 @Cancelable
 public class SchematicPlaceBlockPostEvent extends Event{
-	private World world;
-	private Rotation rotation;
-	private IMultiblock multiblock;
-	private BlockPos worldPos;
-	private BlockPos templatePos;
-	private BlockState state;
-	private CompoundNBT nbt;
-	
+	@Deprecated
 	public SchematicPlaceBlockPostEvent(IMultiblock multiblock, World world, BlockPos worldPos, BlockPos templatePos, BlockState state, CompoundNBT nbt, Rotation rotation){
-		super();
-		this.world = world;
-		this.multiblock = multiblock;
-		this.worldPos=worldPos;
-		this.state=state;
-		this.nbt=nbt;
-		this.templatePos=templatePos;
-		this.rotation=rotation;
 	}
-	
-	public World getWorld(){
-		return this.world;
-	}
-	
-	public IMultiblock getMultiblock(){
-		return this.multiblock;
-	}
-	
-	public Rotation getRotate(){
-		return this.rotation;
-	}
-	
-	public BlockPos getWorldPos(){
-		return this.worldPos;
-	}
-	
-	public BlockPos getTemplatePos(){
-		return this.templatePos;
-	}
-	
-	public BlockState getState(){
-		return this.state;
-	}
-	
-	public CompoundNBT getNBT(){
-		return this.nbt;
-	}
-	
-	// TODO Remove these deprecated methods at some point
 	
 	@Deprecated
-	public void setBlockState(BlockState state){}
+	public World getWorld(){
+		return null;
+	}
+	
+	@Deprecated
+	public IMultiblock getMultiblock(){
+		return null;
+	}
+	
+	@Deprecated
+	public Rotation getRotate(){
+		return null;
+	}
+	
+	@Deprecated
+	public BlockPos getWorldPos(){
+		return null;
+	}
+	
+	@Deprecated
+	public BlockPos getTemplatePos(){
+		return null;
+	}
+	
+	@Deprecated
+	public BlockState getState(){
+		return null;
+	}
+	
+	@Deprecated
+	public CompoundNBT getNBT(){
+		return null;
+	}
+	
+	@Deprecated
+	public void setBlockState(BlockState state){
+	}
 	
 	@Deprecated
 	public int getIndex(){

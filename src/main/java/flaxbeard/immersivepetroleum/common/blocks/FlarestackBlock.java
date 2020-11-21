@@ -10,6 +10,7 @@ import net.minecraft.block.material.MaterialColor;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -41,6 +42,11 @@ public class FlarestackBlock extends IPBlockBase{
 		
 		setDefaultState(getStateContainer().getBaseState()
 				.with(SLAVE, false));
+	}
+	
+	@Override
+	protected BlockItem createBlockItem(){
+		return new FlarestackBlockItem(this);
 	}
 	
 	@Override

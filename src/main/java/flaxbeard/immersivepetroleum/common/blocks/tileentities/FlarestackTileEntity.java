@@ -32,10 +32,6 @@ public class FlarestackTileEntity extends TileEntity implements ITickableTileEnt
 		super(tileEntityTypeIn);
 	}
 	
-	public Direction getFluidInput(){
-		return Direction.DOWN;
-	}
-	
 	@Override
 	public void read(BlockState state, CompoundNBT nbt){
 		super.read(state, nbt);
@@ -89,7 +85,7 @@ public class FlarestackTileEntity extends TileEntity implements ITickableTileEnt
 	
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
-		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (side == null || side == getFluidInput())){
+		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (side == null || side == Direction.DOWN)){
 			if(this.inputHandler == null){
 				this.inputHandler = LazyOptional.of(() -> {
 					TileEntity te = this.world.getTileEntity(getPos());
@@ -129,37 +125,34 @@ public class FlarestackTileEntity extends TileEntity implements ITickableTileEnt
 		this.world.notifyNeighborsOfStateChange(this.pos, state.getBlock());
 	}
 	
-	int count = 0;
 	@Override
 	public void tick(){
 		if(this.world.isRemote){
-			if(this.world.getGameTime() % 4 == 0){
+			if(this.world.getGameTime() % 3 == 0){
 				if(this.isActive){
-					for(int i = 0;i < 2;i++){
-						this.count++;
-						Random lastRand = new Random((int) Math.floor(this.count / 20F));
-						Random thisRand = new Random((int) Math.ceil(this.count / 20F));
+					for(int i = 0;i < 10;i++){
+						Random lastRand = new Random((int) Math.floor(this.world.getGameTime() / 20F));
+						Random thisRand = new Random((int) Math.ceil(this.world.getGameTime() / 20F));
 						
 						float lastDirection = lastRand.nextFloat() * 360;
 						float thisDirection = thisRand.nextFloat() * 360;
-						float interpDirection = (thisDirection - lastDirection) * ((this.count % 20) / 20F) + lastDirection;
+						float interpDirection = (thisDirection - lastDirection) * ((this.world.getGameTime() % 20) / 20F) + lastDirection;
 						
-						float xPos = this.pos.getX() + 0.50F + (this.world.rand.nextFloat() - 0.5F) * .375F;
-						float zPos = this.pos.getZ() + 0.50F + (this.world.rand.nextFloat() - 0.5F) * .375F;
-						float yPos = this.pos.getY() + 1.5F + 0.025F * i;
-						float xSpeed = (float) Math.sin(interpDirection) * .05F;
-						float zSpeed = (float) Math.cos(interpDirection) * .05F;
+						float xPos = (this.pos.getX() + 0.50F) + (this.world.rand.nextFloat() - 0.5F) * .4375F;
+						float zPos = (this.pos.getZ() + 0.50F) + (this.world.rand.nextFloat() - 0.5F) * .4375F;
+						float yPos = (this.pos.getY() + 1.75F) + (this.world.rand.nextFloat() - 0.5F) * .4375F;
+						float xSpeed = (float) Math.sin(interpDirection) * .1F;
+						float zSpeed = (float) Math.cos(interpDirection) * .1F;
 						
-						double xa = (Math.random() - .5) * .125 + xSpeed;
-						double ya = (Math.random() - .5) * .125 + zSpeed;
-						
-						this.world.addParticle(ParticleTypes.FLAME, xPos, yPos, zPos, xa, .155f, ya);
-						this.world.addParticle(ParticleTypes.LARGE_SMOKE, xPos, yPos, zPos, xa, .15f, ya);
+						this.world.addParticle(ParticleTypes.FLAME, xPos, yPos, zPos, xSpeed, .2f, zSpeed);
+						if(Math.random()<=0.05){
+							this.world.addParticle(ParticleTypes.LARGE_SMOKE, xPos, yPos, zPos, xSpeed, .15f, zSpeed);
+						}
 					}
 				}else{
-					for(int i = 0;i < 2;i++){
-						float xPos = this.pos.getX() + 0.50F + (this.world.rand.nextFloat() - 0.5F) * .375F;
-						float zPos = this.pos.getZ() + 0.50F + (this.world.rand.nextFloat() - 0.5F) * .375F;
+					for(int i = 0;i < 3;i++){
+						float xPos = this.pos.getX() + 0.50F + (this.world.rand.nextFloat() - 0.5F) * .4375F;
+						float zPos = this.pos.getZ() + 0.50F + (this.world.rand.nextFloat() - 0.5F) * .4375F;
 						float yPos = this.pos.getY() + 1.6F;
 						double xa = (Math.random() - .5) * .00625;
 						double ya = (Math.random() - .5) * .00625;

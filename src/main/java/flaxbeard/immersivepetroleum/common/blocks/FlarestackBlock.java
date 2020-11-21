@@ -1,5 +1,9 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.FlarestackTileEntity;
 import net.minecraft.block.Block;
@@ -86,15 +90,24 @@ public class FlarestackBlock extends IPBlockBase{
 		}
 	}
 	
+	@Override
+	public List<ItemStack> getDrops(BlockState state, net.minecraft.loot.LootContext.Builder builder){
+		if(!state.get(SLAVE)){
+			return Arrays.asList(new ItemStack(this, 1));
+		}else{
+			return Collections.emptyList();
+		}
+	}
+	
 	static final LazyOptional<VoxelShape> SHAPE_SLAVE = LazyOptional.of(()->{
-		VoxelShape s0 = VoxelShapes.create(0.125, 0.0, 0.125, 0.875, 0.75, 0.875);
-		VoxelShape s1 = VoxelShapes.create(0.0625, 0.0, 0.0625, 0.9375, 0.375, 0.9375);
+		VoxelShape s0 = VoxelShapes.create(0.125, 0.0001, 0.125, 0.875, 0.75, 0.875);
+		VoxelShape s1 = VoxelShapes.create(0.0625, 0.0001, 0.0625, 0.9375, 0.375, 0.9375);
 		return VoxelShapes.combineAndSimplify(s0, s1, IBooleanFunction.OR);
 	});
 	
 	static final LazyOptional<VoxelShape> SHAPE_MASTER = LazyOptional.of(()->{
-		VoxelShape s0 = VoxelShapes.create(0.125, 0.0, 0.125, 0.875, 0.75, 0.875);
-		VoxelShape s1 = VoxelShapes.create(0.0625, 0.5, 0.0625, 0.9375, 1.0, 0.9375);
+		VoxelShape s0 = VoxelShapes.create(0.125, 0.0001, 0.125, 0.875, 0.75, 0.875);
+		VoxelShape s1 = VoxelShapes.create(0.0625, 0.5, 0.0625, 0.9375, 0.9999, 0.9375);
 		return VoxelShapes.combineAndSimplify(s0, s1, IBooleanFunction.OR);
 	});
 	

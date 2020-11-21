@@ -51,12 +51,44 @@ public class IPItemModels extends LoadedModelProvider{
 		distillationtowerItem();
 		generatorItem();
 		autolubeItem();
+		flarestackItem();
 		
 		getBuilder(IPContent.Items.projector)
 			.parent(getExistingFile(modLoc("item/mb_projector")));
 		
 		for(IPFluid f:IPFluid.FLUIDS)
 			createBucket(f);
+	}
+	
+	private void flarestackItem(){
+		LoadedModelBuilder model = obj(IPContent.Blocks.flarestack, "block/obj/flarestack.obj")
+				.texture("texture", modLoc("block/obj/flarestack"));
+		
+		model.transformationMap()
+			.setTransformations(Perspective.FIRSTPERSON_LEFT,
+					createMatrix(new Vector3d(0, 2, 0), new Vector3d(0, 45, 0), 0.25))
+			
+			.setTransformations(Perspective.FIRSTPERSON_RIGHT,
+					createMatrix(new Vector3d(0, 2, 0), new Vector3d(0, 45, 0), 0.25))
+			
+			.setTransformations(Perspective.THIRDPERSON_LEFT,
+					createMatrix(new Vector3d(0, 0, 0), new Vector3d(0, 0, 0), 0.25))
+			
+			.setTransformations(Perspective.THIRDPERSON_RIGHT,
+					createMatrix(new Vector3d(0, 0, 0), new Vector3d(0, 0, 0), 0.25))
+			
+			.setTransformations(Perspective.HEAD,
+					createMatrix(new Vector3d(0, 12, 0), null, 0.75))
+			
+			.setTransformations(Perspective.GUI,
+					createMatrix(new Vector3d(0, -3, 0), new Vector3d(30, 225, 0), 0.4))
+			
+			.setTransformations(Perspective.GROUND,
+					createMatrix(new Vector3d(0, 3, 0), null, 0.25))
+			
+			.setTransformations(Perspective.FIXED,
+					createMatrix(new Vector3d(0, -4, 0), null, 0.5))
+			;
 	}
 	
 	private void generatorItem(){

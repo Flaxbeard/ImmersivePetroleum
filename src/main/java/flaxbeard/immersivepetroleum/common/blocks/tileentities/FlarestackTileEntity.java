@@ -1,9 +1,11 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
+import java.util.List;
 import java.util.Random;
 
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -12,6 +14,8 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -23,13 +27,17 @@ public class FlarestackTileEntity extends TileEntity implements ITickableTileEnt
 	public static TileEntityType<FlarestackTileEntity> TYPE;
 	
 	protected boolean isActive;
-	protected FluidTank tank = new FluidTank(8000, fluid -> (fluid != null && LubricantHandler.isValidLube(fluid.getFluid())));
+	protected FluidTank tank = new FluidTank(1000, fluid -> (fluid != null && LubricantHandler.isValidLube(fluid.getFluid())));
 	public FlarestackTileEntity(){
 		this(TYPE);
 	}
 	
 	public FlarestackTileEntity(TileEntityType<?> tileEntityTypeIn){
 		super(tileEntityTypeIn);
+	}
+	
+	public boolean isActive(){
+		return this.isActive;
 	}
 	
 	@Override
@@ -128,48 +136,60 @@ public class FlarestackTileEntity extends TileEntity implements ITickableTileEnt
 	@Override
 	public void tick(){
 		if(this.world.isRemote){
-			if(this.world.getGameTime() % 3 == 0){
+			if(this.world.getGameTime() % 4 == 0){
 				if(this.isActive){
+					Random lastRand = new Random((int) Math.floor(this.world.getGameTime() / 20F));
+					Random thisRand = new Random((int) Math.ceil(this.world.getGameTime() / 20F));
+					
+					float lastDirection = lastRand.nextFloat() * 360;
+					float thisDirection = thisRand.nextFloat() * 360;
+					float interpDirection = (thisDirection - lastDirection) * ((this.world.getGameTime() % 20) / 20F) + lastDirection;
+					float xSpeed = (float) Math.sin(interpDirection) * .1F;
+					float zSpeed = (float) Math.cos(interpDirection) * .1F;
+					
 					for(int i = 0;i < 10;i++){
-						Random lastRand = new Random((int) Math.floor(this.world.getGameTime() / 20F));
-						Random thisRand = new Random((int) Math.ceil(this.world.getGameTime() / 20F));
-						
-						float lastDirection = lastRand.nextFloat() * 360;
-						float thisDirection = thisRand.nextFloat() * 360;
-						float interpDirection = (thisDirection - lastDirection) * ((this.world.getGameTime() % 20) / 20F) + lastDirection;
-						
 						float xPos = (this.pos.getX() + 0.50F) + (this.world.rand.nextFloat() - 0.5F) * .4375F;
 						float zPos = (this.pos.getZ() + 0.50F) + (this.world.rand.nextFloat() - 0.5F) * .4375F;
-						float yPos = (this.pos.getY() + 1.75F) + (this.world.rand.nextFloat() - 0.5F) * .4375F;
-						float xSpeed = (float) Math.sin(interpDirection) * .1F;
-						float zSpeed = (float) Math.cos(interpDirection) * .1F;
+						float yPos = (this.pos.getY() + 1.875F) + (this.world.rand.nextFloat() - 0.5F) * 1.0F;
 						
 						this.world.addParticle(ParticleTypes.FLAME, xPos, yPos, zPos, xSpeed, .2f, zSpeed);
-						if(Math.random()<=0.05){
+						if(Math.random() <= 0.1){
 							this.world.addParticle(ParticleTypes.LARGE_SMOKE, xPos, yPos, zPos, xSpeed, .15f, zSpeed);
 						}
 					}
 				}else{
-					for(int i = 0;i < 3;i++){
-						float xPos = this.pos.getX() + 0.50F + (this.world.rand.nextFloat() - 0.5F) * .4375F;
-						float zPos = this.pos.getZ() + 0.50F + (this.world.rand.nextFloat() - 0.5F) * .4375F;
-						float yPos = this.pos.getY() + 1.6F;
-						double xa = (Math.random() - .5) * .00625;
-						double ya = (Math.random() - .5) * .00625;
-						
-						this.world.addParticle(ParticleTypes.FLAME, xPos, yPos, zPos, xa, .025f, ya);
-					}
+					float xPos = this.pos.getX() + 0.50F + (this.world.rand.nextFloat() - 0.5F) * .4375F;
+					float zPos = this.pos.getZ() + 0.50F + (this.world.rand.nextFloat() - 0.5F) * .4375F;
+					float yPos = this.pos.getY() + 1.6F;
+					float xa = (this.world.rand.nextFloat() - .5F) * .00625F;
+					float ya = (this.world.rand.nextFloat() - .5F) * .00625F;
+					
+					this.world.addParticle(ParticleTypes.FLAME, xPos, yPos, zPos, xa, .025f, ya);
 				}
 			}
 		}else{
 			boolean lastActive = this.isActive;
 			
-			if(!this.tank.getFluid().isEmpty() && this.tank.getFluidAmount() > 0){
+			if(this.tank.getFluidAmount() > 0){
 				if(this.tank.drain(75, FluidAction.EXECUTE).getAmount() > 0 && !this.isActive){
 					this.isActive = true;
 				}
 			}else if(this.isActive){
 				this.isActive = false;
+			}
+			
+			if(this.isActive && this.world.getGameTime() % 10 == 0){
+				// Set anything ablaze that's in the danger zone
+				BlockPos min = this.pos.add(-1, 2, -1);
+				BlockPos max = min.add(3, 3, 3);
+				List<Entity> list = this.getWorld().getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(min, max));
+				if(!list.isEmpty()){
+					list.forEach(e->{
+						if(!e.isImmuneToFire()){
+							e.setFire(8);
+						}
+					});
+				}
 			}
 			
 			if(lastActive != this.isActive){

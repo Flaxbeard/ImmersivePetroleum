@@ -44,7 +44,7 @@ public class BlockRenderLayers{
 	}
 	
 	public static boolean stackLayer(RenderType t){
-		return t==RenderType.getSolid() || t==RenderType.getCutout();
+		return t==RenderType.getCutout();
 	}
 	
 	public static boolean solidCutout(RenderType t){

@@ -12,6 +12,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.block.material.PushReaction;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -21,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.IBooleanFunction;
@@ -29,8 +31,9 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.common.util.LazyOptional;
 
 public class FlarestackBlock extends IPBlockBase{
 	private static final Material material = new Material(MaterialColor.IRON, false, false, true, true, false, false, PushReaction.BLOCK);
@@ -64,13 +67,14 @@ public class FlarestackBlock extends IPBlockBase{
 	}
 	
 	@Override
-	public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos){
-		return 1.0F;
+	public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos){
+		return true;
 	}
 	
 	@Override
-	public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos){
-		return true;
+	@OnlyIn(Dist.CLIENT)
+	public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos){
+		return 1.0F;
 	}
 	
 	@Override
@@ -91,6 +95,13 @@ public class FlarestackBlock extends IPBlockBase{
 	}
 	
 	@Override
+	public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn){
+		if(state.get(SLAVE) && !entityIn.isImmuneToFire()){
+			entityIn.attackEntityFrom(DamageSource.HOT_FLOOR, 1.0F);
+		}
+	}
+	
+	@Override
 	public List<ItemStack> getDrops(BlockState state, net.minecraft.loot.LootContext.Builder builder){
 		if(!state.get(SLAVE)){
 			return Arrays.asList(new ItemStack(this, 1));
@@ -99,24 +110,27 @@ public class FlarestackBlock extends IPBlockBase{
 		}
 	}
 	
-	static final LazyOptional<VoxelShape> SHAPE_SLAVE = LazyOptional.of(()->{
-		VoxelShape s0 = VoxelShapes.create(0.125, 0.0001, 0.125, 0.875, 0.75, 0.875);
-		VoxelShape s1 = VoxelShapes.create(0.0625, 0.0001, 0.0625, 0.9375, 0.375, 0.9375);
-		return VoxelShapes.combineAndSimplify(s0, s1, IBooleanFunction.OR);
-	});
-	
-	static final LazyOptional<VoxelShape> SHAPE_MASTER = LazyOptional.of(()->{
-		VoxelShape s0 = VoxelShapes.create(0.125, 0.0001, 0.125, 0.875, 0.75, 0.875);
-		VoxelShape s1 = VoxelShapes.create(0.0625, 0.5, 0.0625, 0.9375, 0.9999, 0.9375);
-		return VoxelShapes.combineAndSimplify(s0, s1, IBooleanFunction.OR);
-	});
+	static VoxelShape SHAPE_SLAVE;
+	static VoxelShape SHAPE_MASTER;
 	
 	@Override
 	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
 		if(state.get(SLAVE)){
-			return SHAPE_SLAVE.orElse(VoxelShapes.fullCube());
+			if(SHAPE_SLAVE == null){
+				VoxelShape s0 = VoxelShapes.create(0.125, 0.0, 0.125, 0.875, 0.75, 0.875);
+				VoxelShape s1 = VoxelShapes.create(0.0625, 0.0, 0.0625, 0.9375, 0.375, 0.9375);
+				SHAPE_SLAVE = VoxelShapes.combineAndSimplify(s0, s1, IBooleanFunction.OR);
+			}
+			
+			return SHAPE_SLAVE;
 		}else{
-			return SHAPE_MASTER.orElse(VoxelShapes.fullCube());
+			if(SHAPE_MASTER == null){
+				VoxelShape s0 = VoxelShapes.create(0.125, 0.0, 0.125, 0.875, 0.75, 0.875);
+				VoxelShape s1 = VoxelShapes.create(0.0625, 0.5, 0.0625, 0.9375, 1.0, 0.9375);
+				SHAPE_MASTER = VoxelShapes.combineAndSimplify(s0, s1, IBooleanFunction.OR);
+			}
+			
+			return SHAPE_MASTER;
 		}
 	}
 	

@@ -178,6 +178,19 @@ public class IPRecipes extends RecipeProvider{
 			.addCriterion("has_treated_planks", hasItem(IETags.getItemTag(IETags.treatedWood)))
 			.addCriterion("has_"+toPath(IEBlocks.MetalDevices.fluidPipe), hasItem(IEBlocks.MetalDevices.fluidPipe))
 			.build(this.out, rl("auto_lubricator"));
+		
+		ShapedRecipeBuilder.shapedRecipe(Blocks.flarestack)
+			.key('I', IETags.getTagsFor(EnumMetals.IRON).plate)
+			.key('C', IEItems.Ingredients.componentSteel)
+			.key('P', IEBlocks.MetalDevices.fluidPipe)
+			.key('A', IEBlocks.MetalDevices.fluidPlacer)
+			.key('F', Items.FIRE_CHARGE)
+			.patternLine("IFI")
+			.patternLine("CAC")
+			.patternLine("IPI")
+			.addCriterion("has_bitumen", hasItem(IPContent.Items.bitumen))
+			.addCriterion("has_"+toPath(IEBlocks.MetalDevices.fluidPipe), hasItem(IEBlocks.MetalDevices.fluidPipe))
+			.build(this.out, rl("flarestack"));
 	}
 	
 	private void itemRecipes(){

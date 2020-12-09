@@ -69,9 +69,9 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 		this.predictablyDraining = compound.getBoolean("predictablyDraining");
 		
 		Direction facing = Direction.byName(compound.getString("facing"));
-		if(facing.getHorizontalIndex()==-1)
+		if(facing.getHorizontalIndex() == -1)
 			facing = Direction.NORTH;
-		this.facing=facing;
+		this.facing = facing;
 		
 		this.tank.readFromNBT(compound.getCompound("tank"));
 	}
@@ -119,7 +119,8 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	public void writeTank(CompoundNBT nbt, boolean toItem){
 		boolean write = this.tank.getFluidAmount() > 0;
 		CompoundNBT tankTag = this.tank.writeToNBT(new CompoundNBT());
-		if(!toItem || write) nbt.put("tank", tankTag);
+		if(!toItem || write)
+			nbt.put("tank", tankTag);
 	}
 	
 	public void readOnPlacement(LivingEntity placer, ItemStack stack){
@@ -144,10 +145,10 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
 		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && this.isSlave && (side == null || side == Direction.UP)){
 			if(this.outputHandler == null){
-				this.outputHandler = LazyOptional.of(()->{
-					TileEntity te=this.world.getTileEntity(getPos().offset(Direction.DOWN));
-					if(te!=null && te instanceof AutoLubricatorTileEntity){
-						return ((AutoLubricatorTileEntity)te).tank;
+				this.outputHandler = LazyOptional.of(() -> {
+					TileEntity te = this.world.getTileEntity(getPos().offset(Direction.DOWN));
+					if(te != null && te instanceof AutoLubricatorTileEntity){
+						return ((AutoLubricatorTileEntity) te).tank;
 					}
 					return null;
 				});
@@ -161,7 +162,7 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	@Override
 	public void remove(){
 		super.remove();
-		if(this.outputHandler!=null)
+		if(this.outputHandler != null)
 			this.outputHandler.invalidate();
 	}
 	
@@ -177,7 +178,7 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	@Override
 	protected void invalidateCaps(){
 		super.invalidateCaps();
-		if(this.outputHandler!=null)
+		if(this.outputHandler != null)
 			this.outputHandler.invalidate();
 	}
 	
@@ -192,9 +193,9 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public AxisAlignedBB getRenderBoundingBox(){
-		BlockPos pos=getPos();
-		int size=3;
-		return new AxisAlignedBB(pos.getX()-size, pos.getY()-size, pos.getZ()-size, pos.getX()+size, pos.getY()+size, pos.getZ()+size);
+		BlockPos pos = getPos();
+		int size = 3;
+		return new AxisAlignedBB(pos.getX() - size, pos.getY() - size, pos.getZ() - size, pos.getX() + size, pos.getY() + size, pos.getZ() + size);
 	}
 	
 	@Override
@@ -205,7 +206,7 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 				AutoLubricatorTileEntity lube = (AutoLubricatorTileEntity) master;
 				ITextComponent s = null;
 				if(!lube.tank.isEmpty()){
-					s = ((IFormattableTextComponent)lube.tank.getFluid().getDisplayName()).appendString(": " + lube.tank.getFluidAmount() + "mB");
+					s = ((IFormattableTextComponent) lube.tank.getFluid().getDisplayName()).appendString(": " + lube.tank.getFluidAmount() + "mB");
 				}else{
 					s = new TranslationTextComponent(Lib.GUI + "empty");
 				}
@@ -235,7 +236,7 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public double getMaxRenderDistanceSquared(){
-		return 1024.0D;//super.getMaxRenderDistanceSquared();
+		return 1024.0D;// super.getMaxRenderDistanceSquared();
 	}
 	
 	int count = 0;
@@ -246,7 +247,8 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	@Override
 	public void tick(){
 		if(!this.world.isRemote && this.isSlave){
-			EventHandler.REMOVE_FROM_TICKING.add(this); // See ApiUtils.checkForNeedlessTicking(te);
+			// See ApiUtils.checkForNeedlessTicking(te);
+			EventHandler.REMOVE_FROM_TICKING.add(this);
 			return;
 		}
 		
@@ -258,7 +260,7 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 				ILubricationHandler<TileEntity> handler = LubricatedHandler.getHandlerForTile(te);
 				if(handler != null){
 					TileEntity master = handler.isPlacedCorrectly(this.world, this, this.facing);
-					if(master!=null && handler.isMachineEnabled(this.world, master)){
+					if(master != null && handler.isMachineEnabled(this.world, master)){
 						this.count++;
 						handler.lubricate(this.world, this.count, master);
 						

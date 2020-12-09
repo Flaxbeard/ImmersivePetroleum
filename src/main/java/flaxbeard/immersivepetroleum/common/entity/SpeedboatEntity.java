@@ -66,9 +66,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpawnData{
 	
-	public static final EntityType<SpeedboatEntity> TYPE = EntityType.Builder.<SpeedboatEntity>create(SpeedboatEntity::new, EntityClassification.MISC)
-				.size(1.375F, 0.5625F)
-				.build(ImmersivePetroleum.MODID+":speedboat");
+	public static final EntityType<SpeedboatEntity> TYPE = EntityType.Builder.<SpeedboatEntity> create(SpeedboatEntity::new, EntityClassification.MISC)
+			.size(1.375F, 0.5625F)
+			.build(ImmersivePetroleum.MODID + ":speedboat");
 	static{
 		TYPE.setRegistryName(ImmersivePetroleum.MODID, "speedboat");
 	}
@@ -76,8 +76,11 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	public static DataParameter<Byte> getFlags(){
 		return FLAGS;
 	}
-
-	/** Storage for {@link ResourceLocation} using {@link ResourceLocation#toString()} */
+	
+	/**
+	 * Storage for {@link ResourceLocation} using
+	 * {@link ResourceLocation#toString()}
+	 */
 	static final DataParameter<String> TANK_FLUID = EntityDataManager.createKey(SpeedboatEntity.class, DataSerializers.STRING);
 	static final DataParameter<Integer> TANK_AMOUNT = EntityDataManager.createKey(SpeedboatEntity.class, DataSerializers.VARINT);
 	
@@ -102,9 +105,9 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	public SpeedboatEntity(World world, double x, double y, double z){
 		this(TYPE, world);
 		setPosition(x, y, z);
-		this.prevPosX=x;
-		this.prevPosY=y;
-		this.prevPosZ=z;
+		this.prevPosX = x;
+		this.prevPosY = y;
+		this.prevPosZ = z;
 	}
 	
 	public SpeedboatEntity(EntityType<SpeedboatEntity> type, World world){
@@ -149,8 +152,8 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 			this.isFireproof = false;
 			this.hasIcebreaker = false;
 			for(ItemStack upgrade:upgrades){
-				if(upgrade != null && upgrade!=ItemStack.EMPTY){
-					Item item=upgrade.getItem();
+				if(upgrade != null && upgrade != ItemStack.EMPTY){
+					Item item = upgrade.getItem();
 					if(item == BoatUpgrades.reinforced_hull){
 						this.isFireproof = true;
 					}else if(item == BoatUpgrades.ice_breaker){
@@ -181,7 +184,7 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 		String fluidName = this.dataManager.get(TANK_FLUID);
 		int amount = this.dataManager.get(TANK_AMOUNT).intValue();
 		
-		if(fluidName==null || fluidName.isEmpty() || amount == 0)
+		if(fluidName == null || fluidName.isEmpty() || amount == 0)
 			return FluidStack.EMPTY;
 		
 		Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluidName));
@@ -195,25 +198,25 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	protected void readAdditional(CompoundNBT compound){
 		super.readAdditional(compound);
 		
-		String fluid="";
-		int amount=0;
-		ItemStack stack0=ItemStack.EMPTY;
-		ItemStack stack1=ItemStack.EMPTY;
-		ItemStack stack2=ItemStack.EMPTY;
-		ItemStack stack3=ItemStack.EMPTY;
+		String fluid = "";
+		int amount = 0;
+		ItemStack stack0 = ItemStack.EMPTY;
+		ItemStack stack1 = ItemStack.EMPTY;
+		ItemStack stack2 = ItemStack.EMPTY;
+		ItemStack stack3 = ItemStack.EMPTY;
 		
 		if(compound.contains("tank")){
-			CompoundNBT tank=compound.getCompound("tank");
-			fluid=tank.getString("fluid");
-			amount=tank.getInt("amount");
+			CompoundNBT tank = compound.getCompound("tank");
+			fluid = tank.getString("fluid");
+			amount = tank.getInt("amount");
 		}
 		
 		if(compound.contains("upgrades")){
-			CompoundNBT upgrades=compound.getCompound("upgrades");
-			stack0=ItemStack.read(upgrades.getCompound("0"));
-			stack1=ItemStack.read(upgrades.getCompound("1"));
-			stack2=ItemStack.read(upgrades.getCompound("2"));
-			stack3=ItemStack.read(upgrades.getCompound("3"));
+			CompoundNBT upgrades = compound.getCompound("upgrades");
+			stack0 = ItemStack.read(upgrades.getCompound("0"));
+			stack1 = ItemStack.read(upgrades.getCompound("1"));
+			stack2 = ItemStack.read(upgrades.getCompound("2"));
+			stack3 = ItemStack.read(upgrades.getCompound("3"));
 		}
 		
 		this.dataManager.set(TANK_FLUID, fluid);
@@ -228,19 +231,19 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	protected void writeAdditional(CompoundNBT compound){
 		super.writeAdditional(compound);
 		
-		String fluid=this.dataManager.get(TANK_FLUID);
-		int amount=this.dataManager.get(TANK_AMOUNT);
-		ItemStack stack0=this.dataManager.get(UPGRADE_0);
-		ItemStack stack1=this.dataManager.get(UPGRADE_1);
-		ItemStack stack2=this.dataManager.get(UPGRADE_2);
-		ItemStack stack3=this.dataManager.get(UPGRADE_3);
+		String fluid = this.dataManager.get(TANK_FLUID);
+		int amount = this.dataManager.get(TANK_AMOUNT);
+		ItemStack stack0 = this.dataManager.get(UPGRADE_0);
+		ItemStack stack1 = this.dataManager.get(UPGRADE_1);
+		ItemStack stack2 = this.dataManager.get(UPGRADE_2);
+		ItemStack stack3 = this.dataManager.get(UPGRADE_3);
 		
-		CompoundNBT tank=new CompoundNBT();
+		CompoundNBT tank = new CompoundNBT();
 		tank.putString("fluid", fluid);
 		tank.putInt("amount", amount);
 		compound.put("tank", tank);
 		
-		CompoundNBT upgrades=new CompoundNBT();
+		CompoundNBT upgrades = new CompoundNBT();
 		upgrades.put("0", stack0.serializeNBT());
 		upgrades.put("1", stack1.serializeNBT());
 		upgrades.put("2", stack2.serializeNBT());
@@ -272,10 +275,10 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 						SpeedboatItem item = (SpeedboatItem) getItemBoat();
 						ItemStack stack = new ItemStack(item, 1);
 						
-						IItemHandler handler=stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElse(null);
-						if(handler!=null && handler instanceof IPItemStackHandler){
+						IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElse(null);
+						if(handler != null && handler instanceof IPItemStackHandler){
 							NonNullList<ItemStack> upgrades = getUpgrades();
-							for(int i=0;i<handler.getSlots();i++){
+							for(int i = 0;i < handler.getSlots();i++){
 								handler.insertItem(i, upgrades.get(i), false);
 							}
 						}
@@ -325,14 +328,14 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	public ActionResultType processInitialInteract(PlayerEntity player, Hand hand){
 		ItemStack stack = player.getHeldItem(hand);
 		
-		if(stack!=ItemStack.EMPTY && stack.getItem() instanceof DebugItem){
-			((DebugItem)stack.getItem()).onSpeedboatClick(this, player, stack);
+		if(stack != ItemStack.EMPTY && stack.getItem() instanceof DebugItem){
+			((DebugItem) stack.getItem()).onSpeedboatClick(this, player, stack);
 			return ActionResultType.SUCCESS;
 		}
 		
 		if(Utils.isFluidRelatedItemStack(stack)){
-			FluidStack fstack=FluidUtil.getFluidContained(stack).orElse(null);
-			if(fstack!=null){
+			FluidStack fstack = FluidUtil.getFluidContained(stack).orElse(null);
+			if(fstack != null){
 				FluidTank tank = new FluidTank(getMaxFuel()){
 					@Override
 					public boolean isFluidValid(FluidStack stack){
@@ -432,7 +435,7 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 							float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
 							float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F)) + (world.rand.nextFloat() - .5F) * .3F;
 							float yO = .4F + (world.rand.nextFloat() - .5F) * .3F;
-							Vector3d motion=getMotion();
+							Vector3d motion = getMotion();
 							world.addParticle(ParticleTypes.LAVA, getPosX() - xO * 1.5F, getPosY() + yO, getPosZ() - zO * 1.5F, -2 * motion.getX(), 0, -2 * motion.getZ());
 						}
 					}else{
@@ -456,7 +459,7 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 		if(this.isEmergency()){
 			for(int i = 0;i <= 1;++i){
 				if(this.getPaddleState(i)){
-					this.paddlePositions[i] = (float)((double)this.paddlePositions[i] + (double)((float)Math.PI / 4F));
+					this.paddlePositions[i] = (float) ((double) this.paddlePositions[i] + (double) ((float) Math.PI / 4F));
 				}else{
 					this.paddlePositions[i] = 0.0F;
 				}
@@ -475,7 +478,7 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 		vec.normalize();
 		
 		if(this.hasIcebreaker && !isEmergency()){
-			AxisAlignedBB bb=getBoundingBox().grow(0.1);
+			AxisAlignedBB bb = getBoundingBox().grow(0.1);
 			BlockPos.Mutable mutableBlockPos0 = new BlockPos.Mutable(bb.minX + 0.001D, bb.minY + 0.001D, bb.minZ + 0.001D);
 			BlockPos.Mutable mutableBlockPos1 = new BlockPos.Mutable(bb.maxX - 0.001D, bb.maxY - 0.001D, bb.maxZ - 0.001D);
 			BlockPos.Mutable mutableBlockPos2 = new BlockPos.Mutable();
@@ -524,9 +527,9 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 								float sim = vec2.dot(vec);
 								
 								if(sim > .5f){
-									Vector3d motion=entity.getMotion();
+									Vector3d motion = entity.getMotion();
 									entity.attackEntityFrom(DamageSource.causePlayerDamage((PlayerEntity) this.getControllingPassenger()), 4);
-									entity.setMotion(new Vector3d(motion.x+(vec2.getX() * .75F), motion.y, motion.z+(vec2.getY() * .75F)));
+									entity.setMotion(new Vector3d(motion.x + (vec2.getX() * .75F), motion.y, motion.z + (vec2.getY() * .75F)));
 								}
 							}
 						}
@@ -597,10 +600,10 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 					setPaddleState(false, false);
 				}
 				
-				Vector3d motion=this.getMotion().add((double) (MathHelper.sin(-this.rotationYaw * ((float) Math.PI / 180F)) * f), 0.0D, (double) (MathHelper.cos(this.rotationYaw * ((float) Math.PI / 180F)) * f));
+				Vector3d motion = this.getMotion().add((double) (MathHelper.sin(-this.rotationYaw * ((float) Math.PI / 180F)) * f), 0.0D, (double) (MathHelper.cos(this.rotationYaw * ((float) Math.PI / 180F)) * f));
 				
 				if(this.leftInputDown || this.rightInputDown){
-					float speed = (float)Math.sqrt(motion.x * motion.x + motion.z * motion.z);
+					float speed = (float) Math.sqrt(motion.x * motion.x + motion.z * motion.z);
 					
 					if(this.leftInputDown){
 						this.deltaRotation -= 1.1F * speed * (this.hasRudders ? 1.5F : 1F) * (this.isBoosting ? 0.5F : 1) * (this.backInputDown && !this.forwardInputDown ? 2F : 1F);
@@ -647,8 +650,8 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	}
 	
 	public boolean isEmergency(){
-		FluidStack fluid=getContainedFluid();
-		if(fluid!=FluidStack.EMPTY){
+		FluidStack fluid = getContainedFluid();
+		if(fluid != FluidStack.EMPTY){
 			int consumeAmount = FuelHandler.getBoatFuelUsedPerTick(fluid.getFluid());
 			return fluid.getAmount() <= consumeAmount && this.hasPaddles;
 		}
@@ -811,12 +814,12 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	
 	@Override
 	public void readSpawnData(PacketBuffer buffer){
-		String fluid=buffer.readString();
-		int amount=buffer.readInt();
-		ItemStack stack0=buffer.readItemStack();
-		ItemStack stack1=buffer.readItemStack();
-		ItemStack stack2=buffer.readItemStack();
-		ItemStack stack3=buffer.readItemStack();
+		String fluid = buffer.readString();
+		int amount = buffer.readInt();
+		ItemStack stack0 = buffer.readItemStack();
+		ItemStack stack1 = buffer.readItemStack();
+		ItemStack stack2 = buffer.readItemStack();
+		ItemStack stack3 = buffer.readItemStack();
 		
 		this.dataManager.set(TANK_FLUID, fluid);
 		this.dataManager.set(TANK_AMOUNT, amount);
@@ -828,12 +831,12 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	
 	@Override
 	public void writeSpawnData(PacketBuffer buffer){
-		String fluid=this.dataManager.get(TANK_FLUID);
-		int amount=this.dataManager.get(TANK_AMOUNT);
-		ItemStack stack0=this.dataManager.get(UPGRADE_0);
-		ItemStack stack1=this.dataManager.get(UPGRADE_1);
-		ItemStack stack2=this.dataManager.get(UPGRADE_2);
-		ItemStack stack3=this.dataManager.get(UPGRADE_3);
+		String fluid = this.dataManager.get(TANK_FLUID);
+		int amount = this.dataManager.get(TANK_AMOUNT);
+		ItemStack stack0 = this.dataManager.get(UPGRADE_0);
+		ItemStack stack1 = this.dataManager.get(UPGRADE_1);
+		ItemStack stack2 = this.dataManager.get(UPGRADE_2);
+		ItemStack stack3 = this.dataManager.get(UPGRADE_3);
 		
 		buffer.writeString(fluid);
 		buffer.writeInt(amount);

@@ -32,7 +32,8 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public void render(AutoLubricatorTileEntity te, float partialTicks, MatrixStack transform, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn){
-		if(te == null || te.isSlave) return;
+		if(te == null || te.isSlave)
+			return;
 		
 		FluidStack fs = te.tank.getFluid();
 		float level = 0;
@@ -49,7 +50,7 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 				transform.translate(0.25, 0.875, 0.25);
 				transform.scale(scale, scale, scale);
 				
-				IVertexBuilder builder=bufferIn.getBuffer(RenderType.getTranslucent());
+				IVertexBuilder builder = bufferIn.getBuffer(RenderType.getTranslucent());
 				
 				float h = height * level;
 				ClientUtils.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
@@ -62,7 +63,7 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 				transform.rotate(new Quaternion(0, 90, 0, true));
 				transform.translate(-7.98, 0, 0);
 				ClientUtils.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
-				if(h<height){
+				if(h < height){
 					transform.rotate(new Quaternion(90, 0, 0, true));
 					transform.translate(0, 0, -h);
 					ClientUtils.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, 8);

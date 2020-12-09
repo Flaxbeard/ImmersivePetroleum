@@ -9,8 +9,8 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
 
 public class ModelPumpjack extends IPModel{
-	public static final String ID="pumpjackarm";
-	public static final ResourceLocation TEXTURE=new ResourceLocation(ImmersivePetroleum.MODID, "textures/models/pumpjack_armature.png");
+	public static final String ID = "pumpjackarm";
+	public static final ResourceLocation TEXTURE = new ResourceLocation(ImmersivePetroleum.MODID, "textures/models/pumpjack_armature.png");
 	
 	public ModelRenderer origin;
 	public ModelRenderer swingy;
@@ -24,8 +24,8 @@ public class ModelPumpjack extends IPModel{
 	public ModelPumpjack(){
 		super(IPRenderTypes::getEntitySolid);
 		
-		this.textureWidth=190;
-		this.textureHeight=58;
+		this.textureWidth = 190;
+		this.textureHeight = 58;
 	}
 	
 	@Override

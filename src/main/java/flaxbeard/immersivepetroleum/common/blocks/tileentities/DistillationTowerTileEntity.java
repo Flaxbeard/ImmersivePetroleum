@@ -45,41 +45,44 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<DistillationTowerTileEntity, DistillationRecipe> implements IInteractionObjectIE, IBlockBounds{
-	/** Do not Touch! Taken care of by {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)} */
+	/**
+	 * Do not Touch! Taken care of by
+	 * {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)}
+	 */
 	public static TileEntityType<DistillationTowerTileEntity> TYPE;
 	
 	/** Input Tank ID */
-	public static final int TANK_INPUT=0;
+	public static final int TANK_INPUT = 0;
 	
 	/** Output Tank ID */
-	public static final int TANK_OUTPUT=1;
+	public static final int TANK_OUTPUT = 1;
 	
 	/** Inventory Fluid Input (Filled Bucket) */
-	public static final int INV_0=0;
+	public static final int INV_0 = 0;
 	
 	/** Inventory Fluid Input (Empty Bucket) */
-	public static final int INV_1=1;
+	public static final int INV_1 = 1;
 	
 	/** Inventory Fluid Output (Empty Bucket) */
-	public static final int INV_2=2;
+	public static final int INV_2 = 2;
 	
 	/** Inventory Fluid Output (Filled Bucket) */
-	public static final int INV_3=3;
+	public static final int INV_3 = 3;
 	
 	/** Template-Location of the Fluid Input Port. (3 0 3) */
-	public static final BlockPos Fluid_IN=new BlockPos(3, 0, 3);
+	public static final BlockPos Fluid_IN = new BlockPos(3, 0, 3);
 	
 	/** Template-Location of the Fluid Output Port. (1 0 3) */
-	public static final BlockPos Fluid_OUT=new BlockPos(1, 0, 3);
+	public static final BlockPos Fluid_OUT = new BlockPos(1, 0, 3);
 	
 	/** Template-Location of the Item Output Port. (0 0 1) */
-	public static final BlockPos Item_OUT=new BlockPos(0, 0, 1);
+	public static final BlockPos Item_OUT = new BlockPos(0, 0, 1);
 	
 	/** Template-Location of the Energy Input Port. (3 1 3) */
-	public static final Set<BlockPos> Energy_IN=ImmutableSet.of(new BlockPos(3, 1, 3));
+	public static final Set<BlockPos> Energy_IN = ImmutableSet.of(new BlockPos(3, 1, 3));
 	
 	/** Template-Location of the Redstone Input Port. (0 1 3) */
-	public static final Set<BlockPos> Redstone_IN=ImmutableSet.of(new BlockPos(0, 1, 3));
+	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 3));
 	
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 	public MultiFluidTank[] tanks = new MultiFluidTank[]{new MultiFluidTank(24000), new MultiFluidTank(24000)};
@@ -119,13 +122,13 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	}
 	
 	protected NonNullList<ItemStack> readInventory(CompoundNBT nbt){
-		NonNullList<ItemStack> list=NonNullList.create();
+		NonNullList<ItemStack> list = NonNullList.create();
 		ItemStackHelper.loadAllItems(nbt, list);
 		
-		if(list.size()==0){ // Incase it loaded none
-			list=this.inventory.size()==4?this.inventory:NonNullList.withSize(4, ItemStack.EMPTY);
-		}else if(list.size()<4){ // Padding incase it loaded less than 4
-			while(list.size()<4)
+		if(list.size() == 0){ // Incase it loaded none
+			list = this.inventory.size() == 4 ? this.inventory : NonNullList.withSize(4, ItemStack.EMPTY);
+		}else if(list.size() < 4){ // Padding incase it loaded less than 4
+			while(list.size() < 4)
 				list.add(ItemStack.EMPTY);
 		}
 		return list;
@@ -136,10 +139,10 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	}
 	
 	// DEBUGGING
-	public boolean enableStepping=false;
-	public int step=0;
+	public boolean enableStepping = false;
+	public int step = 0;
 	public boolean step(){
-		if(this.step>0){
+		if(this.step > 0){
 			this.step--;
 			return true;
 		}
@@ -166,7 +169,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		if(this.energyStorage.getEnergyStored() > 0 && this.processQueue.size() < getProcessQueueMaxLength()){
 			if(this.tanks[TANK_INPUT].getFluidAmount() > 0){
 				DistillationRecipe recipe = DistillationRecipe.findRecipe(this.tanks[TANK_INPUT].getFluid());
-				if(recipe != null && this.tanks[TANK_INPUT].getFluidAmount()>=recipe.getInputFluid().getAmount() && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()){
+				if(recipe != null && this.tanks[TANK_INPUT].getFluidAmount() >= recipe.getInputFluid().getAmount() && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()){
 					MultiblockProcessInMachine<DistillationRecipe> process = new MultiblockProcessInMachine<DistillationRecipe>(recipe).setInputTanks(TANK_INPUT);
 					if(addProcessToQueue(process, true)){
 						addProcessToQueue(process, false);
@@ -301,7 +304,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	
 	@Override
 	public IOSideConfig getEnergySideConfig(Direction facing){
-		if(this.formed && this.isEnergyPos() && (facing==null || facing==Direction.UP)){
+		if(this.formed && this.isEnergyPos() && (facing == null || facing == Direction.UP)){
 			return IOSideConfig.INPUT;
 		}
 		
@@ -388,8 +391,8 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(Direction side){
-		DistillationTowerTileEntity master=master();
-		if(master!=null){
+		DistillationTowerTileEntity master = master();
+		if(master != null){
 			// Fluid Input
 			if(this.posInMultiblock.equals(Fluid_IN)){
 				if(side == null || (getIsMirrored() ? (side == getFacing().rotateYCCW()) : (side == getFacing().rotateY()))){
@@ -398,7 +401,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			}
 			
 			// Fluid Output
-			if(this.posInMultiblock.equals(Fluid_OUT) && (side==null || side==getFacing().getOpposite())){
+			if(this.posInMultiblock.equals(Fluid_OUT) && (side == null || side == getFacing().getOpposite())){
 				return new IFluidTank[]{master.tanks[TANK_OUTPUT]};
 			}
 		}
@@ -409,21 +412,21 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource){
 		if(this.posInMultiblock.equals(Fluid_IN)){
 			if(getIsMirrored() ? (side == null || side == getFacing().rotateYCCW()) : (side == null || side == getFacing().rotateY())){
-				DistillationTowerTileEntity master=master();
+				DistillationTowerTileEntity master = master();
 				
-				if(master==null || master.tanks[TANK_INPUT].getFluidAmount()>=master.tanks[TANK_INPUT].getCapacity())
+				if(master == null || master.tanks[TANK_INPUT].getFluidAmount() >= master.tanks[TANK_INPUT].getCapacity())
 					return false;
 				
-				FluidStack copy0=Utils.copyFluidStackWithAmount(resource, 1000, false);
-				FluidStack copy1=Utils.copyFluidStackWithAmount(master.tanks[TANK_INPUT].getFluid(), 1000, false);
+				FluidStack copy0 = Utils.copyFluidStackWithAmount(resource, 1000, false);
+				FluidStack copy1 = Utils.copyFluidStackWithAmount(master.tanks[TANK_INPUT].getFluid(), 1000, false);
 				
-				if(master.tanks[TANK_INPUT].getFluid()==FluidStack.EMPTY){
-					DistillationRecipe r=DistillationRecipe.findRecipe(copy0);
-					return r!=null;
+				if(master.tanks[TANK_INPUT].getFluid() == FluidStack.EMPTY){
+					DistillationRecipe r = DistillationRecipe.findRecipe(copy0);
+					return r != null;
 				}else{
-					DistillationRecipe r0=DistillationRecipe.findRecipe(copy0);
-					DistillationRecipe r1=DistillationRecipe.findRecipe(copy1);
-					return r0==r1;
+					DistillationRecipe r0 = DistillationRecipe.findRecipe(copy0);
+					DistillationRecipe r1 = DistillationRecipe.findRecipe(copy1);
+					return r0 == r1;
 				}
 			}
 		}
@@ -432,16 +435,16 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	
 	@Override
 	protected boolean canDrainTankFrom(int iTank, Direction side){
-		if(this.posInMultiblock.equals(Fluid_OUT) && (side==null || side==getFacing().getOpposite())){
-			DistillationTowerTileEntity master=master();
+		if(this.posInMultiblock.equals(Fluid_OUT) && (side == null || side == getFacing().getOpposite())){
+			DistillationTowerTileEntity master = master();
 			
-			return master!=null && master.tanks[TANK_OUTPUT].getFluidAmount()>0;
+			return master != null && master.tanks[TANK_OUTPUT].getFluidAmount() > 0;
 		}
 		return false;
 	}
 	
 	public boolean isLadder(){
-		return this.posInMultiblock.getY()>0 && (this.posInMultiblock.getX()==2 && this.posInMultiblock.getZ()==0);
+		return this.posInMultiblock.getY() > 0 && (this.posInMultiblock.getX() == 2 && this.posInMultiblock.getZ() == 0);
 	}
 	
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(DistillationTowerTileEntity::getShape);
@@ -452,41 +455,32 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	}
 	
 	private static List<AxisAlignedBB> getShape(BlockPos posInMultiblock){
-		final int bX=posInMultiblock.getX();
-		final int bY=posInMultiblock.getY();
-		final int bZ=posInMultiblock.getZ();
+		final int bX = posInMultiblock.getX();
+		final int bY = posInMultiblock.getY();
+		final int bZ = posInMultiblock.getZ();
 		
 		// Redstone Input
-		if(bY<2){
-			if(bX==0 && bZ==3){
-				if(bY==1){ // Actual Input
+		if(bY < 2){
+			if(bX == 0 && bZ == 3){
+				if(bY == 1){ // Actual Input
 					return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.0, 0.5, 1.0, 1.0));
 				}else{ // Input Legs
-					return Arrays.asList(
-							new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0),
-							new AxisAlignedBB(0.125, 0.0, 0.75, 0.375, 1.0, 0.875),
-							new AxisAlignedBB(0.125, 0.0, 0.125, 0.375, 1.0, 0.25)
-					);
+					return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0), new AxisAlignedBB(0.125, 0.0, 0.75, 0.375, 1.0, 0.875), new AxisAlignedBB(0.125, 0.0, 0.125, 0.375, 1.0, 0.25));
 				}
 			}
 		}
 		
 		// Pipe over Furnace
-		if(bY==2 && bX==3 && bZ==2){
-			return Arrays.asList(
-					new AxisAlignedBB(-0.0625, 0.375, 0.125, 0.0625, 1.125, 0.875),
-					new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.125, 0.875),
-					new AxisAlignedBB(0.25, 0.0, 0.25, 0.75, 1.0, 0.75),
-					new AxisAlignedBB(0.0, 0.5, 0.25, 0.75, 1.0, 0.75)
-			);
+		if(bY == 2 && bX == 3 && bZ == 2){
+			return Arrays.asList(new AxisAlignedBB(-0.0625, 0.375, 0.125, 0.0625, 1.125, 0.875), new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.125, 0.875), new AxisAlignedBB(0.25, 0.0, 0.25, 0.75, 1.0, 0.75), new AxisAlignedBB(0.0, 0.5, 0.25, 0.75, 1.0, 0.75));
 		}
 		
 		// Long Pipe
-		if(bY>0 && bX==1 && bZ==3){
-			if(bY!=15){
-				List<AxisAlignedBB> list=new ArrayList<>();
+		if(bY > 0 && bX == 1 && bZ == 3){
+			if(bY != 15){
+				List<AxisAlignedBB> list = new ArrayList<>();
 				list.add(new AxisAlignedBB(0.1875, 0.0, 0.1875, 0.8125, 1.0, 0.8125));
-				if(bY>0 && bY%4==0){ // For pipe passing a platform
+				if(bY > 0 && bY % 4 == 0){ // For pipe passing a platform
 					list.add(new AxisAlignedBB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0));
 				}
 				return list;
@@ -496,10 +490,10 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		}
 		
 		// Ladder
-		if(bY>0 && bX==2 && bZ==0){
-			List<AxisAlignedBB> list=new ArrayList<>();
-			list.add(new AxisAlignedBB(0.0625, bY==1?0.125:0.0, 0.875, 0.9375, 1.0, 1.0625));
-			if(bY>0 && bY%4==0){
+		if(bY > 0 && bX == 2 && bZ == 0){
+			List<AxisAlignedBB> list = new ArrayList<>();
+			list.add(new AxisAlignedBB(0.0625, bY == 1 ? 0.125 : 0.0, 0.875, 0.9375, 1.0, 1.0625));
+			if(bY > 0 && bY % 4 == 0){
 				list.add(new AxisAlignedBB(0.0, 0.5, 0.875, 1.0, 1.0, 1.0625));
 				list.add(new AxisAlignedBB(0.0, 0.5, 0.0, 1.0, 1.0, 0.0625));
 			}
@@ -507,16 +501,16 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		}
 		
 		// Center
-		if(bX>0 && bX<3 && bZ>0 && bZ<3){
-			if(bY>0){
+		if(bX > 0 && bX < 3 && bZ > 0 && bZ < 3){
+			if(bY > 0){
 				// Boiler
-				AxisAlignedBB bb=new AxisAlignedBB(0.0625, 0.0, 0.0625, 0.9375, 1.0, 0.9375);
-				if(bZ==1){
-					if(bX==1) bb=new AxisAlignedBB(0.0625, 0.0, 0.0625, 1.0, 1.0, 1.0);
-					if(bX==2) bb=new AxisAlignedBB(0.0, 0.0, 0.0625, 0.9375, 1.0, 1.0);
-				}else if(bZ==2){
-					if(bX==1) bb=new AxisAlignedBB(0.0625, 0.0, 0.0, 1.0, 1.0, 0.9375);
-					if(bX==2) bb=new AxisAlignedBB(0.0, 0.0, 0.0, 0.9375, 1.0, 0.9375);
+				AxisAlignedBB bb = new AxisAlignedBB(0.0625, 0.0, 0.0625, 0.9375, 1.0, 0.9375);
+				if(bZ == 1){
+					if(bX == 1) bb = new AxisAlignedBB(0.0625, 0.0, 0.0625, 1.0, 1.0, 1.0);
+					if(bX == 2) bb = new AxisAlignedBB(0.0, 0.0, 0.0625, 0.9375, 1.0, 1.0);
+				}else if(bZ == 2){
+					if(bX == 1) bb = new AxisAlignedBB(0.0625, 0.0, 0.0, 1.0, 1.0, 0.9375);
+					if(bX == 2) bb = new AxisAlignedBB(0.0, 0.0, 0.0, 0.9375, 1.0, 0.9375);
 				}
 				return Arrays.asList(bb);
 			}else{
@@ -529,14 +523,14 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		}
 		
 		// Platforms
-		if(bY>0 && bY%4==0){
+		if(bY > 0 && bY % 4 == 0){
 			return Arrays.asList(new AxisAlignedBB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0));
 		}
 		
 		// Base
-		if(bY==0){
-			List<AxisAlignedBB> list=new ArrayList<>();
-			if((bX==0 && bZ==1) || (bX==1 && bZ==3) || (bX==3 && bZ==2)  || (bX==3 && bZ==3)){
+		if(bY == 0){
+			List<AxisAlignedBB> list = new ArrayList<>();
+			if((bX == 0 && bZ == 1) || (bX == 1 && bZ == 3) || (bX == 3 && bZ == 2) || (bX == 3 && bZ == 3)){
 				list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 			}else{
 				list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));

@@ -22,9 +22,11 @@ import net.minecraftforge.items.ItemStackHandler;
 public class IPItemStackHandler extends ItemStackHandler implements ICapabilityProvider{
 	private boolean first = true;
 	@Nonnull
-	private Runnable onChange = () -> {};
+	private Runnable onChange = () -> {
+	};
 	
-	public IPItemStackHandler(){}
+	public IPItemStackHandler(){
+	}
 	
 	@Override
 	public int getSlots(){
@@ -74,7 +76,7 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 		}
 		
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			return LazyOptional.of(()->this).cast();
+			return LazyOptional.of(() -> this).cast();
 		}
 		
 		return LazyOptional.empty();

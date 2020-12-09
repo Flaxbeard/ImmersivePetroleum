@@ -40,14 +40,14 @@ public class BlockRenderLayers{
 	}
 	
 	public static boolean lubeLayer(RenderType t){
-		return t==RenderType.getTranslucent();
+		return t == RenderType.getTranslucent();
 	}
 	
 	public static boolean stackLayer(RenderType t){
-		return t==RenderType.getCutout();
+		return t == RenderType.getCutout();
 	}
 	
 	public static boolean solidCutout(RenderType t){
-		return t==RenderType.getSolid() || t==RenderType.getCutout();
+		return t == RenderType.getSolid() || t == RenderType.getCutout();
 	}
 }

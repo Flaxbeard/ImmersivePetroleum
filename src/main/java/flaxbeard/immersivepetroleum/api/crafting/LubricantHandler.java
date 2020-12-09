@@ -16,7 +16,8 @@ public class LubricantHandler{
 	 * @param amount mB of lubricant to spend every 4 ticks
 	 */
 	public static void registerLubricant(Fluid lube, int amount){
-		if(lube == null) return;
+		if(lube == null)
+			return;
 		
 		lubricantAmounts.put(lube.getRegistryName(), amount);
 	}

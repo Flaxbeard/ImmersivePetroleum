@@ -86,7 +86,8 @@ public class FlarestackTileEntity extends TileEntity implements ITickableTileEnt
 	public void writeTank(CompoundNBT nbt, boolean toItem){
 		boolean write = this.tank.getFluidAmount() > 0;
 		CompoundNBT tankTag = this.tank.writeToNBT(new CompoundNBT());
-		if(!toItem || write) nbt.put("tank", tankTag);
+		if(!toItem || write)
+			nbt.put("tank", tankTag);
 	}
 	
 	private LazyOptional<IFluidHandler> inputHandler;
@@ -184,7 +185,7 @@ public class FlarestackTileEntity extends TileEntity implements ITickableTileEnt
 				BlockPos max = min.add(3, 3, 3);
 				List<Entity> list = this.getWorld().getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(min, max));
 				if(!list.isEmpty()){
-					list.forEach(e->{
+					list.forEach(e -> {
 						if(!e.isImmuneToFire()){
 							e.setFire(8);
 						}

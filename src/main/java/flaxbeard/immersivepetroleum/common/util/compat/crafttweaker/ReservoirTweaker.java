@@ -29,7 +29,7 @@ public class ReservoirTweaker{
 		
 		if(test.size() > 1){
 			CraftTweakerAPI.logError("§cMultiple results for \"%s\"§r", recipeName);
-		}else if(test.size()==1){
+		}else if(test.size() == 1){
 			ResourceLocation id = test.get(0);
 			if(PumpjackHandler.reservoirs.containsKey(id)){
 				PumpjackHandler.reservoirs.remove(id);

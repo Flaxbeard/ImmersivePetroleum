@@ -64,7 +64,7 @@ public class LubricatedHandler{
 			Class<? extends TileEntity> teClass = te.getClass();
 			if(lubricationHandlers.containsKey(teClass)){
 				@SuppressWarnings("unchecked")
-				ILubricationHandler<TileEntity> tmp=(ILubricationHandler<TileEntity>) lubricationHandlers.get(teClass);
+				ILubricationHandler<TileEntity> tmp = (ILubricationHandler<TileEntity>) lubricationHandlers.get(teClass);
 				return tmp;
 			}
 		}

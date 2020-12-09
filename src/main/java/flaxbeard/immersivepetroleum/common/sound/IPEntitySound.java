@@ -117,43 +117,41 @@ public class IPEntitySound implements ITickableSound{
 		return repeatDelay;
 	}
 	
-	//	public void setPos(float x, float y, float z)
-	//	{
-	//		this.tileX=x;
-	//		this.tileY=y;
-	//		this.tileZ=z;
-	//	}
-	
 	public void evaluateVolume(){
 		volumeAjustment = 1f;
 		if(ClientUtils.mc().player != null && ClientUtils.mc().player.getItemStackFromSlot(EquipmentSlotType.HEAD) != null){
 			ItemStack stack = ClientUtils.mc().player.getItemStackFromSlot(EquipmentSlotType.HEAD);
-			if(ItemNBTHelper.hasKey(stack, "IE:Earmuffs")) stack = ItemNBTHelper.getItemStack(stack, "IE:Earmuffs");
-			if(stack != null && IEItems.Misc.earmuffs.equals(stack.getItem())) volumeAjustment = EarmuffsItem.getVolumeMod(stack);
+			if(ItemNBTHelper.hasKey(stack, "IE:Earmuffs"))
+				stack = ItemNBTHelper.getItemStack(stack, "IE:Earmuffs");
+			if(stack != null && IEItems.Misc.earmuffs.equals(stack.getItem()))
+				volumeAjustment = EarmuffsItem.getVolumeMod(stack);
 		}
 		
-		if(volumeAjustment > .1f) for(int dx = (int) Math.floor(entity.getPosX() - 8) >> 4;dx <= (int) Math.floor(entity.getPosX() + 8) >> 4;dx++){
-			for(int dz = (int) Math.floor(entity.getPosZ() - 8) >> 4;dz <= (int) Math.floor(entity.getPosZ() + 8) >> 4;dz++){
-				Iterator<TileEntity> it = ClientUtils.mc().player.world.getChunk(dx, dz).getTileEntityMap().values().iterator();
-				while(it.hasNext()){
-					TileEntity tile = it.next();
-					if(tile != null && tile.getClass().getName().contains("SoundMuffler")){
-						BlockPos tPos=tile.getPos();
-						double d = entity.getPositionVec().distanceTo(new Vector3d(tPos.getX()+.5, tPos.getY()+.5, tPos.getZ()+.5));
-						if(d <= 64 && d > 0){
-							volumeAjustment = .1f;
+		if(volumeAjustment > .1f)
+			for(int dx = (int) Math.floor(entity.getPosX() - 8) >> 4;dx <= (int) Math.floor(entity.getPosX() + 8) >> 4;dx++){
+				for(int dz = (int) Math.floor(entity.getPosZ() - 8) >> 4;dz <= (int) Math.floor(entity.getPosZ() + 8) >> 4;dz++){
+					Iterator<TileEntity> it = ClientUtils.mc().player.world.getChunk(dx, dz).getTileEntityMap().values().iterator();
+					while(it.hasNext()){
+						TileEntity tile = it.next();
+						if(tile != null && tile.getClass().getName().contains("SoundMuffler")){
+							BlockPos tPos = tile.getPos();
+							double d = entity.getPositionVec().distanceTo(new Vector3d(tPos.getX() + .5, tPos.getY() + .5, tPos.getZ() + .5));
+							if(d <= 64 && d > 0){
+								volumeAjustment = .1f;
+							}
 						}
 					}
 				}
 			}
-		}
 		
-		if(!entity.isAlive()) donePlaying = true;
+		if(!entity.isAlive())
+			donePlaying = true;
 	}
 	
 	@Override
 	public void tick(){
-		if(ClientUtils.mc().player != null && ClientUtils.mc().player.world.getDayTime() % 40 == 0) evaluateVolume();
+		if(ClientUtils.mc().player != null && ClientUtils.mc().player.world.getDayTime() % 40 == 0)
+			evaluateVolume();
 	}
 	
 	public boolean donePlaying = false;
@@ -162,7 +160,7 @@ public class IPEntitySound implements ITickableSound{
 	public boolean isDonePlaying(){
 		return donePlaying;
 	}
-
+	
 	@Override
 	public boolean isGlobal(){
 		return false;

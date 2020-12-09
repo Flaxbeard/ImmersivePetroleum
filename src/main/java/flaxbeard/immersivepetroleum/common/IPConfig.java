@@ -26,21 +26,20 @@ public class IPConfig{
 	public static final ForgeConfigSpec ALL;
 	
 	static{
-		ForgeConfigSpec.Builder builder=new ForgeConfigSpec.Builder();
+		ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 		
-		EXTRACTION=new Extraction(builder);
-		REFINING=new Refining(builder);
-		GENERATION=new Generation(builder);
-		MISCELLANEOUS=new Miscellaneous(builder);
-		TOOLS=new Tools(builder);
+		EXTRACTION = new Extraction(builder);
+		REFINING = new Refining(builder);
+		GENERATION = new Generation(builder);
+		MISCELLANEOUS = new Miscellaneous(builder);
+		TOOLS = new Tools(builder);
 		
-		ALL=builder.build();
+		ALL = builder.build();
 	}
-	
 	
 	private static Config rawConfig;
 	public static Config getRawConfig(){
-		if(rawConfig==null){
+		if(rawConfig == null){
 			try{
 				Field childConfig = ForgeConfigSpec.class.getDeclaredField("childConfig");
 				childConfig.setAccessible(true);
@@ -62,23 +61,23 @@ public class IPConfig{
 		Extraction(ForgeConfigSpec.Builder builder){
 			builder.push("Extraction");
 			
-			reservoir_chance=builder
+			reservoir_chance = builder
 					.comment("The chance that a chunk contains a fluid reservoir, default=0.5")
 					.define("reservoir_chance", Double.valueOf(0.5));
 			
-			pumpjack_consumption=builder
+			pumpjack_consumption = builder
 					.comment("The Flux the Pumpjack requires each tick to pump, default=1024")
 					.define("pumpjack_consumption", Integer.valueOf(1024));
 			
-			pumpjack_speed=builder
+			pumpjack_speed = builder
 					.comment("The amount of mB of oil a Pumpjack extracts per tick, default=15")
 					.define("pumpjack_speed", Integer.valueOf(15));
 			
-			required_pipes=builder
+			required_pipes = builder
 					.comment("Require a pumpjack to have pipes built down to Bedrock, default=false")
 					.define("req_pipes", false);
 			
-			pipe_check_ticks=builder
+			pipe_check_ticks = builder
 					.comment("Number of ticks between checking for pipes below pumpjack if required, default=100 (5 secs)")
 					.define("pipe_check_ticks", Integer.valueOf(100));
 			
@@ -92,11 +91,11 @@ public class IPConfig{
 		Refining(ForgeConfigSpec.Builder builder){
 			builder.push("Refining");
 			
-			distillationTower_energyModifier=builder
+			distillationTower_energyModifier = builder
 					.comment("A modifier to apply to the energy costs of every Distillation Tower recipe, default=1")
 					.define("distillationTower_energyModifier", Double.valueOf(1.0));
 			
-			distillationTower_timeModifier=builder
+			distillationTower_timeModifier = builder
 					.comment("A modifier to apply to the time of every Distillation recipe. Can't be lower than 1, default=1")
 					.define("distillationTower_timeModifier", Double.valueOf(1.0));
 			
@@ -109,7 +108,7 @@ public class IPConfig{
 		Generation(ForgeConfigSpec.Builder builder){
 			builder.push("Generation");
 			
-			fuels=builder
+			fuels = builder
 					.comment("List of Portable Generator fuels. Format: fluid_name, mb_used_per_tick, flux_produced_per_tick")
 					.define("fuels", Arrays.asList(new String[]{
 							"immersivepetroleum:gasoline, 5, 256"
@@ -127,21 +126,21 @@ public class IPConfig{
 		Miscellaneous(ForgeConfigSpec.Builder builder){
 			builder.push("Miscellaneous");
 			
-			sample_displayBorder=builder
+			sample_displayBorder = builder
 					.comment("Display chunk border while holding Core Samples, default=true")
 					.define("sample_displayBorder", true);
 			
-			boat_fuels=builder
+			boat_fuels = builder
 					.comment("List of Motorboat fuels. Format: fluid_name, mb_used_per_tick")
 					.define("boat_fuels", Arrays.asList(new String[]{
 							"immersivepetroleum:gasoline, 1"
 					}));
 			
-			autounlock_recipes=builder
+			autounlock_recipes = builder
 					.comment("Automatically unlock IP recipes for new players, default=true")
 					.define("autounlock_recipes", true);
 			
-			asphalt_speed=builder
+			asphalt_speed = builder
 					.comment("Set to false to disable the asphalt block boosting player speed, default=true")
 					.define("asphalt_speed", true);
 			
@@ -155,14 +154,14 @@ public class IPConfig{
 		}
 	}
 	
-	
 	public static class Utils{
 		
 		public static void addFuel(List<String> fuels){
 			for(int i = 0;i < fuels.size();i++){
 				String str = fuels.get(i);
 				
-				if(str.isEmpty()) continue;
+				if(str.isEmpty())
+					continue;
 				
 				String fluid = null;
 				int amount = 0;
@@ -206,9 +205,9 @@ public class IPConfig{
 				
 				fluid = fluid.toLowerCase(Locale.ENGLISH);
 				
-				ResourceLocation fluidRL=new ResourceLocation(fluid);
+				ResourceLocation fluidRL = new ResourceLocation(fluid);
 				if(!ForgeRegistries.FLUIDS.containsKey(fluidRL)){
-					throw new RuntimeException("\""+fluid+"\" did not resolve into a valid fluid. ("+fluidRL+")");
+					throw new RuntimeException("\"" + fluid + "\" did not resolve into a valid fluid. (" + fluidRL + ")");
 				}
 				
 				FuelHandler.registerPortableGeneratorFuel(fluidRL, production, amount);
@@ -219,7 +218,8 @@ public class IPConfig{
 			for(int i = 0;i < fuels.size();i++){
 				String str = fuels.get(i);
 				
-				if(str.isEmpty()) continue;
+				if(str.isEmpty())
+					continue;
 				
 				String fluid = null;
 				int amount = 0;
@@ -250,9 +250,9 @@ public class IPConfig{
 					throw new RuntimeException("Invalid value for fuel mB/tick for boat fuel " + (i + 1));
 				}
 				
-				ResourceLocation fluidRL=new ResourceLocation(fluid);
+				ResourceLocation fluidRL = new ResourceLocation(fluid);
 				if(!ForgeRegistries.FLUIDS.containsKey(fluidRL)){
-					throw new RuntimeException("\""+fluid+"\" did not resolve into a valid fluid. ("+fluidRL+")");
+					throw new RuntimeException("\"" + fluid + "\" did not resolve into a valid fluid. (" + fluidRL + ")");
 				}
 				
 				FuelHandler.registerMotorboatFuel(fluidRL, amount);

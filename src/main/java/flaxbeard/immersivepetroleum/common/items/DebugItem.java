@@ -65,11 +65,11 @@ public class DebugItem extends IPItemBase{
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		tooltip.add(new StringTextComponent("[Shift + Scroll-UP/DOWN] Change mode.").mergeStyle(TextFormatting.GRAY));
-		Modes mode=getMode(stack);
-		if(mode==Modes.DISABLED){
+		Modes mode = getMode(stack);
+		if(mode == Modes.DISABLED){
 			tooltip.add(new StringTextComponent("  Disabled.").mergeStyle(TextFormatting.DARK_GRAY));
 		}else{
-			tooltip.add(new StringTextComponent("  "+mode.display).mergeStyle(TextFormatting.DARK_GRAY));
+			tooltip.add(new StringTextComponent("  " + mode.display).mergeStyle(TextFormatting.DARK_GRAY));
 		}
 		
 		tooltip.add(new StringTextComponent("You're not supposed to have this.").mergeStyle(TextFormatting.DARK_RED));
@@ -77,33 +77,34 @@ public class DebugItem extends IPItemBase{
 	}
 	
 	@Override
-	public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items){}
+	public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items){
+	}
 	
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn){
 		if(!worldIn.isRemote){
-			Modes mode=DebugItem.getMode(playerIn.getHeldItem(handIn));
+			Modes mode = DebugItem.getMode(playerIn.getHeldItem(handIn));
 			
 			switch(mode){
 				case REFRESH_ALL_IPMODELS:{
-					IPModels.getModels().forEach(m->m.init());
+					IPModels.getModels().forEach(m -> m.init());
 					
 					playerIn.sendStatusMessage(new StringTextComponent("Models refreshed."), true);
 					
 					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 				}
 				case RESERVOIR_BIG_SCAN:{
-					BlockPos pos=playerIn.getPosition();
-					int r=5;
-					int cx=(pos.getX() >> 4);
-					int cz=(pos.getZ() >> 4);
+					BlockPos pos = playerIn.getPosition();
+					int r = 5;
+					int cx = (pos.getX() >> 4);
+					int cz = (pos.getZ() >> 4);
 					ImmersivePetroleum.log.info(worldIn.getDimensionKey());
 					for(int i = -r;i <= r;i++){
 						for(int j = -r;j <= r;j++){
-							int x=cx+i;
-							int z=cz+j;
+							int x = cx + i;
+							int z = cz + j;
 							
-							DimensionChunkCoords coords=new DimensionChunkCoords(worldIn.getDimensionKey(), x, z);
+							DimensionChunkCoords coords = new DimensionChunkCoords(worldIn.getDimensionKey(), x, z);
 							
 							ReservoirWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
 							if(info != null && info.getType() != null){
@@ -112,14 +113,7 @@ public class DebugItem extends IPItemBase{
 								int cap = info.capacity;
 								int cur = info.current;
 								
-								String out = String.format(Locale.ENGLISH,
-										"%s %s:\t%.3f/%.3f Buckets of %s",
-										coords.x,
-										coords.z,
-										cur/1000D,
-										cap/1000D,
-										type.name
-								);
+								String out = String.format(Locale.ENGLISH, "%s %s:\t%.3f/%.3f Buckets of %s", coords.x, coords.z, cur / 1000D, cap / 1000D, type.name);
 								
 								ImmersivePetroleum.log.info(out);
 							}
@@ -141,17 +135,17 @@ public class DebugItem extends IPItemBase{
 					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 				}
 				case RESERVOIR:{
-					BlockPos pos=playerIn.getPosition();
-					DimensionChunkCoords coords=new DimensionChunkCoords(worldIn.getDimensionKey(), (pos.getX() >> 4), (pos.getZ() >> 4));
+					BlockPos pos = playerIn.getPosition();
+					DimensionChunkCoords coords = new DimensionChunkCoords(worldIn.getDimensionKey(), (pos.getX() >> 4), (pos.getZ() >> 4));
 					
-					int last=PumpjackHandler.reservoirsCache.size();
-					ReservoirWorldInfo info=PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
-					boolean isNew=PumpjackHandler.reservoirsCache.size()!=last;
+					int last = PumpjackHandler.reservoirsCache.size();
+					ReservoirWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
+					boolean isNew = PumpjackHandler.reservoirsCache.size() != last;
 					
 					if(info != null){
-						int cap=info.capacity;
-						int cur=info.current;
-						ReservoirType type=info.getType();
+						int cap = info.capacity;
+						int cur = info.current;
+						ReservoirType type = info.getType();
 						
 						if(type!=null){
 							String out = String.format(Locale.ENGLISH,
@@ -175,7 +169,8 @@ public class DebugItem extends IPItemBase{
 					
 					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 				}
-				default:break;
+				default:
+					break;
 			}
 			return new ActionResult<ItemStack>(ActionResultType.PASS, playerIn.getHeldItem(handIn));
 		}
@@ -185,38 +180,38 @@ public class DebugItem extends IPItemBase{
 	
 	@Override
 	public ActionResultType onItemUse(ItemUseContext context){
-		PlayerEntity player=context.getPlayer();
-		if(player==null){
+		PlayerEntity player = context.getPlayer();
+		if(player == null){
 			return ActionResultType.PASS;
 		}
 		
-		ItemStack held=player.getHeldItem(context.getHand());
-		Modes mode=DebugItem.getMode(held);
+		ItemStack held = player.getHeldItem(context.getHand());
+		Modes mode = DebugItem.getMode(held);
 		
-		TileEntity te=context.getWorld().getTileEntity(context.getPos());
+		TileEntity te = context.getWorld().getTileEntity(context.getPos());
 		switch(mode){
 			case INFO_TE_DISTILLATION_TOWER:{
 				if(te instanceof DistillationTowerTileEntity && !context.getWorld().isRemote){
-					DistillationTowerTileEntity tower=(DistillationTowerTileEntity)te;
+					DistillationTowerTileEntity tower = (DistillationTowerTileEntity) te;
 					if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
-						tower=tower.master();
+						tower = tower.master();
 					}
 					
-					IFormattableTextComponent tankInText=new StringTextComponent("\nInputFluids: ");
+					IFormattableTextComponent tankInText = new StringTextComponent("\nInputFluids: ");
 					{
-						MultiFluidTank tank=tower.tanks[DistillationTowerTileEntity.TANK_OUTPUT];
-						for(int i=0;i<tank.fluids.size();i++){
-							FluidStack fstack=tank.fluids.get(i);
-							tankInText.appendString(" ").append(fstack.getDisplayName()).appendString(" "+fstack.getAmount()+"mB,");
+						MultiFluidTank tank = tower.tanks[DistillationTowerTileEntity.TANK_OUTPUT];
+						for(int i = 0;i < tank.fluids.size();i++){
+							FluidStack fstack = tank.fluids.get(i);
+							tankInText.appendString(" ").append(fstack.getDisplayName()).appendString(" " + fstack.getAmount() + "mB,");
 						}
 					}
 					
-					IFormattableTextComponent tankOutText=new StringTextComponent("\nOutputFluids: ");
+					IFormattableTextComponent tankOutText = new StringTextComponent("\nOutputFluids: ");
 					{
-						MultiFluidTank tank=tower.tanks[DistillationTowerTileEntity.TANK_INPUT];
-						for(int i=0;i<tank.fluids.size();i++){
-							FluidStack fstack=tank.fluids.get(i);
-							tankOutText.appendString(" ").append(fstack.getDisplayName()).appendString(" "+fstack.getAmount()+"mB,");
+						MultiFluidTank tank = tower.tanks[DistillationTowerTileEntity.TANK_INPUT];
+						for(int i = 0;i < tank.fluids.size();i++){
+							FluidStack fstack = tank.fluids.get(i);
+							tankOutText.appendString(" ").append(fstack.getDisplayName()).appendString(" " + fstack.getAmount() + "mB,");
 						}
 					}
 					
@@ -226,13 +221,13 @@ public class DebugItem extends IPItemBase{
 			}
 			case INFO_TE_DISTILLATION_TOWER_STEP:{
 				if(te instanceof DistillationTowerTileEntity && !context.getWorld().isRemote){
-					DistillationTowerTileEntity tower=(DistillationTowerTileEntity)te;
+					DistillationTowerTileEntity tower = (DistillationTowerTileEntity) te;
 					if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
-						tower=tower.master();
+						tower = tower.master();
 					}
 					
 					if(!tower.enableStepping){
-						tower.enableStepping=true;
+						tower.enableStepping = true;
 						player.sendMessage(new StringTextComponent("Enabled Stepping."), Util.DUMMY_UUID);
 					}else{
 						tower.step++;
@@ -243,13 +238,13 @@ public class DebugItem extends IPItemBase{
 			}
 			case INFO_TE_MULTIBLOCK:{
 				if(te instanceof PoweredMultiblockTileEntity && !context.getWorld().isRemote){ // Generic
-					PoweredMultiblockTileEntity<?,?> poweredMultiblock=(PoweredMultiblockTileEntity<?,?>)te;
+					PoweredMultiblockTileEntity<?, ?> poweredMultiblock = (PoweredMultiblockTileEntity<?, ?>) te;
 					
-					Vector3i loc=poweredMultiblock.posInMultiblock;
-					Set<BlockPos> energyInputs=poweredMultiblock.getEnergyPos();
-					Set<BlockPos> redstoneInputs=poweredMultiblock.getRedstonePos();
+					Vector3i loc = poweredMultiblock.posInMultiblock;
+					Set<BlockPos> energyInputs = poweredMultiblock.getEnergyPos();
+					Set<BlockPos> redstoneInputs = poweredMultiblock.getRedstonePos();
 					
-					IFormattableTextComponent out=new StringTextComponent("["+loc.getX()+" "+loc.getY()+" "+loc.getZ()+"]: ");
+					IFormattableTextComponent out = new StringTextComponent("[" + loc.getX() + " " + loc.getY() + " " + loc.getZ() + "]: ");
 					
 					for(BlockPos pos:energyInputs){
 						if(pos.equals(loc)){
@@ -267,7 +262,7 @@ public class DebugItem extends IPItemBase{
 						out.appendString("Master.");
 					}
 					
-					out.appendString(" (Facing: "+poweredMultiblock.getFacing()+", Block-Face: "+context.getFace()+")");
+					out.appendString(" (Facing: " + poweredMultiblock.getFacing() + ", Block-Face: " + context.getFace() + ")");
 					
 					player.sendStatusMessage(out, true);
 					return ActionResultType.SUCCESS;
@@ -276,15 +271,15 @@ public class DebugItem extends IPItemBase{
 			}
 			case INFO_TE_AUTOLUBE:{
 				if(te instanceof AutoLubricatorTileEntity){
-					AutoLubricatorTileEntity lube=(AutoLubricatorTileEntity)te;
+					AutoLubricatorTileEntity lube = (AutoLubricatorTileEntity) te;
 					
-					IFormattableTextComponent out=new StringTextComponent(context.getWorld().isRemote?"CLIENT: ":"SERVER: ");
-					out.appendString(lube.facing+", ");
-					out.appendString((lube.isActive?"Active":"Inactive")+", ");
-					out.appendString((lube.isSlave?"Slave":"Master")+", ");
-					out.appendString((lube.predictablyDraining?"Predictably Draining, ":""));
+					IFormattableTextComponent out = new StringTextComponent(context.getWorld().isRemote ? "CLIENT: " : "SERVER: ");
+					out.appendString(lube.facing + ", ");
+					out.appendString((lube.isActive ? "Active" : "Inactive") + ", ");
+					out.appendString((lube.isSlave ? "Slave" : "Master") + ", ");
+					out.appendString((lube.predictablyDraining ? "Predictably Draining, " : ""));
 					if(!lube.tank.isEmpty()){
-						out.append(lube.tank.getFluid().getDisplayName()).appendString(" "+lube.tank.getFluidAmount()+"/"+lube.tank.getCapacity()+"mB");
+						out.append(lube.tank.getFluid().getDisplayName()).appendString(" " + lube.tank.getFluidAmount() + "/" + lube.tank.getCapacity() + "mB");
 					}else{
 						out.appendString("Empty");
 					}
@@ -297,12 +292,12 @@ public class DebugItem extends IPItemBase{
 			}
 			case INFO_TE_GASGEN:{
 				if(te instanceof GasGeneratorTileEntity){
-					GasGeneratorTileEntity gas=(GasGeneratorTileEntity)te;
+					GasGeneratorTileEntity gas = (GasGeneratorTileEntity) te;
 					
-					IFormattableTextComponent out=new StringTextComponent(context.getWorld().isRemote?"CLIENT: ":"SERVER: ");
-					out.appendString(gas.getFacing()+", ");
-					out.appendString(gas.getEnergyStored(null)+", ");
-					out.appendString(gas.getMaxEnergyStored(null)+", ");
+					IFormattableTextComponent out = new StringTextComponent(context.getWorld().isRemote ? "CLIENT: " : "SERVER: ");
+					out.appendString(gas.getFacing() + ", ");
+					out.appendString(gas.getEnergyStored(null) + ", ");
+					out.appendString(gas.getMaxEnergyStored(null) + ", ");
 					
 					player.sendMessage(out, Util.DUMMY_UUID);
 					
@@ -310,14 +305,15 @@ public class DebugItem extends IPItemBase{
 				}
 				break;
 			}
-			default:break;
+			default:
+				break;
 		}
 		
 		return ActionResultType.PASS;
 	}
 	
 	public void onSpeedboatClick(SpeedboatEntity speedboatEntity, PlayerEntity player, ItemStack debugStack){
-		if(speedboatEntity.world.isRemote || DebugItem.getMode(debugStack)!=Modes.INFO_SPEEDBOAT){
+		if(speedboatEntity.world.isRemote || DebugItem.getMode(debugStack) != Modes.INFO_SPEEDBOAT){
 			return;
 		}
 		
@@ -344,28 +340,29 @@ public class DebugItem extends IPItemBase{
 		
 		player.sendMessage(textOut, Util.DUMMY_UUID);
 	}
-
+	
 	@SuppressWarnings("unused")
-	private void analyze(ItemUseContext context, BlockState state, PumpjackTileEntity te){}
+	private void analyze(ItemUseContext context, BlockState state, PumpjackTileEntity te){
+	}
 	
 	public static void setModeServer(ItemStack stack, Modes mode){
-		CompoundNBT nbt=getSettings(stack);
+		CompoundNBT nbt = getSettings(stack);
 		nbt.putInt("mode", mode.ordinal());
 	}
 	
 	public static void setModeClient(ItemStack stack, Modes mode){
-		CompoundNBT nbt=getSettings(stack);
+		CompoundNBT nbt = getSettings(stack);
 		nbt.putInt("mode", mode.ordinal());
 		IPPacketHandler.sendToServer(new MessageDebugSync(nbt));
 	}
 	
 	public static Modes getMode(ItemStack stack){
-		CompoundNBT nbt=getSettings(stack);
+		CompoundNBT nbt = getSettings(stack);
 		if(nbt.contains("mode")){
-			int mode=nbt.getInt("mode");
+			int mode = nbt.getInt("mode");
 			
-			if(mode<0 || mode>=Modes.values().length)
-				mode=0;
+			if(mode < 0 || mode >= Modes.values().length)
+				mode = 0;
 			
 			return Modes.values()[mode];
 		}
@@ -375,7 +372,6 @@ public class DebugItem extends IPItemBase{
 	public static CompoundNBT getSettings(ItemStack stack){
 		return stack.getOrCreateChildTag("settings");
 	}
-	
 	
 	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT)
 	public static class ClientInputHandler{
@@ -445,7 +441,7 @@ public class DebugItem extends IPItemBase{
 		
 		public final String display;
 		private Modes(String display){
-			this.display=display;
+			this.display = display;
 		}
 	}
 }

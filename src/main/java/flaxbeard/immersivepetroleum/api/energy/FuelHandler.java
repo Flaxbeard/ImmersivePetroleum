@@ -48,27 +48,37 @@ public class FuelHandler{
 	}
 	
 	public static boolean isValidBoatFuel(Fluid fuel){
-		if(fuel != null) return motorboatAmountTick.containsKey(fuel.getRegistryName());
+		if(fuel != null)
+			return motorboatAmountTick.containsKey(fuel.getRegistryName());
+		
 		return false;
 	}
 	
 	public static int getBoatFuelUsedPerTick(Fluid fuel){
-		if(!isValidBoatFuel(fuel)) return 0;
+		if(!isValidBoatFuel(fuel))
+			return 0;
+		
 		return motorboatAmountTick.get(fuel.getRegistryName());
 	}
 	
 	public static int getFuelUsedPerTick(Fluid fuel){
-		if(!isValidFuel(fuel)) return 0;
+		if(!isValidFuel(fuel))
+			return 0;
+		
 		return portableGenAmountTick.get(fuel.getRegistryName());
 	}
 	
 	public static int getFluxGeneratedPerTick(Fluid fuel){
-		if(!isValidFuel(fuel)) return 0;
+		if(!isValidFuel(fuel))
+			return 0;
+		
 		return portableGenPowerTick.get(fuel.getRegistryName());
 	}
 	
 	public static boolean isValidFuel(Fluid fuel){
-		if(fuel != null) return portableGenAmountTick.containsKey(fuel.getRegistryName());
+		if(fuel != null)
+			return portableGenAmountTick.containsKey(fuel.getRegistryName());
+		
 		return false;
 	}
 	

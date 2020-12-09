@@ -17,10 +17,10 @@ public abstract class IPRecipeCategory<T> implements IRecipeCategory<T>{
 	private IDrawable icon;
 	
 	public IPRecipeCategory(Class<? extends T> recipeClass, IGuiHelper guiHelper, ResourceLocation id, String localKey){
-		this.recipeClass=recipeClass;
-		this.guiHelper=guiHelper;
-		this.id=id;
-		this.localizedName=I18n.format(localKey);
+		this.recipeClass = recipeClass;
+		this.guiHelper = guiHelper;
+		this.id = id;
+		this.localizedName = I18n.format(localKey);
 	}
 	
 	public void setBackground(IDrawableStatic background){

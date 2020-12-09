@@ -50,8 +50,8 @@ public class IPFluid extends FlowingFluid{
 	
 	public IPFluid(String name, int density, int viscosity){
 		this(name,
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/"+name+"_still"),
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/"+name+"_flow"), IPFluid.createBuilder(density, viscosity));
+				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/" + name + "_still"),
+				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/" + name + "_flow"), IPFluid.createBuilder(density, viscosity));
 	}
 	
 	protected IPFluid(String name, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidAttributes.Builder> buildAttributes){
@@ -96,7 +96,8 @@ public class IPFluid extends FlowingFluid{
 	@Override
 	protected FluidAttributes createAttributes(){
 		FluidAttributes.Builder builder = FluidAttributes.builder(this.stillTexture, this.flowingTexture);
-		if(this.buildAttributes != null) this.buildAttributes.accept(builder);
+		if(this.buildAttributes != null)
+			this.buildAttributes.accept(builder);
 		return builder.build(this);
 	}
 	
@@ -169,7 +170,6 @@ public class IPFluid extends FlowingFluid{
 		return fluidIn == this.source || fluidIn == this.flowing;
 	}
 	
-	
 	public static Consumer<FluidAttributes.Builder> createBuilder(int density, int viscosity){
 		return builder -> builder.viscosity(viscosity).density(density);
 	}
@@ -195,7 +195,8 @@ public class IPFluid extends FlowingFluid{
 		public FluidState getFluidState(BlockState state){
 			FluidState baseState = super.getFluidState(state);
 			for(Property<?> prop:this.fluid.getStateContainer().getProperties())
-				if(prop != FlowingFluidBlock.LEVEL) baseState = withCopiedValue(prop, baseState, state);
+				if(prop != FlowingFluidBlock.LEVEL)
+					baseState = withCopiedValue(prop, baseState, state);
 			return baseState;
 		}
 		

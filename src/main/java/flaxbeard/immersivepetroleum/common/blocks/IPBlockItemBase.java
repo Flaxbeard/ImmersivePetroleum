@@ -24,20 +24,23 @@ public class IPBlockItemBase extends BlockItem{
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		if(stack.hasTag()){
-			if(stack.getTag().contains("tank")){ // Display Stored Tank Information
-				CompoundNBT tank=stack.getTag().getCompound("tank");
+			// Display Stored Tank Information
+			if(stack.getTag().contains("tank")){
+				CompoundNBT tank = stack.getTag().getCompound("tank");
 				
-				FluidStack fluidstack=FluidStack.loadFluidStackFromNBT(tank);
-				if(fluidstack.getAmount()>0){
-					tooltip.add(((IFormattableTextComponent)fluidstack.getDisplayName()).appendString(" "+fluidstack.getAmount()+"mB").mergeStyle(TextFormatting.GRAY));
+				FluidStack fluidstack = FluidStack.loadFluidStackFromNBT(tank);
+				if(fluidstack.getAmount() > 0){
+					tooltip.add(((IFormattableTextComponent) fluidstack.getDisplayName()).appendString(" " + fluidstack.getAmount() + "mB").mergeStyle(TextFormatting.GRAY));
 				}else{
 					tooltip.add(new TranslationTextComponent(Lib.GUI + "empty").mergeStyle(TextFormatting.GRAY));
 				}
 			}
-			if(stack.getTag().contains("energy")){ // Display Stored Energy Information
-				CompoundNBT energy=stack.getTag().getCompound("energy");
-				int flux=energy.getInt("ifluxEnergy");
-				tooltip.add(new StringTextComponent(flux+"RF").mergeStyle(TextFormatting.GRAY));
+			
+			// Display Stored Energy Information
+			if(stack.getTag().contains("energy")){
+				CompoundNBT energy = stack.getTag().getCompound("energy");
+				int flux = energy.getInt("ifluxEnergy");
+				tooltip.add(new StringTextComponent(flux + "RF").mergeStyle(TextFormatting.GRAY));
 			}
 		}
 		

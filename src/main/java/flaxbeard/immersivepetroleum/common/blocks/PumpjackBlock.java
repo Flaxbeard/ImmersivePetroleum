@@ -12,14 +12,14 @@ import net.minecraft.world.World;
 
 public class PumpjackBlock extends IPMetalMultiblock<PumpjackTileEntity>{
 	public PumpjackBlock(){
-		super("pumpjack", ()->PumpjackTileEntity.TYPE);
+		super("pumpjack", () -> PumpjackTileEntity.TYPE);
 	}
 	
 	@Override
 	public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit){
-		TileEntity te=world.getTileEntity(pos);
+		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof PumpjackTileEntity){
-			//BlockPos tPos=((PumpjackTileEntity)te).posInMultiblock;
+			// BlockPos tPos=((PumpjackTileEntity)te).posInMultiblock;
 		}
 		return super.onBlockActivated(state, world, pos, player, hand, hit);
 	}

@@ -18,22 +18,22 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRecipe>{
-	public static final ResourceLocation ID=new ResourceLocation(ImmersivePetroleum.MODID, "distillation");
+	public static final ResourceLocation ID = new ResourceLocation(ImmersivePetroleum.MODID, "distillation");
 	
 	private final IDrawableStatic tankOverlay;
 	public DistillationRecipeCategory(IGuiHelper guiHelper){
 		super(DistillationRecipe.class, guiHelper, ID, "block.immersivepetroleum.distillationtower");
-		ResourceLocation background=new ResourceLocation(ImmersivePetroleum.MODID, "textures/gui/distillation.png");
+		ResourceLocation background = new ResourceLocation(ImmersivePetroleum.MODID, "textures/gui/distillation.png");
 		setBackground(guiHelper.createDrawable(background, 51, 0, 81, 77));
 		setIcon(new ItemStack(IPContent.Multiblock.distillationtower));
-		this.tankOverlay=guiHelper.createDrawable(background, 177, 31, 20, 51);
+		this.tankOverlay = guiHelper.createDrawable(background, 177, 31, 20, 51);
 	}
 	
 	@Override
 	public void setIngredients(DistillationRecipe recipe, IIngredients ingredients){
-		List<FluidStack> out=new ArrayList<>();
+		List<FluidStack> out = new ArrayList<>();
 		for(FluidStack fluid:recipe.getFluidOutputs()){
-			if(fluid!=null)
+			if(fluid != null)
 				out.add(fluid);
 		}
 		
@@ -43,9 +43,9 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRec
 	
 	@Override
 	public void setRecipe(IRecipeLayout recipeLayout, DistillationRecipe recipe, IIngredients ingredients){
-		IGuiFluidStackGroup guiFluidStacks=recipeLayout.getFluidStacks();
+		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
 		
-		if(recipe.getInputFluid()!=null){
+		if(recipe.getInputFluid() != null){
 			guiFluidStacks.init(0, true, 9, 19, 20, 51, 100, false, this.tankOverlay);
 			guiFluidStacks.set(0, recipe.getInputFluid().getMatchingFluidStacks());
 		}

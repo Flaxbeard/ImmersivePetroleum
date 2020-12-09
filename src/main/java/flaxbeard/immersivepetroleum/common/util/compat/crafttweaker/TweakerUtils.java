@@ -7,7 +7,7 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.util.ResourceLocation;
 
 public class TweakerUtils{
-	public static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID+"/CT-Compat");
+	public static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/CT-Compat");
 	
 	public static ResourceLocation ctLoc(String name){
 		return new ResourceLocation("crafttweaker", name);

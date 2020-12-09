@@ -34,11 +34,13 @@ public class ReservoirWorldInfo{
 		if(tag.contains("type")){
 			String s = tag.getString("type");
 			for(ReservoirType res:PumpjackHandler.reservoirs.values()){
-				if(s.equalsIgnoreCase(res.name)) info.type = res;
+				if(s.equalsIgnoreCase(res.name))
+					info.type = res;
 			}
 		}else if(info.current > 0){
 			for(ReservoirType res:PumpjackHandler.reservoirs.values()){
-				if(res.name.equalsIgnoreCase("resAmount")) info.type = res;
+				if(res.name.equalsIgnoreCase("resAmount"))
+					info.type = res;
 			}
 			
 			if(info.type == null){
@@ -49,7 +51,8 @@ public class ReservoirWorldInfo{
 		if(tag.contains("overrideType")){
 			String s = tag.getString("overrideType");
 			for(ReservoirType res:PumpjackHandler.reservoirs.values()){
-				if(s.equalsIgnoreCase(res.name)) info.overrideType = res;
+				if(s.equalsIgnoreCase(res.name))
+					info.overrideType = res;
 			}
 		}
 		

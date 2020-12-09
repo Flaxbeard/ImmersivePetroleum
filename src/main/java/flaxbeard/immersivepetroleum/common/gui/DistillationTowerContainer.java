@@ -19,23 +19,22 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 public class DistillationTowerContainer extends IEBaseContainer<DistillationTowerTileEntity>{
 	public DistillationTowerContainer(int windowId, PlayerInventory inventoryPlayer, final DistillationTowerTileEntity tile){
 		super(inventoryPlayer, tile, windowId);
-
+		
 		this.addSlot(new IESlot.FluidContainer(this, this.inv, INV_0, 12, 17, 2){
 			@Override
 			public boolean isItemValid(ItemStack itemStack){
-				return itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
-						.map(h->{
-							if(h.getTanks()<=0)
-								return false;
-							FluidStack fs=h.getFluidInTank(0);
-							if(fs.isEmpty())
-								return false;
-							if(tile.tanks[TANK_INPUT].getFluidAmount() > 0 && !fs.isFluidEqual(tile.tanks[TANK_INPUT].getFluid()))
-								return false;
-							
-							DistillationRecipe incomplete = DistillationRecipe.findRecipe(fs);
-							return incomplete != null;
-						}).orElse(false);
+				return itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).map(h -> {
+					if(h.getTanks() <= 0)
+						return false;
+					FluidStack fs = h.getFluidInTank(0);
+					if(fs.isEmpty())
+						return false;
+					if(tile.tanks[TANK_INPUT].getFluidAmount() > 0 && !fs.isFluidEqual(tile.tanks[TANK_INPUT].getFluid()))
+						return false;
+					
+					DistillationRecipe incomplete = DistillationRecipe.findRecipe(fs);
+					return incomplete != null;
+				}).orElse(false);
 			}
 		});
 		this.addSlot(new IESlot.Output(this, this.inv, INV_1, 12, 53));

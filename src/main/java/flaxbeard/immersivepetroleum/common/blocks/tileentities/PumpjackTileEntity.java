@@ -43,25 +43,30 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTileEntity, MultiblockRecipe>  implements IBlockBounds{
-	/** Do not Touch! Taken care of by {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)} */
+public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTileEntity, MultiblockRecipe> implements IBlockBounds{
+	/**
+	 * Do not Touch! Taken care of by
+	 * {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)}
+	 */
 	public static TileEntityType<PumpjackTileEntity> TYPE;
 	
 	/** Template-Location of the Energy Input Port. (0, 1, 5) */
-	public static final Set<BlockPos> Redstone_IN=ImmutableSet.of(new BlockPos(0, 1, 5));
+	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 5));
 	
 	/** Template-Location of the Redstone Input Port. (2, 1, 5) */
-	public static final Set<BlockPos> Energy_IN=ImmutableSet.of(new BlockPos(2, 1, 5));
+	public static final Set<BlockPos> Energy_IN = ImmutableSet.of(new BlockPos(2, 1, 5));
 	
 	/** Template-Location of the Eastern Fluid Output Port. (2, 0, 2) */
-	public static final BlockPos East_Port=new BlockPos(2, 0, 2);
+	public static final BlockPos East_Port = new BlockPos(2, 0, 2);
 	
 	/** Template-Location of the Western Fluid Output Port. (0, 0, 2) */
-	public static final BlockPos West_Port=new BlockPos(0, 0, 2);
+	public static final BlockPos West_Port = new BlockPos(0, 0, 2);
 	
-	/** Template-Location of the Bottom Fluid Output Port. (1, 0, 0) <b>(Also Master Block)</b> */
-	public static final BlockPos Down_Port=new BlockPos(1, 0, 0);
-	
+	/**
+	 * Template-Location of the Bottom Fluid Output Port. (1, 0, 0) <b>(Also
+	 * Master Block)</b>
+	 */
+	public static final BlockPos Down_Port = new BlockPos(1, 0, 0);
 	
 	public FluidTank fakeTank = new FluidTank(0);
 	public boolean wasActive = false;
@@ -99,7 +104,8 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	}
 	
 	private boolean hasPipes(){
-		if(!IPConfig.EXTRACTION.required_pipes.get()) return true;
+		if(!IPConfig.EXTRACTION.required_pipes.get())
+			return true;
 		
 		BlockPos basePos = getBlockPosForPos(Down_Port);
 		for(int y = basePos.getY() - 2;y > 0;y--){
@@ -130,7 +136,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 			
 			if(!stack.isEmpty()){
 				Block block = Block.getBlockFromItem(stack.getItem());
-				if(block!=Blocks.AIR){
+				if(block != Blocks.AIR){
 					this.state = block.getDefaultState();
 				}
 			}
@@ -158,24 +164,23 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 			this.activeTicks++;
 			
 			if(this.state != null){
-				// What is this whole thing even for? I've never seen the pumpjack spawning particles anywhere.
+				// What is this whole thing even for? I've never seen the
+				// pumpjack spawning particles anywhere.
 				float r1 = (this.world.rand.nextFloat() - .5F) * 2F;
 				float r2 = (this.world.rand.nextFloat() - .5F) * 2F;
 				
-				this.world.addParticle(ParticleTypes.SMOKE,
-						this.pos.getX()+.5, this.pos.getY()+.5, this.pos.getZ()+.5,
-						r1 * 0.04D, 0.25D, r2 * 0.025D);
+				this.world.addParticle(ParticleTypes.SMOKE, this.pos.getX() + .5, this.pos.getY() + .5, this.pos.getZ() + .5, r1 * 0.04D, 0.25D, r2 * 0.025D);
 			}
 			
 			return;
 		}
 		
-		boolean active=false;
+		boolean active = false;
 		
-		int consumption=IPConfig.EXTRACTION.pumpjack_consumption.get();
-		int extracted=this.energyStorage.extractEnergy(IPConfig.EXTRACTION.pumpjack_consumption.get(), true);
+		int consumption = IPConfig.EXTRACTION.pumpjack_consumption.get();
+		int extracted = this.energyStorage.extractEnergy(IPConfig.EXTRACTION.pumpjack_consumption.get(), true);
 		
-		if(extracted>=consumption && canExtract()){
+		if(extracted >= consumption && canExtract()){
 			if((getPos().getX() + getPos().getZ()) % IPConfig.EXTRACTION.pipe_check_ticks.get() == this.pipeTicks){
 				this.lastHadPipes = hasPipes();
 			}
@@ -234,7 +239,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	
 	@Override
 	public IOSideConfig getEnergySideConfig(Direction facing){
-		if(this.formed && this.isEnergyPos() && (facing==null || facing==Direction.UP))
+		if(this.formed && this.isEnergyPos() && (facing == null || facing == Direction.UP))
 			return IOSideConfig.INPUT;
 		
 		return IOSideConfig.NONE;
@@ -371,102 +376,102 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	}
 	
 	private static List<AxisAlignedBB> getShape(BlockPos posInMultiblock){
-		final int bX=posInMultiblock.getX();
-		final int bY=posInMultiblock.getY();
-		final int bZ=posInMultiblock.getZ();
+		final int bX = posInMultiblock.getX();
+		final int bY = posInMultiblock.getY();
+		final int bZ = posInMultiblock.getZ();
 		
 		// Most of the arm doesnt need collision. Dumb anyway.
-		if((bY==3 && bX==1 && bZ!=2) || (bX==1 && bY==2 && bZ==0)){
+		if((bY == 3 && bX == 1 && bZ != 2) || (bX == 1 && bY == 2 && bZ == 0)){
 			return new ArrayList<>();
 		}
 		
 		// Motor
-		if(bY<3 && bX==1 && bZ==4){
-			List<AxisAlignedBB> list=new ArrayList<>();
-			if(bY==2){
+		if(bY < 3 && bX == 1 && bZ == 4){
+			List<AxisAlignedBB> list = new ArrayList<>();
+			if(bY == 2){
 				list.add(new AxisAlignedBB(0.25, 0.0, 0.0, 0.75, 0.25, 1.0));
 			}else{
 				list.add(new AxisAlignedBB(0.25, 0.0, 0.0, 0.75, 1.0, 1.0));
 			}
-			if(bY==0){
+			if(bY == 0){
 				list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
 			}
 			return list;
 		}
 		
 		// Support
-		if(bZ==2 && bY>0){
-			if(bX==0){
-				if(bY==1){
-					List<AxisAlignedBB> list=new ArrayList<>();
+		if(bZ == 2 && bY > 0){
+			if(bX == 0){
+				if(bY == 1){
+					List<AxisAlignedBB> list = new ArrayList<>();
 					list.add(new AxisAlignedBB(0.6875, 0.0, 0.0, 1.0, 1.0, 0.25));
 					list.add(new AxisAlignedBB(0.6875, 0.0, 0.75, 1.0, 1.0, 1.0));
 					return list;
 				}
-				if(bY==2){
-					List<AxisAlignedBB> list=new ArrayList<>();
+				if(bY == 2){
+					List<AxisAlignedBB> list = new ArrayList<>();
 					list.add(new AxisAlignedBB(0.8125, 0.0, 0.0, 1.0, 0.5, 1.0));
 					list.add(new AxisAlignedBB(0.8125, 0.5, 0.25, 1.0, 1.0, 0.75));
 					return list;
 				}
-				if(bY==3){
+				if(bY == 3){
 					return Arrays.asList(new AxisAlignedBB(0.9375, 0.0, 0.375, 1.0, 0.125, 0.625));
 				}
 			}
-			if(bX==1 && bY==3){
+			if(bX == 1 && bY == 3){
 				return Arrays.asList(new AxisAlignedBB(0.0, -0.125, 0.375, 1.0, 0.125, 0.625));
 			}
-			if(bX==2){
-				if(bY==1){
-					List<AxisAlignedBB> list=new ArrayList<>();
+			if(bX == 2){
+				if(bY == 1){
+					List<AxisAlignedBB> list = new ArrayList<>();
 					list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 0.3125, 1.0, 0.25));
 					list.add(new AxisAlignedBB(0.0, 0.0, 0.75, 0.3125, 1.0, 1.0));
 					return list;
 				}
-				if(bY==2){
-					List<AxisAlignedBB> list=new ArrayList<>();
+				if(bY == 2){
+					List<AxisAlignedBB> list = new ArrayList<>();
 					list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 0.1875, 0.5, 1.0));
 					list.add(new AxisAlignedBB(0.0, 0.5, 0.25, 0.1875, 1.0, 0.75));
 					return list;
 				}
-				if(bY==3){
+				if(bY == 3){
 					return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.375, 0.0625, 0.125, 0.625));
 				}
 			}
 		}
 		
 		// Redstone Controller
-		if(bX==0 && bZ==5){
-			if(bY==0){ // Bottom
+		if(bX == 0 && bZ == 5){
+			if(bY == 0){ // Bottom
 				return Arrays.asList(
 						new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0),
 						new AxisAlignedBB(0.75, 0.0, 0.625, 0.875, 1.0, 0.875),
 						new AxisAlignedBB(0.125, 0.0, 0.625, 0.25, 1.0, 0.875)
 				);
 			}
-			if(bY==1){ // Top
+			if(bY == 1){ // Top
 				return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0));
 			}
 		}
 		
 		// Below the power-in block, base height
-		if(bX==2 && bY==0 && bZ==5){
+		if(bX == 2 && bY == 0 && bZ == 5){
 			return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 		}
 		
 		// Misc
-		if(bY==0){
+		if(bY == 0){
 			
 			// Legs Bottom Front
-			if(bZ==1 && (bX==0 || bX==2)){
-				List<AxisAlignedBB> list=new ArrayList<>();
+			if(bZ == 1 && (bX == 0 || bX == 2)){
+				List<AxisAlignedBB> list = new ArrayList<>();
 				
 				list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
-
-				if(bX==0){
+				
+				if(bX == 0){
 					list.add(new AxisAlignedBB(0.5, 0.5, 0.5, 1.0, 1.0, 1.0));
 				}
-				if(bX==2){
+				if(bX == 2){
 					list.add(new AxisAlignedBB(0.0, 0.5, 0.5, 0.5, 1.0, 1.0));
 				}
 				
@@ -474,15 +479,15 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 			}
 			
 			// Legs Bottom Back
-			if(bZ==3 && (bX==0 || bX==2)){
-				List<AxisAlignedBB> list=new ArrayList<>();
+			if(bZ == 3 && (bX == 0 || bX == 2)){
+				List<AxisAlignedBB> list = new ArrayList<>();
 				
 				list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
-
-				if(bX==0){
+				
+				if(bX == 0){
 					list.add(new AxisAlignedBB(0.5, 0.5, 0.0, 1.0, 1.0, 0.5));
 				}
-				if(bX==2){
+				if(bX == 2){
 					list.add(new AxisAlignedBB(0.0, 0.5, 0.0, 0.5, 1.0, 0.5));
 				}
 				
@@ -490,27 +495,24 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 			}
 			
 			// Fluid Outputs
-			if(bZ==2 && (bX==0 || bX==2)){
+			if(bZ == 2 && (bX == 0 || bX == 2)){
 				return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 			}
 			
-			if(bX==1){
+			if(bX == 1){
 				// Well
-				if(bZ==0){
-					return Arrays.asList(
-							new AxisAlignedBB(0.3125, 0.5, 0.8125, 0.6875, 0.875, 1.0),
-							new AxisAlignedBB(0.1875, 0, 0.1875, 0.8125, 1.0, 0.8125)
-					);
+				if(bZ == 0){
+					return Arrays.asList(new AxisAlignedBB(0.3125, 0.5, 0.8125, 0.6875, 0.875, 1.0), new AxisAlignedBB(0.1875, 0, 0.1875, 0.8125, 1.0, 0.8125));
 				}
 				
 				// Pipes
-				if(bZ==1){
+				if(bZ == 1){
 					return Arrays.asList(
 							new AxisAlignedBB(0.3125, 0.5, 0.0, 0.6875, 0.875, 1.0),
 							new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0)
 					);
 				}
-				if(bZ==2){
+				if(bZ == 2){
 					return Arrays.asList(
 							new AxisAlignedBB(0.3125, 0.5, 0.0, 0.6875, 0.875, 0.6875),
 							new AxisAlignedBB(0.0, 0.5, 0.3125, 1.0, 0.875, 0.6875),

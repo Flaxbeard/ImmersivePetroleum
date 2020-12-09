@@ -15,19 +15,19 @@ import net.minecraft.world.World;
 
 public class DistillationTowerBlock extends IPMetalMultiblock<DistillationTowerTileEntity>{
 	public DistillationTowerBlock(){
-		super("distillationtower", ()->DistillationTowerTileEntity.TYPE);
+		super("distillationtower", () -> DistillationTowerTileEntity.TYPE);
 	}
 	
 	@Override
 	public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit){
 		if(!player.getHeldItem(hand).isEmpty()){
-			TileEntity te=world.getTileEntity(pos);
+			TileEntity te = world.getTileEntity(pos);
 			if(te instanceof DistillationTowerTileEntity){
-				BlockPos tPos=((DistillationTowerTileEntity)te).posInMultiblock;
-				if((tPos.getY()==1 && tPos.getX()==3 && tPos.getZ()==3) && hit.getFace()==Direction.UP){
+				BlockPos tPos = ((DistillationTowerTileEntity) te).posInMultiblock;
+				if((tPos.getY() == 1 && tPos.getX() == 3 && tPos.getZ() == 3) && hit.getFace() == Direction.UP){
 					return ActionResultType.FAIL;
 				}
-				if((tPos.getY()==1 && tPos.getX()==0 && tPos.getZ()==3)){
+				if((tPos.getY() == 1 && tPos.getX() == 0 && tPos.getZ() == 3)){
 					return ActionResultType.FAIL;
 				}
 			}
@@ -37,9 +37,9 @@ public class DistillationTowerBlock extends IPMetalMultiblock<DistillationTowerT
 	
 	@Override
 	public boolean isLadder(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity){
-		TileEntity te=world.getTileEntity(pos);
+		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof DistillationTowerTileEntity){
-			return ((DistillationTowerTileEntity)te).isLadder();
+			return ((DistillationTowerTileEntity) te).isLadder();
 		}
 		return false;
 	}

@@ -23,5 +23,6 @@ public class BlockDummy extends IPBlockBase{
 	}
 	
 	@Override
-	public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items){}
+	public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items){
+	}
 }

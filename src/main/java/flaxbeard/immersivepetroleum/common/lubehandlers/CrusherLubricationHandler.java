@@ -33,7 +33,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class CrusherLubricationHandler implements ILubricationHandler<CrusherTileEntity>{
-	private static Vector3i size=new Vector3i(3,3,5);
+	private static Vector3i size = new Vector3i(3, 3, 5);
 	
 	@Override
 	public Vector3i getStructureDimensions(){
@@ -53,7 +53,7 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 		if(te instanceof CrusherTileEntity){
 			CrusherTileEntity master = ((CrusherTileEntity) te).master();
 			
-			if(master!=null && master.getFacing().getOpposite() == facing){
+			if(master != null && master.getFacing().getOpposite() == facing){
 				return master;
 			}
 		}
@@ -71,10 +71,15 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 				int consume = mbte.energyStorage.extractEnergy(process.energyPerTick, true);
 				if(consume >= process.energyPerTick){
 					mbte.energyStorage.extractEnergy(process.energyPerTick, false);
-					if(process.processTick < process.maxTicks) process.processTick++;
+					
+					if(process.processTick < process.maxTicks)
+						process.processTick++;
+					
 					if(process.processTick >= process.maxTicks && mbte.processQueue.size() > 1){
 						process = processIterator.next();
-						if(process.processTick < process.maxTicks) process.processTick++;
+						
+						if(process.processTick < process.maxTicks)
+							process.processTick++;
 					}
 				}
 			}
@@ -101,8 +106,10 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 			zO = 1.65F;
 		}
 		
-		if(facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
-		if(!flip) zO = -zO + 1;
+		if(facing.getAxisDirection() == AxisDirection.NEGATIVE)
+			xO = -xO + 1;
+		if(!flip)
+			zO = -zO + 1;
 		
 		float x = lubricator.getPos().getX() + (f.getAxis() == Axis.X ? xO : zO);
 		float y = lubricator.getPos().getY() + yO;
@@ -126,7 +133,6 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 		}
 		return null;
 	}
-	
 	
 	private static final ResourceLocation TEXTURE = new ResourceLocation(ImmersivePetroleum.MODID, "textures/models/lube_pipe.png");
 	private static Supplier<IPModel> pipes;
@@ -159,13 +165,15 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 				matrix.translate(-1, 0, -1);
 				break;
 			}
-			default: break;
+			default:
+				break;
 		}
 		
-		if(pipes==null) pipes = IPModels.getSupplier(ModelLubricantPipes.Crusher.ID);
+		if(pipes == null)
+			pipes = IPModels.getSupplier(ModelLubricantPipes.Crusher.ID);
 		
 		IPModel model;
-		if((model=pipes.get())!=null){
+		if((model = pipes.get()) != null){
 			model.render(matrix, buffer.getBuffer(model.getRenderType(TEXTURE)), combinedLight, combinedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
 		}
 	}

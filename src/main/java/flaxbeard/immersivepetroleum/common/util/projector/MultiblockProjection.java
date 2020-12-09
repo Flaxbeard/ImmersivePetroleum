@@ -123,7 +123,8 @@ public class MultiblockProjection{
 	
 	@Override
 	public boolean equals(Object obj){
-		if(this == obj) return true;
+		if(this == obj)
+			return true;
 		if(obj instanceof MultiblockProjection){
 			MultiblockProjection other = (MultiblockProjection) obj;
 			return this.multiblock.getUniqueName().equals(other.multiblock.getUniqueName()) &&
@@ -160,7 +161,8 @@ public class MultiblockProjection{
 	 * Multi-Layer based projection processing. (Do all at once)
 	 * 
 	 * @param predicate What to do per block
-	 * @return true if it was stopped pre-maturely, false if it went through everything
+	 * @return true if it was stopped pre-maturely, false if it went through
+	 *         everything
 	 */
 	public boolean processAll(BiPredicate<Integer, Info> predicate){
 		updateData();
@@ -179,7 +181,8 @@ public class MultiblockProjection{
 	}
 	
 	private void updateData(){
-		if(!this.isDirty) return;
+		if(!this.isDirty)
+			return;
 		this.isDirty = false;
 		
 		boolean mirrored = this.settings.getMirror() == Mirror.FRONT_BACK;
@@ -230,7 +233,10 @@ public class MultiblockProjection{
 		/** The multiblock being processed */
 		public final IMultiblock multiblock;
 		
-		/** Any TileEntity in this should not be used for anything other than ModelData */
+		/**
+		 * Any TileEntity in this should not be used for anything other than
+		 * ModelData
+		 */
 		public final IMultiblockBlockReader blockAccess;
 		
 		public Info(IMultiblockBlockReader blockAccess, PlacementSettings settings, BlockPos templatePos, BlockPos transformedPos){

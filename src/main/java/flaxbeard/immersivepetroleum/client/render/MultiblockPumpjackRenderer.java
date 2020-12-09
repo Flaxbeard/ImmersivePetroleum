@@ -51,7 +51,7 @@ public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileE
 			}
 			
 			ModelPumpjack model;
-			if((model=(ModelPumpjack)pumpjackarm.get())!=null){
+			if((model = (ModelPumpjack) pumpjackarm.get()) != null){
 				float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);
 				model.ticks = 1.5F * ticks;
 				

@@ -11,6 +11,9 @@ public abstract class IPModel extends Model{
 		super(renderTypeIn);
 	}
 	
-	/** This is where the model parts should be created, to keep things seperate. (And for easier refreshing) */
+	/**
+	 * This is where the model parts should be created, to keep things seperate.
+	 * (And for easier refreshing)
+	 */
 	public abstract void init();
 }

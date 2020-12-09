@@ -18,11 +18,11 @@ public class IPTags{
 	private static final Map<ITag.INamedTag<Block>, ITag.INamedTag<Item>> toItemTag = new HashMap<>();
 	
 	public static class Blocks{
-		public static final ITag.INamedTag<Block> asphalt=createBlockWrapper(forgeLoc("asphalt"));
+		public static final ITag.INamedTag<Block> asphalt = createBlockWrapper(forgeLoc("asphalt"));
 	}
 	
 	public static class Items{
-		public static final ITag.INamedTag<Item> bitumen=createItemWrapper(forgeLoc("bitumen"));
+		public static final ITag.INamedTag<Item> bitumen = createItemWrapper(forgeLoc("bitumen"));
 	}
 	
 	public static class Fluids{

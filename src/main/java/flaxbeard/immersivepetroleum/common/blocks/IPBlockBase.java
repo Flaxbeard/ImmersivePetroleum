@@ -14,8 +14,8 @@ public class IPBlockBase extends Block{
 		
 		IPContent.registeredIPBlocks.add(this);
 		
-		BlockItem bItem=createBlockItem();
-		if(bItem!=null)
+		BlockItem bItem = createBlockItem();
+		if(bItem != null)
 			IPContent.registeredIPItems.add(bItem.setRegistryName(getRegistryName()));
 	}
 	

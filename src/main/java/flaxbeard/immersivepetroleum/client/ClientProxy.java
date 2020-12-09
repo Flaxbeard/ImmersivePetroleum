@@ -97,13 +97,14 @@ import net.minecraftforge.registries.ForgeRegistries;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID)
 public class ClientProxy extends CommonProxy{
 	@SuppressWarnings("unused")
-	private static final Logger log=LogManager.getLogger(ImmersivePetroleum.MODID+"/ClientProxy");
+	private static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/ClientProxy");
 	public static final String CAT_IP = "ip";
 	
 	public static final KeyBinding keybind_preview_flip = new KeyBinding("key.immersivepetroleum.projector.flip", InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_M, "key.categories.immersivepetroleum");
 	
 	@Override
-	public void construct(){}
+	public void construct(){
+	}
 	
 	@Override
 	public void setup(){
@@ -119,17 +120,17 @@ public class ClientProxy extends CommonProxy{
 	
 	@SuppressWarnings("unchecked")
 	public <C extends Container, S extends Screen & IHasContainer<C>> void registerScreen(ResourceLocation name, IScreenFactory<C, S> factory){
-		ContainerType<C> type=(ContainerType<C>)GuiHandler.getContainerType(name);
+		ContainerType<C> type = (ContainerType<C>) GuiHandler.getContainerType(name);
 		ScreenManager.registerFactory(type, factory);
 	}
 	
 	@Override
 	public void completed(){
 		
-		ManualHelper.addConfigGetter(str->{
+		ManualHelper.addConfigGetter(str -> {
 			switch(str){
 				case "distillationtower_operationcost":{
-					return Integer.valueOf((int)(2048 * IPConfig.REFINING.distillationTower_energyModifier.get()));
+					return Integer.valueOf((int) (2048 * IPConfig.REFINING.distillationTower_energyModifier.get()));
 				}
 				case "pumpjack_consumption":{
 					return IPConfig.EXTRACTION.pumpjack_consumption.get();
@@ -155,7 +156,7 @@ public class ClientProxy extends CommonProxy{
 				}
 				case "portablegenerator_flux":{
 					Map<ResourceLocation, Integer> map = FuelHandler.getFuelFluxesPerTick();
-					if(map.size()>0){
+					if(map.size() > 0){
 						for(ResourceLocation loc:map.keySet()){
 							if(loc.toString().contains("gasoline")){
 								return map.get(loc);
@@ -165,11 +166,12 @@ public class ClientProxy extends CommonProxy{
 					
 					return Integer.valueOf(-1);
 				}
-				default:break;
+				default:
+					break;
 			}
 			
 			// Last resort
-			Config cfg=IPConfig.getRawConfig();
+			Config cfg = IPConfig.getRawConfig();
 			if(cfg.contains(str)){
 				return cfg.get(str);
 			}
@@ -189,8 +191,6 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void init(){
-		//ShaderUtil.init(); // Get's initialized befor the first time it's actualy used.
-		
 		MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
 		MinecraftForge.EVENT_BUS.register(new RecipeReloadListener(null));
 		
@@ -201,9 +201,9 @@ public class ClientProxy extends CommonProxy{
 	/** ImmersivePetroleum's Manual Category */
 	private static InnerNode<ResourceLocation, ManualEntry> IP_CATEGORY;
 	public void setupManualPages(){
-		ManualInstance man=ManualHelper.getManual();
+		ManualInstance man = ManualHelper.getManual();
 		
-		IP_CATEGORY=man.getRoot().getOrCreateSubnode(modLoc("main"), 100);
+		IP_CATEGORY = man.getRoot().getOrCreateSubnode(modLoc("main"), 100);
 		
 		pumpjack(modLoc("pumpjack"), 0);
 		distillation(modLoc("distillationtower"), 1);
@@ -219,27 +219,27 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	protected static void autolube(ResourceLocation location, int priority){
-		ManualInstance man=ManualHelper.getManual();
+		ManualInstance man = ManualHelper.getManual();
 		
-		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.addSpecialElement("automaticlubricator0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.auto_lubricator)));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
 	protected static void generator(ResourceLocation location, int priority){
-		ManualInstance man=ManualHelper.getManual();
+		ManualInstance man = ManualHelper.getManual();
 		
-		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.addSpecialElement("portablegenerator0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.gas_generator)));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
 	protected static void speedboat(ResourceLocation location, int priority){
-		ManualInstance man=ManualHelper.getManual();
+		ManualInstance man = ManualHelper.getManual();
 		
-		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.addSpecialElement("speedboat0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Items.speedboat)));
 		builder.addSpecialElement("speedboat1", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.tank)));
 		builder.addSpecialElement("speedboat2", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.rudders)));
@@ -251,29 +251,29 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	protected static void lubricant(ResourceLocation location, int priority){
-		ManualInstance man=ManualHelper.getManual();
+		ManualInstance man = ManualHelper.getManual();
 		
-		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.addSpecialElement("lubricant1", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Items.oil_can)));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
 	protected static void pumpjack(ResourceLocation location, int priority){
-		ManualInstance man=ManualHelper.getManual();
+		ManualInstance man = ManualHelper.getManual();
 		
-		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("pumpjack0", 0, ()->new ManualElementMultiblock(man, PumpjackMultiblock.INSTANCE));
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement("pumpjack0", 0, () -> new ManualElementMultiblock(man, PumpjackMultiblock.INSTANCE));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
 	protected static void distillation(ResourceLocation location, int priority){
-		ManualInstance man=ManualHelper.getManual();
+		ManualInstance man = ManualHelper.getManual();
 		
-		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("distillationtower0", 0, ()->new ManualElementMultiblock(man, DistillationTowerMultiblock.INSTANCE));
-		builder.addSpecialElement("distillationtower1", 0, ()->{
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement("distillationtower0", 0, () -> new ManualElementMultiblock(man, DistillationTowerMultiblock.INSTANCE));
+		builder.addSpecialElement("distillationtower1", 0, () -> {
 			Collection<DistillationRecipe> recipeList = DistillationRecipe.recipes.values();
 			List<ITextComponent[]> l = new ArrayList<ITextComponent[]>();
 			for(DistillationRecipe recipe:recipeList){
@@ -282,8 +282,8 @@ public class ClientProxy extends CommonProxy{
 					String inputName = recipe.getInputFluid().getMatchingFluidStacks().get(0).getDisplayName().getUnformattedComponentText();
 					String outputName = output.getDisplayName().getUnformattedComponentText();
 					ITextComponent[] array = new ITextComponent[]{
-							new StringTextComponent(first ? recipe.getInputFluid().getAmount()+"mB "+inputName : ""),
-							new StringTextComponent(output.getAmount()+"mB "+outputName)
+							new StringTextComponent(first ? recipe.getInputFluid().getAmount() + "mB " + inputName : ""),
+							new StringTextComponent(output.getAmount() + "mB " + outputName)
 					};
 					l.add(array);
 					first = false;
@@ -297,12 +297,12 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	protected static void schematics(ResourceLocation location, int priority){
-		ManualInstance man=ManualHelper.getManual();
+		ManualInstance man = ManualHelper.getManual();
 		
-		ItemStack projectorWithNBT=new ItemStack(Items.projector);
+		ItemStack projectorWithNBT = new ItemStack(Items.projector);
 		ItemNBTHelper.putString(projectorWithNBT, "multiblock", IEMultiblocks.ARC_FURNACE.getUniqueName().toString());
 		
-		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.addSpecialElement("schematics0", 0, new ManualElementCrafting(man, new ItemStack(Items.projector)));
 		builder.addSpecialElement("schematics1", 0, new ManualElementCrafting(man, projectorWithNBT));
 		builder.readFromFile(location);
@@ -310,9 +310,9 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	protected static void handleReservoirManual(ResourceLocation location, int priority){
-		ManualInstance man=ManualHelper.getManual();
+		ManualInstance man = ManualHelper.getManual();
 		
-		ManualEntry.ManualEntryBuilder builder=new ManualEntry.ManualEntryBuilder(man);
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.setContent(ClientProxy::createContent);
 		builder.setLocation(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
@@ -328,21 +328,21 @@ public class ClientProxy extends CommonProxy{
 		ArrayList<ItemStack> list = new ArrayList<>();
 		final ReservoirType[] reservoirs = PumpjackHandler.reservoirs.values().toArray(new ReservoirType[0]);
 		
-		StringBuilder contentBuilder=new StringBuilder();
+		StringBuilder contentBuilder = new StringBuilder();
 		contentBuilder.append(I18n.format("ie.manual.entry.reservoirs.oil0"));
 		contentBuilder.append(I18n.format("ie.manual.entry.reservoirs.oil1"));
 		
-		for(int i=0;i<reservoirs.length;i++){
-			ReservoirType type=reservoirs[i];
+		for(int i = 0;i < reservoirs.length;i++){
+			ReservoirType type = reservoirs[i];
 			
-			ImmersivePetroleum.log.info("Creating entry for "+type);
+			ImmersivePetroleum.log.info("Creating entry for " + type);
 			
 			String name = "desc.immersivepetroleum.info.reservoir." + type.name;
 			String localizedName = I18n.format(name);
 			if(localizedName.equalsIgnoreCase(name))
 				localizedName = type.name;
 			
-			char c=localizedName.toLowerCase().charAt(0);
+			char c = localizedName.toLowerCase().charAt(0);
 			boolean isVowel = (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
 			String aOrAn = I18n.format(isVowel ? "ie.manual.entry.reservoirs.vowel" : "ie.manual.entry.reservoirs.consonant");
 			
@@ -367,14 +367,14 @@ public class ClientProxy extends CommonProxy{
 			if(type.bioWhitelist != null && type.bioWhitelist.size() > 0){
 				String validBiomes = "";
 				for(ResourceLocation rl:type.bioWhitelist){
-					Biome bio=ForgeRegistries.BIOMES.getValue(rl);
+					Biome bio = ForgeRegistries.BIOMES.getValue(rl);
 					validBiomes += (!validBiomes.isEmpty() ? ", " : "") + (bio != null ? bio.toString() : rl);
 				}
 				bioBLWL = I18n.format("ie.manual.entry.reservoirs.bio.valid", validBiomes);
 			}else if(type.bioBlacklist != null && type.bioBlacklist.size() > 0){
 				String invalidBiomes = "";
 				for(ResourceLocation rl:type.bioBlacklist){
-					Biome bio=ForgeRegistries.BIOMES.getValue(rl);
+					Biome bio = ForgeRegistries.BIOMES.getValue(rl);
 					invalidBiomes += (!invalidBiomes.isEmpty() ? ", " : "") + (bio != null ? bio.toString() : rl);
 				}
 				bioBLWL = I18n.format("ie.manual.entry.reservoirs.bio.invalid", invalidBiomes);
@@ -394,26 +394,15 @@ public class ClientProxy extends CommonProxy{
 			}
 			contentBuilder.append(I18n.format("ie.manual.entry.reservoirs.content", dimBLWL, fluidName, FORMATTER.format(type.minSize), FORMATTER.format(type.maxSize), repRate, bioBLWL));
 			
-			if(i<(reservoirs.length-1))
+			if(i < (reservoirs.length - 1))
 				contentBuilder.append("<np>");
 			
 			list.add(new ItemStack(fluid.getFilledBucket()));
 		}
 		
-		// This no longer works, there's no way to do this legit!
-		/*
-		ManualElementItem[] items=pages.toArray(new ManualElementItem[list.size()]);
-		pages.toArray(new ManualElementItem[pages.size()])
-		if(resEntry != null){
-			resEntry.setPages(items);
-		}else{
-			resEntry = man.addEntry(ipCat, modLoc("resAmount"), ep++);
-		}
-		*/
-		
-		String translatedTitle=I18n.format("ie.manual.entry.reservoirs.title");
-		String tanslatedSubtext=I18n.format("ie.manual.entry.reservoirs.subtitle");
-		String formattedContent=contentBuilder.toString().replaceAll("\r\n|\r|\n", "\n");
+		String translatedTitle = I18n.format("ie.manual.entry.reservoirs.title");
+		String tanslatedSubtext = I18n.format("ie.manual.entry.reservoirs.subtitle");
+		String formattedContent = contentBuilder.toString().replaceAll("\r\n|\r|\n", "\n");
 		return new EntryData(translatedTitle, tanslatedSubtext, formattedContent);
 	}
 	
@@ -427,10 +416,10 @@ public class ClientProxy extends CommonProxy{
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void onModelBakeEvent(ModelBakeEvent event){
 		ModelResourceLocation mLoc = new ModelResourceLocation(IEBlocks.StoneDecoration.coresample.getRegistryName(), "inventory");
-		IBakedModel model=event.getModelRegistry().get(mLoc);
+		IBakedModel model = event.getModelRegistry().get(mLoc);
 		if(model instanceof ModelCoresample){
 			// It'll be a while until that is in working conditions again
-			//event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
+			// event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
 		}
 	}
 	

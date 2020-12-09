@@ -29,7 +29,7 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.fluids.FluidStack;
 
 public class IPRecipes extends RecipeProvider{
-	private final Map<String, Integer> PATH_COUNT=new HashMap<>();
+	private final Map<String, Integer> PATH_COUNT = new HashMap<>();
 	
 	protected Consumer<IFinishedRecipe> out;
 	public IPRecipes(DataGenerator generatorIn){
@@ -38,7 +38,7 @@ public class IPRecipes extends RecipeProvider{
 	
 	@Override
 	protected void registerRecipes(Consumer<IFinishedRecipe> out){
-		this.out=out;
+		this.out = out;
 		
 		itemRecipes();
 		blockRecipes();
@@ -231,9 +231,9 @@ public class IPRecipes extends RecipeProvider{
 	
 	private ResourceLocation rl(String str){
 		if(PATH_COUNT.containsKey(str)){
-			int count=PATH_COUNT.get(str)+1;
+			int count = PATH_COUNT.get(str) + 1;
 			PATH_COUNT.put(str, count);
-			return new ResourceLocation(ImmersivePetroleum.MODID, str+count);
+			return new ResourceLocation(ImmersivePetroleum.MODID, str + count);
 		}
 		PATH_COUNT.put(str, 1);
 		return new ResourceLocation(ImmersivePetroleum.MODID, str);

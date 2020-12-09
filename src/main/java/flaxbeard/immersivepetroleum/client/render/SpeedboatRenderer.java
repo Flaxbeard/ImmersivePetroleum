@@ -43,26 +43,27 @@ public class SpeedboatRenderer extends EntityRenderer<SpeedboatEntity>{
 			
 			IVertexBuilder ivertexbuilder = bufferIn.getBuffer(this.modelBoat.getRenderType(this.getEntityTexture(entity)));
 			this.modelBoat.render(transform, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-			//this.modelBoat.render(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+			// this.modelBoat.render(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
 			
 			if(entity.hasIcebreaker){
 				ClientUtils.bindTexture(textureArmor);
-				//this.modelBoat.renderIcebreaker(0.0625F); // TODO
+				// this.modelBoat.renderIcebreaker(0.0625F); // TODO
 			}
 			
 			if(entity.hasRudders){
 				ClientUtils.bindTexture(textureArmor);
-				//this.modelBoat.renderRudders(entity, 0.0625F); // TODO
+				// this.modelBoat.renderRudders(entity, 0.0625F); // TODO
 			}
 			
 			if(entity.hasTank){
 				ClientUtils.bindTexture(textureArmor);
-				//this.modelBoat.renderTank(0.0625F); // TODO
+				// this.modelBoat.renderTank(0.0625F); // TODO
 			}
 			
 			if(entity.hasPaddles){
 				ClientUtils.bindTexture(texture);
-				//this.modelBoat.renderPaddles(entity, 0.0625F, partialTicks); // TODO
+				// this.modelBoat.renderPaddles(entity, 0.0625F, partialTicks);
+				// // TODO
 			}
 		}
 		transform.pop();
@@ -78,7 +79,7 @@ public class SpeedboatRenderer extends EntityRenderer<SpeedboatEntity>{
 			
 			ClientUtils.bindTexture(texture);
 			
-			//modelBoat.renderMultipass(0.0625F); // TODO
+			// modelBoat.renderMultipass(0.0625F); // TODO
 		}
 		transform.pop();
 	}

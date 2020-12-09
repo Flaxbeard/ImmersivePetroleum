@@ -19,8 +19,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class IPUpgradeItem extends IPItemBase implements IUpgrade{
 	private Set<String> set;
 	public IPUpgradeItem(String name, String type){
-		super("upgrade_"+name, new Item.Properties().maxStackSize(1));
-		this.set=ImmutableSet.of(type);
+		super("upgrade_" + name, new Item.Properties().maxStackSize(1));
+		this.set = ImmutableSet.of(type);
 	}
 	
 	@Override
@@ -28,17 +28,17 @@ public class IPUpgradeItem extends IPItemBase implements IUpgrade{
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		tooltip.add(new TranslationTextComponent("desc.immersivepetroleum.flavour." + getRegistryName().getPath()));
 	}
-
+	
 	@Override
 	public Set<String> getUpgradeTypes(ItemStack upgrade){
 		return this.set;
 	}
-
+	
 	@Override
 	public boolean canApplyUpgrades(ItemStack target, ItemStack upgrade){
 		return true;
 	}
-
+	
 	@Override
 	public void applyUpgrades(ItemStack target, ItemStack upgrade, CompoundNBT modifications){
 	}

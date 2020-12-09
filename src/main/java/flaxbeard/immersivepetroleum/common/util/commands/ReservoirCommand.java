@@ -25,29 +25,30 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public class ReservoirCommand{
-	private ReservoirCommand(){}
+	private ReservoirCommand(){
+	}
 	
 	// new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.setCapacity.NFE", numberString)
 	
 	public static LiteralArgumentBuilder<CommandSource> create(){
-		LiteralArgumentBuilder<CommandSource> lab=Commands.literal("reservoir")
-				.requires(source->source.hasPermissionLevel(4));
+		LiteralArgumentBuilder<CommandSource> lab = Commands.literal("reservoir")
+				.requires(source -> source.hasPermissionLevel(4));
 		
 		lab.then(Commands.literal("list")
-				.executes(source->list(source.getSource().asPlayer())));
+				.executes(source -> list(source.getSource().asPlayer())));
 		
 		lab.then(Commands.literal("get")
-				.executes(source->get(source.getSource().asPlayer())));
+				.executes(source -> get(source.getSource().asPlayer())));
 		
 		lab.then(setReservoir());
 		
 		lab.then(Commands.literal("setAmount")
 				.then(Commands.argument("amount", IntegerArgumentType.integer(0, Integer.MAX_VALUE))
-						.executes(context->setAmount(context.getSource().asPlayer(), context.getArgument("amount", Integer.class)))));
+						.executes(context -> setAmount(context.getSource().asPlayer(), context.getArgument("amount", Integer.class)))));
 		
 		lab.then(Commands.literal("setCapacity")
 				.then(Commands.argument("capacity", IntegerArgumentType.integer(0, Integer.MAX_VALUE))
-						.executes(context->setCapacity(context.getSource().asPlayer(), context.getArgument("capacity", Integer.class)))));
+						.executes(context -> setCapacity(context.getSource().asPlayer(), context.getArgument("capacity", Integer.class)))));
 		
 		return lab;
 	}
@@ -79,20 +80,19 @@ public class ReservoirCommand{
 	}
 	
 	static LiteralArgumentBuilder<CommandSource> setReservoir(){
-		RequiredArgumentBuilder<CommandSource, String> nameArg=Commands.argument("name", StringArgumentType.string());
-		nameArg.suggests((context, builder)->{
-			return ISuggestionProvider.suggest(PumpjackHandler.reservoirs.values().stream().map(type->type.name), builder);
-		}).executes(command->{
-			ServerPlayerEntity player=command.getSource().asPlayer();
-			setReservoir(command, player.getPosition().getX()>>4, player.getPosition().getZ()>>4);
+		RequiredArgumentBuilder<CommandSource, String> nameArg = Commands.argument("name", StringArgumentType.string());
+		nameArg.suggests((context, builder) -> {
+			return ISuggestionProvider.suggest(PumpjackHandler.reservoirs.values().stream().map(type -> type.name), builder);
+		}).executes(command -> {
+			ServerPlayerEntity player = command.getSource().asPlayer();
+			setReservoir(command, player.getPosition().getX() >> 4, player.getPosition().getZ() >> 4);
 			return Command.SINGLE_SUCCESS;
 		});
-		nameArg.then(Commands.argument("location", ColumnPosArgument.columnPos())
-				.executes(command->{
-					ColumnPos pos=command.getArgument("location", ColumnPos.class);
-					setReservoir(command, pos.x, pos.z);
-					return Command.SINGLE_SUCCESS;
-				}));
+		nameArg.then(Commands.argument("location", ColumnPosArgument.columnPos()).executes(command -> {
+			ColumnPos pos = command.getArgument("location", ColumnPos.class);
+			setReservoir(command, pos.x, pos.z);
+			return Command.SINGLE_SUCCESS;
+		}));
 		
 		LiteralArgumentBuilder<CommandSource> set = Commands.literal("setTest");
 		set.then(nameArg);
@@ -100,21 +100,21 @@ public class ReservoirCommand{
 	}
 	
 	static void setReservoir(CommandContext<CommandSource> context, int xChunk, int zChunk){
-		CommandSource sender=context.getSource();
-		ReservoirWorldInfo info=PumpjackHandler.getOrCreateOilWorldInfo(sender.getWorld(), xChunk, zChunk);
+		CommandSource sender = context.getSource();
+		ReservoirWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(sender.getWorld(), xChunk, zChunk);
 		
-		String name=context.getArgument("name", String.class);
+		String name = context.getArgument("name", String.class);
 		ReservoirType reservoir = null;
 		for(ReservoirType res:PumpjackHandler.reservoirs.values())
 			if(res.name.equalsIgnoreCase(name))
 				reservoir = res;
-		
+			
 		if(reservoir == null){
 			sender.sendFeedback(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.set.invalidReservoir", name), true);
 			return;
 		}
 		
-		info.overrideType=reservoir;
+		info.overrideType = reservoir;
 		IPSaveData.setDirty();
 		sender.sendFeedback(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.set.sucess", reservoir.name), true);
 	}
@@ -126,7 +126,7 @@ public class ReservoirCommand{
 		for(ReservoirType res:PumpjackHandler.reservoirs.values())
 			if(res.name.equalsIgnoreCase(name))
 				reservoir = res;
-		
+			
 		if(reservoir == null){
 			playerEntity.sendMessage(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.set.invalidReservoir", name), Util.DUMMY_UUID);
 			return Command.SINGLE_SUCCESS;
@@ -166,7 +166,7 @@ public class ReservoirCommand{
 	}
 	
 	static ReservoirWorldInfo getOilWorldInfo(ServerPlayerEntity playerEntity){
-		ChunkPos coords=new ChunkPos(playerEntity.getPosition());
+		ChunkPos coords = new ChunkPos(playerEntity.getPosition());
 		return PumpjackHandler.getOrCreateOilWorldInfo(playerEntity.getEntityWorld(), coords.x, coords.z);
 	}
 	

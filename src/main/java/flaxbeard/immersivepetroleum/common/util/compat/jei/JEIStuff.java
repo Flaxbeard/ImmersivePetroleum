@@ -19,7 +19,7 @@ import net.minecraft.util.ResourceLocation;
 
 @JeiPlugin
 public class JEIStuff implements IModPlugin{
-	private static final ResourceLocation ID=new ResourceLocation(ImmersivePetroleum.MODID, "main");
+	private static final ResourceLocation ID = new ResourceLocation(ImmersivePetroleum.MODID, "main");
 	
 	@Override
 	public ResourceLocation getPluginUid(){
@@ -28,7 +28,7 @@ public class JEIStuff implements IModPlugin{
 	
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registration){
-		IGuiHelper guiHelper=registration.getJeiHelpers().getGuiHelper();
+		IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
 		
 		registration.addRecipeCategories(new DistillationRecipeCategory(guiHelper));
 	}

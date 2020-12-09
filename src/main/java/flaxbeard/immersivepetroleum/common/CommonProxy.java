@@ -24,13 +24,15 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 
 public class CommonProxy{
 	@SuppressWarnings("unused")
-	private static final Logger log=LogManager.getLogger(ImmersivePetroleum.MODID+"/CommonProxy");
+	private static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/CommonProxy");
 	
 	/** Fired during instantiation of {@link ImmersivePetroleum} */
-	public void construct(){}
+	public void construct(){
+	}
 	
 	/** Fired at {@link FMLCommonSetupEvent} */
-	public void setup(){}
+	public void setup(){
+	}
 	
 	/** Fired at {@link FMLLoadCompleteEvent} */
 	public void completed(){

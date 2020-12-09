@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class IPLoadedModels extends LoadedModelProvider{
-	final Map<ResourceLocation, LoadedModelBuilder> models=new HashMap<>();
+	final Map<ResourceLocation, LoadedModelBuilder> models = new HashMap<>();
 	public IPLoadedModels(DataGenerator gen, ExistingFileHelper exHelper){
 		super(gen, ImmersivePetroleum.MODID, "block", exHelper);
 	}

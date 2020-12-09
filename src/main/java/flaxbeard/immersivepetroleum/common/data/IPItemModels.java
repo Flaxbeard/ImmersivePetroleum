@@ -21,7 +21,7 @@ public class IPItemModels extends LoadedModelProvider{
 	IPBlockStates blockStates;
 	public IPItemModels(DataGenerator gen, ExistingFileHelper exHelper, IPBlockStates blockstates){
 		super(gen, ImmersivePetroleum.MODID, "item", exHelper);
-		this.blockStates=blockstates;
+		this.blockStates = blockstates;
 	}
 	
 	@Override
@@ -31,7 +31,7 @@ public class IPItemModels extends LoadedModelProvider{
 	
 	@Override
 	protected void registerModels(){
-		String debugItem=name(IPContent.debugItem);
+		String debugItem = name(IPContent.debugItem);
 		
 		getBuilder(debugItem)
 			.parent(getExistingFile(mcLoc("item/generated")))
@@ -92,7 +92,7 @@ public class IPItemModels extends LoadedModelProvider{
 	}
 	
 	private void generatorItem(){
-		LoadedModelBuilder model=obj(IPContent.Blocks.gas_generator, "block/obj/generator.obj")
+		LoadedModelBuilder model = obj(IPContent.Blocks.gas_generator, "block/obj/generator.obj")
 				.texture("texture", modLoc("block/obj/generator"));
 		
 		model.transformationMap()
@@ -123,7 +123,7 @@ public class IPItemModels extends LoadedModelProvider{
 	}
 	
 	private void autolubeItem(){
-		LoadedModelBuilder model=obj(IPContent.Blocks.auto_lubricator, "block/obj/autolubricator.obj")
+		LoadedModelBuilder model = obj(IPContent.Blocks.auto_lubricator, "block/obj/autolubricator.obj")
 			.texture("texture", modLoc("models/lubricator"));
 		
 		model.transformationMap()
@@ -154,7 +154,7 @@ public class IPItemModels extends LoadedModelProvider{
 	}
 	
 	private void pumpjackItem(){
-		LoadedModelBuilder model=obj(IPContent.Multiblock.pumpjack, "item/obj/pumpjack_itemmockup.obj")
+		LoadedModelBuilder model = obj(IPContent.Multiblock.pumpjack, "item/obj/pumpjack_itemmockup.obj")
 			.texture("texture_base", modLoc("multiblock/pumpjack_base"))
 			.texture("texture_armature", modLoc("models/pumpjack_armature"))
 			;
@@ -187,7 +187,7 @@ public class IPItemModels extends LoadedModelProvider{
 	}
 	
 	private void distillationtowerItem(){
-		LoadedModelBuilder model=obj(IPContent.Multiblock.distillationtower, "multiblock/obj/distillationtower.obj")
+		LoadedModelBuilder model = obj(IPContent.Multiblock.distillationtower, "multiblock/obj/distillationtower.obj")
 			.texture("texture", modLoc("multiblock/distillation_tower"));
 		
 		model.transformationMap()
@@ -226,17 +226,17 @@ public class IPItemModels extends LoadedModelProvider{
 	 * @return
 	 */
 	private Matrix4 createMatrix(Vector3d translation, Vector3d rotationAngle, double scale){
-		Matrix4 mat=new Matrix4().setIdentity();
-		mat.translate(translation.x/16D, translation.y/16D, translation.z/16D);
+		Matrix4 mat = new Matrix4().setIdentity();
+		mat.translate(translation.x / 16D, translation.y / 16D, translation.z / 16D);
 		
-		if(rotationAngle!=null){
-			if(rotationAngle.x!=0.0)
+		if(rotationAngle != null){
+			if(rotationAngle.x != 0.0)
 				mat.rotate(Math.toRadians(rotationAngle.x), 1, 0, 0);
 			
-			if(rotationAngle.y!=0.0)
+			if(rotationAngle.y != 0.0)
 				mat.rotate(Math.toRadians(rotationAngle.y), 0, 1, 0);
 			
-			if(rotationAngle.z!=0.0)
+			if(rotationAngle.z != 0.0)
 				mat.rotate(Math.toRadians(rotationAngle.z), 0, 0, 1);
 		}
 		
@@ -246,18 +246,18 @@ public class IPItemModels extends LoadedModelProvider{
 	
 	private LoadedModelBuilder obj(IItemProvider item, String model){
 		return getBuilder(item)
-			.loader(forgeLoc("obj"))
-			.additional("model", modLoc("models/"+model))
-			.additional("flip-v", true);
+				.loader(forgeLoc("obj"))
+				.additional("model", modLoc("models/" + model))
+				.additional("flip-v", true);
 	}
 	
 	private void genericItem(Item item){
-		if(item==null){
-			StackTraceElement where=new NullPointerException().getStackTrace()[1];
+		if(item == null){
+			StackTraceElement where = new NullPointerException().getStackTrace()[1];
 			IPDataGenerator.log.warn("Skipping null item. ( {} -> {} )", where.getFileName(), where.getLineNumber());
 			return;
 		}
-		String name=name(item);
+		String name = name(item);
 		
 		getBuilder(name)
 			.parent(getExistingFile(mcLoc("item/generated")))

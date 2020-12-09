@@ -9,13 +9,13 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 public class ModelLubricantPipes{
 	
 	public static class Crusher extends IPModel{
-		public static final String ID="crusher_lubepipes";
+		public static final String ID = "crusher_lubepipes";
 		
 		private ModelRenderer origin;
 		public Crusher(){
 			super(RenderType::getEntitySolid);
 			
-			this.textureWidth=this.textureHeight=16;
+			this.textureWidth = this.textureHeight = 16;
 		}
 		
 		@Override
@@ -73,8 +73,8 @@ public class ModelLubricantPipes{
 	}
 	
 	public static class Excavator extends IPModel{
-		public static final String ID_NORMAL="excavator_lubepipes_normal";
-		public static final String ID_MIRRORED="excavator_lubepipes_mirrored";
+		public static final String ID_NORMAL = "excavator_lubepipes_normal";
+		public static final String ID_MIRRORED = "excavator_lubepipes_mirrored";
 		
 		private ModelRenderer origin;
 		private boolean mirrored;
@@ -82,7 +82,7 @@ public class ModelLubricantPipes{
 			super(RenderType::getEntitySolid);
 			this.mirrored = mirror;
 			
-			this.textureWidth=this.textureHeight=16;
+			this.textureWidth = this.textureHeight = 16;
 		}
 		
 		@Override
@@ -236,8 +236,8 @@ public class ModelLubricantPipes{
 	}
 	
 	public static class Pumpjack extends IPModel{
-		public static final String ID_NORMAL="pumpjack_lubepipes_normal";
-		public static final String ID_MIRRORED="pumpjack_lubepipes_mirrored";
+		public static final String ID_NORMAL = "pumpjack_lubepipes_normal";
+		public static final String ID_MIRRORED = "pumpjack_lubepipes_mirrored";
 		
 		private boolean mirrored = false;
 		private ModelRenderer origin;
@@ -245,7 +245,7 @@ public class ModelLubricantPipes{
 			super(RenderType::getEntitySolid);
 			this.mirrored = mirror;
 			
-			this.textureWidth=this.textureHeight=16;
+			this.textureWidth = this.textureHeight = 16;
 		}
 		
 		@Override
@@ -291,7 +291,7 @@ public class ModelLubricantPipes{
 				this.origin.addChild(p7);
 				
 				ModelRenderer leg1 = new ModelRenderer(this, 0, 0);
-//				leg1.addBox(-1F, 1F, -4F, 38, 2, 2);
+				// leg1.addBox(-1F, 1F, -4F, 38, 2, 2);
 				leg1.setRotationPoint(56 - 13.6F, 8F, 12F);
 				leg1.rotateAngleX = (float) Math.toRadians(9);
 				leg1.rotateAngleY = (float) Math.toRadians(20);
@@ -357,7 +357,7 @@ public class ModelLubricantPipes{
 				this.origin.addChild(p7);
 				
 				ModelRenderer leg1 = new ModelRenderer(this, 0, 0);
-//				leg1.addBox(-1F, 1F, -4F, 38, 2, 2);
+				// leg1.addBox(-1F, 1F, -4F, 38, 2, 2);
 				leg1.setRotationPoint(56 - 13.6F, 8F, 36F);
 				leg1.rotateAngleX = (float) Math.toRadians(-10);
 				leg1.rotateAngleY = (float) Math.toRadians(-20);

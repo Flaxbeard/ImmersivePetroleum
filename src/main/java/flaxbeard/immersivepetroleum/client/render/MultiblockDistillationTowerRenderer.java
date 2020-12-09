@@ -33,14 +33,14 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 	public void render(DistillationTowerTileEntity te, float partialTicks, MatrixStack transform, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn){
 		if(te != null && te.formed && !te.isDummy()){
 			if(te.shouldRenderAsActive()){
-				combinedOverlayIn=OverlayTexture.NO_OVERLAY;
+				combinedOverlayIn = OverlayTexture.NO_OVERLAY;
 				
 				transform.push();
 				{
 					Direction rotation = te.getFacing();
 					switch(rotation){
 						case NORTH:{
-//							transform.rotate(new Quaternion(0, 0, 0, true));
+							// transform.rotate(new Quaternion(0, 0, 0, true));
 							transform.translate(3, 0, 4);
 							break;
 						}
@@ -63,16 +63,16 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 							break;
 					}
 					
-					float br=0.75F; // "Brightness"
+					float br = 0.75F; // "Brightness"
 					
 					// Is it the most efficient way of doing this? Probably not.
 					// Does it make me look smart af? hell yeah..
-					IVertexBuilder buf=bufferIn.getBuffer(IPRenderTypes.DISTILLATION_TOWER_ACTIVE);
+					IVertexBuilder buf = bufferIn.getBuffer(IPRenderTypes.DISTILLATION_TOWER_ACTIVE);
 					if(te.getIsMirrored()){
 						transform.push();
 						{
 							transform.translate(-6.0, 0.0, -2.0);
-							Matrix4f mat=transform.getLast().getMatrix();
+							Matrix4f mat = transform.getLast().getMatrix();
 							
 							// Active Boiler Front
 							int ux=96, vy=134;
@@ -110,7 +110,7 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 						transform.push();
 						{
 							transform.translate(0.0, 0.0, -2.0);
-							Matrix4f mat=transform.getLast().getMatrix();
+							Matrix4f mat = transform.getLast().getMatrix();
 							
 							// Active Boiler Back
 							int ux=96, vy=158;

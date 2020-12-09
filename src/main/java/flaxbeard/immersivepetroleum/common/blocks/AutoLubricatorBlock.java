@@ -41,10 +41,10 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
 
 public class AutoLubricatorBlock extends IPBlockBase{
-	private static final Material material=new Material(MaterialColor.IRON, false, false, true, true, false, false, PushReaction.BLOCK);
+	private static final Material material = new Material(MaterialColor.IRON, false, false, true, true, false, false, PushReaction.BLOCK);
 	
-	public static final DirectionProperty FACING=DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
-	public static final BooleanProperty SLAVE=BooleanProperty.create("slave");
+	public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
+	public static final BooleanProperty SLAVE = BooleanProperty.create("slave");
 	
 	public AutoLubricatorBlock(String name){
 		super(name, Block.Properties.create(material)
@@ -80,9 +80,9 @@ public class AutoLubricatorBlock extends IPBlockBase{
 	
 	@Override
 	public TileEntity createTileEntity(BlockState state, IBlockReader world){
-		AutoLubricatorTileEntity te=new AutoLubricatorTileEntity();
-		te.isSlave=state.get(SLAVE);
-		te.facing=state.get(FACING);
+		AutoLubricatorTileEntity te = new AutoLubricatorTileEntity();
+		te.isSlave = state.get(SLAVE);
+		te.facing = state.get(FACING);
 		return te;
 	}
 	
@@ -99,9 +99,9 @@ public class AutoLubricatorBlock extends IPBlockBase{
 	
 	@Override
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit){
-		TileEntity te=worldIn.getTileEntity(pos);
+		TileEntity te = worldIn.getTileEntity(pos);
 		if(te instanceof IPlayerInteraction){
-			if(((IPlayerInteraction)te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), (float)hit.getHitVec().x, (float)hit.getHitVec().y, (float)hit.getHitVec().z)){
+			if(((IPlayerInteraction) te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), (float) hit.getHitVec().x, (float) hit.getHitVec().y, (float) hit.getHitVec().z)){
 				return ActionResultType.SUCCESS;
 			}
 		}
@@ -112,9 +112,9 @@ public class AutoLubricatorBlock extends IPBlockBase{
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
 		if(!worldIn.isRemote){
 			worldIn.setBlockState(pos.add(0, 1, 0), state.with(SLAVE, true));
-			TileEntity te=worldIn.getTileEntity(pos);
+			TileEntity te = worldIn.getTileEntity(pos);
 			if(te instanceof IReadOnPlacement){
-				((IReadOnPlacement)te).readOnPlacement(placer, stack);
+				((IReadOnPlacement) te).readOnPlacement(placer, stack);
 			}
 		}
 	}
@@ -138,8 +138,8 @@ public class AutoLubricatorBlock extends IPBlockBase{
 		return Collections.emptyList();
 	}
 	
-	static final VoxelShape SHAPE_SLAVE=VoxelShapes.create(.1875F, 0, .1875F, .8125f, 1, .8125f);
-	static final VoxelShape SHAPE_MASTER=VoxelShapes.create(.0625f, 0, .0625f, .9375f, 1, .9375f);
+	static final VoxelShape SHAPE_SLAVE = VoxelShapes.create(.1875F, 0, .1875F, .8125f, 1, .8125f);
+	static final VoxelShape SHAPE_MASTER = VoxelShapes.create(.0625f, 0, .0625f, .9375f, 1, .9375f);
 	
 	@Override
 	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
@@ -153,12 +153,12 @@ public class AutoLubricatorBlock extends IPBlockBase{
 		
 		@Override
 		protected boolean canPlace(BlockItemUseContext con, BlockState state){
-			if(super.canPlace(con, state)){ // No point in checking if the second block above is empty if it can't even place on the first one
+			// No point in checking if the second block above is empty if it can't even place on the first one
+			if(super.canPlace(con, state)){
 				BlockPos pos=con.getPos().add(0, 1, 0);
 				BlockState otherState=con.getWorld().getBlockState(pos);
 				otherState.getBlock().isAir(otherState, con.getWorld(), pos);
 				return otherState.getBlock().isAir(otherState, con.getWorld(), pos);
-//				return con.getWorld().getBlockState(pos).isAir(con.getWorld(), pos);
 			}
 			return false;
 		}

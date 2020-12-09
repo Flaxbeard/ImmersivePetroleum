@@ -82,18 +82,18 @@ public class CommonEventHandler{
 			if(te instanceof SampleDrillTileEntity){
 				SampleDrillTileEntity drill = (SampleDrillTileEntity) te;
 				if(drill.isDummy()){
-					drill = (SampleDrillTileEntity)drill.master();
+					drill = (SampleDrillTileEntity) drill.master();
 				}
 				
 				if(!drill.sample.isEmpty()){
-					ColumnPos cPos=CoresampleItem.getCoords(drill.sample);
-					if(cPos!=null){
+					ColumnPos cPos = CoresampleItem.getCoords(drill.sample);
+					if(cPos != null){
 						try{
 							World world = event.getWorld();
-							DimensionChunkCoords coords=new DimensionChunkCoords(world.getDimensionKey(), cPos.x >> 4, cPos.z >> 4);
+							DimensionChunkCoords coords = new DimensionChunkCoords(world.getDimensionKey(), cPos.x >> 4, cPos.z >> 4);
 							
 							ReservoirWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(world, coords, false);
-							if(info!=null && info.getType() != null){
+							if(info != null && info.getType() != null){
 								ItemNBTHelper.putString(drill.sample, "resType", info.getType().name);
 								ItemNBTHelper.putInt(drill.sample, "resAmount", info.current);
 							}else{
@@ -121,7 +121,7 @@ public class CommonEventHandler{
 				}
 			}
 			
-			if(entity.getFireTimer()>0 && entity.getActivePotionEffect(IPEffects.ANTI_DISMOUNT_FIRE)!=null){
+			if(entity.getFireTimer() > 0 && entity.getActivePotionEffect(IPEffects.ANTI_DISMOUNT_FIRE) != null){
 				entity.extinguish();
 				entity.removePotionEffect(IPEffects.ANTI_DISMOUNT_FIRE);
 				event.setCanceled(true);
@@ -147,7 +147,7 @@ public class CommonEventHandler{
 	 */
 	@SubscribeEvent
 	public void handleDismountingBoat(EntityMountEvent event){
-		if(event.getEntityMounting()==null){
+		if(event.getEntityMounting() == null){
 			return;
 		}
 		
@@ -156,8 +156,8 @@ public class CommonEventHandler{
 				SpeedboatEntity boat = (SpeedboatEntity) event.getEntityBeingMounted();
 				
 				if(boat.isFireproof){
-					FluidState fluidstate=event.getWorldObj().getBlockState(new BlockPos(boat.getPositionVec().add(0.5, 0, 0.5))).getFluidState();
-					if(fluidstate!=Fluids.EMPTY.getDefaultState() && fluidstate.isTagged(FluidTags.LAVA)){
+					FluidState fluidstate = event.getWorldObj().getBlockState(new BlockPos(boat.getPositionVec().add(0.5, 0, 0.5))).getFluidState();
+					if(fluidstate != Fluids.EMPTY.getDefaultState() && fluidstate.isTagged(FluidTags.LAVA)){
 						LivingEntity living = (LivingEntity) event.getEntityMounting();
 						
 						living.addPotionEffect(new EffectInstance(IPEffects.ANTI_DISMOUNT_FIRE, 1, 0, false, false));
@@ -175,7 +175,7 @@ public class CommonEventHandler{
 		}
 	}
 	
-	static final Random random=new Random();
+	static final Random random = new Random();
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	public static void handleLubricatingMachines(World world){
 		Set<LubricatedTileInfo> toRemove = new HashSet<LubricatedTileInfo>();
@@ -192,14 +192,14 @@ public class CommonEventHandler{
 						if(te instanceof MultiblockPartTileEntity){
 							MultiblockPartTileEntity<?> part = (MultiblockPartTileEntity<?>) te;
 							
-							BlockParticleData lubeParticle=new BlockParticleData(ParticleTypes.FALLING_DUST, IPContent.Fluids.lubricant.block.getDefaultState());
-							Vector3i size=lubeHandler.getStructureDimensions();
+							BlockParticleData lubeParticle = new BlockParticleData(ParticleTypes.FALLING_DUST, IPContent.Fluids.lubricant.block.getDefaultState());
+							Vector3i size = lubeHandler.getStructureDimensions();
 							
-							int numBlocks = (int)(size.getX()*size.getY()*size.getZ()*0.25F);
+							int numBlocks = (int) (size.getX() * size.getY() * size.getZ() * 0.25F);
 							
 							for(int i = 0;i < numBlocks;i++){
-								BlockPos pos = part.getBlockPosForPos(new BlockPos(size.getX()*random.nextFloat(), size.getY()*random.nextFloat(), size.getZ()*random.nextFloat()));
-								if(world.getBlockState(pos)==Blocks.AIR.getDefaultState())
+								BlockPos pos = part.getBlockPosForPos(new BlockPos(size.getX() * random.nextFloat(), size.getY() * random.nextFloat(), size.getZ() * random.nextFloat()));
+								if(world.getBlockState(pos) == Blocks.AIR.getDefaultState())
 									continue;
 								
 								TileEntity te2 = world.getTileEntity(info.pos);
@@ -222,7 +222,8 @@ public class CommonEventHandler{
 					}
 					
 					info.ticks--;
-					if(info.ticks == 0) toRemove.add(info);
+					if(info.ticks == 0)
+						toRemove.add(info);
 				}
 			}
 		}
@@ -241,10 +242,10 @@ public class CommonEventHandler{
 			
 			if(IPConfig.MISCELLANEOUS.autounlock_recipes.get()){
 				List<IRecipe<?>> l = new ArrayList<IRecipe<?>>();
-				Collection<IRecipe<?>> recipes=event.getWorld().getRecipeManager().getRecipes();
-				recipes.forEach(recipe->{
+				Collection<IRecipe<?>> recipes = event.getWorld().getRecipeManager().getRecipes();
+				recipes.forEach(recipe -> {
 					ResourceLocation name = recipe.getId();
-					if(name.getNamespace()==ImmersivePetroleum.MODID){
+					if(name.getNamespace() == ImmersivePetroleum.MODID){
 						if(recipe.getRecipeOutput().getItem() != null){
 							l.add(recipe);
 						}

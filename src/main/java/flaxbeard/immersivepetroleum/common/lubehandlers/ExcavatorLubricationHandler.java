@@ -32,7 +32,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ExcavatorLubricationHandler implements ILubricationHandler<ExcavatorTileEntity>{
-	private static Vector3i size=new Vector3i(3, 6, 3);
+	private static Vector3i size = new Vector3i(3, 6, 3);
 	
 	@Override
 	public Vector3i getStructureDimensions(){
@@ -64,7 +64,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		if(te instanceof ExcavatorTileEntity){
 			ExcavatorTileEntity master = ((ExcavatorTileEntity) te).master();
 			
-			if(master!=null){
+			if(master != null){
 				Direction dir = master.getIsMirrored() ? master.getFacing().rotateY() : master.getFacing().rotateYCCW();
 				if(dir == facing){
 					return master;
@@ -117,8 +117,10 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 			zO = 1.75F;
 		}
 		
-		if(facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
-		if(!flip) zO = -zO + 1;
+		if(facing.getAxisDirection() == AxisDirection.NEGATIVE)
+			xO = -xO + 1;
+		if(!flip)
+			zO = -zO + 1;
 		
 		float x = lubricator.getPos().getX() + (f.getAxis() == Axis.X ? xO : zO);
 		float y = lubricator.getPos().getY() + yO;
@@ -144,7 +146,6 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		}
 		return null;
 	}
-	
 	
 	private static final ResourceLocation TEXTURE = new ResourceLocation(ImmersivePetroleum.MODID, "textures/models/lube_pipe.png");
 	private static Supplier<IPModel> pipes_normal;
@@ -178,21 +179,24 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 				matrix.translate(-1, 0, -2);
 				break;
 			}
-			default: break;
+			default:
+				break;
 		}
 		
-		IPModel model=null;
+		IPModel model = null;
 		if(mbte.getIsMirrored()){
-			if(pipes_mirrored==null) pipes_mirrored = IPModels.getSupplier(ModelLubricantPipes.Excavator.ID_MIRRORED);
+			if(pipes_mirrored == null)
+				pipes_mirrored = IPModels.getSupplier(ModelLubricantPipes.Excavator.ID_MIRRORED);
 			
-			model=pipes_mirrored.get();
+			model = pipes_mirrored.get();
 		}else{
-			if(pipes_normal==null) pipes_normal = IPModels.getSupplier(ModelLubricantPipes.Excavator.ID_NORMAL);
+			if(pipes_normal == null)
+				pipes_normal = IPModels.getSupplier(ModelLubricantPipes.Excavator.ID_NORMAL);
 			
-			model=pipes_normal.get();
+			model = pipes_normal.get();
 		}
 		
-		if(model!=null){
+		if(model != null){
 			model.render(matrix, buffer.getBuffer(model.getRenderType(TEXTURE)), combinedLight, combinedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
 		}
 	}

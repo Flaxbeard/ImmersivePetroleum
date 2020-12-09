@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.items;
 
-
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -44,7 +43,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
-	static final String Upgrade_Type="BOAT";
+	static final String Upgrade_Type = "BOAT";
 	public SpeedboatItem(String name){
 		super(name, new Item.Properties().maxStackSize(1).group(ImmersivePetroleum.creativeTab));
 	}
@@ -127,18 +126,18 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 		if(raytraceresult != null){
 			Vector3d vec3d2 = playerIn.getLook(1.0F);
 			boolean flag = false;
-			AxisAlignedBB bb=playerIn.getBoundingBox();
-			if(bb==null)
-				bb=playerIn.getBoundingBox();
+			AxisAlignedBB bb = playerIn.getBoundingBox();
+			if(bb == null)
+				bb = playerIn.getBoundingBox();
 			
-			if(bb!=null){
+			if(bb != null){
 				List<Entity> list = worldIn.getEntitiesWithinAABBExcludingEntity(playerIn, bb.expand(vec3d2.x * 5.0D, vec3d2.y * 5.0D, vec3d2.z * 5.0D).grow(1.0D));
 				for(int i = 0;i < list.size();++i){
 					Entity entity = (Entity) list.get(i);
 					
 					if(entity.canBeCollidedWith()){
 						AxisAlignedBB axisalignedbb = entity.getBoundingBox();
-						if(axisalignedbb!=null && axisalignedbb.grow((double) entity.getCollisionBorderSize()).contains(vec3d)){
+						if(axisalignedbb != null && axisalignedbb.grow((double) entity.getCollisionBorderSize()).contains(vec3d)){
 							flag = true;
 						}
 					}
@@ -150,7 +149,7 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 			}else if(raytraceresult.getType() != RayTraceResult.Type.BLOCK){
 				return new ActionResult<ItemStack>(ActionResultType.PASS, itemstack);
 			}else{
-				Vector3d hit=raytraceresult.getHitVec();
+				Vector3d hit = raytraceresult.getHitVec();
 				Block block = worldIn.getBlockState(new BlockPos(hit.add(0, .5, 0))).getBlock();
 				boolean flag1 = block == Blocks.WATER;
 				SpeedboatEntity entityboat = new SpeedboatEntity(worldIn, hit.x, flag1 ? hit.y - 0.12D : hit.y, hit.z);
@@ -171,7 +170,7 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 						itemstack.shrink(1);
 					}
 					
-					//playerIn.addStat(net.minecraft.stats.Stats.CUSTOM.get(getRegistryName()));
+					// playerIn.addStat(net.minecraft.stats.Stats.CUSTOM.get(getRegistryName()));
 					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, itemstack);
 				}
 			}
@@ -202,12 +201,13 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 	}
 	
 	@Override
-	public void finishUpgradeRecalculation(ItemStack stack){}
+	public void finishUpgradeRecalculation(ItemStack stack){
+	}
 	
 	@Override
 	public Slot[] getWorkbenchSlots(Container container, ItemStack stack, Supplier<World> getWorld, Supplier<PlayerEntity> getPlayer){
-		IItemHandler inv=stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
-		if(inv!=null){
+		IItemHandler inv = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
+		if(inv != null){
 			return new Slot[]{
 					new IESlot.Upgrades(container, inv, 0, 78, 35 - 5, Upgrade_Type, stack, true, getWorld, getPlayer),
 					new IESlot.Upgrades(container, inv, 1, 98, 35 + 5, Upgrade_Type, stack, true, getWorld, getPlayer),
@@ -225,21 +225,21 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 		if(ItemNBTHelper.hasKey(stack, "tank")){
 			FluidStack fs = FluidStack.loadFluidStackFromNBT(ItemNBTHelper.getTagCompound(stack, "tank"));
 			if(fs != null){
-				tooltip.add(((IFormattableTextComponent)fs.getDisplayName()).appendString(": " + fs.getAmount() + "mB").mergeStyle(TextFormatting.GRAY));
+				tooltip.add(((IFormattableTextComponent) fs.getDisplayName()).appendString(": " + fs.getAmount() + "mB").mergeStyle(TextFormatting.GRAY));
 			}
 		}
 		
-		IItemHandler handler=stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElse(null);
-		if(handler!=null && handler instanceof IPItemStackHandler){
-			boolean first=true;
-			for(int i=0;i<handler.getSlots();i++){
-				ItemStack upgrade=handler.getStackInSlot(i);
-				if(upgrade!=null && upgrade!=ItemStack.EMPTY){
+		IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElse(null);
+		if(handler != null && handler instanceof IPItemStackHandler){
+			boolean first = true;
+			for(int i = 0;i < handler.getSlots();i++){
+				ItemStack upgrade = handler.getStackInSlot(i);
+				if(upgrade != null && upgrade != ItemStack.EMPTY){
 					if(first){
 						tooltip.add(new TranslationTextComponent("desc.immersivepetroleum.flavour.speedboat0").mergeStyle(TextFormatting.GRAY));
 					}
 					tooltip.add(new StringTextComponent("  ").append(upgrade.getDisplayName()).mergeStyle(TextFormatting.DARK_GRAY));
-					first=false;
+					first = false;
 				}
 			}
 		}

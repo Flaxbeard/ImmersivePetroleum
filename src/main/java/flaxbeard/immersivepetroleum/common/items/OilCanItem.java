@@ -46,16 +46,16 @@ public class OilCanItem extends IPItemBase{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		if(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY==null)
+		if(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY == null)
 			return;
 		
-		FluidUtil.getFluidContained(stack).ifPresent(fluid->{
-			if(fluid!=null && fluid.getAmount()>0){
+		FluidUtil.getFluidContained(stack).ifPresent(fluid -> {
+			if(fluid != null && fluid.getAmount() > 0){
 				FluidAttributes att = fluid.getFluid().getAttributes();
 				TextFormatting rarity = att.getRarity() == Rarity.COMMON ? TextFormatting.GRAY : att.getRarity().color;
 				
-				ITextComponent out=((IFormattableTextComponent)fluid.getDisplayName()).mergeStyle(rarity)
-					.append(new StringTextComponent(": " + fluid.getAmount() + "/8000mB").mergeStyle(TextFormatting.GRAY));
+				ITextComponent out = ((IFormattableTextComponent) fluid.getDisplayName()).mergeStyle(rarity)
+						.append(new StringTextComponent(": " + fluid.getAmount() + "/8000mB").mergeStyle(TextFormatting.GRAY));
 				tooltip.add(out);
 			}else{
 				tooltip.add(new StringTextComponent(I18n.format(Lib.DESC_FLAVOUR + "drill.empty")));

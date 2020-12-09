@@ -49,13 +49,15 @@ public class DistillationTowerScreen extends IEContainerScreen<DistillationTower
 					if(fs != null && fs.getFluid() != null){
 						int fluidHeight = (int) (47 * (fs.getAmount() / capacity));
 						yy -= fluidHeight;
-						if(my >= yy && my < yy + fluidHeight) ClientUtils.addFluidTooltip(fs, tooltip, (int) capacity);
+						if(my >= yy && my < yy + fluidHeight)
+							ClientUtils.addFluidTooltip(fs, tooltip, (int) capacity);
 					}
 				}
 			}
 		}
 		
-		if(mx > guiLeft + 157 && mx < guiLeft + 164 && my > guiTop + 21 && my < guiTop + 67) tooltip.add(new StringTextComponent(tile.getEnergyStored(null) + "/" + tile.getMaxEnergyStored(null) + " RF"));
+		if(mx > guiLeft + 157 && mx < guiLeft + 164 && my > guiTop + 21 && my < guiTop + 67)
+			tooltip.add(new StringTextComponent(tile.getEnergyStored(null) + "/" + tile.getMaxEnergyStored(null) + " RF"));
 		
 		if(!tooltip.isEmpty()){
 			GuiUtils.drawHoveringText(transform, tooltip, mx, my, width, height, -1, font);

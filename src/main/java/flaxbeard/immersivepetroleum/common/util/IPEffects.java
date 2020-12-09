@@ -17,7 +17,7 @@ public class IPEffects{
 	public static Effect ANTI_DISMOUNT_FIRE;
 	
 	public static void init(){
-		ANTI_DISMOUNT_FIRE=new AntiFireEffect();
+		ANTI_DISMOUNT_FIRE = new AntiFireEffect();
 	}
 	
 	private static class AntiFireEffect extends IPEffect{

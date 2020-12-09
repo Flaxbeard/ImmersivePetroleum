@@ -21,7 +21,7 @@ public class ShaderUtil{
 	}
 	
 	public static void alpha_static(float av, float ticks){
-		if(alpha==-1)
+		if(alpha == -1)
 			init();
 		
 		ARBShaderObjects.glUseProgramObjectARB(alpha);
@@ -99,7 +99,8 @@ public class ShaderUtil{
 	private static String readFileAsString(String filename) throws Exception{
 		InputStream in = ShaderUtil.class.getResourceAsStream(filename);
 		
-		if(in == null) return "";
+		if(in == null)
+			return "";
 		
 		try(BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"))){
 			return reader.lines().collect(Collectors.joining("\n"));

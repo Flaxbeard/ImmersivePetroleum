@@ -10,24 +10,24 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
-@EventBusSubscriber(modid=ImmersivePetroleum.MODID, bus=Bus.MOD)
+@EventBusSubscriber(modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
 public class IPDataGenerator{
-	public static final Logger log=LogManager.getLogger(ImmersivePetroleum.MODID+"/DataGenerator");
+	public static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/DataGenerator");
 	
 	@SubscribeEvent
 	public static void generate(GatherDataEvent event){
 		if(event.includeServer()){
-			DataGenerator generator=event.getGenerator();
+			DataGenerator generator = event.getGenerator();
 			
-			IPBlockTags blockTags=new IPBlockTags(generator);
+			IPBlockTags blockTags = new IPBlockTags(generator);
 			
 			generator.addProvider(new IPBlockTags(generator));
 			generator.addProvider(new IPItemTags(generator, blockTags));
 			generator.addProvider(new IPFluidTags(generator));
 			generator.addProvider(new IPRecipes(generator));
 			
-			IPLoadedModels loadedModels=new IPLoadedModels(generator, event.getExistingFileHelper());
-			IPBlockStates blockstates=new IPBlockStates(generator, event.getExistingFileHelper(), loadedModels);
+			IPLoadedModels loadedModels = new IPLoadedModels(generator, event.getExistingFileHelper());
+			IPBlockStates blockstates = new IPBlockStates(generator, event.getExistingFileHelper(), loadedModels);
 			
 			generator.addProvider(blockstates);
 			generator.addProvider(loadedModels);

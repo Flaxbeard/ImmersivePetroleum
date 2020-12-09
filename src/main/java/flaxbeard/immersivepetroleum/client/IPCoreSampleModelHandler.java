@@ -14,6 +14,6 @@ public class IPCoreSampleModelHandler{
 	public void onModelBakeEvent(ModelBakeEvent event){
 		
 		ModelResourceLocation mLoc = new ModelResourceLocation(StoneDecoration.coresample.getRegistryName(), "inventory");
-		//event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
+		// event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
 	}
 }

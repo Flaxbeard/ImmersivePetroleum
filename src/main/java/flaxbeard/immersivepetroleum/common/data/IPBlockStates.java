@@ -45,32 +45,32 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class IPBlockStates extends BlockStateProvider{
 	/** ResourceLocation("forge","obj") */
-	private static final ResourceLocation FORGE_LOADER=new ResourceLocation("forge","obj");
+	private static final ResourceLocation FORGE_LOADER = new ResourceLocation("forge", "obj");
 	
 	final IPLoadedModels loadedModels;
 	final ExistingFileHelper exFileHelper;
 	public IPBlockStates(DataGenerator gen, ExistingFileHelper exFileHelper, IPLoadedModels loadedModels){
 		super(gen, ImmersivePetroleum.MODID, exFileHelper);
-		this.loadedModels=loadedModels;
-		this.exFileHelper=exFileHelper;
+		this.loadedModels = loadedModels;
+		this.exFileHelper = exFileHelper;
 	}
 	
 	@Override
 	protected void registerStatesAndModels(){
 		// Dummy Oil Ore
-		ModelFile dummyOilOreModel=cubeAll(IPContent.Blocks.dummyOilOre);
+		ModelFile dummyOilOreModel = cubeAll(IPContent.Blocks.dummyOilOre);
 		getVariantBuilder(IPContent.Blocks.dummyOilOre).partialState()
 			.setModels(new ConfiguredModel(dummyOilOreModel));
 		itemModelWithParent(IPContent.Blocks.dummyOilOre, dummyOilOreModel);
 		
 		// Dummy Pipe
-		ModelFile dummyPipeModel=new ExistingModelFile(modLoc("block/dummy_pipe"), this.exFileHelper);
+		ModelFile dummyPipeModel = new ExistingModelFile(modLoc("block/dummy_pipe"), this.exFileHelper);
 		getVariantBuilder(IPContent.Blocks.dummyPipe).partialState()
 			.setModels(new ConfiguredModel(dummyPipeModel));
 		itemModelWithParent(IPContent.Blocks.dummyPipe, dummyPipeModel);
 		
 		// Dummy Conveyor
-		ModelFile dummyConveyorModel=new ExistingModelFile(modLoc("block/dummy_conveyor"), this.exFileHelper);
+		ModelFile dummyConveyorModel = new ExistingModelFile(modLoc("block/dummy_conveyor"), this.exFileHelper);
 		getVariantBuilder(IPContent.Blocks.dummyConveyor).partialState()
 			.setModels(new ConfiguredModel(dummyConveyorModel));
 		getItemBuilder(IPContent.Blocks.dummyConveyor)
@@ -90,8 +90,8 @@ public class IPBlockStates extends BlockStateProvider{
 		
 		// Fluids
 		for(IPFluid f:IPFluid.FLUIDS){
-			ResourceLocation still=f.getAttributes().getStillTexture();
-			ModelFile model = this.loadedModels.getBuilder("block/fluid/"+f.getRegistryName().getPath()).texture("particle", still);
+			ResourceLocation still = f.getAttributes().getStillTexture();
+			ModelFile model = this.loadedModels.getBuilder("block/fluid/" + f.getRegistryName().getPath()).texture("particle", still);
 			
 			getVariantBuilder(f.block).partialState().setModels(new ConfiguredModel(model));
 		}
@@ -100,23 +100,23 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	private void distillationtower(){
-		ResourceLocation idleTexture=modLoc("multiblock/distillation_tower");
-		ResourceLocation modelNormal=modLoc("models/multiblock/obj/distillationtower.obj");
-		ResourceLocation modelMirrored=modLoc("models/multiblock/obj/distillationtower_mirrored.obj");
+		ResourceLocation idleTexture = modLoc("multiblock/distillation_tower");
+		ResourceLocation modelNormal = modLoc("models/multiblock/obj/distillationtower.obj");
+		ResourceLocation modelMirrored = modLoc("models/multiblock/obj/distillationtower_mirrored.obj");
 		
-		LoadedModelBuilder normal=multiblockModel(IPContent.Multiblock.distillationtower, modelNormal, idleTexture, "_idle", DistillationTowerMultiblock.INSTANCE, false);
-		LoadedModelBuilder mirrored=multiblockModel(IPContent.Multiblock.distillationtower, modelMirrored, idleTexture, "_mirrored_idle", DistillationTowerMultiblock.INSTANCE, true);
+		LoadedModelBuilder normal = multiblockModel(IPContent.Multiblock.distillationtower, modelNormal, idleTexture, "_idle", DistillationTowerMultiblock.INSTANCE, false);
+		LoadedModelBuilder mirrored = multiblockModel(IPContent.Multiblock.distillationtower, modelMirrored, idleTexture, "_mirrored_idle", DistillationTowerMultiblock.INSTANCE, true);
 		
 		createMultiblock(IPContent.Multiblock.distillationtower, normal, mirrored, idleTexture);
 	}
 	
 	private void pumpjack(){
-		ResourceLocation texture=modLoc("multiblock/pumpjack_base");
-		ResourceLocation modelNormal=modLoc("models/multiblock/obj/pumpjack.obj");
-		ResourceLocation modelMirrored=modLoc("models/multiblock/obj/pumpjack_mirrored.obj");
+		ResourceLocation texture = modLoc("multiblock/pumpjack_base");
+		ResourceLocation modelNormal = modLoc("models/multiblock/obj/pumpjack.obj");
+		ResourceLocation modelMirrored = modLoc("models/multiblock/obj/pumpjack_mirrored.obj");
 		
-		LoadedModelBuilder normal=multiblockModel(IPContent.Multiblock.pumpjack, modelNormal, texture, "", PumpjackMultiblock.INSTANCE, false);
-		LoadedModelBuilder mirrored=multiblockModel(IPContent.Multiblock.pumpjack, modelMirrored, texture, "_mirrored", PumpjackMultiblock.INSTANCE, true);
+		LoadedModelBuilder normal = multiblockModel(IPContent.Multiblock.pumpjack, modelNormal, texture, "", PumpjackMultiblock.INSTANCE, false);
+		LoadedModelBuilder mirrored = multiblockModel(IPContent.Multiblock.pumpjack, modelMirrored, texture, "_mirrored", PumpjackMultiblock.INSTANCE, true);
 		
 		createMultiblock(IPContent.Multiblock.pumpjack, normal, mirrored, texture);
 	}
@@ -129,12 +129,12 @@ public class IPBlockStates extends BlockStateProvider{
 		}
 		final Vector3i offset = mb.getMasterFromOriginOffset();
 		@SuppressWarnings("deprecation")
-		Stream<Vector3i> partsStream=mb.getStructure(null).stream()
+		Stream<Vector3i> partsStream = mb.getStructure(null).stream()
 				.filter(info -> !info.state.isAir())
 				.map(info -> info.pos)
 				.map(transform)
 				.map(p -> p.subtract(offset));
-		LoadedModelBuilder out=this.loadedModels.withExistingParent(getMultiblockPath(block)+add, mcLoc("block"))
+		LoadedModelBuilder out = this.loadedModels.withExistingParent(getMultiblockPath(block) + add, mcLoc("block"))
 				.texture("texture", texture)
 				.texture("particle", texture)
 				.additional("flip-v", true)
@@ -143,7 +143,7 @@ public class IPBlockStates extends BlockStateProvider{
 				.additional(SplitModelLoader.BASE_LOADER, FORGE_LOADER)
 				.additional(SplitModelLoader.DYNAMIC, false)
 				.loader(SplitModelLoader.LOCATION);
-		JsonArray partsJson=partsStream.collect(POSITIONS_TO_JSON);
+		JsonArray partsJson = partsStream.collect(POSITIONS_TO_JSON);
 		out.additional(SplitModelLoader.PARTS, partsJson);
 		return out;
 	}
@@ -166,13 +166,11 @@ public class IPBlockStates extends BlockStateProvider{
 	);
 	
 	private void autolubricator(){
-		ResourceLocation texture=modLoc("models/lubricator");
+		ResourceLocation texture = modLoc("models/lubricator");
 		
-		LoadedModelBuilder lube_empty=this.loadedModels.withExistingParent("lube_empty", new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty"))
-				.texture("particle", texture);
+		LoadedModelBuilder lube_empty = this.loadedModels.withExistingParent("lube_empty", new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty")).texture("particle", texture);
 		
-		LoadedModelBuilder lubeModel=this.loadedModels.withExistingParent(getPath(IPContent.Blocks.auto_lubricator),
-				mcLoc("block"))
+		LoadedModelBuilder lubeModel = this.loadedModels.withExistingParent(getPath(IPContent.Blocks.auto_lubricator), mcLoc("block"))
 				.loader(FORGE_LOADER)
 				.additional("model", modLoc("models/block/obj/autolubricator.obj"))
 				.additional("flip-v", true)
@@ -221,7 +219,7 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	private void gasGenerator(){
-		JsonObject basemodel=new JsonObject();
+		JsonObject basemodel = new JsonObject();
 		basemodel.addProperty("loader", "forge:obj");
 		basemodel.addProperty("model", modLoc("models/block/obj/generator.obj").toString());
 		basemodel.addProperty("flip-v", true);
@@ -232,25 +230,22 @@ public class IPBlockStates extends BlockStateProvider{
 			.texture("particle", texture)
 			.loader(ConnectionLoader.LOADER_NAME)
 			.additional("base_model", basemodel)
-				.additional("layers", Arrays.asList("solid", "cutout"))
-			;
+			.additional("layers", Arrays.asList("solid", "cutout"));
 		
 		
-		VariantBlockStateBuilder builder=getVariantBuilder(IPContent.Blocks.gas_generator);
-		Direction.Plane.HORIZONTAL.forEach(dir->{
+		VariantBlockStateBuilder builder = getVariantBuilder(IPContent.Blocks.gas_generator);
+		Direction.Plane.HORIZONTAL.forEach(dir -> {
 			int rotation = (90 * dir.getHorizontalIndex() + 90) % 360;
 			
-			builder.partialState()
-				.with(GasGeneratorBlock.FACING, dir)
-				.addModels(new ConfiguredModel(model, 0, rotation, false));
+			builder.partialState().with(GasGeneratorBlock.FACING, dir).addModels(new ConfiguredModel(model, 0, rotation, false));
 		});
 	}
 	
-//	/** Used basicly for every multiblock-block */
-//	private ConfiguredModel EMPTY_MODEL = null;
-	
-	/** From {@link blusunrize.immersiveengineering.common.data.BlockStates} 
-	 * @param idleTexture */
+	/**
+	 * From {@link blusunrize.immersiveengineering.common.data.BlockStates}
+	 * 
+	 * @param idleTexture
+	 */
 	private void createMultiblock(Block b, ModelFile masterModel, ModelFile mirroredModel, ResourceLocation particleTexture){
 		createMultiblock(b, masterModel, mirroredModel, IEProperties.MULTIBLOCKSLAVE, IEProperties.FACING_HORIZONTAL, IEProperties.MIRRORED, 180, particleTexture);
 	}
@@ -259,18 +254,6 @@ public class IPBlockStates extends BlockStateProvider{
 	private void createMultiblock(Block b, ModelFile masterModel, @Nullable ModelFile mirroredModel, Property<Boolean> isSlave, EnumProperty<Direction> facing, @Nullable Property<Boolean> mirroredState, int rotationOffset, ResourceLocation particleTex){
 		Preconditions.checkArgument((mirroredModel == null) == (mirroredState == null));
 		VariantBlockStateBuilder builder = getVariantBuilder(b);
-		
-//		if(EMPTY_MODEL==null){
-//			EMPTY_MODEL = new ConfiguredModel(
-//					new ExistingModelFile(new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty"), this.exFileHelper)
-//			);
-//		}
-//		
-//		builder.partialState()
-//			.with(isSlave, true)
-//			.setModels(new ConfiguredModel(
-//					this.loadedModels.withExistingParent(getMultiblockPath(b)+"_empty", EMPTY_MODEL.model.getLocation())
-//					.texture("particle", particleTex)));
 		
 		boolean[] possibleMirrorStates;
 		if(mirroredState != null)
@@ -310,7 +293,7 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	private String getMultiblockPath(Block b){
-		return "multiblock/"+getPath(b);
+		return "multiblock/" + getPath(b);
 	}
 	
 	private String getPath(Block b){
@@ -319,11 +302,11 @@ public class IPBlockStates extends BlockStateProvider{
 	
 	private void itemModelWithParent(Block block, ModelFile parent){
 		getItemBuilder(block).parent(parent)
-			.texture("particle", modLoc("block/"+getPath(block)));
+			.texture("particle", modLoc("block/" + getPath(block)));
 	}
 	
 	private void simpleBlockWithItem(Block block){
-		ModelFile file=cubeAll(block);
+		ModelFile file = cubeAll(block);
 		
 		getVariantBuilder(block).partialState()
 			.setModels(new ConfiguredModel(file));
@@ -331,6 +314,6 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	private ItemModelBuilder getItemBuilder(Block block){
-		return itemModels().getBuilder(modLoc("item/"+getPath(block)).toString());
+		return itemModels().getBuilder(modLoc("item/" + getPath(block)).toString());
 	}
 }

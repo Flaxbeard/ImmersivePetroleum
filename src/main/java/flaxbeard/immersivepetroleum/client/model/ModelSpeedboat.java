@@ -69,7 +69,7 @@ public class ModelSpeedboat extends SegmentedModel<SpeedboatEntity>{
 		this.paddles[0].rotateAngleZ = 0.19634955F;
 		this.paddles[1].rotateAngleZ = 0.19634955F;
 		
-		ImmutableList.Builder<ModelRenderer> builder=ImmutableList.builder();
+		ImmutableList.Builder<ModelRenderer> builder = ImmutableList.builder();
 		
 		builder.addAll(Arrays.asList(this.boatSides));
 		builder.addAll(Arrays.asList(this.paddles));
@@ -83,7 +83,7 @@ public class ModelSpeedboat extends SegmentedModel<SpeedboatEntity>{
 				this.rudder1,
 				this.ruddersBase));
 		
-		this.list=builder.build();
+		this.list = builder.build();
 	}
 	
 	// TODO Not sure if this is still a good idea now

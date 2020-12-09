@@ -18,7 +18,9 @@ import net.minecraft.util.ResourceLocation;
 public class IPRenderTypes{
 	static final ResourceLocation activeTexture = new ResourceLocation(ImmersivePetroleum.MODID, "textures/multiblock/distillation_tower_active.png");
 	
-	/** Intended to only be used by {@link MultiblockDistillationTowerRenderer} */
+	/**
+	 * Intended to only be used by {@link MultiblockDistillationTowerRenderer}
+	 */
 	public static final RenderType DISTILLATION_TOWER_ACTIVE;
 	public static final RenderType TRANSLUCENT_LINES;
 	

@@ -64,9 +64,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, bus=Bus.MOD)
+@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
 public class IPContent{
-	public static final Logger log=LogManager.getLogger(ImmersivePetroleum.MODID+"/Content");
+	public static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/Content");
 	
 	public static final List<Block> registeredIPBlocks = new ArrayList<>();
 	public static final List<Item> registeredIPItems = new ArrayList<>();
@@ -111,12 +111,12 @@ public class IPContent{
 		public static IPUpgradeItem rudders;
 		public static IPUpgradeItem paddles;
 	}
-
+	
 	public static DebugItem debugItem;
 	
 	/** block/item/fluid population */
 	public static void populate(){
-		IPContent.debugItem=new DebugItem();
+		IPContent.debugItem = new DebugItem();
 		
 		Fluids.crudeOil = new IPFluid("oil", 1000, 2250);
 		Fluids.diesel = new IPFluid("diesel", 789, 1750);
@@ -124,17 +124,17 @@ public class IPContent{
 		Fluids.gasoline = new IPFluid("gasoline", 789, 1200);
 		Fluids.napalm = new NapalmFluid();
 		
-		Blocks.dummyOilOre=new BlockDummy("dummy_oil_ore");
-		Blocks.dummyPipe=new BlockDummy("dummy_pipe");
-		Blocks.dummyConveyor=new BlockDummy("dummy_conveyor");
+		Blocks.dummyOilOre = new BlockDummy("dummy_oil_ore");
+		Blocks.dummyPipe = new BlockDummy("dummy_pipe");
+		Blocks.dummyConveyor = new BlockDummy("dummy_conveyor");
 		
-		Multiblock.distillationtower=new DistillationTowerBlock();
-		Multiblock.pumpjack=new PumpjackBlock();
+		Multiblock.distillationtower = new DistillationTowerBlock();
+		Multiblock.pumpjack = new PumpjackBlock();
 		
-		Blocks.asphalt=new AsphaltBlock();
-		Blocks.gas_generator=new GasGeneratorBlock();
+		Blocks.asphalt = new AsphaltBlock();
+		Blocks.gas_generator = new GasGeneratorBlock();
 		
-		Blocks.auto_lubricator=new AutoLubricatorBlock("auto_lubricator");
+		Blocks.auto_lubricator = new AutoLubricatorBlock("auto_lubricator");
 		Blocks.flarestack = new FlarestackBlock();
 		
 		Items.bitumen = new IPItemBase("bitumen");
@@ -182,7 +182,7 @@ public class IPContent{
 		LubricatedHandler.registerLubricatedTile(ExcavatorTileEntity.class, ExcavatorLubricationHandler::new);
 		LubricatedHandler.registerLubricatedTile(CrusherTileEntity.class, CrusherLubricationHandler::new);
 	}
-
+	
 	@SubscribeEvent
 	public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event){
 		registerTile(event, DistillationTowerTileEntity.class, Multiblock.distillationtower);
@@ -194,9 +194,13 @@ public class IPContent{
 	}
 	
 	/**
-	 * 
 	 * @param event
-	 * @param tile the TileEntity class to register.<pre>Requires <code>public static TileEntityType TYPE;</code> field in the class.</pre>
+	 * @param tile the TileEntity class to register.
+	 * 
+	 *        <pre>
+	 * Requires <code>public static TileEntityType TYPE;</code> field in the class.
+	 *        </pre>
+	 * 
 	 * @param valid
 	 */
 	public static <T extends TileEntity> void registerTile(RegistryEvent.Register<TileEntityType<?>> event, Class<T> tile, Block... valid){
@@ -217,7 +221,7 @@ public class IPContent{
 		log.debug("Registered TileEntity: {} as {}", tile, type.getRegistryName());
 	}
 	
-	private static  <T extends TileEntity> TileEntityType<T> createType(Class<T> typeClass, Block... valid){
+	private static <T extends TileEntity> TileEntityType<T> createType(Class<T> typeClass, Block... valid){
 		Set<Block> validSet = new HashSet<>(Arrays.asList(valid));
 		TileEntityType<T> type = new TileEntityType<>(() -> {
 			try{
@@ -236,7 +240,7 @@ public class IPContent{
 		for(Block block:registeredIPBlocks){
 			try{
 				event.getRegistry().register(block);
-			}catch(Throwable e) {
+			}catch(Throwable e){
 				log.error("Failed to register a block. ({})", block);
 				throw e;
 			}
@@ -248,7 +252,7 @@ public class IPContent{
 		for(Item item:registeredIPItems){
 			try{
 				event.getRegistry().register(item);
-			}catch(Throwable e) {
+			}catch(Throwable e){
 				log.error("Failed to register an item. ({}, {})", item, item.getRegistryName());
 				throw e;
 			}
@@ -260,7 +264,7 @@ public class IPContent{
 		for(Fluid fluid:registeredIPFluids){
 			try{
 				event.getRegistry().register(fluid);
-			}catch(Throwable e) {
+			}catch(Throwable e){
 				log.error("Failed to register a fluid. ({}, {})", fluid, fluid.getRegistryName());
 				throw e;
 			}

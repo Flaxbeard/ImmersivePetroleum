@@ -30,7 +30,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackTileEntity>{
-	private static Vector3i size=new Vector3i(4, 6, 3);
+	private static Vector3i size = new Vector3i(4, 6, 3);
 	
 	@Override
 	public Vector3i getStructureDimensions(){
@@ -49,7 +49,7 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 		
 		if(te instanceof PumpjackTileEntity){
 			PumpjackTileEntity master = ((PumpjackTileEntity) te).master();
-			if(master!=null){
+			if(master != null){
 				Direction f = master.getIsMirrored() ? facing : facing.getOpposite();
 				if(master.getFacing().rotateY() == f){
 					return master;
@@ -88,8 +88,10 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 			
 		}
 		
-		if(facing.getAxisDirection() == AxisDirection.NEGATIVE) xO = -xO + 1;
-		if(!flip) zO = -zO + 1;
+		if(facing.getAxisDirection() == AxisDirection.NEGATIVE)
+			xO = -xO + 1;
+		if(!flip)
+			zO = -zO + 1;
 		
 		float x = lubricator.getPos().getX() + (f.getAxis() == Axis.X ? xO : zO);
 		float y = lubricator.getPos().getY() + yO;
@@ -107,7 +109,7 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 	@Override
 	public Tuple<BlockPos, Direction> getGhostBlockPosition(World world, PumpjackTileEntity mbte){
 		if(!mbte.isDummy()){
-			Direction mbFacing=mbte.getFacing().getOpposite();
+			Direction mbFacing = mbte.getFacing().getOpposite();
 			BlockPos pos = mbte.getPos()
 					.offset(Direction.UP)
 					.offset(mbFacing, 4)
@@ -118,7 +120,6 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 		}
 		return null;
 	}
-	
 	
 	private static final ResourceLocation TEXTURE = new ResourceLocation(ImmersivePetroleum.MODID, "textures/models/lube_pipe.png");
 	
@@ -156,21 +157,24 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 				matrix.translate(-6, 1, -2);
 				break;
 			}
-			default: break;
+			default:
+				break;
 		}
 		
 		IPModel model;
 		if(mbte.getIsMirrored()){
-			if(pipes_mirrored==null) pipes_mirrored = IPModels.getSupplier(ModelLubricantPipes.Pumpjack.ID_MIRRORED);
+			if(pipes_mirrored == null)
+				pipes_mirrored = IPModels.getSupplier(ModelLubricantPipes.Pumpjack.ID_MIRRORED);
 			
-			model=pipes_mirrored.get();
+			model = pipes_mirrored.get();
 		}else{
-			if(pipes_normal==null) pipes_normal = IPModels.getSupplier(ModelLubricantPipes.Pumpjack.ID_NORMAL);
+			if(pipes_normal == null)
+				pipes_normal = IPModels.getSupplier(ModelLubricantPipes.Pumpjack.ID_NORMAL);
 			
-			model=pipes_normal.get();
+			model = pipes_normal.get();
 		}
 		
-		if(model!=null){
+		if(model != null){
 			model.render(matrix, buffer.getBuffer(model.getRenderType(TEXTURE)), combinedLight, combinedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
 		}
 	}

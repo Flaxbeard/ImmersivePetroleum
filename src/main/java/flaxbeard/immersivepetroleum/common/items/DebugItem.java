@@ -11,9 +11,9 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
@@ -132,7 +132,7 @@ public class DebugItem extends IPItemBase{
 					int contentSize = PumpjackHandler.reservoirsCache.size();
 					
 					PumpjackHandler.reservoirsCache.clear();
-					PumpjackHandler.recalculateChances(true);
+					PumpjackHandler.recalculateChances();
 					
 					IPSaveData.setDirty();
 					

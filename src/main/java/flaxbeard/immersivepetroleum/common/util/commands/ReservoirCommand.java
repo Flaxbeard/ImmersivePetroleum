@@ -7,9 +7,9 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.command.CommandSource;

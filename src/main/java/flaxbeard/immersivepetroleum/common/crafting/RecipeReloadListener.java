@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.common.crafting;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -25,12 +24,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class RecipeReloadListener implements IResourceManagerReloadListener{
 	private final DataPackRegistries dataPackRegistries;
 	public RecipeReloadListener(DataPackRegistries dataPackRegistries){
-		this.dataPackRegistries=dataPackRegistries;
+		this.dataPackRegistries = dataPackRegistries;
 	}
-
+	
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager){
-		if(dataPackRegistries!=null){
+		if(dataPackRegistries != null){
+			ImmersivePetroleum.log.info("onResourceManagerReload");
 			lists(dataPackRegistries.getRecipeManager());
 		}
 	}
@@ -38,23 +38,27 @@ public class RecipeReloadListener implements IResourceManagerReloadListener{
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void recipesUpdated(RecipesUpdatedEvent event){
 		if(!Minecraft.getInstance().isSingleplayer()){
+			ImmersivePetroleum.log.info("recipesUpdated");
 			lists(event.getRecipeManager());
 		}
 	}
 	
 	static void lists(RecipeManager recipeManager){
-		Collection<IRecipe<?>> recipes=recipeManager.getRecipes();
+		Collection<IRecipe<?>> recipes = recipeManager.getRecipes();
+		if(recipes.size() == 0){
+			return;
+		}
 		
 		ImmersivePetroleum.log.info("Loading Distillation Recipes.");
-		DistillationRecipe.recipes=filterRecipes(recipes, DistillationRecipe.class, DistillationRecipe.TYPE);
+		DistillationRecipe.recipes = filterRecipes(recipes, DistillationRecipe.class, DistillationRecipe.TYPE);
 		
 		ImmersivePetroleum.log.info("Loading Reservoirs.");
-		PumpjackHandler.reservoirs=new LinkedHashMap<>(filterRecipes(recipes, ReservoirType.class, ReservoirType.TYPE));
+		PumpjackHandler.reservoirs = filterRecipes(recipes, ReservoirType.class, ReservoirType.TYPE);
 	}
 	
 	static <R extends IRecipe<?>> Map<ResourceLocation, R> filterRecipes(Collection<IRecipe<?>> recipes, Class<R> recipeClass, IRecipeType<R> recipeType){
 		return recipes.stream()
-				.filter(iRecipe -> iRecipe.getType()==recipeType)
+				.filter(iRecipe -> iRecipe.getType() == recipeType)
 				.map(recipeClass::cast)
 				.collect(Collectors.toMap(recipe -> recipe.getId(), recipe -> recipe));
 	}

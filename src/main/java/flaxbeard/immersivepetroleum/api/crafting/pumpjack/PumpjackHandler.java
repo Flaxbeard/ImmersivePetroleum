@@ -3,7 +3,6 @@ package flaxbeard.immersivepetroleum.api.crafting.pumpjack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -17,8 +16,6 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
-import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
-import flaxbeard.immersivepetroleum.common.network.MessageSyncReservoirs;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeType;
@@ -36,7 +33,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class PumpjackHandler{
-	public static LinkedHashMap<ResourceLocation, ReservoirType> reservoirs=new LinkedHashMap<>();
+	public static Map<ResourceLocation, ReservoirType> reservoirs = new HashMap<>();
 	
 	private static Map<ResourceLocation, Map<ResourceLocation, Integer>> totalWeightMap = new HashMap<>();
 	
@@ -250,12 +247,8 @@ public class PumpjackHandler{
 		return reservoir;
 	}
 	
-	public static void recalculateChances(boolean mutePackets){
+	public static void recalculateChances(){
 		totalWeightMap.clear();
-		
-		if(!mutePackets){
-			IPPacketHandler.sendAll(new MessageSyncReservoirs(reservoirs));
-		}
 	}
 	
 	public static class ReservoirType extends IESerializableRecipe{
@@ -310,7 +303,7 @@ public class PumpjackHandler{
 			super(ItemStack.EMPTY, TYPE, id);
 			this.name = name;
 			this.fluidLocation = fluid.getRegistryName();
-			this.fluid=fluid;
+			this.fluid = fluid;
 			this.replenishRate = traceAmount;
 			this.minSize = minSize;
 			this.maxSize = maxSize;
@@ -322,8 +315,8 @@ public class PumpjackHandler{
 			
 			this.name = nbt.getString("name");
 			
-			this.fluidLocation = new ResourceLocation(nbt.getString("fluidname"));
-			this.fluid=ForgeRegistries.FLUIDS.getValue(this.fluidLocation);
+			this.fluidLocation = new ResourceLocation(nbt.getString("fluid"));
+			this.fluid = ForgeRegistries.FLUIDS.getValue(this.fluidLocation);
 			
 			this.minSize = nbt.getInt("minSize");
 			this.maxSize = nbt.getInt("maxSize");
@@ -334,6 +327,28 @@ public class PumpjackHandler{
 			
 			this.bioWhitelist = toList(nbt.getList("biomeWhitelist", NBT.TAG_STRING));
 			this.bioBlacklist = toList(nbt.getList("biomeBlacklist", NBT.TAG_STRING));
+		}
+		
+		public CompoundNBT writeToNBT(){
+			return writeToNBT(new CompoundNBT());
+		}
+		
+		public CompoundNBT writeToNBT(CompoundNBT nbt){
+			nbt.putString("name", this.name);
+			nbt.putString("id", this.id.toString());
+			nbt.putString("fluid", this.fluidLocation.toString());
+			
+			nbt.putInt("minSize", this.minSize);
+			nbt.putInt("maxSize", this.maxSize);
+			nbt.putInt("replenishRate", this.replenishRate);
+			
+			nbt.put("dimensionWhitelist", toNbt(this.dimWhitelist));
+			nbt.put("dimensionBlacklist", toNbt(this.dimBlacklist));
+			
+			nbt.put("biomeWhitelist", toNbt(this.bioWhitelist));
+			nbt.put("biomeBlacklist", toNbt(this.bioBlacklist));
+			
+			return nbt;
 		}
 		
 		public boolean addDimension(boolean blacklist, ResourceLocation...names){
@@ -404,28 +419,6 @@ public class PumpjackHandler{
 		
 		public Fluid getFluid(){
 			return this.fluid;
-		}
-		
-		public CompoundNBT writeToNBT(){
-			return writeToNBT(new CompoundNBT());
-		}
-		
-		public CompoundNBT writeToNBT(CompoundNBT nbt){
-			nbt.putString("name", this.name);
-			nbt.putString("id", this.id.toString());
-			nbt.putString("fluid", this.fluidLocation.toString());
-			
-			nbt.putInt("minSize", this.minSize);
-			nbt.putInt("maxSize", this.maxSize);
-			nbt.putInt("replenishRate", this.replenishRate);
-			
-			nbt.put("dimensionWhitelist", toNbt(this.dimWhitelist));
-			nbt.put("dimensionBlacklist", toNbt(this.dimBlacklist));
-			
-			nbt.put("biomeWhitelist", toNbt(this.bioWhitelist));
-			nbt.put("biomeBlacklist", toNbt(this.bioBlacklist));
-			
-			return nbt;
 		}
 		
 		@Override

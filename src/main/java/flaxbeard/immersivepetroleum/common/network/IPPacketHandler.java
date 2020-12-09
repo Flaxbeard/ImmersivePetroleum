@@ -25,7 +25,6 @@ public class IPPacketHandler
 	
 	public static void preInit(){
 		registerMessage(MessageDebugSync.class, MessageDebugSync::new);
-		registerMessage(MessageSyncReservoirs.class, MessageSyncReservoirs::new);
 		registerMessage(MessageConsumeBoatFuel.class, MessageConsumeBoatFuel::new);
 		registerMessage(MessageProjectorSync.class, MessageProjectorSync::new);
 	}

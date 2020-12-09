@@ -95,7 +95,7 @@ public class ImmersivePetroleum{
 		
 		proxy.postInit();
 		
-		PumpjackHandler.recalculateChances(true);
+		PumpjackHandler.recalculateChances();
 	}
 	
 	public void loadComplete(FMLLoadCompleteEvent event){
@@ -127,6 +127,6 @@ public class ImmersivePetroleum{
 			IPSaveData.setInstance(worldData);
 		}
 		
-		PumpjackHandler.recalculateChances(true);
+		PumpjackHandler.recalculateChances();
 	}
 }

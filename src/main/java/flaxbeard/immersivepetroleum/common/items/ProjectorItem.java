@@ -702,7 +702,7 @@ public class ProjectorItem extends IPItemBase{
 		public static void onPlayerTick(TickEvent.PlayerTickEvent event){
 			if(event.side == LogicalSide.CLIENT && event.player != null && event.player == ClientUtils.mc().getRenderViewEntity()){
 				if(event.phase == Phase.END){
-					if(!ClientProxy.keybind_preview_flip.isInvalid() && ClientProxy.keybind_preview_flip.isPressed() && shiftHeld){
+					if(!ClientProxy.keybind_preview_flip.isInvalid() && ClientProxy.keybind_preview_flip.isPressed()){
 						doAFlip();
 					}
 				}

@@ -51,8 +51,6 @@ public class PumpjackHandler{
 	 * @return mB of fluid in the given reservoir
 	 */
 	public static int getFluidAmount(World world, int chunkX, int chunkZ){
-		assert !world.isRemote;
-		
 		if(world.isRemote)
 			return 0;
 		
@@ -72,8 +70,6 @@ public class PumpjackHandler{
 	 * @return Fluid in given reservoir (or null if none)
 	 */
 	public static Fluid getFluid(World world, int chunkX, int chunkZ){
-		assert !world.isRemote;
-		
 		if(world.isRemote)
 			return null;
 		
@@ -96,8 +92,6 @@ public class PumpjackHandler{
 	 * @return mB of fluid that can be extracted "residually"
 	 */
 	public static int getResidualFluid(World world, int chunkX, int chunkZ){
-		assert !world.isRemote;
-		
 		ReservoirWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
 		
 		if(info == null || info.getType() == null || info.getType().fluidLocation == null || (info.capacity == 0) || (info.current == 0 && info.getType().replenishRate == 0))
@@ -137,8 +131,6 @@ public class PumpjackHandler{
 	 * @return The OilWorldInfo corresponding w/ given chunk
 	 */
 	public static ReservoirWorldInfo getOrCreateOilWorldInfo(World world, DimensionChunkCoords coords, boolean force){
-		assert !world.isRemote;
-		
 		if(world.isRemote)
 			return null;
 		
@@ -204,8 +196,6 @@ public class PumpjackHandler{
 	 * @param amount Amount of fluid in mB to drain
 	 */
 	public static void depleteFluid(World world, int chunkX, int chunkZ, int amount){
-		assert !world.isRemote;
-		
 		ReservoirWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
 		info.current = Math.max(info.current - amount, 0);
 		IPSaveData.setDirty();

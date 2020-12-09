@@ -71,7 +71,7 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 					if(te.getIsMirrored()){
 						transform.push();
 						{
-							transform.translate(-6.0, 0.0, -2.0);
+							transform.translate(-4.0, 0.0, -4.0);
 							Matrix4f mat = transform.getLast().getMatrix();
 							
 							// Active Boiler Front
@@ -109,7 +109,7 @@ public class MultiblockDistillationTowerRenderer extends TileEntityRenderer<Dist
 					}else{
 						transform.push();
 						{
-							transform.translate(0.0, 0.0, -2.0);
+							transform.translate(-2.0, 0.0, -4.0);
 							Matrix4f mat = transform.getLast().getMatrix();
 							
 							// Active Boiler Back

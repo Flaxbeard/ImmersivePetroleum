@@ -24,6 +24,5 @@
     "tag": "forge:crude_oil",
     "amount": 75
   },
-  "energy": 2048,
-  "time": 1
+  "energy": 2048
 }

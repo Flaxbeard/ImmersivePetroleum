@@ -79,7 +79,6 @@ public class IPRecipes extends RecipeProvider{
 			.addByproduct(new ItemStack(IPContent.Items.bitumen), 0.07)
 			.addInput(IPTags.Fluids.crudeOil, 75)
 			.setEnergy(2048)
-			.setTime(1)
 			.build(this.out, rl("distillationtower/oilcracking"));
 	}
 	

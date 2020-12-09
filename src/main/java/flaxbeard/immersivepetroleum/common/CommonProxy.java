@@ -15,6 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
@@ -75,6 +76,9 @@ public class CommonProxy{
 	
 	public PlayerEntity getClientPlayer(){
 		return null;
+	}
+	
+	public void openProjectorGui(Hand hand, ItemStack held){
 	}
 	
 	protected static ResourceLocation modLoc(String str){

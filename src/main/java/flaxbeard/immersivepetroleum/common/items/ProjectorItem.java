@@ -23,7 +23,6 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.event.ProjectorEvent;
 import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.client.ShaderUtil;
-import flaxbeard.immersivepetroleum.client.gui.ProjectorScreen;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
@@ -232,7 +231,7 @@ public class ProjectorItem extends IPItemBase{
 			case MULTIBLOCK_SELECTION:{
 				if(worldIn.isRemote){
 					if(!playerIn.isSneaking()){
-						Minecraft.getInstance().displayGuiScreen(new ProjectorScreen(handIn, held));
+						ImmersivePetroleum.proxy.openProjectorGui(handIn, held);
 					}else{
 						changeMode = true;
 					}

@@ -76,6 +76,9 @@ public class Config
 			public static String[] towerByproduct = new String[]{
 					"immersivepetroleum:material, 1, 0, 7"
 			};
+			@Comment({"Output rate of the Distillation tower in mB/tick, default=80"})
+			public static int distillationTower_outputRate = 80
+			};
 		}
 
 		public static Generation generation;

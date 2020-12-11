@@ -10,6 +10,7 @@ import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import com.google.common.collect.Lists;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
+import flaxbeard.immersivepetroleum.common.Config;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -81,6 +82,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 
 	private int cooldownTicks = 0;
 	private boolean operated = false;
+	private int outputRate = flaxbeard.immersivepetroleum.common.Config.distillationTower_outputRate;
 
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket)
@@ -212,7 +214,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 				lastFluidOut = null;
 				if (targetFluidStack != null)
 				{
-					FluidStack out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.amount, 80), false);
+					FluidStack out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.amount, outputRate), false);
 					int accepted = output.fill(out, false);
 					if (accepted > 0)
 					{
@@ -227,7 +229,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 						while (iterator.hasNext())
 						{
 							targetFluidStack = iterator.next();
-							out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.amount, 80), false);
+							out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.amount, outputRate), false);
 							accepted = output.fill(out, false);
 							if (accepted > 0)
 							{

@@ -284,6 +284,8 @@ public class ProjectorItem extends IPItemBase{
 					
 					Predicate<MultiblockProjection.Info> pred = layer -> {
 						BlockState tstate = layer.blockAccess.getBlockState(layer.templatePos);
+						tstate = tstate.rotate(world, pos, settings.getRotation());
+						
 						ProjectorEvent.PlaceBlock event = new ProjectorEvent.PlaceBlock(layer.blockAccess, layer.templatePos, world, layer.tPos, tstate, settings.getRotation());
 						if(!MinecraftForge.EVENT_BUS.post(event)){
 							tstate = event.getState();
@@ -567,6 +569,8 @@ public class ProjectorItem extends IPItemBase{
 			IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
 			
 			BlockState state = blockAccess.getBlockState(templatePos);
+			state = state.rotate(world, worldPos, rotation);
+			
 			ProjectorEvent.RenderBlock renderEvent = new ProjectorEvent.RenderBlock(blockAccess, templatePos, world, worldPos, state, rotation);
 			if(!MinecraftForge.EVENT_BUS.post(renderEvent)){
 				state = renderEvent.getState();
@@ -574,6 +578,7 @@ public class ProjectorItem extends IPItemBase{
 				IModelData modelData = EmptyModelData.INSTANCE;
 				TileEntity te = blockAccess.getTileEntity(templatePos);
 				if(te != null){
+					te.cachedBlockState = state;
 					modelData = te.getModelData();
 				}
 				

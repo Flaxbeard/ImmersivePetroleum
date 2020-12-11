@@ -55,14 +55,13 @@ public class NapalmFluid extends IPFluid{
 		}
 		CommonEventHandler.napalmPositions.get(d).add(pos);
 		
-		world.setBlockState(pos, Blocks.FIRE.getDefaultState(), 1 | 2);
+		world.setBlockState(pos, Blocks.FIRE.getDefaultState(), 3);
 		
 		for(Direction facing:Direction.values()){
 			BlockPos notifyPos = pos.offset(facing);
 			Block block = world.getBlockState(notifyPos).getBlock();
 			if(block == this.block){
 				CommonEventHandler.napalmPositions.get(d).add(notifyPos);
-				// world.neighborChanged(notifyPos, block, neighbourPos);
 			}
 		}
 	}

@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import blusunrize.immersiveengineering.api.IETags;
+import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
+import blusunrize.immersiveengineering.api.crafting.builders.MixerRecipeBuilder;
 import blusunrize.immersiveengineering.common.blocks.EnumMetals;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.items.IEItems;
@@ -45,6 +47,12 @@ public class IPRecipes extends RecipeProvider{
 		speedboatUpgradeRecipes();
 		distillationRecipes();
 		reservoirs();
+		
+		MixerRecipeBuilder.builder(IPContent.Fluids.napalm, 500)
+			.addFluidTag(IPTags.Fluids.gasoline, 500)
+			.addInput(new IngredientWithSize(IETags.getTagsFor(EnumMetals.ALUMINUM).dust, 3))
+			.setEnergy(3200)
+			.build(this.out, rl("mixer/napalm"));
 	}
 	
 	private void reservoirs(){
@@ -55,7 +63,7 @@ public class IPRecipes extends RecipeProvider{
 			.trace(0.006)
 			.weight(30)
 			.addDimensions(false, DimensionType.OVERWORLD.getRegistryName()) // false = Whitelist, true = blacklist
-//			.addDimensions(true, DimensionType.OVERWORLD.func_240901_a_()) // Will crash the generator, only one or the other but not both at the same time
+//			.addDimensions(true, DimensionType.OVERWORLD.getRegistryName()) // Will crash the generator, only one or the other but not both at the same time
 //			.addBiomes(false, new ResourceLocation[]{}) // Just for demonstration purposes.
 			.build(this.out, rl("reservoirs/aquifer"));
 		

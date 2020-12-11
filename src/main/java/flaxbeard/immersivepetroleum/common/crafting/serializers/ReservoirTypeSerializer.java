@@ -26,7 +26,10 @@ public class ReservoirTypeSerializer extends IERecipeSerializer<ReservoirType>{
 		int weight = JSONUtils.getInt(json, "weight");
 		
 		ReservoirType type = new ReservoirType(name, recipeId, fluid, min, max, trace, weight);
-		ImmersivePetroleum.log.debug(type);
+		
+		ImmersivePetroleum.log.debug(String.format("Loaded reservoir %s as %s, with %smB to %smB of %s and %smB trace, with %s of weight.",
+				recipeId, name, min, max, fluid, trace, weight));
+		
 		if(JSONUtils.hasField(json, "dimension")){
 			JsonObject dimension = JSONUtils.getJsonObject(json, "dimension");
 			
@@ -48,12 +51,12 @@ public class ReservoirTypeSerializer extends IERecipeSerializer<ReservoirType>{
 			}
 			
 			if(whitelist.size() > 0){
-				ImmersivePetroleum.log.debug("- Adding these to dimension-whitelist -");
-				whitelist.forEach(ins -> ImmersivePetroleum.log.info(ins));
+				ImmersivePetroleum.log.debug("- Adding these to dimension-whitelist for {} -", name);
+				whitelist.forEach(ins -> ImmersivePetroleum.log.debug(ins));
 				type.addDimension(false, whitelist);
 			}else if(blacklist.size() > 0){
-				ImmersivePetroleum.log.debug("- Adding these to dimension-blacklist -");
-				blacklist.forEach(ins -> ImmersivePetroleum.log.info(ins));
+				ImmersivePetroleum.log.debug("- Adding these to dimension-blacklist for {} -", name);
+				blacklist.forEach(ins -> ImmersivePetroleum.log.debug(ins));
 				type.addDimension(true, blacklist);
 			}
 		}
@@ -79,12 +82,12 @@ public class ReservoirTypeSerializer extends IERecipeSerializer<ReservoirType>{
 			}
 			
 			if(whitelist.size() > 0){
-				ImmersivePetroleum.log.debug("- Adding these to biome-whitelist -");
-				whitelist.forEach(ins -> ImmersivePetroleum.log.info(ins));
+				ImmersivePetroleum.log.debug("- Adding these to biome-whitelist for {} -", name);
+				whitelist.forEach(ins -> ImmersivePetroleum.log.debug(ins));
 				type.addBiome(false, whitelist);
 			}else if(blacklist.size() > 0){
-				ImmersivePetroleum.log.debug("- Adding these to biome-blacklist -");
-				blacklist.forEach(ins -> ImmersivePetroleum.log.info(ins));
+				ImmersivePetroleum.log.debug("- Adding these to biome-blacklist for {} -", name);
+				blacklist.forEach(ins -> ImmersivePetroleum.log.debug(ins));
 				type.addBiome(true, blacklist);
 			}
 		}

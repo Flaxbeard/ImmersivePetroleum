@@ -8,7 +8,7 @@
   "dimension": {
     "whitelist": [],
     "blacklist": [
-      "minecraft:dimension_type"
+      "minecraft:the_end"
     ]
   },
   "biome": {

@@ -7,7 +7,7 @@
   "weight": 30,
   "dimension": {
     "whitelist": [
-      "minecraft:dimension_type"
+      "minecraft:overworld"
     ],
     "blacklist": []
   },

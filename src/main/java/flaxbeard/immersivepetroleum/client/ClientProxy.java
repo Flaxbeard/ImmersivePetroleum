@@ -216,6 +216,16 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, modLoc("napalm"), 7);
 		generator(modLoc("portablegenerator"), 8);
 		autolube(modLoc("automaticlubricator"), 9);
+		flarestack(modLoc("flarestack"), 10);
+	}
+	
+	protected static void flarestack(ResourceLocation location, int priority){
+		ManualInstance man = ManualHelper.getManual();
+		
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement("flarestack0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.flarestack)));
+		builder.readFromFile(location);
+		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
 	protected static void autolube(ResourceLocation location, int priority){

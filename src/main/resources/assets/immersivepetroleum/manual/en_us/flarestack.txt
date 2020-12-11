@@ -1,0 +1,5 @@
+Flarestack
+Burns away your problems
+<&flarestack0>This simple device burns away excess or unwanted Lubricant.
+
+Lubricant is pumped in through the bottom, it will automatically start burning it at a rate of 100mB per Tick.

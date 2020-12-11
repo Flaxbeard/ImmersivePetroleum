@@ -1,0 +1,25 @@
+Multiblock Projector
+Invaluable instructions
+<&projector0>When it comes to building large multiblock structures, referring to your Engineer's Manual time and time again has grown tedious. By crafting a primitive projector device, you believe you can project schematics of these structures into the world to use as a template.<np>
+It's GUI can be overwhelming at first, but it is very simple.
+
+The left side shows a list of every existing multiblock.
+Selecting one will show the finished multiblock on the right side, and also the currently selected multiblock name will show up over the GUI itself.<np>
+The center houses buttons to change the settings of the multiblock display and the current rotation is indicated by N-S-E-W above the rotation buttons.
+
+Once happy with your decisions clicking the button with the green checkmark will apply the selection and close the GUI.<np>
+
+###################### below this is either old stuff or stuff that im unsure yet how to integrate ######################
+###################### And will not be part of the whole thing ######################
+
+Rightclicking while holding the projector will open it's GUI, allowing you to select and search for every multiblock on the fly!<np>
+A list of every multiblock will be located on the left half, the finished multiblock machine will be shown on the right half.<np>
+Once you have decided which multiblock you'd like to build select it in the list on the left and then press the green checkmark in the center at top.
+
+You'll then have to switch it to projection mode by pressing and holding shift and then rightclicking in the air.<np>
+Made the wrong choice or changed something by accident? Don't worry, simply press the cancel button and it will be like nothing ever happend.<np>
+Holding a Projector will display the structure. Pressing §l<keybind;key.immersivepetroleum.projector.flip>§r will flip the structure, and sneaking while scrolling will rotate it. Right clicking will lock the image in place, where it will show as long as the Projector is in your hotbar.
+
+Sneaking and right clicking with a projector that has a locked image will unlock the image.
+
+In Creative mode, sneaking while locking the image will build the multiblock automatically.

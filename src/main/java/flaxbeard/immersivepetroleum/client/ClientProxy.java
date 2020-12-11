@@ -211,7 +211,7 @@ public class ClientProxy extends CommonProxy{
 		
 		lubricant(modLoc("lubricant"), 3);
 		man.addEntry(IP_CATEGORY, modLoc("asphalt"), 4);
-		schematics(modLoc("schematics"), 5);
+		projector(modLoc("projector"), 5);
 		man.addEntry(IP_CATEGORY, modLoc("speedboat"), 6);
 		man.addEntry(IP_CATEGORY, modLoc("napalm"), 7);
 		generator(modLoc("portablegenerator"), 8);
@@ -296,15 +296,15 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	protected static void schematics(ResourceLocation location, int priority){
+	protected static void projector(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
 		ItemStack projectorWithNBT = new ItemStack(Items.projector);
 		ItemNBTHelper.putString(projectorWithNBT, "multiblock", IEMultiblocks.ARC_FURNACE.getUniqueName().toString());
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("schematics0", 0, new ManualElementCrafting(man, new ItemStack(Items.projector)));
-		builder.addSpecialElement("schematics1", 0, new ManualElementCrafting(man, projectorWithNBT));
+		builder.addSpecialElement("projector0", 0, new ManualElementCrafting(man, new ItemStack(Items.projector)));
+		builder.addSpecialElement("projector1", 0, new ManualElementCrafting(man, projectorWithNBT));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}

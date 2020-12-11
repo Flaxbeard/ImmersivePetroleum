@@ -283,9 +283,12 @@ public class ProjectorItem extends IPItemBase{
 					}
 					
 					Predicate<MultiblockProjection.Info> pred = layer -> {
-						ProjectorEvent.PlaceBlock event = new ProjectorEvent.PlaceBlock(layer.blockAccess, layer.templatePos, world, layer.tPos, layer.blockAccess.getBlockState(layer.templatePos), settings.getRotation());
+						BlockState tstate = layer.blockAccess.getBlockState(layer.templatePos);
+						ProjectorEvent.PlaceBlock event = new ProjectorEvent.PlaceBlock(layer.blockAccess, layer.templatePos, world, layer.tPos, tstate, settings.getRotation());
 						if(!MinecraftForge.EVENT_BUS.post(event)){
-							world.setBlockState(layer.tPos.add(hit), event.getState());
+							tstate = event.getState();
+							
+							world.setBlockState(layer.tPos.add(hit), tstate);
 							
 							ProjectorEvent.PlaceBlockPost postEvent = new ProjectorEvent.PlaceBlockPost(layer.blockAccess, event.getTemplatePos(), world, layer.tPos, event.getState(), settings.getRotation());
 							MinecraftForge.EVENT_BUS.post(postEvent);
@@ -558,15 +561,15 @@ public class ProjectorItem extends IPItemBase{
 			BlockModelRenderer blockRenderer = dispatcher.getBlockModelRenderer();
 			BlockColors blockColors = ClientUtils.mc().getBlockColors();
 			
-			matrix.translate(worldPos.getX(), worldPos.getY(), worldPos.getZ()); // Centers
-																					// the
-																					// preview
-																					// block
+			// Centers the preview block
+			matrix.translate(worldPos.getX(), worldPos.getY(), worldPos.getZ());
+			
 			IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
 			
-			ProjectorEvent.RenderBlock renderEvent = new ProjectorEvent.RenderBlock(blockAccess, templatePos, world, worldPos, blockAccess.getBlockState(templatePos), rotation);
+			BlockState state = blockAccess.getBlockState(templatePos);
+			ProjectorEvent.RenderBlock renderEvent = new ProjectorEvent.RenderBlock(blockAccess, templatePos, world, worldPos, state, rotation);
 			if(!MinecraftForge.EVENT_BUS.post(renderEvent)){
-				BlockState state = renderEvent.getState();
+				state = renderEvent.getState();
 				
 				IModelData modelData = EmptyModelData.INSTANCE;
 				TileEntity te = blockAccess.getTileEntity(templatePos);

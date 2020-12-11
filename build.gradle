@@ -44,7 +44,7 @@ minecraft {
 		client {
 			workingDirectory project.file('run')
 			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-			property 'forge.logging.console.level', 'info'
+			property 'forge.logging.console.level', 'debug'
 			property 'fml.earlyprogresswindow', 'false'
 			mods {
 				immersivepetroleum {
@@ -56,7 +56,7 @@ minecraft {
 		server {
 			workingDirectory project.file('run')
 			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-			property 'forge.logging.console.level', 'info'
+			property 'forge.logging.console.level', 'debug'
 			property 'fml.earlyprogresswindow', 'false'
 			mods {
 				immersivepetroleum {
@@ -68,7 +68,7 @@ minecraft {
 		data {
 			workingDirectory project.file('run')
 			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-			property 'forge.logging.console.level', 'info'
+			property 'forge.logging.console.level', 'debug'
 			property 'fml.earlyprogresswindow', 'false'
 			
 			args '--mod', 'immersivepetroleum', '--all', '--output', file('src/generated/resources/'), '--validate', '--existing', sourceSets.main.resources.srcDirs[0], '--existing', 'C:/Users/TwistedGate/.gradle/caches/forge_gradle/deobf_dependencies/blusunrize/immersiveengineering/ImmersiveEngineering/1.16.3-4.1.1-127_mapped_snapshot_20200916-1.16.2/ImmersiveEngineering-1.16.3-4.1.1-127_mapped_snapshot_20200916-1.16.2.jar'

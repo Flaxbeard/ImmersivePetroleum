@@ -30,7 +30,6 @@ public class RecipeReloadListener implements IResourceManagerReloadListener{
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager){
 		if(dataPackRegistries != null){
-			ImmersivePetroleum.log.info("onResourceManagerReload");
 			lists(dataPackRegistries.getRecipeManager());
 		}
 	}
@@ -38,7 +37,6 @@ public class RecipeReloadListener implements IResourceManagerReloadListener{
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void recipesUpdated(RecipesUpdatedEvent event){
 		if(!Minecraft.getInstance().isSingleplayer()){
-			ImmersivePetroleum.log.info("recipesUpdated");
 			lists(event.getRecipeManager());
 		}
 	}

@@ -335,7 +335,7 @@ public class ClientProxy extends CommonProxy{
 		for(int i = 0;i < reservoirs.length;i++){
 			ReservoirType type = reservoirs[i];
 			
-			ImmersivePetroleum.log.info("Creating entry for " + type);
+			ImmersivePetroleum.log.debug("Creating entry for " + type);
 			
 			String name = "desc.immersivepetroleum.info.reservoir." + type.name;
 			String localizedName = I18n.format(name);

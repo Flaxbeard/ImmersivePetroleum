@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -46,14 +45,11 @@ public class DistillationTowerMultiblock extends IETemplateMultiblock{
 			renderStack = new ItemStack(Multiblock.distillationtower);
 		
 		// "Undo" the GUI Perspective Transform
-		transform.scale(16.0F, 16.0F, 16.0F);
-		transform.translate(0.030, 0.355, 0.300);
-		transform.rotate(new Quaternion(0, -225, 0, true));
-		transform.rotate(new Quaternion(-30, 0, 0, true));
+		transform.translate(2.5, 0.5, 2.5);
 		
 		ClientUtils.mc().getItemRenderer().renderItem(
 				renderStack,
-				ItemCameraTransforms.TransformType.GUI,
+				ItemCameraTransforms.TransformType.NONE,
 				0xf000f0,
 				OverlayTexture.NO_OVERLAY,
 				transform, buffer);

@@ -65,11 +65,15 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 		if(this.list != null && this.list.size() > 0){
 			World world = ClientUtils.mc().world;
 			if(world != null){
+				transform.push();
+				transform.translate(1, 0, 0);
 				ClientUtils.renderModelTESRFast(this.list, buffer.getBuffer(RenderType.getSolid()), transform, 0xF000F0, OverlayTexture.NO_OVERLAY);
 				
 				transform.push();
 				transform.translate(-1, -1, -1);
 				ImmersivePetroleum.proxy.renderTile(this.te, buffer.getBuffer(RenderType.getSolid()), transform, buffer);
+				transform.pop();
+				
 				transform.pop();
 			}
 		}

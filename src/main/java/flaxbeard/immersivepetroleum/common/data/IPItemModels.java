@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.data;
 
+import javax.annotation.Nullable;
+
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.data.models.LoadedModelBuilder;
 import blusunrize.immersiveengineering.common.data.models.LoadedModelProvider;
@@ -192,10 +194,10 @@ public class IPItemModels extends LoadedModelProvider{
 		
 		model.transformationMap()
 			.setTransformations(Perspective.FIRSTPERSON_LEFT,
-					createMatrix(new Vector3d(-1.75, 2.5, 1.25), new Vector3d(0, 225, 0), 0.03125))
+					createMatrix(new Vector3d(0, 0, 0), new Vector3d(0, 0, 0), 0.03125))
 			
 			.setTransformations(Perspective.FIRSTPERSON_RIGHT,
-					createMatrix(new Vector3d(-1.75, 2.5, 1.75), new Vector3d(0, 225, 0), 0.03125))
+					createMatrix(new Vector3d(0, 0, 0), new Vector3d(0, 0, 0), 0.03125))
 			
 			.setTransformations(Perspective.THIRDPERSON_LEFT,
 					createMatrix(new Vector3d(-0.75, -5, -1.25), new Vector3d(0, 90, 0), 0.03125))
@@ -204,16 +206,16 @@ public class IPItemModels extends LoadedModelProvider{
 					createMatrix(new Vector3d(1.0, -5, -1.75), new Vector3d(0, 270, 0), 0.03125))
 			
 			.setTransformations(Perspective.HEAD,
-					createMatrix(new Vector3d(-4.75, 8, -4.75), null, 0.2))
+					createMatrix(new Vector3d(1.5, 8, 1.5), null, 0.2))
 			
 			.setTransformations(Perspective.GUI,
-					createMatrix(new Vector3d(3, -6, 0), new Vector3d(30, 225, 0), 0.0625))
+					createMatrix(new Vector3d(-1, -6, 0), new Vector3d(30, 225, 0), 0.0625))
 			
 			.setTransformations(Perspective.GROUND,
-					createMatrix(new Vector3d(-1.5, 3, -1.5), null, 0.0625))
+					createMatrix(new Vector3d(1, 0, 1), null, 0.0625))
 			
 			.setTransformations(Perspective.FIXED,
-					createMatrix(new Vector3d(-1, -8, -2), null, 0.0625))
+					createMatrix(new Vector3d(0, -8, 0), null, 0.0625))
 			;
 	}
 	
@@ -225,7 +227,7 @@ public class IPItemModels extends LoadedModelProvider{
 	 * @param scale Size of the model.
 	 * @return
 	 */
-	private Matrix4 createMatrix(Vector3d translation, Vector3d rotationAngle, double scale){
+	private Matrix4 createMatrix(Vector3d translation, @Nullable Vector3d rotationAngle, double scale){
 		Matrix4 mat = new Matrix4().setIdentity();
 		mat.translate(translation.x / 16D, translation.y / 16D, translation.z / 16D);
 		

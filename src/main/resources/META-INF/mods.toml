@@ -17,20 +17,20 @@ description="Adds oil and oil processing features to Immersive Engineering."
 [[dependencies.immersiveengineering]]
 	modId="immersiveengineering"
 	mandatory=true
-	versionRange="[1.16.3-4.1.1-127,)"
+	versionRange="[1.16.4-4.1.2-129,)"
 	ordering="BEFOR"
 	side="BOTH"
 
 [[dependencies.immersivepetroleum]]
 	modId="forge"
 	mandatory=true
-	versionRange="[34.1.25,)"
+	versionRange="[35.1.0,)"
 	ordering="NONE"
 	side="BOTH"
 
 [[dependencies.immersivepetroleum]]
 	modId="minecraft"
 	mandatory=true
-	versionRange="[1.16.3]"
+	versionRange="[1.16.4]"
 	ordering="NONE"
 	side="BOTH"

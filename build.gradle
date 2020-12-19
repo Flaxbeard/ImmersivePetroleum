@@ -14,15 +14,14 @@ apply plugin: 'maven-publish'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 //----------------------------------------------------------------------------------------------------------------------
 
-version = '3.1.0'
+version = '3.1.0-2'
 group = 'flaxbeard.immersivepetroleum'
-archivesBaseName = 'ImmersivePetroleum-1.16.3'
+archivesBaseName = 'ImmersivePetroleum-1.16.4'
 
 repositories {
 	maven {	name = "BlameJared";	url = "https://maven.blamejared.com/" }         // IE & CT Files
 	maven { name = "DVS1 Maven FS"; url = "https://dvs1.progwml6.com/files/maven" } // JEI & Tinkers Files
 	maven { url = 'https://maven.latmod.com/' }                                     // Needed for JEI
-	maven { url = 'https://www.dogforce-games.com/maven/' }                         // gigaherz maven for 1.16.2 mappings
 }
 
 sourceSets {
@@ -46,6 +45,7 @@ minecraft {
 			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 			property 'forge.logging.console.level', 'debug'
 			property 'fml.earlyprogresswindow', 'false'
+			property 'mixin.env.disableRefMap', 'true'
 			mods {
 				immersivepetroleum {
 					source sourceSets.main
@@ -58,6 +58,10 @@ minecraft {
 			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 			property 'forge.logging.console.level', 'debug'
 			property 'fml.earlyprogresswindow', 'false'
+			property 'mixin.env.disableRefMap', 'true'
+			
+			arg '-nogui'
+			
 			mods {
 				immersivepetroleum {
 					source sourceSets.main
@@ -70,8 +74,9 @@ minecraft {
 			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 			property 'forge.logging.console.level', 'debug'
 			property 'fml.earlyprogresswindow', 'false'
+			property 'mixin.env.disableRefMap', 'true'
 			
-			args '--mod', 'immersivepetroleum', '--all', '--output', file('src/generated/resources/'), '--validate', '--existing', sourceSets.main.resources.srcDirs[0], '--existing', 'C:/Users/TwistedGate/.gradle/caches/forge_gradle/deobf_dependencies/blusunrize/immersiveengineering/ImmersiveEngineering/1.16.3-4.1.1-127_mapped_snapshot_20200916-1.16.2/ImmersiveEngineering-1.16.3-4.1.1-127_mapped_snapshot_20200916-1.16.2.jar'
+			args '--mod', 'immersivepetroleum', '--all', '--output', file('src/generated/resources/'), '--validate', '--existing', sourceSets.main.resources.srcDirs[0]
 			
 			mods {
 				immersivepetroleum {
@@ -83,12 +88,12 @@ minecraft {
 }
 
 dependencies {
-	minecraft "net.minecraftforge:forge:1.16.3-34.1.25"
+	minecraft "net.minecraftforge:forge:1.16.4-35.1.0"
 	
-	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.3-4.1.1-127")
+	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.4-4.1.2-129")
 	compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.3:7.0.0.45")
 	
-	compileOnly fg.deobf("mezz.jei:jei-1.16.2:7.3.2.25:api")
+	compileOnly fg.deobf("mezz.jei:jei-1.16.3:7.6.0.49:api")
 	//compileOnly fg.deobf('com.feed_the_beast.mods:ftb-gui-library:1.0.0.18')
 	
 	//runtimeOnly fg.deobf("mezz.jei:jei-1.16.3:7.3.2.34")

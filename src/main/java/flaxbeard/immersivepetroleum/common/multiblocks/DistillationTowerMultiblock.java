@@ -21,7 +21,7 @@ public class DistillationTowerMultiblock extends IETemplateMultiblock{
 	
 	private DistillationTowerMultiblock(){
 		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/distillationtower"),
-				new BlockPos(2, 0, 2), new BlockPos(0, 1, 3), () -> IPContent.Multiblock.distillationtower.getDefaultState());
+				new BlockPos(2, 0, 2), new BlockPos(0, 1, 3), new BlockPos(4, 16, 4), () -> IPContent.Multiblock.distillationtower.getDefaultState());
 	}
 	
 	@Override

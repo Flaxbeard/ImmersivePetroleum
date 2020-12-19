@@ -30,7 +30,7 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 	
 	private PumpjackMultiblock(){
 		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/pumpjack"),
-				new BlockPos(1, 0, 0), new BlockPos(1, 1, 4), () -> IPContent.Multiblock.pumpjack.getDefaultState());
+				new BlockPos(1, 0, 0), new BlockPos(1, 1, 4), new BlockPos(3, 4, 6), () -> IPContent.Multiblock.pumpjack.getDefaultState());
 	}
 	
 	@Override

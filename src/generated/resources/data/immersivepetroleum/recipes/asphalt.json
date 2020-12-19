@@ -16,7 +16,9 @@
       "tag": "forge:gravel"
     },
     "B": {
-      "item": "minecraft:water_bucket"
+      "tag": "minecraft:water",
+      "amount": 1000,
+      "type": "immersiveengineering:fluid"
     }
   },
   "result": {

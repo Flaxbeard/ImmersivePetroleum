@@ -9,6 +9,7 @@ import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.crafting.builders.MixerRecipeBuilder;
 import blusunrize.immersiveengineering.common.blocks.EnumMetals;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
+import blusunrize.immersiveengineering.common.crafting.fluidaware.IngredientFluidStack;
 import blusunrize.immersiveengineering.common.items.IEItems;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
@@ -24,10 +25,12 @@ import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 
 public class IPRecipes extends RecipeProvider{
@@ -144,7 +147,7 @@ public class IPRecipes extends RecipeProvider{
 			.key('C', IPContent.Items.bitumen)
 			.key('S', Tags.Items.SAND)
 			.key('G', Tags.Items.GRAVEL)
-			.key('B', Items.WATER_BUCKET)
+			.key('B', new IngredientFluidStack(FluidTags.WATER, FluidAttributes.BUCKET_VOLUME))
 			.patternLine("SCS")
 			.patternLine("GBG")
 			.patternLine("SCS")
@@ -155,7 +158,7 @@ public class IPRecipes extends RecipeProvider{
 			.key('C', IPContent.Items.bitumen)
 			.key('S', IEItems.Ingredients.slag)
 			.key('G', Tags.Items.GRAVEL)
-			.key('B', Items.WATER_BUCKET)
+			.key('B', new IngredientFluidStack(FluidTags.WATER, FluidAttributes.BUCKET_VOLUME))
 			.patternLine("SCS")
 			.patternLine("GBG")
 			.patternLine("SCS")

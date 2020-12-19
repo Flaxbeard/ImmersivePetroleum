@@ -21,7 +21,7 @@ public class IPDataGenerator{
 			
 			IPBlockTags blockTags = new IPBlockTags(generator);
 			
-			generator.addProvider(new IPBlockTags(generator));
+			generator.addProvider(blockTags);
 			generator.addProvider(new IPItemTags(generator, blockTags));
 			generator.addProvider(new IPFluidTags(generator));
 			generator.addProvider(new IPRecipes(generator));

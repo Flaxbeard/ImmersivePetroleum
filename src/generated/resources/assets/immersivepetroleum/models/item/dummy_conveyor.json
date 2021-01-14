@@ -1,0 +1,6 @@
+{
+  "parent": "immersivepetroleum:block/dummy_conveyor",
+  "textures": {
+    "particle": "immersiveengineering:block/conveyor/conveyor"
+  }
+}

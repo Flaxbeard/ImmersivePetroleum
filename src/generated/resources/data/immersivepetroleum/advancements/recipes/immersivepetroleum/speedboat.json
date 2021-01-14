@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "immersivepetroleum:speedboat"
+    ]
+  },
+  "criteria": {
+    "has_treated_planks": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:treated_wood"
+          }
+        ]
+      }
+    },
+    "has_light_engineering": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "immersiveengineering:light_engineering"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "immersivepetroleum:speedboat"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_treated_planks",
+      "has_light_engineering",
+      "has_the_recipe"
+    ]
+  ]
+}

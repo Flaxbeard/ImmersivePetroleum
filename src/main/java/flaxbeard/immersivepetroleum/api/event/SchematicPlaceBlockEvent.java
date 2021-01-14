@@ -1,90 +1,84 @@
 package flaxbeard.immersivepetroleum.api.event;
 
-import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumFacing;
+import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 @Cancelable
-public class SchematicPlaceBlockEvent extends Event
-{
-	private IBlockState state;
+public class SchematicPlaceBlockEvent extends Event{
 	private World world;
-	private int index;
+	private Rotation rotation;
 	private IMultiblock multiblock;
-	private int rotate;
-	private int l;
-	private int h;
-	private int w;
-
-	public SchematicPlaceBlockEvent(IMultiblock multiblock, int index, IBlockState state, World world, int rotate, int l, int h, int w)
-	{
+	private BlockPos worldPos;
+	private BlockPos templatePos;
+	private BlockState state;
+	private CompoundNBT nbt;
+	
+	public SchematicPlaceBlockEvent(IMultiblock multiblock, World world, BlockPos worldPos, BlockPos templatePos, BlockState state, CompoundNBT nbt, Rotation rotation){
 		super();
-		this.state = state;
 		this.world = world;
 		this.multiblock = multiblock;
-		this.index = index;
-		this.rotate = rotate;
-		this.l = l;
-		this.h = h;
-		this.w = w;
+		this.worldPos=worldPos;
+		this.templatePos=templatePos;
+		this.state=state;
+		this.nbt=nbt;
+		this.rotation=rotation;
 	}
-
-	public World getWorld()
-	{
-		return world;
-	}
-
-	public IBlockState getBlockState()
-	{
-		return state;
-	}
-
-	public int getIndex()
-	{
-		return index;
-	}
-
-	public IMultiblock getMultiblock()
-	{
-		return multiblock;
-	}
-
-	public void setBlockState(IBlockState state)
-	{
+	
+	public void setBlockState(BlockState state){
 		this.state = state;
 	}
-
-	public EnumFacing getRotate()
-	{
-		switch (rotate)
-		{
-			case 0:
-				return EnumFacing.EAST;
-			case 1:
-				return EnumFacing.NORTH;
-			case 2:
-				return EnumFacing.WEST;
-			default:
-				return EnumFacing.SOUTH;
-		}
+	
+	public World getWorld(){
+		return this.world;
 	}
-
-
-	public int getL()
-	{
-		return l;
+	
+	public IMultiblock getMultiblock(){
+		return this.multiblock;
 	}
-
-	public int getH()
-	{
-		return h;
+	
+	public Rotation getRotate(){
+		return this.rotation;
 	}
-
-	public int getW()
-	{
-		return w;
+	
+	public BlockPos getWorldPos(){
+		return this.worldPos;
+	}
+	
+	public BlockPos getTemplatePos(){
+		return this.templatePos;
+	}
+	
+	public BlockState getState(){
+		return this.state;
+	}
+	
+	public CompoundNBT getNBT(){
+		return this.nbt;
+	}
+	
+	@Deprecated
+	public int getIndex(){
+		return 0;
+	}
+	
+	@Deprecated
+	public int getL(){
+		return 0;
+	}
+	
+	@Deprecated
+	public int getH(){
+		return 0;
+	}
+	
+	@Deprecated
+	public int getW(){
+		return 0;
 	}
 }

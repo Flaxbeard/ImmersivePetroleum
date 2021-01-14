@@ -1,0 +1,202 @@
+{
+  "textures": {
+    "texture": "immersivepetroleum:multiblock/distillation_tower"
+  },
+  "loader": "forge:obj",
+  "model": "immersivepetroleum:models/multiblock/obj/distillationtower.obj",
+  "flip-v": true,
+  "transform": {
+    "thirdperson_righthand": {
+      "translation": [
+        0.0625,
+        -0.3125,
+        -0.109375
+      ],
+      "rotation": [
+        0.0,
+        0.7071068,
+        0.0,
+        -0.7071068
+      ],
+      "scale": [
+        0.03125,
+        0.03125,
+        0.03125
+      ],
+      "post-rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "thirdperson_lefthand": {
+      "translation": [
+        -0.046875,
+        -0.3125,
+        -0.078125
+      ],
+      "rotation": [
+        0.0,
+        0.7071068,
+        0.0,
+        0.7071068
+      ],
+      "scale": [
+        0.03125,
+        0.03125,
+        0.03125
+      ],
+      "post-rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "firstperson_righthand": {
+      "translation": [
+        -0.109375,
+        0.15625,
+        0.109375
+      ],
+      "rotation": [
+        0.0,
+        0.9238795,
+        0.0,
+        -0.3826834
+      ],
+      "scale": [
+        0.031249998,
+        0.031249998,
+        0.031249998
+      ],
+      "post-rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "firstperson_lefthand": {
+      "translation": [
+        -0.109375,
+        0.15625,
+        0.078125
+      ],
+      "rotation": [
+        0.0,
+        0.9238795,
+        0.0,
+        -0.3826834
+      ],
+      "scale": [
+        0.031249998,
+        0.031249998,
+        0.031249998
+      ],
+      "post-rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "head": {
+      "translation": [
+        -0.296875,
+        0.5,
+        -0.296875
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.20000002,
+        0.20000002,
+        0.20000002
+      ],
+      "post-rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "gui": {
+      "translation": [
+        0.1875,
+        -0.375,
+        0.0
+      ],
+      "rotation": [
+        -0.099045746,
+        0.8923991,
+        0.23911761,
+        -0.3696438
+      ],
+      "scale": [
+        0.0625,
+        0.062499996,
+        0.0625
+      ],
+      "post-rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "ground": {
+      "translation": [
+        -0.09375,
+        0.1875,
+        -0.09375
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0625,
+        0.0625,
+        0.0625
+      ],
+      "post-rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "fixed": {
+      "translation": [
+        -0.0625,
+        -0.5,
+        -0.125
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0625,
+        0.0625,
+        0.0625
+      ],
+      "post-rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  }
+}

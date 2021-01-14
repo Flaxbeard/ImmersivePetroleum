@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "immersivepetroleum:item/upgrade_tank"
+  }
+}

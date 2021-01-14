@@ -1,69 +1,55 @@
 package flaxbeard.immersivepetroleum.client.render;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.client.model.ModelPumpjack;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackTileEntity;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.util.Direction;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-@SideOnly(Side.CLIENT)
-public class MultiblockPumpjackRenderer extends TileEntitySpecialRenderer<TileEntityPumpjack.TileEntityPumpjackParent>
-{
-	private static ModelPumpjack model = new ModelPumpjack(false);
-	private static ModelPumpjack modelM = new ModelPumpjack(true);
-
-	private static String texture = "immersivepetroleum:textures/models/pumpjack.png";
-
+@OnlyIn(Dist.CLIENT)
+public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileEntity>{
+	private static ModelPumpjack model = new ModelPumpjack();
+	
+	private static String texture = "immersivepetroleum:textures/models/pumpjack_armature.png";
+	
 	@Override
-	public void render(TileEntityPumpjack.TileEntityPumpjackParent te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
-	{
-		if (te != null)
-		{
+	public void render(PumpjackTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
+		if(te != null && !te.isDummy()){
 			GlStateManager.pushMatrix();
-			GlStateManager.translate(x, y - 1, z);
-
-			EnumFacing rotation = te.facing;
-			if (rotation == EnumFacing.NORTH)
-			{
-				GlStateManager.rotate(90F, 0, 1, 0);
-				GlStateManager.translate(-1, 0, 0);
+			GlStateManager.translated(x, y, z);
+			
+			Direction rotation = te.getFacing();
+			switch(rotation){
+				case NORTH:
+					GlStateManager.rotated(90F, 0, 1, 0);
+					GlStateManager.translated(-6, 0, -1);
+					break;
+				case EAST:
+					GlStateManager.translated(-5, 0, -1);
+					break;
+				case SOUTH:
+					GlStateManager.rotated(270F, 0, 1, 0);
+					GlStateManager.translated(-5, 0, -2);
+					break;
+				case WEST:
+					GlStateManager.rotated(180F, 0, 1, 0);
+					GlStateManager.translated(-6, 0, -2);
+					break;
+				default:
+					break;
+				
 			}
-			else if (rotation == EnumFacing.WEST)
-			{
-				GlStateManager.rotate(180F, 0, 1, 0);
-				GlStateManager.translate(-1, 0, -1);
-			}
-			else if (rotation == EnumFacing.SOUTH)
-			{
-				GlStateManager.rotate(270F, 0, 1, 0);
-				GlStateManager.translate(0, 0, -1);
-			}
-			GlStateManager.translate(-1, 0, -1);
-
-			if (te.mirrored)
-			{
-			}
-
-			ClientUtils.bindTexture(texture);
-
+			
 			float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);
-			;
-			model.ticks = modelM.ticks = 1.5F * ticks;
-
-			if (te.mirrored)
-			{
-				modelM.render(null, 0, 0, 0, 0, 0, 0.0625F);
-			}
-			else
-			{
-				model.render(null, 0, 0, 0, 0, 0, 0.0625F);
-			}
+			model.ticks = 1.5F * ticks;
+			
+			ClientUtils.bindTexture(texture);
+			model.render(0.0625F);
 			GlStateManager.popMatrix();
-
 		}
 	}
-
 }

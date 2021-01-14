@@ -1,98 +1,85 @@
 package flaxbeard.immersivepetroleum.api.event;
 
-import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumFacing;
+import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 @Cancelable
-public class SchematicPlaceBlockPostEvent extends Event
-{
-	private IBlockState state;
+public class SchematicPlaceBlockPostEvent extends Event{
 	private World world;
-	private int index;
+	private Rotation rotation;
 	private IMultiblock multiblock;
-	private int rotate;
-	private int l;
-	private int h;
-	private int w;
-	private BlockPos pos;
-
-	public SchematicPlaceBlockPostEvent(IMultiblock multiblock, int index, IBlockState state, BlockPos pos, World world, int rotate, int l, int h, int w)
-	{
+	private BlockPos worldPos;
+	private BlockPos templatePos;
+	private BlockState state;
+	private CompoundNBT nbt;
+	
+	public SchematicPlaceBlockPostEvent(IMultiblock multiblock, World world, BlockPos worldPos, BlockPos templatePos, BlockState state, CompoundNBT nbt, Rotation rotation){
 		super();
-		this.state = state;
 		this.world = world;
 		this.multiblock = multiblock;
-		this.index = index;
-		this.rotate = rotate;
-		this.l = l;
-		this.h = h;
-		this.w = w;
-		this.pos = pos;
+		this.worldPos=worldPos;
+		this.state=state;
+		this.nbt=nbt;
+		this.templatePos=templatePos;
+		this.rotation=rotation;
 	}
-
-	public World getWorld()
-	{
-		return world;
+	
+	public World getWorld(){
+		return this.world;
 	}
-
-	public IBlockState getBlockState()
-	{
-		return state;
+	
+	public IMultiblock getMultiblock(){
+		return this.multiblock;
 	}
-
-	public int getIndex()
-	{
-		return index;
+	
+	public Rotation getRotate(){
+		return this.rotation;
 	}
-
-	public IMultiblock getMultiblock()
-	{
-		return multiblock;
+	
+	public BlockPos getWorldPos(){
+		return this.worldPos;
 	}
-
-	public void setBlockState(IBlockState state)
-	{
-		this.state = state;
+	
+	public BlockPos getTemplatePos(){
+		return this.templatePos;
 	}
-
-	public BlockPos getPos()
-	{
-		return pos;
+	
+	public BlockState getState(){
+		return this.state;
 	}
-
-	public EnumFacing getRotate()
-	{
-		switch (rotate)
-		{
-			case 0:
-				return EnumFacing.EAST;
-			case 1:
-				return EnumFacing.NORTH;
-			case 2:
-				return EnumFacing.WEST;
-			default:
-				return EnumFacing.SOUTH;
-		}
+	
+	public CompoundNBT getNBT(){
+		return this.nbt;
 	}
-
-
-	public int getL()
-	{
-		return l;
+	
+	// TODO Remove these deprecated methods at some point
+	
+	@Deprecated
+	public void setBlockState(BlockState state){}
+	
+	@Deprecated
+	public int getIndex(){
+		return 0;
 	}
-
-	public int getH()
-	{
-		return h;
+	
+	@Deprecated
+	public int getL(){
+		return 0;
 	}
-
-	public int getW()
-	{
-		return w;
+	
+	@Deprecated
+	public int getH(){
+		return 0;
+	}
+	
+	@Deprecated
+	public int getW(){
+		return 0;
 	}
 }

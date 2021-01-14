@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "immersivepetroleum:block/gas_generator",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "immersivepetroleum:block/gas_generator",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "immersivepetroleum:block/gas_generator",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "immersivepetroleum:block/gas_generator"
+    }
+  }
+}

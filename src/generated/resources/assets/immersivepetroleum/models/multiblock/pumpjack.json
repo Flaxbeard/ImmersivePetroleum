@@ -1,0 +1,11 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "texture": "immersivepetroleum:multiblock/pumpjack_base",
+    "particle": "immersivepetroleum:multiblock/pumpjack_base"
+  },
+  "loader": "forge:obj",
+  "flip-v": true,
+  "model": "immersivepetroleum:models/multiblock/obj/pumpjack.obj",
+  "detectCullableFaces": false
+}

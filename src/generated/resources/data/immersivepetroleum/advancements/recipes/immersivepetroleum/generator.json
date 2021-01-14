@@ -1,0 +1,54 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "immersivepetroleum:generator"
+    ]
+  },
+  "criteria": {
+    "has_iron_plate": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/iron"
+          }
+        ]
+      }
+    },
+    "has_capacitor_lv": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "immersiveengineering:capacitor_lv"
+          }
+        ]
+      }
+    },
+    "has_generator": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "immersiveengineering:generator"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "immersivepetroleum:generator"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_iron_plate",
+      "has_capacitor_lv",
+      "has_generator",
+      "has_the_recipe"
+    ]
+  ]
+}

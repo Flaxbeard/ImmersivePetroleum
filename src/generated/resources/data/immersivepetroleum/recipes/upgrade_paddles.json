@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "S S",
+    "S S",
+    "P P"
+  ],
+  "key": {
+    "P": {
+      "tag": "forge:treated_wood"
+    },
+    "S": {
+      "tag": "forge:rods/treated_wood"
+    }
+  },
+  "result": {
+    "item": "immersivepetroleum:upgrade_paddles"
+  }
+}

@@ -1,90 +1,81 @@
 package flaxbeard.immersivepetroleum.api.event;
 
-import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumFacing;
+import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
+/**
+ * @deprecated Use
+ *             {@link flaxbeard.immersivepetroleum.api.event.ProjectorEvent.PlaceBlock}
+ */
+@Deprecated
 @Cancelable
-public class SchematicPlaceBlockEvent extends Event
-{
-	private IBlockState state;
-	private World world;
-	private int index;
-	private IMultiblock multiblock;
-	private int rotate;
-	private int l;
-	private int h;
-	private int w;
-
-	public SchematicPlaceBlockEvent(IMultiblock multiblock, int index, IBlockState state, World world, int rotate, int l, int h, int w)
-	{
-		super();
-		this.state = state;
-		this.world = world;
-		this.multiblock = multiblock;
-		this.index = index;
-		this.rotate = rotate;
-		this.l = l;
-		this.h = h;
-		this.w = w;
+public class SchematicPlaceBlockEvent extends Event{
+	@Deprecated
+	public SchematicPlaceBlockEvent(IMultiblock multiblock, World world, BlockPos worldPos, BlockPos templatePos, BlockState state, CompoundNBT nbt, Rotation rotation){
 	}
-
-	public World getWorld()
-	{
-		return world;
+	
+	@Deprecated
+	public void setBlockState(BlockState state){
 	}
-
-	public IBlockState getBlockState()
-	{
-		return state;
+	
+	@Deprecated
+	public World getWorld(){
+		return null;
 	}
-
-	public int getIndex()
-	{
-		return index;
+	
+	@Deprecated
+	public IMultiblock getMultiblock(){
+		return null;
 	}
-
-	public IMultiblock getMultiblock()
-	{
-		return multiblock;
+	
+	@Deprecated
+	public Rotation getRotate(){
+		return null;
 	}
-
-	public void setBlockState(IBlockState state)
-	{
-		this.state = state;
+	
+	@Deprecated
+	public BlockPos getWorldPos(){
+		return null;
 	}
-
-	public EnumFacing getRotate()
-	{
-		switch (rotate)
-		{
-			case 0:
-				return EnumFacing.EAST;
-			case 1:
-				return EnumFacing.NORTH;
-			case 2:
-				return EnumFacing.WEST;
-			default:
-				return EnumFacing.SOUTH;
-		}
+	
+	@Deprecated
+	public BlockPos getTemplatePos(){
+		return null;
 	}
-
-
-	public int getL()
-	{
-		return l;
+	
+	@Deprecated
+	public BlockState getState(){
+		return null;
 	}
-
-	public int getH()
-	{
-		return h;
+	
+	@Deprecated
+	public CompoundNBT getNBT(){
+		return null;
 	}
-
-	public int getW()
-	{
-		return w;
+	
+	@Deprecated
+	public int getIndex(){
+		return 0;
+	}
+	
+	@Deprecated
+	public int getL(){
+		return 0;
+	}
+	
+	@Deprecated
+	public int getH(){
+		return 0;
+	}
+	
+	@Deprecated
+	public int getW(){
+		return 0;
 	}
 }

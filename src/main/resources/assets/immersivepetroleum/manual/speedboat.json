@@ -1,0 +1,26 @@
+{
+	"speedboat0":{
+		"type": "crafting",
+		"recipe": "immersivepetroleum:speedboat"
+	},
+	"speedboat1":{
+		"type": "crafting",
+		"recipe": "immersivepetroleum:upgrade_tank"
+	},
+	"speedboat2":{
+		"type": "crafting",
+		"recipe": "immersivepetroleum:upgrade_rudders"
+	},
+	"speedboat3":{
+		"type": "crafting",
+		"recipe": "immersivepetroleum:upgrade_icebreaker"
+	},
+	"speedboat4":{
+		"type": "crafting",
+		"recipe": "immersivepetroleum:upgrade_reinforced_hull"
+	},
+	"speedboat5":{
+		"type": "crafting",
+		"recipe": "immersivepetroleum:upgrade_paddles"
+	}
+}

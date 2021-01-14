@@ -1,0 +1,5 @@
+newmtl None
+map_Kd #texture_base
+
+newmtl None2
+map_Kd #texture_armature

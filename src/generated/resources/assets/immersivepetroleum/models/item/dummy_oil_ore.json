@@ -1,0 +1,6 @@
+{
+  "parent": "immersivepetroleum:block/dummy_oil_ore",
+  "textures": {
+    "particle": "immersivepetroleum:block/dummy_oil_ore"
+  }
+}

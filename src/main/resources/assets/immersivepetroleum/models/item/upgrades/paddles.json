@@ -1,6 +1,0 @@
-{
-  "parent": "immersivepetroleum:item/ip_item_base",
-  "textures": {
-    "layer0": "immersivepetroleum:items/paddles"
-  }
-}

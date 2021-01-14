@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IFI",
+    "CAC",
+    "IPI"
+  ],
+  "key": {
+    "I": {
+      "tag": "forge:plates/iron"
+    },
+    "C": {
+      "item": "immersiveengineering:component_steel"
+    },
+    "P": {
+      "item": "immersiveengineering:fluid_pipe"
+    },
+    "A": {
+      "item": "immersiveengineering:fluid_placer"
+    },
+    "F": {
+      "item": "minecraft:fire_charge"
+    }
+  },
+  "result": {
+    "item": "immersivepetroleum:flarestack"
+  }
+}

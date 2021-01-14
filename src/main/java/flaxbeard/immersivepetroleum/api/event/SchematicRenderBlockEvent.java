@@ -1,90 +1,103 @@
 package flaxbeard.immersivepetroleum.api.event;
 
-import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
+import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
+/**
+ * @deprecated Use
+ *             {@link flaxbeard.immersivepetroleum.api.event.ProjectorEvent.RenderBlock}
+ */
+@Deprecated
 @Cancelable
-public class SchematicRenderBlockEvent extends Event
-{
-	private ItemStack stack;
-	private World world;
-	private int index;
-	private IMultiblock multiblock;
-	private int rotate;
-	private int l;
-	private int h;
-	private int w;
-
-	public SchematicRenderBlockEvent(IMultiblock multiblock, int index, ItemStack stack, World world, int rotate, int l, int h, int w)
-	{
-		super();
-		this.stack = stack;
-		this.world = world;
-		this.multiblock = multiblock;
-		this.index = index;
-		this.rotate = rotate;
-		this.l = l;
-		this.h = h;
-		this.w = w;
+public class SchematicRenderBlockEvent extends Event{
+	
+	@Deprecated
+	public SchematicRenderBlockEvent(IMultiblock multiblock, World world, BlockPos worldPos, BlockPos templatePos, BlockState state, CompoundNBT nbt, Rotation rotation){
 	}
-
-	public World getWorld()
-	{
-		return world;
+	
+	@Deprecated
+	public void setState(BlockState state){
 	}
-
-	public ItemStack getItemStack()
-	{
-		return stack;
+	
+	@Deprecated
+	public void setBlock(Block block){
 	}
-
-	public int getIndex()
-	{
-		return index;
+	
+	@Deprecated
+	public World getWorld(){
+		return null;
 	}
-
-	public IMultiblock getMultiblock()
-	{
-		return multiblock;
+	
+	@Deprecated
+	public IMultiblock getMultiblock(){
+		return null;
 	}
-
-	public void setItemStack(ItemStack itemStack)
-	{
-		this.stack = itemStack;
+	
+	@Deprecated
+	public Rotation getRotate(){
+		return null;
 	}
-
-	public EnumFacing getRotate()
-	{
-		switch (rotate)
-		{
-			case 0:
-				return EnumFacing.EAST;
-			case 1:
-				return EnumFacing.NORTH;
-			case 2:
-				return EnumFacing.WEST;
-			default:
-				return EnumFacing.SOUTH;
-		}
+	
+	@Deprecated
+	public BlockPos getWorldPos(){
+		return null;
 	}
-
-
-	public int getL()
-	{
-		return l;
+	
+	@Deprecated
+	public BlockPos getTemplatePos(){
+		return null;
 	}
-
-	public int getH()
-	{
-		return h;
+	
+	@Deprecated
+	public Block getBlock(){
+		return null;
 	}
-
-	public int getW()
-	{
-		return w;
+	
+	@Deprecated
+	public BlockState getState(){
+		return null;
+	}
+	
+	@Deprecated
+	public CompoundNBT getNBT(){
+		return null;
+	}
+	
+	/** Replaced by {@link SchematicRenderBlockEvent#setState(BlockState)} */
+	@Deprecated
+	public void setItemStack(ItemStack itemStack){
+	}
+	
+	@Deprecated
+	public ItemStack getItemStack(){
+		return null;
+	}
+	
+	@Deprecated
+	public int getIndex(){
+		return 0;
+	}
+	
+	@Deprecated
+	public int getL(){
+		return 0;
+	}
+	
+	@Deprecated
+	public int getH(){
+		return 0;
+	}
+	
+	@Deprecated
+	public int getW(){
+		return 0;
 	}
 }

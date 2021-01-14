@@ -24,9 +24,11 @@ src/main/java/cofh/api/energy/IEnergyReceiver.java
 
 out/
 eclipse/
+bin/
 *.launch
-*.txt
+*.blend1
 run/
+libs/
 *.project
 *.classpath
 .settings/

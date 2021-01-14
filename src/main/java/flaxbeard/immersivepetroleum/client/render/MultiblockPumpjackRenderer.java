@@ -1,69 +1,63 @@
 package flaxbeard.immersivepetroleum.client.render;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
+import java.util.function.Supplier;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+
+import flaxbeard.immersivepetroleum.client.model.IPModel;
+import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelPumpjack;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-@SideOnly(Side.CLIENT)
-public class MultiblockPumpjackRenderer extends TileEntitySpecialRenderer<TileEntityPumpjack.TileEntityPumpjackParent>
-{
-	private static ModelPumpjack model = new ModelPumpjack(false);
-	private static ModelPumpjack modelM = new ModelPumpjack(true);
-
-	private static String texture = "immersivepetroleum:textures/models/pumpjack.png";
-
+@OnlyIn(Dist.CLIENT)
+public class MultiblockPumpjackRenderer extends TileEntityRenderer<PumpjackTileEntity>{
+	public MultiblockPumpjackRenderer(TileEntityRendererDispatcher dispatcher){
+		super(dispatcher);
+	}
+	
+	private static Supplier<IPModel> pumpjackarm = IPModels.getSupplier(ModelPumpjack.ID);
+	
 	@Override
-	public void render(TileEntityPumpjack.TileEntityPumpjackParent te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
-	{
-		if (te != null)
-		{
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(x, y - 1, z);
-
-			EnumFacing rotation = te.facing;
-			if (rotation == EnumFacing.NORTH)
-			{
-				GlStateManager.rotate(90F, 0, 1, 0);
-				GlStateManager.translate(-1, 0, 0);
+	public void render(PumpjackTileEntity te, float partialTicks, MatrixStack transform, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn){
+		if(te != null && !te.isDummy()){
+			transform.push();
+			Direction rotation = te.getFacing();
+			switch(rotation){
+				case NORTH:
+					transform.rotate(new Quaternion(0, 90F, 0, true));
+					transform.translate(-6, 0, -1);
+					break;
+				case EAST:
+					transform.translate(-5, 0, -1);
+					break;
+				case SOUTH:
+					transform.rotate(new Quaternion(0, 270F, 0, true));
+					transform.translate(-5, 0, -2);
+					break;
+				case WEST:
+					transform.rotate(new Quaternion(0, 180F, 0, true));
+					transform.translate(-6, 0, -2);
+					break;
+				default:
+					break;
+				
 			}
-			else if (rotation == EnumFacing.WEST)
-			{
-				GlStateManager.rotate(180F, 0, 1, 0);
-				GlStateManager.translate(-1, 0, -1);
+			
+			ModelPumpjack model;
+			if((model = (ModelPumpjack) pumpjackarm.get()) != null){
+				float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);
+				model.ticks = 1.5F * ticks;
+				
+				model.render(transform, buffer.getBuffer(model.getRenderType(ModelPumpjack.TEXTURE)), combinedLightIn, combinedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
 			}
-			else if (rotation == EnumFacing.SOUTH)
-			{
-				GlStateManager.rotate(270F, 0, 1, 0);
-				GlStateManager.translate(0, 0, -1);
-			}
-			GlStateManager.translate(-1, 0, -1);
-
-			if (te.mirrored)
-			{
-			}
-
-			ClientUtils.bindTexture(texture);
-
-			float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);
-			;
-			model.ticks = modelM.ticks = 1.5F * ticks;
-
-			if (te.mirrored)
-			{
-				modelM.render(null, 0, 0, 0, 0, 0, 0.0625F);
-			}
-			else
-			{
-				model.render(null, 0, 0, 0, 0, 0, 0.0625F);
-			}
-			GlStateManager.popMatrix();
-
+			transform.pop();
 		}
 	}
-
 }

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " G ",
+    "G G",
+    "TPT"
+  ],
+  "key": {
+    "G": {
+      "tag": "forge:glass"
+    },
+    "T": {
+      "tag": "forge:treated_wood"
+    },
+    "P": {
+      "item": "immersiveengineering:fluid_pipe"
+    }
+  },
+  "result": {
+    "item": "immersivepetroleum:auto_lubricator"
+  }
+}

@@ -1,0 +1,6 @@
+{
+	"lubricant1":{
+		"type": "crafting",
+		"recipe": "immersivepetroleum:oil_can"
+	}
+}

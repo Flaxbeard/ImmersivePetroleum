@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "immersivepetroleum:asphalt"
+    ]
+  },
+  "criteria": {
+    "has_bitumen": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "immersivepetroleum:bitumen"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "immersivepetroleum:asphalt"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_bitumen",
+      "has_the_recipe"
+    ]
+  ]
+}

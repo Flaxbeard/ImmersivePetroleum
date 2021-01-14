@@ -1,0 +1,3 @@
+Asphalt Concrete
+Highway material
+<&asphalt0>Asphalt Concrete, held together by gooey Bitumen, is a darker colored alternative to regular Concrete. It may be produced using the byproducts of processing Crude Oil in the <link;immersivepetroleum:distillationtower;§n§oDistillation §n§oTower§r>.

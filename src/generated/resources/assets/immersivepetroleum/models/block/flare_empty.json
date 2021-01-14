@@ -1,0 +1,6 @@
+{
+  "parent": "immersiveengineering:block/ie_empty",
+  "textures": {
+    "particle": "immersivepetroleum:block/obj/flarestack"
+  }
+}

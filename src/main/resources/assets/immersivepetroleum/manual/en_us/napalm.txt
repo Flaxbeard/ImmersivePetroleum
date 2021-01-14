@@ -1,0 +1,3 @@
+Napalm
+Beware the River God
+Napalm is an extremely flammable substance that can be created in the <link;mixer;§n§oMixer§r> using <link;immersivepetroleum:distillationtower;§n§oGasoline§r> and three measures of Aluminium Grit. It has little use other than wanton destruction; when Napalm is lit, fire will spread almost immediately over its surface, allowing for rapid deforestation. In addition, it can serve as a very effective fuel for the <link;chemthrower;§n§oChemthrower§r>.

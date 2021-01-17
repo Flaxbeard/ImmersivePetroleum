@@ -88,7 +88,7 @@ ie.manual.entry.oilDimInvalid=%3$s §l%1$s§r is a type of fluid reservoir that 
 ie.manual.entry.oilDimAny=%2$s §l%1$s§r is a type of fluid reservoir that can be found in any Dimension.
 ie.manual.entry.oilReplenish=<br>After the reservoir is depleted, %1$d mB/tick of trace %2$s can be extracted by a single Pumpjack.
 ie.manual.entry.oilBiomeValid=This reservoir will generate in %s Biomes.
-ie.manual.entry.oilBiomeInvalid=This reservoir will generate in %s Biomes.
+ie.manual.entry.oilBiomeInvalid=This reservoir will generate in any biome but %s Biomes.
 ie.manual.entry.oilBiomeAny=This reservoir will generate in any Biome.
 
 ie.manual.entry.asphalt.name=Asphalt Concrete

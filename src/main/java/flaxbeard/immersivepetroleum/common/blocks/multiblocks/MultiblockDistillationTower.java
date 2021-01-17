@@ -331,7 +331,7 @@ public class MultiblockDistillationTower implements IMultiblock
 
 	static final IngredientStack[] materials = new IngredientStack[]{
 			new IngredientStack("scaffoldingSteel", 25),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDecorationSlabs1, 33, BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta())),
+			new IngredientStack(new ItemStack(IEContent.blockMetalDecorationSlabs1, 30, BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDevice1, 17, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 4, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())),

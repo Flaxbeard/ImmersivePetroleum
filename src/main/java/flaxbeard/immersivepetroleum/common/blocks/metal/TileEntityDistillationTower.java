@@ -212,7 +212,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 				lastFluidOut = null;
 				if (targetFluidStack != null)
 				{
-					FluidStack out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.amount, 80), false);
+					FluidStack out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.amount, 100), false);
 					int accepted = output.fill(out, false);
 					if (accepted > 0)
 					{
@@ -227,7 +227,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 						while (iterator.hasNext())
 						{
 							targetFluidStack = iterator.next();
-							out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.amount, 80), false);
+							out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.amount, 100), false);
 							accepted = output.fill(out, false);
 							if (accepted > 0)
 							{
@@ -245,8 +245,9 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 
 		}
 
+		int amount_prev = tanks[0].getFluidAmount();
 		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
-		if (!emptyContainer.isEmpty() && emptyContainer.getCount() > 0)
+		if (amount_prev != tanks[0].getFluidAmount())
 		{
 			if (!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), emptyContainer, true))
 				inventory.get(1).grow(emptyContainer.getCount());

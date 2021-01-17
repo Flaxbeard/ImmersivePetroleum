@@ -245,8 +245,9 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 
 		}
 
+		int amount_prev = tanks[0].getFluidAmount();
 		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
-		if (!emptyContainer.isEmpty() && emptyContainer.getCount() > 0)
+		if (amount_prev != tanks[0].getFluidAmount())
 		{
 			if (!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), emptyContainer, true))
 				inventory.get(1).grow(emptyContainer.getCount());

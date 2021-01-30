@@ -20,10 +20,12 @@ public class IPDataGenerator{
 			DataGenerator generator = event.getGenerator();
 			
 			IPBlockTags blockTags = new IPBlockTags(generator);
-			
 			generator.addProvider(blockTags);
 			generator.addProvider(new IPItemTags(generator, blockTags));
 			generator.addProvider(new IPFluidTags(generator));
+			
+			generator.addProvider(new IPBlockLoot(generator));
+			
 			generator.addProvider(new IPRecipes(generator));
 			
 			IPLoadedModels loadedModels = new IPLoadedModels(generator, event.getExistingFileHelper());

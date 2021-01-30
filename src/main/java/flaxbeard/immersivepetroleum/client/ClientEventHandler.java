@@ -55,6 +55,7 @@ import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.LanguageMap;
 import net.minecraft.util.text.StringTextComponent;
@@ -276,10 +277,11 @@ public class ClientEventHandler{
 				if(ClientUtils.mc().objectMouseOver != null){
 					RayTraceResult rt = ClientUtils.mc().objectMouseOver;
 					
-					if(rt.getType() == RayTraceResult.Type.BLOCK && rt instanceof BlockRayTraceResult){
+					if(rt != null && rt.getType() == RayTraceResult.Type.BLOCK){
 						BlockRayTraceResult result = (BlockRayTraceResult) rt;
-						
 						World world = player.world;
+						
+						List<ITextComponent> debugOut = new ArrayList<>();
 						
 						TileEntity te = world.getTileEntity(result.getPos());
 						if(te instanceof DistillationTowerTileEntity){
@@ -288,36 +290,46 @@ public class ClientEventHandler{
 								tower = tower.master();
 							}
 							
-							List<String> strings = new ArrayList<>();
-							strings.add("Distillation Tower");
-							strings.add(tower.energyStorage.getEnergyStored() + "/" + tower.energyStorage.getMaxEnergyStored() + "RF");
+							debugOut.add(toText("Distillation Tower").mergeStyle(TextFormatting.GOLD)
+									.append(toText(tower.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED))
+									.append(toText(tower.shouldRenderAsActive() ? " (Active)" : "").mergeStyle(TextFormatting.GREEN)));
+							debugOut.add(toText(tower.energyStorage.getEnergyStored() + "/" + tower.energyStorage.getMaxEnergyStored() + "RF"));
 							
 							{
+								debugOut.add(toText("Input Fluid").mergeStyle(TextFormatting.UNDERLINE));
+								
 								MultiFluidTank tank = tower.tanks[DistillationTowerTileEntity.TANK_INPUT];
 								if(tank.fluids.size() > 0){
-									strings.add("Input");
 									for(int i = 0;i < tank.fluids.size();i++){
 										FluidStack fstack = tank.fluids.get(i);
-										strings.add("  " + fstack.getDisplayName() + " " + fstack.getAmount() + "mB");
+										debugOut.add(toText("  " + fstack.getDisplayName().getString() + " (" + fstack.getAmount() + "mB)"));
 									}
+								}else{
+									debugOut.add(toText("  Empty"));
 								}
 							}
 							
 							{
+								debugOut.add(toText("Output Fluid(s)").mergeStyle(TextFormatting.UNDERLINE));
+								
 								MultiFluidTank tank = tower.tanks[DistillationTowerTileEntity.TANK_OUTPUT];
 								if(tank.fluids.size() > 0){
-									strings.add("Output");
 									for(int i = 0;i < tank.fluids.size();i++){
 										FluidStack fstack = tank.fluids.get(i);
-										strings.add("  " + fstack.getDisplayName() + " " + fstack.getAmount() + "mB");
+										debugOut.add(toText("  " + fstack.getDisplayName().getString() + " (" + fstack.getAmount() + "mB)"));
 									}
+								}else{
+									debugOut.add(toText("  Empty"));
 								}
 							}
 							
+						}
+						
+						if(!debugOut.isEmpty()){
 							MatrixStack matrix = event.getMatrixStack();
 							matrix.push();
-							for(int i = 0;i < strings.size();i++){
-								ClientUtils.mc().fontRenderer.drawStringWithShadow(matrix, strings.get(i), 1, 1 + (i * ClientUtils.font().FONT_HEIGHT), 0xffffff);
+							for(int i = 0;i < debugOut.size();i++){
+								ClientUtils.font().func_243246_a(matrix, debugOut.get(i), 2, 2 + (i * (ClientUtils.font().FONT_HEIGHT + 2)), -1);
 							}
 							matrix.pop();
 						}
@@ -325,6 +337,10 @@ public class ClientEventHandler{
 				}
 			}
 		}
+	}
+	
+	private IFormattableTextComponent toText(String string){
+		return new StringTextComponent(string);
 	}
 	
 	@SubscribeEvent

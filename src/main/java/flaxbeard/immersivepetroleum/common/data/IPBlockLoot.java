@@ -2,8 +2,11 @@ package flaxbeard.immersivepetroleum.common.data;
 
 import java.util.Arrays;
 
+import blusunrize.immersiveengineering.common.util.loot.DropInventoryLootEntry;
+import blusunrize.immersiveengineering.common.util.loot.MBOriginalBlockLootEntry;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.data.loot.LootGenerator;
+import flaxbeard.immersivepetroleum.common.util.loot.IPTileDropLootEntry;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IDataProvider;
@@ -29,10 +32,29 @@ public class IPBlockLoot extends LootGenerator implements IDataProvider{
 	@Override
 	protected void registerTables(){
 		registerSelfDropping(IPContent.Blocks.asphalt);
+		registerSelfDropping(IPContent.Blocks.flarestack);
+		
+		register(IPContent.Blocks.gas_generator, tileDrop());
+		register(IPContent.Blocks.auto_lubricator, tileDrop());
+		
+		registerMultiblock(IPContent.Multiblock.distillationtower);
+		registerMultiblock(IPContent.Multiblock.pumpjack);
 	}
 	
-	private ResourceLocation toTableLoc(ResourceLocation in){
-		return new ResourceLocation(in.getNamespace(), "blocks/" + in.getPath());
+	private void registerMultiblock(Block b){
+		register(b, dropInv(), dropOriginalBlock());
+	}
+	
+	private LootPool.Builder dropOriginalBlock(){
+		return createPoolBuilder().addEntry(MBOriginalBlockLootEntry.builder());
+	}
+	
+	private LootPool.Builder dropInv(){
+		return createPoolBuilder().addEntry(DropInventoryLootEntry.builder());
+	}
+	
+	private LootPool.Builder tileDrop(){
+		return createPoolBuilder().addEntry(IPTileDropLootEntry.builder());
 	}
 	
 	private void registerSelfDropping(Block b, LootPool.Builder... pool){
@@ -63,5 +85,9 @@ public class IPBlockLoot extends LootGenerator implements IDataProvider{
 	
 	private LootPool.Builder createPoolBuilder(){
 		return LootPool.builder().acceptCondition(SurvivesExplosion.builder());
+	}
+	
+	private ResourceLocation toTableLoc(ResourceLocation in){
+		return new ResourceLocation(in.getNamespace(), "blocks/" + in.getPath());
 	}
 }

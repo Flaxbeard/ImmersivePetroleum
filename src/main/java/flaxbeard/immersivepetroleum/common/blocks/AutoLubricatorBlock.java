@@ -1,11 +1,7 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
-import java.util.Collections;
-import java.util.List;
-
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IReadOnPlacement;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import net.minecraft.block.Block;
@@ -20,9 +16,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameterSets;
-import net.minecraft.loot.LootParameters;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
@@ -37,7 +30,6 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
 
 public class AutoLubricatorBlock extends IPBlockBase{
@@ -117,25 +109,6 @@ public class AutoLubricatorBlock extends IPBlockBase{
 				((IReadOnPlacement) te).readOnPlacement(placer, stack);
 			}
 		}
-	}
-	
-	@Override
-	public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder){
-		TileEntity te = builder.get(LootParameters.BLOCK_ENTITY);
-		
-		if(te instanceof AutoLubricatorTileEntity){
-			if(((AutoLubricatorTileEntity) te).isSlave){
-				ServerWorld world = builder.getWorld();
-				
-				te = world.getTileEntity(te.getPos().offset(Direction.DOWN));
-			}
-		}
-		
-		if(te instanceof ITileDrop){
-			return ((ITileDrop) te).getTileDrops(builder.withParameter(LootParameters.BLOCK_STATE, state).build(LootParameterSets.BLOCK));
-		}
-		
-		return Collections.emptyList();
 	}
 	
 	static final VoxelShape SHAPE_SLAVE = VoxelShapes.create(.1875F, 0, .1875F, .8125f, 1, .8125f);

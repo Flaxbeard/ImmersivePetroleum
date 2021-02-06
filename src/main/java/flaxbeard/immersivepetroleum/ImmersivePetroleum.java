@@ -15,6 +15,7 @@ import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.util.commands.ReservoirCommand;
+import flaxbeard.immersivepetroleum.common.util.loot.IPLootFunctions;
 import net.minecraft.command.Commands;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -66,6 +67,7 @@ public class ImmersivePetroleum{
 		Serializers.RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
 		
 		IPContent.populate();
+		IPLootFunctions.modConstruction();
 		
 		proxy.construct();
 		proxy.registerContainersAndScreens();

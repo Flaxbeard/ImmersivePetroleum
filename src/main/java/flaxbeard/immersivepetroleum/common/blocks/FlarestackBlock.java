@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -101,13 +100,15 @@ public class FlarestackBlock extends IPBlockBase{
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public List<ItemStack> getDrops(BlockState state, net.minecraft.loot.LootContext.Builder builder){
-		if(!state.get(SLAVE)){
-			return Arrays.asList(new ItemStack(this, 1));
-		}else{
+		if(state.get(SLAVE)){
+			// TODO Don't know how else i would do this yet
 			return Collections.emptyList();
 		}
+		
+		return super.getDrops(state, builder);
 	}
 	
 	static VoxelShape SHAPE_SLAVE;

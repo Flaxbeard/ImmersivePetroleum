@@ -1,12 +1,8 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
-import java.util.Collections;
-import java.util.List;
-
 import blusunrize.immersiveengineering.common.blocks.IEBaseTileEntity;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IReadOnPlacement;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -18,9 +14,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameterSets;
-import net.minecraft.loot.LootParameters;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
@@ -110,17 +103,6 @@ public class GasGeneratorBlock extends IPBlockBase{
 				}
 			}
 		}
-	}
-	
-	@Override
-	public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder){
-		TileEntity te = builder.get(LootParameters.BLOCK_ENTITY);
-		
-		if(te instanceof ITileDrop){
-			return ((ITileDrop) te).getTileDrops(builder.withParameter(LootParameters.BLOCK_STATE, state).build(LootParameterSets.BLOCK));
-		}
-		
-		return Collections.emptyList();
 	}
 	
 	@Override

@@ -12,6 +12,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
+import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -131,11 +132,24 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	
 	@Override
 	public List<ItemStack> getTileDrops(LootContext context){
-		ItemStack stack = new ItemStack(context.get(LootParameters.BLOCK_STATE).getBlock());
-		CompoundNBT tag = new CompoundNBT();
-		writeTank(tag, true);
-		if(!tag.isEmpty())
-			stack.setTag(tag);
+		BlockState state = context.get(LootParameters.BLOCK_STATE);
+		if(state.get(AutoLubricatorBlock.SLAVE)){
+			return Arrays.asList(ItemStack.EMPTY);
+		}
+		
+		ItemStack stack = new ItemStack(state.getBlock());
+		
+		TileEntity te = context.get(LootParameters.BLOCK_ENTITY);
+		if(te instanceof AutoLubricatorTileEntity){
+			AutoLubricatorTileEntity lube = (AutoLubricatorTileEntity) te;
+			
+			CompoundNBT tag = new CompoundNBT();
+			lube.writeTank(tag, true);
+			if(!tag.isEmpty()){
+				stack.setTag(tag);
+			}
+		}
+		
 		return Arrays.asList(stack);
 	}
 	

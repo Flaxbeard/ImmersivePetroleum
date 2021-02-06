@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
@@ -35,9 +37,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fluids.FluidActionResult;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -209,6 +214,43 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		
 		if(this.tanks[TANK_OUTPUT].getFluidAmount() > 0){
 			if(this.inventory.get(INV_2) != ItemStack.EMPTY){
+				
+				if(this.tanks[TANK_OUTPUT].getFluidTypes() > 0){
+					MultiFluidTank outTank = this.tanks[TANK_OUTPUT];
+					
+					for(int i = outTank.getFluidTypes() - 1;i >= 0;i--){
+						FluidStack fs = outTank.getFluidInTank(i);
+						
+						if(fs.getAmount() >= FluidAttributes.BUCKET_VOLUME){
+							ItemStack filledContainer = fillFluidContainer(fs, this.inventory.get(INV_2), this.inventory.get(INV_3));
+							if(!filledContainer.isEmpty()){
+								FluidStack copy = fs.copy();
+								copy.setAmount(FluidAttributes.BUCKET_VOLUME);
+								outTank.drain(copy, FluidAction.EXECUTE);
+								
+								if(this.inventory.get(INV_3).getCount() == 1 && !Utils.isFluidContainerFull(filledContainer)){
+									this.inventory.set(INV_3, filledContainer.copy());
+								}else{
+									if(!this.inventory.get(INV_3).isEmpty() && ItemHandlerHelper.canItemStacksStack(this.inventory.get(INV_3), filledContainer)){
+										this.inventory.get(INV_3).grow(filledContainer.getCount());
+									}else if(this.inventory.get(INV_3).isEmpty()){
+										this.inventory.set(INV_3, filledContainer.copy());
+									}
+									
+									this.inventory.get(INV_2).shrink(1);
+									if(this.inventory.get(INV_2).getCount() <= 0){
+										this.inventory.set(INV_2, ItemStack.EMPTY);
+									}
+								}
+								
+								update = true;
+								break;
+							}
+						}
+					}
+				}
+				
+				/*
 				ItemStack filledContainer = Utils.fillFluidContainer(this.tanks[TANK_OUTPUT], this.inventory.get(INV_2), this.inventory.get(INV_3), null);
 				if(!filledContainer.isEmpty()){
 					
@@ -228,7 +270,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 					}
 					
 					update = true;
-				}
+				}*/
 			}
 			
 			update |= FluidUtil.getFluidHandler(this.world, getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite()), getFacing().getOpposite()).map(output -> {
@@ -260,6 +302,54 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		if(update){
 			updateMasterBlock(null, true);
 		}
+	}
+	
+	/**
+	 * FluidStack based version of {@link blusunrize.immersiveengineering.common.util.Utils#fillFluidContainer(IFluidHandler, ItemStack, ItemStack, PlayerEntity)}
+	 * minus the useless bits :D
+	 */
+	static ItemStack fillFluidContainer(FluidStack fluid, ItemStack containerIn, ItemStack containerOut){
+		if(containerIn == null || containerIn.isEmpty())
+			return ItemStack.EMPTY;
+		
+		FluidActionResult result = tryFillContainer(containerIn, fluid, Integer.MAX_VALUE, false);
+		if(result.isSuccess()){
+			final ItemStack full = result.getResult();
+			if((containerOut.isEmpty() || ItemHandlerHelper.canItemStacksStack(containerOut, full))){
+				if(!containerOut.isEmpty() && containerOut.getCount() + full.getCount() > containerOut.getMaxStackSize()){
+					return ItemStack.EMPTY;
+				}
+				
+				result = tryFillContainer(containerIn, fluid, Integer.MAX_VALUE, true);
+				if(result.isSuccess()){
+					return result.getResult();
+				}
+			}
+		}
+		
+		return ItemStack.EMPTY;
+	}
+	
+	/** 
+	 * FluidStack based version of {@link net.minecraftforge.fluids.FluidUtil#tryFillContainer(ItemStack, IFluidHandler, int, PlayerEntity, boolean)}
+	 * minus the useless bits :D
+	 */
+	static FluidActionResult tryFillContainer(@Nonnull ItemStack container, FluidStack fluidSource, int maxAmount, boolean doFill){
+		ItemStack containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1);
+		return FluidUtil.getFluidHandler(containerCopy).map(containerFluidHandler -> {
+			
+			int fillableAmount = containerFluidHandler.fill(fluidSource, IFluidHandler.FluidAction.SIMULATE);
+			if(fillableAmount > 0){
+				if(doFill){
+					containerFluidHandler.fill(fluidSource, IFluidHandler.FluidAction.EXECUTE);
+				}
+				
+				ItemStack resultContainer = containerFluidHandler.getContainer();
+				return new FluidActionResult(resultContainer);
+			}
+			
+			return FluidActionResult.FAILURE;
+		}).orElse(FluidActionResult.FAILURE);
 	}
 	
 	@Override

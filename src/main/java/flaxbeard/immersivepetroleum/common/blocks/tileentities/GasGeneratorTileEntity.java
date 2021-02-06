@@ -79,7 +79,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	}
 	
 	private int getMaxStorage(){
-		return 16000;
+		return IEServerConfig.MACHINES.lvCapConfig.storage.getAsInt();
 	}
 	
 	@Override

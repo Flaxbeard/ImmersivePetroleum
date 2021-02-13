@@ -1,0 +1,159 @@
+{
+	"itemGroup.immersivepetroleum": "Immersive Petroleum",
+	
+	"_comment": "################## Blocks ##################",
+	
+	"block.immersivepetroleum.fluid_diesel": "Diesel",
+	"block.immersivepetroleum.fluid_crude_oil": "Petróleo crudo",
+	"block.immersivepetroleum.fluid_lubricant": "Lubricante",
+	"block.immersivepetroleum.fluid_gasoline": "Gasolina",
+	"block.immersivepetroleum.fluid_napalm": "Napalm",
+	
+	"block.immersivepetroleum.asphalt": "Hormigón asfáltico",
+	
+	"block.immersivepetroleum.auto_lubricator": "Lubricador automático",
+	"block.immersivepetroleum.gas_generator": "Generador portátil",
+	"block.immersivepetroleum.flarestack": "Pila de bengalas",
+	
+	"block.immersivepetroleum.pumpjack": "Bomba hidráulica",
+	"block.immersivepetroleum.distillationtower": "Torre de destilación",
+	
+	"fluid.immersivepetroleum.diesel": "Diesel",
+	"fluid.immersivepetroleum.oil": "Petróleo crudo",
+	"fluid.immersivepetroleum.lubricant": "Lubricante",
+	"fluid.immersivepetroleum.gasoline": "Gasolina",
+	"fluid.immersivepetroleum.napalm": "Napalm",
+	
+	"_comment": "################## Items ##################",
+	
+	"item.immersivepetroleum.projector": "Proyector",
+	"item.immersivepetroleum.projector.specific": "%s Proyector",
+	"item.immersivepetroleum.speedboat": "Lancha a motor",
+	"item.immersivepetroleum.oil_can": "Lata de lubricante",
+	
+	"item.immersivepetroleum.bitumen": "Betún",
+	"item.immersivepetroleum.petcoke": "Coque de petróleo",
+	"item.immersivepetroleum.diesel_bucket": "Cubo de Diesel",
+	"item.immersivepetroleum.oil_bucket": "Cubo de Petróleo crudo",
+	"item.immersivepetroleum.lubricant_bucket": "Cubo de Lubricante",
+	"item.immersivepetroleum.gasoline_bucket": "Cubo de Gasolina",
+	"item.immersivepetroleum.napalm_bucket": "Cubo de Napalm",
+	
+	"item.immersivepetroleum.upgrade_reinforced_hull": "Casco reforzado",
+	"item.immersivepetroleum.upgrade_icebreaker": "Proa rompehielos",
+	"item.immersivepetroleum.upgrade_tank": "Depósito de combustible ampliado",
+	"item.immersivepetroleum.upgrade_rudders": "Timones de maniobra",
+	"item.immersivepetroleum.upgrade_paddles": "Palas de emergencia",
+	
+	"_comment": "################## Descriptions ##################",
+	
+	"_comment":"Replaced the IP with IE to save me from headaches. ~TwistedGate",
+	"desc.immersiveengineering.info.multiblock.IE:DistillationTower": "Torre de destilación",
+	"desc.immersiveengineering.info.multiblock.IE:Pumpjack": "Bomba hidráulica",
+	
+	"desc.immersivepetroleum.info.reservoir.oil": "Depósito de aceite",
+	"desc.immersivepetroleum.info.reservoir.aquifer": "Aquífero",
+	"desc.immersivepetroleum.info.reservoir.lava": "Cámara de Magma",
+	
+	"desc.immersivepetroleum.flavour.upgrade_reinforced_hull": "Hace que la lancha sea resistente al fuego y aumenta su salud",
+	"desc.immersivepetroleum.flavour.upgrade_icebreaker": "Permite que la lancha destruya el hielo y dañe a las turbas",
+	"desc.immersivepetroleum.flavour.upgrade_tank": "Aumenta la capacidad del depósito de combustible de la lancha",
+	"desc.immersivepetroleum.flavour.upgrade_rudders": "Permite realizar giros más cerrados en la lancha",
+	"desc.immersivepetroleum.flavour.upgrade_paddles": "Puede remar aún con motor cuando se queda sin combustible",
+	
+	"desc.immersivepetroleum.flavour.asphalt": "Aumenta la velocidad de la marcha en %1$s",
+	
+	"_comment": "This is for the upgrade list of the speedboat tooltip",
+	"desc.immersivepetroleum.flavour.speedboat0": "Actualización(es)",
+	
+	"desc.immersivepetroleum.info.projector.noMultiblock": "Haga clic con el botón derecho para abrir el menú",
+	"desc.immersivepetroleum.info.projector.size": "Tamaño: %d x %d x %d",
+	"desc.immersivepetroleum.info.projector.build0": "Muestra las instrucciones",
+	"desc.immersivepetroleum.info.projector.build1": "para hacer un %s",
+	"desc.immersivepetroleum.info.projector.center": "centrado en [%d, %d, %d]",
+	
+	"desc.immersivepetroleum.info.projector.flipped.true": "Espejado: Sí.",
+	"desc.immersivepetroleum.info.projector.flipped.false": "Espejado: No.",
+	
+	"desc.immersivepetroleum.info.projector.rotated.north":"Rotación al Norte",
+	"desc.immersivepetroleum.info.projector.rotated.east":  "Rotación al Este",
+	"desc.immersivepetroleum.info.projector.rotated.south": "Rotación al sur",
+	"desc.immersivepetroleum.info.projector.rotated.west": "Rotación al oeste",
+	
+	"desc.immersivepetroleum.info.projector.mode_0": "Modo de selección",
+	"desc.immersivepetroleum.info.projector.mode_1": "Modo de proyección",
+	
+	"desc.immersivepetroleum.info.projector.holdshift": "Mantenga shift",
+	"desc.immersivepetroleum.info.projector.holdshift.text": "Para los ajustes",
+	
+	"desc.immersivepetroleum.info.projector.holdctrl": "Mantenga Ctrl",
+	"desc.immersivepetroleum.info.projector.holdctrl.text": "Para el sistema de control",
+	
+	"desc.immersivepetroleum.info.projector.control1": "Shift + Scroll hacia arriba/abajo para girar",
+	"desc.immersivepetroleum.info.projector.control2": "%s al espejo",
+	"desc.immersivepetroleum.info.projector.control3": "Agáchate + clic con el botón derecho del ratón en el aire para cambiar el modo",
+	
+	"_comment": "################## GUI ##################",
+	
+	"gui.immersivepetroleum.projector.search": "Búsqueda",
+	"gui.immersivepetroleum.projector.button.confirm": "Confirmar",
+	"gui.immersivepetroleum.projector.button.cancel": "Cancelar",
+	"gui.immersivepetroleum.projector.button.mirror": "Espejo",
+	"gui.immersivepetroleum.projector.button.rcw": "Girar en el sentido de las agujas del reloj",
+	"gui.immersivepetroleum.projector.button.rccw": "Girar en sentido contrario a las agujas del reloj",
+	
+	"_comment": "################## IE-Manual ##################",
+	
+	"effect.immersivepetroleum.anti_fire": "",
+	
+	"_comment": "################## IE-Manual ##################",
+	
+	"manual.immersivepetroleum.main": "Procesamiento del aceite",
+	
+	"ie.manual.entry.blank_text": "",
+	
+	"ie.manual.entry.reservoirs.title": "Depósitos de fluidos",
+	"ie.manual.entry.reservoirs.subtitle": "Oro negro",
+	
+	"ie.manual.entry.reservoirs.oil0": "Al minar cerca del lecho rocoso, de vez en cuando habrás notado una sustancia negra e inflamable: el petróleo. El petróleo es sólo uno de los muchos fluidos que pueden encontrarse bajo la impenetrable roca, pero no podrás abrir una brecha en estas reservas por tu cuenta.\n\nCon la ayuda de una <link;immersivepetroleum:pumpjack;§o§nmáquina §o§nespecialmente §o§ndiseñada§r> puedes ser capaz de poner tus manos en el contenido de estos depósitos.<np>",
+	"ie.manual.entry.reservoirs.oil1": "El <link;minerals;§o§nNúcleo §o§nbásico de §o§nperforación§r> determinará si se puede encontrar un yacimiento en un trozo específico y da una idea del tamaño del depósito de fluidos.\n\nA pesar del volumen finito de fluido en cada trozo, ciertos tipos de yacimientos pueden tener trazas de fluido que todavía pueden ser cosechadas después de que el trozo se agote. Utilizar más de una Bomba hidráulica en un trozo agotado no proporciona ningún beneficio.<np>",
+	
+	"ie.manual.entry.reservoirs.consonant": "Un",
+	"ie.manual.entry.reservoirs.vowel": "Un",
+	
+	"ie.manual.entry.reservoirs.dim.valid": "%3$s §l%1$s§r es un tipo de depósito de fluido que puede encontrarse en %2$s.",
+	"ie.manual.entry.reservoirs.dim.invalid": "%3$s §l%1$s§r es un tipo de depósito de fluido que puede encontrarse en cualquier lugar, pero en %2$s.",
+	"ie.manual.entry.reservoirs.dim.any": "%2$s §l%1$s§r es un tipo de depósito de fluido que puede encontrarse en cualquier Dimensión.",
+	
+	"ie.manual.entry.reservoirs.bio.valid": "Este depósito generará en %s Biomas.",
+	"ie.manual.entry.reservoirs.bio.invalid": "Este depósito no generará en %s Biomas.",
+	"ie.manual.entry.reservoirs.bio.any": "Este depósito generará en cualquier bioma.",
+	
+	"ie.manual.entry.reservoirs.content": "%1$s %6$s\nIt contiene %3$s a %4$s mB de %2$s.%5$s",
+	"ie.manual.entry.reservoirs.replenish": "\nUna vez agotado el depósito, %1$d mB/tick de vestigios de %2$s puede ser extraído por una sola Bomba hidráulica.",
+	
+	"_comment": "################## Chat ##################",
+	
+	"chat.immersivepetroleum.command.help.help": "§6Usa: /ip help <command> [sub-commands ...]§r\nPara obtener más información sobre el comando especificado u, opcionalmente, sus subcomandos",
+	"chat.immersivepetroleum.command.reservoir.help": "§6Usa: /ip reservoir <list|get|set|setAmount|setCapacity>§r",
+	"chat.immersivepetroleum.command.reservoir.list.help": "§6Usa: /ip reservoir list§r<br> Lista de todos los depósitos registrados",
+	"chat.immersivepetroleum.command.reservoir.get.help": "§6Usa: /ip reservoir get§r<br> Muestra el depósito del chunk",
+	"chat.immersivepetroleum.command.reservoir.set.help": "§6Usa: /ip reservoir set [reservoir]§r<br> Establece una anulación de depósito para el trozo. Especifique que no hay depósito para eliminar la anulación.",
+	"chat.immersivepetroleum.command.reservoir.setAmount.help": "§6Usa: /ip reservoir setAmount <number>§r<br> Establece la cantidad de mB de líquido que queda dentro del chunk.",
+	"chat.immersivepetroleum.command.reservoir.setCapacity.help": "§6Usa: /ip reservoir setCapacity <number>§r<br> Establece la cantidad máxima de mB de fluido en el chunk.",
+	"chat.immersivepetroleum.command.reservoir.get": "Chunk contiene: %1$s <br>Anular: %2$s <br>Cantidad: %3$s",
+	"chat.immersivepetroleum.command.reservoir.set.invalidReservoir": "§cDepósito inválido, '%1$s' no es un identificador válido. Utilice '/ip reservoir list' para obtener una lista de todos los identificadores.§r",
+	"chat.immersivepetroleum.command.reservoir.set.sucess": "Anulación del depósito ajustada a: %1$s",
+	"chat.immersivepetroleum.command.reservoir.set.clear": "Anulación del depósito anulada. (%1$s)",
+	"chat.immersivepetroleum.command.reservoir.setAmount.sucess": "Cantidad del depósito ajustada a: %1$s",
+	"chat.immersivepetroleum.command.reservoir.setAmount.NFE": "Error, '%1$s' no es un número válido",
+	"chat.immersivepetroleum.command.reservoir.setCapacity.sucess": "Capacidad del depósito ajustada a: %1$s",
+	"chat.immersivepetroleum.command.reservoir.setCapacity.NFE": "Error, '%1$s' no es un número válido",
+	
+	"chat.immersivepetroleum.info.coresample.oil": "%s Depósito",
+	"chat.immersivepetroleum.info.coresample.oilRep": "Hasta %d mB/tick vestigios de %s",
+	"chat.immersivepetroleum.info.coresample.noOil": "Sin depósito de fluido",
+	
+	"key.categories.immersivepetroleum": "Immersive Petroleum",
+	"key.immersivepetroleum.projector.flip": "Proyección Espejada"
+}

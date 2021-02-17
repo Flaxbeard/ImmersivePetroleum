@@ -116,7 +116,7 @@
 	"ie.manual.entry.reservoirs.subtitle": "Oro negro",
 	
 	"ie.manual.entry.reservoirs.oil0": "Al minar cerca del lecho rocoso, de vez en cuando habrás notado una sustancia negra e inflamable: el petróleo. El petróleo es sólo uno de los muchos fluidos que pueden encontrarse bajo la impenetrable roca, pero no podrás abrir una brecha en estas reservas por tu cuenta.\n\nCon la ayuda de una <link;immersivepetroleum:pumpjack;§o§nmáquina §o§nespecialmente §o§ndiseñada§r> puedes ser capaz de poner tus manos en el contenido de estos depósitos.<np>",
-	"ie.manual.entry.reservoirs.oil1": "El <link;minerals;§o§nNúcleo §o§nbásico de §o§nperforación§r> determinará si se puede encontrar un yacimiento en un trozo específico y da una idea del tamaño del depósito de fluidos.\n\nA pesar del volumen finito de fluido en cada trozo, ciertos tipos de yacimientos pueden tener trazas de fluido que todavía pueden ser cosechadas después de que el trozo se agote. Utilizar más de una Bomba hidráulica en un trozo agotado no proporciona ningún beneficio.<np>",
+	"ie.manual.entry.reservoirs.oil1": "La <link;minerals;§o§nMuestra §o§ndel núcleo §o§nperforación§r> determinará si se puede encontrar un yacimiento en un trozo específico y da una idea del tamaño del depósito de fluidos.\n\nA pesar del volumen finito de fluido en cada trozo, ciertos tipos de yacimientos pueden tener trazas de fluido que todavía pueden ser cosechadas después de que el trozo se agote. Utilizar más de una Bomba hidráulica en un trozo agotado no proporciona ningún beneficio.<np>",
 	
 	"ie.manual.entry.reservoirs.consonant": "Un",
 	"ie.manual.entry.reservoirs.vowel": "Un",

@@ -1,0 +1,7 @@
+Lubricante
+Deslizamiento y deslizamiento
+Las máquinas de nadie son perfectas, ni siquiera las suyas. La inevitable fricción entre las piezas móviles impide que sus dispositivos funcionen al máximo de su capacidad: ahí es donde entra en juego el Lubricante. Se asegurará de que una máquina conectada funcione a pleno rendimiento, <config;d;autolubricant_speedup>por su velocidad base. <link;immersivepetroleum:pumpjack;§n§oBombas hidráulicas§r>, <link;excavator;§n§oExcavadoras§r>, y <link;crusher;§n§oTrituradoras§r> pueden ser lubricados.
+<&lubricant1>El lata de lubricante puede utilizarse para aplicar manualmente un fluido lubricante a una máquina. El lubricante de petróleo es el más eficaz, pero el <link;squeezer;§n§oAceite vegetal§r> también funciona. Una vez que la lata esté llena, basta con hacer clic con el botón derecho en un bloque válido para lubricarlo. Mientras se acelera, la máquina goteará visiblemente.
+Los Golems de hierro también pueden ser lubricados, curándolos y aumentando temporalmente su velocidad y fuerza.
+
+Un <link;chemthrower;§o§nEl lanzador de productos §o§nQuímicos§r> también se puede utilizar para aplicar un lubricante a los bloques, aunque con menos eficacia. Basta con rociar un fluido lubricante válido sobre una máquina y ésta empezará a funcionar a toda velocidad.

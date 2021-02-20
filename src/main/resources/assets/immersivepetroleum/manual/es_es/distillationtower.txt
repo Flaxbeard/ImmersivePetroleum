@@ -1,0 +1,9 @@
+Torre de destilación
+No es respetuosa con el medio ambiente
+<&distillationtower0>La Torre de Destilación es una gran estructura multibloque que separa el petróleo crudo en una serie de subproductos. Se construye como se muestra y se forma utilizando el Martillo del Ingeniero en el Bloque de Ingeniería de Redstone.
+
+El petróleo crudo puede introducirse en la Torre de destilación por la compuerta trasera marcada con un punto azul, donde se calentará hasta que se separe en una serie de capas. Esto produce una variedad de fluidos y tiene la posibilidad de producir betún como subproducto.<np>
+La Torre de Destilación utiliza <config;i;distillationtower_operationcost> Flux por operación, convirtiendo hasta 25 mB de Petróleo Crudo en Diesel, Lubricante, Gasolina y Betún por tick. La mezcla de fluidos producida sale por la escotilla lateral marcada con un punto naranja; el Betún por la escotilla frontal.
+
+El Diesel puede usarse para la <link;diesel_generator;§o§nproducción §o§nde energía§r>, el lubricante para <link;immersivepetroleum:lubricant;§o§nmáquinas de §o§naceite§r>, y la gasolina para <link;immersivepetroleum:portablegenerator;§o§motores de combustión§r> <link;immersivepetroleum:speedboat;§o§nvehículos§r>, o <link;immersivepetroleum:napalm;§o§nNapalm§r>. El betún se utiliza para fabricar <link;immersivepetroleum:asphalt;§o§nAsfalto§r>.
+<&distillationtower1>A continuación se muestran las operaciones que puede realizar la Torre de Destilación:

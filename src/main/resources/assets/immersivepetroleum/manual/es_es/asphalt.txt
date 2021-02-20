@@ -1,0 +1,3 @@
+Hormigón asfáltico
+Material para carreteras
+<&asphalt0>El Hormigón asfáltico, mantenido por el betún pegajoso, es una alternativa de color más oscuro que el Hormigón normal. Puede producirse utilizando los subproductos del procesamiento del petróleo crudo en la <link;immersivepetroleum:distillationtower;§n§oTorre de §n§odestilación§r>.

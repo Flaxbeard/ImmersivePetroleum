@@ -1,0 +1,8 @@
+Bomba de hidrocarburos
+Bombea, bombea
+<&pumpjack0>La bomba de hidrocarburos es un multibloque que extrae petróleo crudo de depósitos situados bajo el lecho de roca. La estructura se forma utilizando el Martillo del Ingeniero en el bloque de Ingeniería pesada de la segunda capa.<np>
+La Bomba de hidrocarburos utiliza <config;i;pumpjack_consumption> Flux/t para bombear Petróleo Crudo a una velocidad de <config;i;pumpjack_speed> mB/t. El petróleo producido se expulsa automáticamente por los dos puertos laterales con puntos naranjas.
+
+El depósito medio de petróleo tardará <config;i;pumpjack_days> días en agotarse, aunque añadir más Bombas puede acelerar el proceso.
+
+La aplicación de una señal de redstone al panel de control detendrá el proceso de la máquina, este comportamiento puede ser invertido mediante el uso del Martillo del Ingeniero.

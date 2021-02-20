@@ -1,0 +1,5 @@
+Regulador de lubricante
+Quema tus problemas
+<&flarestack0>Este sencillo dispositivo quema el exceso de lubricante o el no deseado.
+
+El lubricante se bombea a través de la parte inferior, automáticamente comenzará a quemarlo a un ritmo de 100mB por Tick.

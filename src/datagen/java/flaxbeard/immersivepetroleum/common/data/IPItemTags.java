@@ -1,16 +1,16 @@
 package flaxbeard.immersivepetroleum.common.data;
 
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.ItemTagsProvider;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class IPItemTags extends ItemTagsProvider{
-	
-	@SuppressWarnings("deprecation")
-	public IPItemTags(DataGenerator generatorIn, BlockTagsProvider exhelper){
-		super(generatorIn, exhelper);
+	public IPItemTags(DataGenerator dataGen, BlockTagsProvider blockTags, ExistingFileHelper exFileHelper){
+		super(dataGen, blockTags, ImmersivePetroleum.MODID, exFileHelper);
 	}
 	
 	@Override

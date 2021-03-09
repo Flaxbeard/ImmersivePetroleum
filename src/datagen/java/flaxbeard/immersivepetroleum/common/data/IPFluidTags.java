@@ -1,15 +1,16 @@
 package flaxbeard.immersivepetroleum.common.data;
 
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.FluidTagsProvider;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class IPFluidTags extends FluidTagsProvider{
 	
-	@SuppressWarnings("deprecation")
-	public IPFluidTags(DataGenerator gen){
-		super(gen);
+	public IPFluidTags(DataGenerator gen, ExistingFileHelper exHelper){
+		super(gen, ImmersivePetroleum.MODID, exHelper);
 	}
 	
 	@Override

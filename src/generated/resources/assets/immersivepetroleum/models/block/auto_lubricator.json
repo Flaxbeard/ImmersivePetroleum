@@ -5,6 +5,5 @@
     "particle": "immersivepetroleum:models/lubricator"
   },
   "loader": "forge:obj",
-  "model": "immersivepetroleum:models/block/obj/autolubricator.obj",
-  "flip-v": true
+  "model": "immersivepetroleum:models/block/obj/autolubricator.obj"
 }

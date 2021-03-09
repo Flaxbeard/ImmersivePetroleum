@@ -1,210 +1,110 @@
 {
+  "display": {
+    "firstperson_lefthand": {
+      "scale": [
+        0.03125,
+        0.03125,
+        0.03125
+      ]
+    },
+    "firstperson_righthand": {
+      "scale": [
+        0.03125,
+        0.03125,
+        0.03125
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        0,
+        90,
+        0
+      ],
+      "translation": [
+        -0.75,
+        -5,
+        -1.25
+      ],
+      "scale": [
+        0.03125,
+        0.03125,
+        0.03125
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        0,
+        270,
+        0
+      ],
+      "translation": [
+        1,
+        -5,
+        -1.75
+      ],
+      "scale": [
+        0.03125,
+        0.03125,
+        0.03125
+      ]
+    },
+    "head": {
+      "translation": [
+        1.5,
+        8,
+        1.5
+      ],
+      "scale": [
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "translation": [
+        -1,
+        -6,
+        0
+      ],
+      "scale": [
+        0.0625,
+        0.0625,
+        0.0625
+      ]
+    },
+    "ground": {
+      "translation": [
+        1,
+        0,
+        1
+      ],
+      "scale": [
+        0.0625,
+        0.0625,
+        0.0625
+      ]
+    },
+    "fixed": {
+      "translation": [
+        0,
+        -8,
+        0
+      ],
+      "scale": [
+        0.0625,
+        0.0625,
+        0.0625
+      ]
+    }
+  },
   "textures": {
     "texture": "immersivepetroleum:multiblock/distillation_tower"
   },
   "loader": "forge:obj",
-  "model": "immersivepetroleum:models/multiblock/obj/distillationtower.obj",
-  "flip-v": true,
-  "transform": {
-    "thirdperson_righthand": {
-      "translation": [
-        0.0625,
-        -0.3125,
-        -0.109375
-      ],
-      "rotation": [
-        0.0,
-        0.7071068,
-        0.0,
-        -0.7071068
-      ],
-      "scale": [
-        0.03125,
-        0.03125,
-        0.03125
-      ],
-      "post-rotation": [
-        0.0,
-        0.0,
-        0.0,
-        0.99830717
-      ],
-      "origin": "corner"
-    },
-    "thirdperson_lefthand": {
-      "translation": [
-        -0.046875,
-        -0.3125,
-        -0.078125
-      ],
-      "rotation": [
-        0.0,
-        0.7071068,
-        0.0,
-        0.7071068
-      ],
-      "scale": [
-        0.03125,
-        0.03125,
-        0.03125
-      ],
-      "post-rotation": [
-        0.0,
-        0.0,
-        0.0,
-        0.99830717
-      ],
-      "origin": "corner"
-    },
-    "firstperson_righthand": {
-      "translation": [
-        0.0,
-        0.0,
-        0.0
-      ],
-      "rotation": [
-        0.0,
-        0.0,
-        0.0,
-        1.0
-      ],
-      "scale": [
-        0.03125,
-        0.03125,
-        0.03125
-      ],
-      "post-rotation": [
-        0.0,
-        0.0,
-        0.0,
-        0.99830717
-      ],
-      "origin": "corner"
-    },
-    "firstperson_lefthand": {
-      "translation": [
-        0.0,
-        0.0,
-        0.0
-      ],
-      "rotation": [
-        0.0,
-        0.0,
-        0.0,
-        1.0
-      ],
-      "scale": [
-        0.03125,
-        0.03125,
-        0.03125
-      ],
-      "post-rotation": [
-        0.0,
-        0.0,
-        0.0,
-        0.99830717
-      ],
-      "origin": "corner"
-    },
-    "head": {
-      "translation": [
-        0.09375,
-        0.5,
-        0.09375
-      ],
-      "rotation": [
-        0.0,
-        0.0,
-        0.0,
-        1.0
-      ],
-      "scale": [
-        0.20000002,
-        0.20000002,
-        0.20000002
-      ],
-      "post-rotation": [
-        0.0,
-        0.0,
-        0.0,
-        0.99830717
-      ],
-      "origin": "corner"
-    },
-    "gui": {
-      "translation": [
-        -0.0625,
-        -0.375,
-        0.0
-      ],
-      "rotation": [
-        -0.099045746,
-        0.8923991,
-        0.23911761,
-        -0.3696438
-      ],
-      "scale": [
-        0.0625,
-        0.062499996,
-        0.0625
-      ],
-      "post-rotation": [
-        0.0,
-        0.0,
-        0.0,
-        0.99830717
-      ],
-      "origin": "corner"
-    },
-    "ground": {
-      "translation": [
-        0.0625,
-        0.0,
-        0.0625
-      ],
-      "rotation": [
-        0.0,
-        0.0,
-        0.0,
-        1.0
-      ],
-      "scale": [
-        0.0625,
-        0.0625,
-        0.0625
-      ],
-      "post-rotation": [
-        0.0,
-        0.0,
-        0.0,
-        0.99830717
-      ],
-      "origin": "corner"
-    },
-    "fixed": {
-      "translation": [
-        0.0,
-        -0.5,
-        0.0
-      ],
-      "rotation": [
-        0.0,
-        0.0,
-        0.0,
-        1.0
-      ],
-      "scale": [
-        0.0625,
-        0.0625,
-        0.0625
-      ],
-      "post-rotation": [
-        0.0,
-        0.0,
-        0.0,
-        0.99830717
-      ],
-      "origin": "corner"
-    }
-  }
+  "model": "immersivepetroleum:models/multiblock/obj/distillationtower.obj"
 }

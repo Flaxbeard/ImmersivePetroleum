@@ -100,9 +100,11 @@ minecraft {
 }
 
 dependencies {
-	minecraft "net.minecraftforge:forge:1.16.5-36.0.0"
+	minecraft "net.minecraftforge:forge:1.16.5-36.0.27"
 	
 	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-4.2.2-132")
+	datagenCompile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-4.2.2-132:datagen")
+	
 	compile fg.deobf(group: "com.blamejared.crafttweaker", name: "CraftTweaker-1.16.5", version: "7.1.0.103")
 	
 	compileOnly fg.deobf("mezz.jei:jei-1.16.3:7.6.0.49:api")

@@ -142,7 +142,7 @@ public class ReservoirTweaker{
 				ResourceLocation id = TweakerUtils.ctLoc(name);
 				
 				if(!PumpjackHandler.reservoirs.containsKey(id)){
-					ReservoirType type = new ReservoirType(name, id, this.iFluidStack.getFluid().getInternal(), this.minSize, this.maxSize, this.traceAmount, this.weight);
+					ReservoirType type = new ReservoirType(name, id, this.iFluidStack.getFluid(), this.minSize, this.maxSize, this.traceAmount, this.weight);
 					
 					if(!this.dimWhitelist.isEmpty()){
 						type.addDimension(false, this.dimWhitelist);

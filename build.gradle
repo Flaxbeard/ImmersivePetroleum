@@ -16,7 +16,7 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 
 version = '3.1.0-2'
 group = 'flaxbeard.immersivepetroleum'
-archivesBaseName = 'ImmersivePetroleum-1.16.4'
+archivesBaseName = 'ImmersivePetroleum-1.16.5'
 
 repositories {
 	maven {	name = "BlameJared";	url = "https://maven.blamejared.com/" }         // IE & CT Files
@@ -33,17 +33,23 @@ sourceSets {
 			]
 		}
 	}
+	datagen {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
+		compileClasspath += main.output
+		runtimeClasspath += main.output
+	}
 }
 
 minecraft {
-	mappings channel: 'snapshot', version: '20200916-1.16.2'
+	mappings channel: 'snapshot', version: '20201028-1.16.3'
 	accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 	
 	runs {
 		client {
 			workingDirectory project.file('run')
-			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-			property 'forge.logging.console.level', 'debug'
+			property 'forge.logging.markers', ''
+			property 'forge.logging.console.level', 'info'
 			property 'fml.earlyprogresswindow', 'false'
 			property 'mixin.env.disableRefMap', 'true'
 			mods {
@@ -55,8 +61,8 @@ minecraft {
 
 		server {
 			workingDirectory project.file('run')
-			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-			property 'forge.logging.console.level', 'debug'
+			property 'forge.logging.markers', ''
+			property 'forge.logging.console.level', 'info'
 			property 'fml.earlyprogresswindow', 'false'
 			property 'mixin.env.disableRefMap', 'true'
 			
@@ -71,7 +77,7 @@ minecraft {
 
 		data {
 			workingDirectory project.file('run')
-			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+			property 'forge.logging.markers', ''
 			property 'forge.logging.console.level', 'info'
 			property 'fml.earlyprogresswindow', 'false'
 			property 'mixin.env.disableRefMap', 'true'
@@ -81,11 +87,12 @@ minecraft {
 				 '--output', file('src/generated/resources/'),
 				 '--validate',
 				 '--existing', sourceSets.main.resources.srcDirs[0],
-				 '--existing', 'C:/Users/TwistedGate/.gradle/caches/forge_gradle/deobf_dependencies/blusunrize/immersiveengineering/ImmersiveEngineering/1.16.4-4.1.2-129_mapped_snapshot_20200916-1.16.2/ImmersiveEngineering-1.16.4-4.1.2-129_mapped_snapshot_20200916-1.16.2.jar'
+				 '--existing-mod', 'immersiveengineering'
 			
 			mods {
 				immersivepetroleum {
 					source sourceSets.main
+					source sourceSets.datagen
 				}
 			}
 		}
@@ -93,10 +100,10 @@ minecraft {
 }
 
 dependencies {
-	minecraft "net.minecraftforge:forge:1.16.4-35.1.0"
+	minecraft "net.minecraftforge:forge:1.16.5-36.0.0"
 	
-	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.4-4.1.2-129")
-	compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.3:7.0.0.45")
+	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-4.2.2-132")
+	compile fg.deobf(group: "com.blamejared.crafttweaker", name: "CraftTweaker-1.16.5", version: "7.1.0.103")
 	
 	compileOnly fg.deobf("mezz.jei:jei-1.16.3:7.6.0.49:api")
 	//compileOnly fg.deobf('com.feed_the_beast.mods:ftb-gui-library:1.0.0.18')

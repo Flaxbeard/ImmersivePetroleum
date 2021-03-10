@@ -249,28 +249,6 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 						}
 					}
 				}
-				
-				/*
-				ItemStack filledContainer = Utils.fillFluidContainer(this.tanks[TANK_OUTPUT], this.inventory.get(INV_2), this.inventory.get(INV_3), null);
-				if(!filledContainer.isEmpty()){
-					
-					if(this.inventory.get(INV_3).getCount() == 1 && !Utils.isFluidContainerFull(filledContainer)){
-						this.inventory.set(INV_3, filledContainer.copy());
-					}else{
-						if(!this.inventory.get(INV_3).isEmpty() && ItemHandlerHelper.canItemStacksStack(this.inventory.get(INV_3), filledContainer)){
-							this.inventory.get(INV_3).grow(filledContainer.getCount());
-						}else if(this.inventory.get(INV_3).isEmpty()){
-							this.inventory.set(INV_3, filledContainer.copy());
-						}
-						
-						this.inventory.get(INV_2).shrink(1);
-						if(this.inventory.get(INV_2).getCount() <= 0){
-							this.inventory.set(INV_2, ItemStack.EMPTY);
-						}
-					}
-					
-					update = true;
-				}*/
 			}
 			
 			update |= FluidUtil.getFluidHandler(this.world, getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite()), getFacing().getOpposite()).map(output -> {

@@ -1,4 +1,4 @@
-# Blender MTL File: 'GasGenerator.blend'
+# Blender MTL File: 'gasgenerator.blend'
 # Material Count: 1
 
 newmtl None
@@ -8,4 +8,4 @@ Kd 0.8 0.8 0.8
 Ks 0.8 0.8 0.8
 d 1
 illum 2
-map_Kd H:\MinecraftModdingStuff\Forge_1.14.4\ImmersivePetroleum\src\main\resources\assets\immersivepetroleum\textures\block\generator.png
+map_Kd H:\MinecraftModdingStuff\Forge-1.16.5\ImmersivePetroleum\src\main\resources\assets\immersivepetroleum\textures\block\obj\generator.png

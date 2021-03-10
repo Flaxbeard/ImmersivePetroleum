@@ -1,15 +1,18 @@
 package flaxbeard.immersivepetroleum.common.data;
 
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
-import com.google.gson.JsonObject;
 
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
-import blusunrize.immersiveengineering.client.models.connection.ConnectionLoader;
-import blusunrize.immersiveengineering.data.models.SpecialModelBuilder;
+import blusunrize.immersiveengineering.data.blockstates.ConnectorBlockBuilder;
+import blusunrize.immersiveengineering.data.models.SplitModelBuilder;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
@@ -19,12 +22,15 @@ import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblo
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.Property;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
@@ -111,50 +117,33 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	private BlockModelBuilder multiblockModel(Block block, ResourceLocation model, ResourceLocation texture, String add, TemplateMultiblock mb, boolean mirror){
-//		UnaryOperator<BlockPos> transform = UnaryOperator.identity();
-//		if(mirror){
-//			Vector3i size = mb.getSize(null);
-//			transform = p -> new BlockPos(size.getX() - p.getX() - 1, p.getY(), p.getZ());
-//		}
-//		final Vector3i offset = mb.getMasterFromOriginOffset();
-//		@SuppressWarnings("deprecation")
-//		Stream<Vector3i> partsStream = mb.getStructure(null).stream()
-//				.filter(info -> !info.state.isAir())
-//				.map(info -> info.pos)
-//				.map(transform)
-//				.map(p -> p.subtract(offset));
-		BlockModelBuilder out = this.models().withExistingParent(getMultiblockPath(block) + add, mcLoc("block"))
-				.customLoader(OBJLoaderBuilder::begin)
-				.modelLocation(model).end()
+		UnaryOperator<BlockPos> transform = UnaryOperator.identity();
+		if(mirror){
+			Vector3i size = mb.getSize(null);
+			transform = p -> new BlockPos(size.getX() - p.getX() - 1, p.getY(), p.getZ());
+		}
+		final Vector3i offset = mb.getMasterFromOriginOffset();
+		@SuppressWarnings("deprecation")
+		Stream<Vector3i> partsStream = mb.getStructure(null).stream()
+				.filter(info -> !info.state.isAir())
+				.map(info -> info.pos)
+				.map(transform)
+				.map(p -> p.subtract(offset));
+		
+		String name = getMultiblockPath(block) + add;
+		BlockModelBuilder base = this.models().withExistingParent(name, mcLoc("block"))
+				.customLoader(OBJLoaderBuilder::begin).modelLocation(model).detectCullableFaces(false).flipV(true).end()
 				.texture("texture", texture)
 				.texture("particle", texture);
-//				.additional("flip-v", true)
-//				.additional("model", model)
-//				.additional("detectCullableFaces", false)
-//				.additional(SplitModelLoader.BASE_LOADER, FORGE_LOADER)
-//				.additional(SplitModelLoader.DYNAMIC, false)
-//				.loader(SplitModelLoader.LOCATION);
-//		JsonArray partsJson = partsStream.collect(POSITIONS_TO_JSON);
-//		out.additional(SplitModelLoader.PARTS, partsJson);
-		return out;
+		
+		BlockModelBuilder split = this.models().withExistingParent(name + "_split", mcLoc("block"))
+				.customLoader(SplitModelBuilder::begin)
+				.innerModel(base)
+				.parts(partsStream.collect(Collectors.toList()))
+				.dynamic(false).end();
+		
+		return split;
 	}
-	
-//	private static final Collector<Vector3i, JsonArray, JsonArray> POSITIONS_TO_JSON = Collector.of(
-//			JsonArray::new,
-//			(arr, vec) -> {
-//				JsonArray posJson = new JsonArray();
-//				posJson.add(vec.getX());
-//				posJson.add(vec.getY());
-//				posJson.add(vec.getZ());
-//				arr.add(posJson);
-//			},
-//			(a, b) -> {
-//				JsonArray arr = new JsonArray();
-//				arr.addAll(a);
-//				arr.addAll(b);
-//				return arr;
-//			}
-//	);
 	
 	private void autolubricator(){
 		ResourceLocation texture = modLoc("models/lubricator");
@@ -162,9 +151,7 @@ public class IPBlockStates extends BlockStateProvider{
 		BlockModelBuilder lube_empty = this.models().withExistingParent("lube_empty", new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty")).texture("particle", texture);
 		
 		BlockModelBuilder lubeModel = this.models().withExistingParent(getPath(IPContent.Blocks.auto_lubricator), mcLoc("block"))
-				.customLoader(OBJLoaderBuilder::begin)
-				.modelLocation(modLoc("models/block/obj/autolubricator.obj")).end()
-//				.additional("flip-v", true)
+				.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/autolubricator.obj")).flipV(true).end()
 				.texture("texture", texture)
 				.texture("particle", texture);
 		
@@ -191,9 +178,7 @@ public class IPBlockStates extends BlockStateProvider{
 				.texture("particle", texture));
 		
 		BlockModelBuilder flarestackModel = this.models().withExistingParent(getPath(IPContent.Blocks.flarestack), mcLoc("block"))
-				.customLoader(OBJLoaderBuilder::begin)
-				.modelLocation(modLoc("models/block/obj/flarestack.obj")).end()
-//				.additional("flip-v", true)
+				.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/flarestack.obj")).flipV(true).end()
 				.texture("texture", texture)
 				.texture("particle", texture);
 		
@@ -209,27 +194,19 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	private void gasGenerator(){
-		JsonObject basemodel = new JsonObject();
-		basemodel.addProperty("loader", "forge:obj");
-		basemodel.addProperty("model", modLoc("models/block/obj/generator.obj").toString());
-		basemodel.addProperty("flip-v", true);
-		
 		ResourceLocation texture = modLoc("block/obj/generator");
+		
 		BlockModelBuilder model = this.models().getBuilder(getPath(IPContent.Blocks.gas_generator))
-			.customLoader(SpecialModelBuilder.forLoader(ConnectionLoader.LOADER_NAME)).end()
+			.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/generator.obj")).flipV(true).end()
 			.texture("texture", texture)
 			.texture("particle", texture);
-//			.loader(ConnectionLoader.LOADER_NAME)
-//			.additional("base_model", basemodel)
-//			.additional("layers", Arrays.asList("solid", "cutout"))
-		
 		
 		VariantBlockStateBuilder builder = getVariantBuilder(IPContent.Blocks.gas_generator);
-		Direction.Plane.HORIZONTAL.forEach(dir -> {
-			int rotation = (90 * dir.getHorizontalIndex() + 90) % 360;
-			
-			builder.partialState().with(GasGeneratorBlock.FACING, dir).addModels(new ConfiguredModel(model, 0, rotation, false));
-		});
+		ConnectorBlockBuilder.builder(this.models(), builder, (res, mod) -> res.texture("particle", texture))
+			.fixedModel(model)
+			.layers(RenderType.getSolid(), RenderType.getCutout())
+			.rotationData(GasGeneratorBlock.FACING, 0)
+			.build();
 	}
 	
 	/**

@@ -330,7 +330,6 @@ public class ProjectorScreen extends Screen{
 			this.settings = settings;
 		}
 		
-		@SuppressWarnings("deprecation")
 		@Override
 		public void renderButton(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
 			Minecraft.getInstance().getTextureManager().bindTexture(GUI_TEXTURE);
@@ -438,7 +437,6 @@ public class ProjectorScreen extends Screen{
 			this.yOverlay = overlayY;
 		}
 		
-		@SuppressWarnings("deprecation")
 		@Override
 		public void renderButton(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
 			Minecraft.getInstance().getTextureManager().bindTexture(GUI_TEXTURE);

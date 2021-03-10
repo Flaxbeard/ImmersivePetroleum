@@ -153,7 +153,7 @@ public class IPItemModels extends ItemModelProvider{
 	private ItemModelBuilder obj(IItemProvider item, String model){
 		return getBuilder(item.asItem().getRegistryName().toString())
 				.customLoader(OBJLoaderBuilder::begin)
-				.modelLocation(modLoc("models/" + model)).end();
+				.modelLocation(modLoc("models/" + model)).flipV(true).end();
 	}
 	
 	private void genericItem(Item item){

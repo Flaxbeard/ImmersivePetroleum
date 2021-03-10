@@ -1,18 +1,27 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.Lib;
+import blusunrize.immersiveengineering.api.TargetingInfo;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import blusunrize.immersiveengineering.api.wires.Connection;
 import blusunrize.immersiveengineering.api.wires.ConnectionPoint;
-import blusunrize.immersiveengineering.api.wires.ImmersiveConnectableTileEntity;
+import blusunrize.immersiveengineering.api.wires.ConnectorTileHelper;
+import blusunrize.immersiveengineering.api.wires.IImmersiveConnectable;
 import blusunrize.immersiveengineering.api.wires.WireType;
+import blusunrize.immersiveengineering.api.wires.impl.ImmersiveConnectableTileEntity;
 import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler.EnergyConnector;
+import blusunrize.immersiveengineering.api.wires.utils.WireUtils;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
@@ -41,6 +50,7 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3i;
@@ -61,6 +71,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	
 	public static final int FLUX_CAPACITY = 8000;
 	
+	protected WireType wireType;
 	protected boolean isActive = false;
 	protected Direction facing = Direction.NORTH;
 	protected FluxStorage energyStorage = new FluxStorage(getMaxStorage(), getMaxInput(), getMaxOutput());
@@ -83,21 +94,25 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	}
 	
 	@Override
-	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket){
-		super.writeCustomNBT(nbt, descPacket);
+	public CompoundNBT serializeNBT(){
+		CompoundNBT nbt = super.serializeNBT();
 		
 		nbt.putBoolean("isActive", this.isActive);
 		nbt.put("tank", this.tank.writeToNBT(new CompoundNBT()));
 		nbt.put("buffer", this.energyStorage.writeToNBT(new CompoundNBT()));
+		nbt.putString("wiretype", this.wireType.getUniqueName());
+		
+		return nbt;
 	}
 	
 	@Override
-	public void readCustomNBT(CompoundNBT nbt, boolean descPacket){
-		super.readCustomNBT(nbt, descPacket);
+	public void deserializeNBT(CompoundNBT nbt){
+		super.deserializeNBT(nbt);
 		
 		this.isActive = nbt.getBoolean("isActive");
 		this.tank.readFromNBT(nbt.getCompound("tank"));
 		this.energyStorage.readFromNBT(nbt.getCompound("buffer"));
+		this.wireType = nbt.contains("wiretype") ? WireUtils.getWireTypeFromNBT(nbt, "wiretype") : null;
 	}
 	
 	@Override
@@ -131,6 +146,22 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	}
 	
 	@Override
+	public void markDirty(){
+		super.markDirty();
+		
+		BlockState state = world.getBlockState(pos);
+		world.notifyBlockUpdate(pos, state, state, 3);
+		world.notifyNeighborsOfStateChange(pos, state.getBlock());
+	}
+	
+	/** TODO Temporary Solution from Malte, until it's sorted out. */
+	@Override
+	public void remove(){
+		super.remove();
+		ConnectorTileHelper.remove(world, this);
+	}
+	
+	@Override
 	public List<ItemStack> getTileDrops(LootContext context){
 		ItemStack stack;
 		if(context != null){
@@ -157,11 +188,6 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	}
 	
 	@Override
-	public boolean canConnectCable(WireType cableType, ConnectionPoint target, Vector3i offset){
-		return cableType.getCategory().equals(WireType.LV_CATEGORY) || cableType.getCategory().equals(WireType.MV_CATEGORY);
-	}
-	
-	@Override
 	public int getAvailableEnergy(){
 		return this.energyStorage.getEnergyStored();
 	}
@@ -169,13 +195,6 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	@Override
 	public void extractEnergy(int amount){
 		this.energyStorage.extractEnergy(amount, false);
-	}
-	
-	@Override
-	public Vector3d getConnectionOffset(Connection con, ConnectionPoint here){
-		float xo = facing.getDirectionVec().getX() * .5f + .5f;
-		float zo = facing.getDirectionVec().getZ() * .5f + .5f;
-		return new Vector3d(xo, .5f, zo);
 	}
 	
 	@Override
@@ -215,7 +234,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 		return this.energyWrapper;
 	}
 	
-	private LazyOptional<IFluidHandler> fluidHandler = registerCap(LazyOptional.of(() -> this.tank));
+	private LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> this.tank);
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
 		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (side == null || side == Direction.UP)){
@@ -245,7 +264,6 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	@Override
 	public boolean interact(Direction side, PlayerEntity player, Hand hand, ItemStack heldItem, float hitX, float hitY, float hitZ){
 		if(FluidUtil.interactWithFluidHandler(player, hand, tank)){
-			markContainingBlockForUpdate(null);
 			markDirty();
 			return true;
 		}else if(player.isSneaking()){
@@ -328,7 +346,55 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 		}
 		
 		if(lastActive != this.isActive || (!this.world.isRemote && this.isActive)){
-			markContainingBlockForUpdate(null);
+			markDirty();
 		}
+	}
+	
+	@Override
+	public void connectCable(WireType cableType, ConnectionPoint target, IImmersiveConnectable other, ConnectionPoint otherTarget){
+		this.wireType = cableType;
+		markDirty();
+	}
+	
+	@Override
+	public void removeCable(@Nullable Connection connection, ConnectionPoint attachedPoint){
+		this.wireType = null;
+		markDirty();
+	}
+	
+	@Override
+	public boolean canConnect(){
+		return true;
+	}
+	
+	@Override
+	public boolean canConnectCable(WireType cableType, ConnectionPoint target, Vector3i offset){
+		if(world.getBlockState(target.getPosition()).getBlock() != world.getBlockState(getPos()).getBlock()){
+			return false;
+		}
+		
+		return this.wireType == null && (cableType.getCategory().equals(WireType.LV_CATEGORY) || cableType.getCategory().equals(WireType.MV_CATEGORY));
+	}
+	
+	@Override
+	public BlockPos getConnectionMaster(@Nullable WireType cableType, TargetingInfo target){
+		return pos;
+	}
+	
+	@Override
+	public ConnectionPoint getTargetedPoint(TargetingInfo info, Vector3i offset){
+		return new ConnectionPoint(pos, 0);
+	}
+	
+	@Override
+	public Collection<ConnectionPoint> getConnectionPoints(){
+		return Arrays.asList(new ConnectionPoint(pos, 0));
+	}
+	
+	@Override
+	public Vector3d getConnectionOffset(@Nonnull Connection con, ConnectionPoint here){
+		float xo = facing.getDirectionVec().getX() * .5f + .5f;
+		float zo = facing.getDirectionVec().getZ() * .5f + .5f;
+		return new Vector3d(xo, .5f, zo);
 	}
 }

@@ -37,6 +37,8 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTower
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.FlarestackTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
+import flaxbeard.immersivepetroleum.common.cfg.ConfigUtils;
+import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import flaxbeard.immersivepetroleum.common.items.IPItemBase;
@@ -170,8 +172,8 @@ public class IPContent{
 		MultiblockHandler.registerMultiblock(DistillationTowerMultiblock.INSTANCE);
 		MultiblockHandler.registerMultiblock(PumpjackMultiblock.INSTANCE);
 		
-		IPConfig.Utils.addFuel(IPConfig.GENERATION.fuels.get());
-		IPConfig.Utils.addBoatFuel(IPConfig.MISCELLANEOUS.boat_fuels.get());
+		ConfigUtils.addFuel(IPServerConfig.GENERATION.fuels.get());
+		ConfigUtils.addBoatFuel(IPServerConfig.MISCELLANEOUS.boat_fuels.get());
 		
 		DieselHandler.registerFuel(IPTags.Fluids.diesel, 150);
 		

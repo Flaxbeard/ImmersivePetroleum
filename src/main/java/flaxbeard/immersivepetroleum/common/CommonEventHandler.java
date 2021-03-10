@@ -21,6 +21,7 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationH
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
+import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import flaxbeard.immersivepetroleum.common.util.fluids.NapalmFluid;
@@ -240,7 +241,7 @@ public class CommonEventHandler{
 				return;
 			}
 			
-			if(IPConfig.MISCELLANEOUS.autounlock_recipes.get()){
+			if(IPServerConfig.MISCELLANEOUS.autounlock_recipes.get()){
 				List<IRecipe<?>> l = new ArrayList<IRecipe<?>>();
 				Collection<IRecipe<?>> recipes = event.getWorld().getRecipeManager().getRecipes();
 				recipes.forEach(recipe -> {

@@ -9,7 +9,7 @@ import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.IPConfig;
+import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeType;
@@ -59,8 +59,8 @@ public class DistillationRecipe extends MultiblockRecipe{
 		this.fluidOutputList = Arrays.asList(this.fluidOutput);
 		this.outputList = NonNullList.from(ItemStack.EMPTY, itemOutput);
 		
-		this.totalProcessEnergy = (int) Math.floor(energy * IPConfig.REFINING.distillationTower_energyModifier.get());
-		this.totalProcessTime = (int) Math.floor(time * IPConfig.REFINING.distillationTower_timeModifier.get());
+		this.totalProcessEnergy = (int) Math.floor(energy * IPServerConfig.REFINING.distillationTower_energyModifier.get());
+		this.totalProcessTime = (int) Math.floor(time * IPServerConfig.REFINING.distillationTower_timeModifier.get());
 	}
 	
 	@Override

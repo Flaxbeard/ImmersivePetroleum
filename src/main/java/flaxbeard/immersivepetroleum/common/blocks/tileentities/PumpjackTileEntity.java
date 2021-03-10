@@ -17,8 +17,8 @@ import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
-import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -104,7 +104,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	}
 	
 	private boolean hasPipes(){
-		if(!IPConfig.EXTRACTION.required_pipes.get())
+		if(!IPServerConfig.EXTRACTION.required_pipes.get())
 			return true;
 		
 		BlockPos basePos = getBlockPosForPos(Down_Port);
@@ -177,11 +177,11 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		
 		boolean active = false;
 		
-		int consumption = IPConfig.EXTRACTION.pumpjack_consumption.get();
-		int extracted = this.energyStorage.extractEnergy(IPConfig.EXTRACTION.pumpjack_consumption.get(), true);
+		int consumption = IPServerConfig.EXTRACTION.pumpjack_consumption.get();
+		int extracted = this.energyStorage.extractEnergy(IPServerConfig.EXTRACTION.pumpjack_consumption.get(), true);
 		
 		if(extracted >= consumption && canExtract()){
-			if((getPos().getX() + getPos().getZ()) % IPConfig.EXTRACTION.pipe_check_ticks.get() == this.pipeTicks){
+			if((getPos().getX() + getPos().getZ()) % IPServerConfig.EXTRACTION.pipe_check_ticks.get() == this.pipeTicks){
 				this.lastHadPipes = hasPipes();
 			}
 			
@@ -192,7 +192,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 					int oilAmnt = getFluidAmount() <= 0 ? residual : getFluidAmount();
 					
 					this.energyStorage.extractEnergy(consumption, false);
-					FluidStack out = new FluidStack(getFluidType(), Math.min(IPConfig.EXTRACTION.pumpjack_speed.get(), oilAmnt));
+					FluidStack out = new FluidStack(getFluidType(), Math.min(IPServerConfig.EXTRACTION.pumpjack_speed.get(), oilAmnt));
 					Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
 					BlockPos outputPos = master().getBlockPosForPos(East_Port).offset(facing);
 					IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, facing).orElse(null);
@@ -221,7 +221,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 					this.activeTicks++;
 				}
 			}
-			this.pipeTicks = (this.pipeTicks + 1) % IPConfig.EXTRACTION.pipe_check_ticks.get();
+			this.pipeTicks = (this.pipeTicks + 1) % IPServerConfig.EXTRACTION.pipe_check_ticks.get();
 		}
 		
 		if(active != this.wasActive){
@@ -352,7 +352,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 			}
 			
 			// Below Head
-			if(IPConfig.EXTRACTION.required_pipes.get() && this.posInMultiblock.equals(Down_Port) && (side == null || side == Direction.DOWN)){
+			if(IPServerConfig.EXTRACTION.required_pipes.get() && this.posInMultiblock.equals(Down_Port) && (side == null || side == Direction.DOWN)){
 				return new FluidTank[]{master.fakeTank};
 			}
 		}

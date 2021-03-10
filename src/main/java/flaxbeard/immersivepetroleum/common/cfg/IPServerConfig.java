@@ -1,27 +1,28 @@
-package flaxbeard.immersivepetroleum.common;
+package flaxbeard.immersivepetroleum.common.cfg;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import com.electronwill.nightconfig.core.Config;
 import com.google.common.base.Preconditions;
 
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
-import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
-import net.minecraft.util.ResourceLocation;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.config.ModConfig.ModConfigEvent;
 
-public class IPConfig{
+@EventBusSubscriber(modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
+public class IPServerConfig{
 	public static final Extraction EXTRACTION;
 	public static final Refining REFINING;
 	public static final Generation GENERATION;
 	public static final Miscellaneous MISCELLANEOUS;
-	public static final Tools TOOLS;
 	
 	public static final ForgeConfigSpec ALL;
 	
@@ -32,7 +33,6 @@ public class IPConfig{
 		REFINING = new Refining(builder);
 		GENERATION = new Generation(builder);
 		MISCELLANEOUS = new Miscellaneous(builder);
-		TOOLS = new Tools(builder);
 		
 		ALL = builder.build();
 	}
@@ -119,16 +119,11 @@ public class IPConfig{
 	}
 	
 	public static class Miscellaneous{
-		public final BooleanValue sample_displayBorder;
 		public final ConfigValue<List<String>> boat_fuels;
 		public final BooleanValue autounlock_recipes;
 		public final BooleanValue asphalt_speed;
 		Miscellaneous(ForgeConfigSpec.Builder builder){
 			builder.push("Miscellaneous");
-			
-			sample_displayBorder = builder
-					.comment("Display chunk border while holding Core Samples, default=true")
-					.define("sample_displayBorder", true);
 			
 			boat_fuels = builder
 					.comment("List of Motorboat fuels. Format: fluid_name, mb_used_per_tick")
@@ -148,115 +143,8 @@ public class IPConfig{
 		}
 	}
 	
-	public static class Tools{
-		Tools(ForgeConfigSpec.Builder builder){
-			
-		}
-	}
-	
-	public static class Utils{
+	@SubscribeEvent
+	public static void onConfigReload(ModConfigEvent ev){
 		
-		public static void addFuel(List<String> fuels){
-			for(int i = 0;i < fuels.size();i++){
-				String str = fuels.get(i);
-				
-				if(str.isEmpty())
-					continue;
-				
-				String fluid = null;
-				int amount = 0;
-				int production = 0;
-				
-				String remain = str;
-				
-				int index = 0;
-				
-				while(remain.indexOf(",") != -1){
-					int endPos = remain.indexOf(",");
-					
-					String current = remain.substring(0, endPos).trim();
-					
-					if(index == 0)
-						fluid = current;
-					else if(index == 1){
-						try{
-							amount = Integer.parseInt(current);
-							if(amount <= 0){
-								throw new RuntimeException("Negative value for fuel mB/tick for generator fuel " + (i + 1));
-							}
-						}catch(NumberFormatException e){
-							throw new RuntimeException("Invalid value for fuel mB/tick for generator fuel " + (i + 1));
-						}
-					}
-					
-					remain = remain.substring(endPos + 1);
-					index++;
-				}
-				String current = remain.trim();
-				
-				try{
-					production = Integer.parseInt(current);
-					if(production < 0){
-						throw new RuntimeException("Negative value for fuel RF/tick for generator fuel " + (i + 1));
-					}
-				}catch(NumberFormatException e){
-					throw new RuntimeException("Invalid value for fuel RF/tick for generator fuel " + (i + 1));
-				}
-				
-				fluid = fluid.toLowerCase(Locale.ENGLISH);
-				
-				ResourceLocation fluidRL = new ResourceLocation(fluid);
-				if(!ForgeRegistries.FLUIDS.containsKey(fluidRL)){
-					throw new RuntimeException("\"" + fluid + "\" did not resolve into a valid fluid. (" + fluidRL + ")");
-				}
-				
-				FuelHandler.registerPortableGeneratorFuel(fluidRL, production, amount);
-			}
-		}
-		
-		public static void addBoatFuel(List<String> fuels){
-			for(int i = 0;i < fuels.size();i++){
-				String str = fuels.get(i);
-				
-				if(str.isEmpty())
-					continue;
-				
-				String fluid = null;
-				int amount = 0;
-				
-				String remain = str;
-				int index = 0;
-				while(remain.indexOf(",") != -1){
-					int endPos = remain.indexOf(",");
-					
-					String current = remain.substring(0, endPos).trim();
-					
-					if(index == 0)
-						fluid = current;
-					
-					remain = remain.substring(endPos + 1);
-					index++;
-				}
-				String current = remain.trim();
-				
-				fluid = fluid.toLowerCase(Locale.ENGLISH);
-				
-				try{
-					amount = Integer.parseInt(current);
-					if(amount <= 0){
-						throw new RuntimeException("Negative value for fuel mB/tick for boat fuel " + (i + 1));
-					}
-				}catch(NumberFormatException e){
-					throw new RuntimeException("Invalid value for fuel mB/tick for boat fuel " + (i + 1));
-				}
-				
-				ResourceLocation fluidRL = new ResourceLocation(fluid);
-				if(!ForgeRegistries.FLUIDS.containsKey(fluidRL)){
-					throw new RuntimeException("\"" + fluid + "\" did not resolve into a valid fluid. (" + fluidRL + ")");
-				}
-				
-				FuelHandler.registerMotorboatFuel(fluidRL, amount);
-			}
-		}
 	}
 }

@@ -41,12 +41,12 @@ import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRen
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.client.render.SpeedboatRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
-import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
+import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
@@ -130,13 +130,13 @@ public class ClientProxy extends CommonProxy{
 		ManualHelper.addConfigGetter(str -> {
 			switch(str){
 				case "distillationtower_operationcost":{
-					return Integer.valueOf((int) (2048 * IPConfig.REFINING.distillationTower_energyModifier.get()));
+					return Integer.valueOf((int) (2048 * IPServerConfig.REFINING.distillationTower_energyModifier.get()));
 				}
 				case "pumpjack_consumption":{
-					return IPConfig.EXTRACTION.pumpjack_consumption.get();
+					return IPServerConfig.EXTRACTION.pumpjack_consumption.get();
 				}
 				case "pumpjack_speed":{
-					return IPConfig.EXTRACTION.pumpjack_speed.get();
+					return IPServerConfig.EXTRACTION.pumpjack_speed.get();
 				}
 				case "pumpjack_days":{
 					int oil_min = 1000000;
@@ -149,7 +149,7 @@ public class ClientProxy extends CommonProxy{
 						}
 					}
 					
-					return Integer.valueOf((((oil_max + oil_min) / 2) + oil_min) / (IPConfig.EXTRACTION.pumpjack_speed.get() * 24000));
+					return Integer.valueOf((((oil_max + oil_min) / 2) + oil_min) / (IPServerConfig.EXTRACTION.pumpjack_speed.get() * 24000));
 				}
 				case "autolubricant_speedup":{
 					return Double.valueOf(1.25D);
@@ -171,7 +171,7 @@ public class ClientProxy extends CommonProxy{
 			}
 			
 			// Last resort
-			Config cfg = IPConfig.getRawConfig();
+			Config cfg = IPServerConfig.getRawConfig();
 			if(cfg.contains(str)){
 				return cfg.get(str);
 			}

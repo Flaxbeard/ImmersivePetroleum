@@ -3,7 +3,7 @@ package flaxbeard.immersivepetroleum.common.blocks;
 import java.util.List;
 import java.util.Locale;
 
-import flaxbeard.immersivepetroleum.common.IPConfig;
+import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -25,12 +25,16 @@ public class AsphaltBlock extends IPBlockBase{
 	
 	@Override
 	public float getSpeedFactor(){
+		if(!IPServerConfig.MISCELLANEOUS.asphalt_speed.get()){
+			return 1.0F;
+		}
+		
 		return SPEED_FACTOR;
 	}
 	
 	@Override
 	public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		if(IPConfig.MISCELLANEOUS.asphalt_speed.get()){
+		if(IPServerConfig.MISCELLANEOUS.asphalt_speed.get()){
 			IFormattableTextComponent out = new TranslationTextComponent("desc.immersivepetroleum.flavour.asphalt", String.format(Locale.ENGLISH, "%.1f", (SPEED_FACTOR * 100 - 100)) + "%").mergeStyle(TextFormatting.GRAY);
 			
 			tooltip.add(out);

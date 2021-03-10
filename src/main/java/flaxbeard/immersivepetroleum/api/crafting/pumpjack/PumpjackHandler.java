@@ -13,8 +13,8 @@ import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.IPConfig;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
+import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
@@ -139,7 +139,7 @@ public class PumpjackHandler{
 			ReservoirType res = null;
 			
 			Random r = SharedSeedRandom.seedSlimeChunk(coords.x, coords.z, ((ISeedReader) world).getSeed(), 90210L);
-			boolean empty = (r.nextDouble() > IPConfig.EXTRACTION.reservoir_chance.get());
+			boolean empty = (r.nextDouble() > IPServerConfig.EXTRACTION.reservoir_chance.get());
 			double size = r.nextDouble();
 			int query = r.nextInt();
 			

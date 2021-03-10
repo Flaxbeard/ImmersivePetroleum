@@ -449,6 +449,14 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			double y = outputpos.getY() + 0.25;
 			double z = outputpos.getZ() + 0.5;
 			
+			Direction facing = getIsMirrored() ? getFacing().getOpposite() : getFacing();
+			if(facing != Direction.EAST && facing != Direction.WEST){
+				x = outputpos.getX() + (facing == Direction.SOUTH ? 0.15 : 0.85);
+			}
+			if(facing != Direction.NORTH && facing != Direction.SOUTH){
+				z = outputpos.getZ() + (facing == Direction.WEST ? 0.15 : 0.85);
+			}
+			
 			ItemEntity ei = new ItemEntity(world, x, y, z, output.copy());
 			ei.setMotion(0.075 * outputdir.getXOffset(), 0.025, 0.075 * outputdir.getZOffset());
 			world.addEntity(ei);

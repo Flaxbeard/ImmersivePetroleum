@@ -11,23 +11,23 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
 
-import blusunrize.immersiveengineering.api.DirectionalBlockPos;
 import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
-import blusunrize.immersiveengineering.common.util.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import net.minecraft.block.Block;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
@@ -431,18 +431,27 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		return true;
 	}
 	
-	/** Output Capability Reference */
-	private CapabilityReference<IItemHandler> output_capref = CapabilityReference.forTileEntity(this, () -> {
-		Direction outputdir = (getIsMirrored() ? getFacing().rotateY() : getFacing().rotateYCCW());
-		return new DirectionalBlockPos(getBlockPosForPos(Item_OUT).offset(outputdir), outputdir);
-	}, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-	
 	@Override
 	public void doProcessOutput(ItemStack output){
-		output = Utils.insertStackIntoInventory(this.output_capref, output, false);
+		Direction outputdir = (getIsMirrored() ? getFacing().rotateY() : getFacing().rotateYCCW());
+		BlockPos outputpos = getBlockPosForPos(Item_OUT).offset(outputdir);
+		
+		TileEntity te = world.getTileEntity(outputpos);
+		if(te!=null){
+			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
+			if(handler!=null){
+				output = ItemHandlerHelper.insertItem(handler, output, false);
+			}
+		}
+		
 		if(!output.isEmpty()){
-			Direction outputdir = (getIsMirrored() ? getFacing().rotateY() : getFacing().rotateYCCW());
-			Utils.dropStackAtPos(this.world, getBlockPosForPos(Item_OUT).offset(outputdir), output, outputdir);
+			double x = outputpos.getX() + 0.5;
+			double y = outputpos.getY() + 0.25;
+			double z = outputpos.getZ() + 0.5;
+			
+			ItemEntity ei = new ItemEntity(world, x, y, z, output.copy());
+			ei.setMotion(0.075 * outputdir.getXOffset(), 0.025, 0.075 * outputdir.getZOffset());
+			world.addEntity(ei);
 		}
 	}
 	

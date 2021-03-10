@@ -1,0 +1,11 @@
+{
+  "textures": {
+    "particle": "immersivepetroleum:block/obj/generator"
+  },
+  "loader": "immersiveengineering:connector",
+  "base_model": "immersivepetroleum:block/gas_generator",
+  "layers": [
+    "solid",
+    "cutout"
+  ]
+}

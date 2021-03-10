@@ -106,5 +106,6 @@
     "texture": "immersivepetroleum:block/obj/flarestack"
   },
   "loader": "forge:obj",
-  "model": "immersivepetroleum:models/block/obj/flarestack.obj"
+  "model": "immersivepetroleum:models/block/obj/flarestack.obj",
+  "flip-v": true
 }

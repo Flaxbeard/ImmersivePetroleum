@@ -106,5 +106,6 @@
     "texture": "immersivepetroleum:multiblock/distillation_tower"
   },
   "loader": "forge:obj",
-  "model": "immersivepetroleum:models/multiblock/obj/distillationtower.obj"
+  "model": "immersivepetroleum:models/multiblock/obj/distillationtower.obj",
+  "flip-v": true
 }

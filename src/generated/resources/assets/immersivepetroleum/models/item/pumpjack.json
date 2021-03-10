@@ -127,5 +127,6 @@
     "texture_armature": "immersivepetroleum:models/pumpjack_armature"
   },
   "loader": "forge:obj",
-  "model": "immersivepetroleum:models/item/obj/pumpjack_itemmockup.obj"
+  "model": "immersivepetroleum:models/item/obj/pumpjack_itemmockup.obj",
+  "flip-v": true
 }

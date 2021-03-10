@@ -5,5 +5,7 @@
     "particle": "immersivepetroleum:multiblock/pumpjack_base"
   },
   "loader": "forge:obj",
-  "model": "immersivepetroleum:models/multiblock/obj/pumpjack.obj"
+  "model": "immersivepetroleum:models/multiblock/obj/pumpjack.obj",
+  "detectCullableFaces": false,
+  "flip-v": true
 }

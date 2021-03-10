@@ -3,5 +3,7 @@
     "texture": "immersivepetroleum:block/obj/generator",
     "particle": "immersivepetroleum:block/obj/generator"
   },
-  "loader": "immersiveengineering:connector"
+  "loader": "forge:obj",
+  "model": "immersivepetroleum:models/block/obj/generator.obj",
+  "flip-v": true
 }

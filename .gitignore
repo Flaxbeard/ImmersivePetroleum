@@ -32,5 +32,6 @@ libs/
 *.project
 *.classpath
 .settings/
+logs/
 src/main/java/flaxbeard/immersivepetroleum/common/items/ItemEmptySampleMap.java
 src/main/java/flaxbeard/immersivepetroleum/common/items/ItemSampleMap.java

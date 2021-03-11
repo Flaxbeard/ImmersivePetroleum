@@ -1,13 +1,13 @@
 package flaxbeard.immersivepetroleum.common.multiblocks;
 
 import java.util.List;
+import java.util.Random;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
-import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
@@ -26,6 +26,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.EmptyModelData;
 
 public class PumpjackMultiblock extends IETemplateMultiblock{
+	private static final Random RAND = new Random();
 	public static final PumpjackMultiblock INSTANCE = new PumpjackMultiblock();
 	
 	private PumpjackMultiblock(){
@@ -59,7 +60,7 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 		if(this.list == null){
 			BlockState state = IPContent.Multiblock.pumpjack.getDefaultState().with(IEProperties.FACING_HORIZONTAL, Direction.NORTH);
 			IBakedModel model = ClientUtils.mc().getBlockRendererDispatcher().getModelForState(state);
-			this.list = model.getQuads(state, null, Utils.RAND, EmptyModelData.INSTANCE);
+			this.list = model.getQuads(state, null, RAND, EmptyModelData.INSTANCE);
 		}
 		
 		if(this.list != null && this.list.size() > 0){

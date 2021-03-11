@@ -104,20 +104,20 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	}
 	
 	private boolean hasPipes(){
-		if(!IPServerConfig.EXTRACTION.required_pipes.get())
-			return true;
-		
-		BlockPos basePos = getBlockPosForPos(Down_Port);
-		for(int y = basePos.getY() - 2;y > 0;y--){
-			BlockPos pos = new BlockPos(basePos.getX(), y, basePos.getZ());
-			BlockState state = this.world.getBlockState(pos);
-			
-			if(state.getBlock() == Blocks.BEDROCK)
-				return true;
-			
-			if(!Utils.isBlockAt(this.world, pos, IEBlocks.MetalDevices.fluidPipe))
-				return false;
+		if(IPServerConfig.EXTRACTION.required_pipes.get()){
+			BlockPos basePos = getBlockPosForPos(Down_Port);
+			for(int y = basePos.getY() - 2;y > 0;y--){
+				BlockPos pos = new BlockPos(basePos.getX(), y, basePos.getZ());
+				BlockState state = this.world.getBlockState(pos);
+				
+				if(state.getBlock() == Blocks.BEDROCK)
+					return true;
+				
+				if(state.getBlock() != IEBlocks.MetalDevices.fluidPipe)
+					return false;
+			}
 		}
+		
 		return true;
 	}
 	

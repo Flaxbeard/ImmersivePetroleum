@@ -180,6 +180,13 @@ public class IPContent{
 		LubricantHandler.register(IPTags.Fluids.lubricant, 3);
 		LubricantHandler.register(IETags.fluidPlantoil, 12);
 		
+		FlarestackHandler.register(IPTags.Fluids.lubricant);
+		FlarestackHandler.register(IPTags.Fluids.diesel);
+		FlarestackHandler.register(IPTags.Fluids.gasoline);
+		FlarestackHandler.register(IETags.fluidPlantoil);
+		FlarestackHandler.register(IETags.fluidCreosote);
+		FlarestackHandler.register(IETags.fluidEthanol);
+		
 		LubricatedHandler.registerLubricatedTile(PumpjackTileEntity.class, PumpjackLubricationHandler::new);
 		LubricatedHandler.registerLubricatedTile(ExcavatorTileEntity.class, ExcavatorLubricationHandler::new);
 		LubricatedHandler.registerLubricatedTile(CrusherTileEntity.class, CrusherLubricationHandler::new);

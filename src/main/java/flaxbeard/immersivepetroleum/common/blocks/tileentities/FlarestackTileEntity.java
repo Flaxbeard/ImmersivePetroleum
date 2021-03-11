@@ -3,7 +3,7 @@ package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 import java.util.List;
 import java.util.Random;
 
-import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
+import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
@@ -27,7 +27,7 @@ public class FlarestackTileEntity extends TileEntity implements ITickableTileEnt
 	public static TileEntityType<FlarestackTileEntity> TYPE;
 	
 	protected boolean isActive;
-	protected FluidTank tank = new FluidTank(1000, fluid -> (fluid != null && LubricantHandler.isValidLube(fluid.getFluid())));
+	protected FluidTank tank = new FluidTank(1000, fstack -> (fstack != null && FlarestackHandler.isBurnable(fstack)));
 	public FlarestackTileEntity(){
 		this(TYPE);
 	}

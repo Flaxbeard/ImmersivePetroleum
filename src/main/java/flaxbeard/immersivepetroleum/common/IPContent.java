@@ -15,12 +15,12 @@ import blusunrize.immersiveengineering.api.energy.DieselHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect_Potion;
-import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.metal.CrusherTileEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.ExcavatorTileEntity;
 import blusunrize.immersiveengineering.common.util.IEPotions;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
+import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
@@ -177,8 +177,8 @@ public class IPContent{
 		
 		DieselHandler.registerFuel(IPTags.Fluids.diesel, 150);
 		
-		LubricantHandler.registerLubricant(Fluids.lubricant, 3);
-		LubricantHandler.registerLubricant(IEContent.fluidPlantoil, 12);
+		LubricantHandler.register(IPTags.Fluids.lubricant, 3);
+		LubricantHandler.register(IETags.fluidPlantoil, 12);
 		
 		LubricatedHandler.registerLubricatedTile(PumpjackTileEntity.class, PumpjackLubricationHandler::new);
 		LubricatedHandler.registerLubricatedTile(ExcavatorTileEntity.class, ExcavatorLubricationHandler::new);

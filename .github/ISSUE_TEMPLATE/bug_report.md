@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve this addon!
-title: "[1.16.5] Title Here"
+title: ''
 labels: ''
 assignees: ''
 

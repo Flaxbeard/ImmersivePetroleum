@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:lubricant",
+    "#forge:diesel",
+    "#forge:gasoline",
+    "#forge:plantoil",
+    "#forge:creosote",
+    "#forge:ethanol"
+  ]
+}

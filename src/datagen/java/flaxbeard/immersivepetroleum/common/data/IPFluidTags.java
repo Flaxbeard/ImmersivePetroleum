@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.data;
 
+import blusunrize.immersiveengineering.api.IETags;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.common.IPContent;
@@ -29,5 +30,13 @@ public class IPFluidTags extends FluidTagsProvider{
 		
 		getOrCreateBuilder(IPTags.Fluids.crudeOil)
 			.add(IPContent.Fluids.crudeOil);
+		
+		getOrCreateBuilder(IPTags.Utility.burnableInFlarestack)
+			.addTag(IPTags.Fluids.lubricant)
+			.addTag(IPTags.Fluids.diesel)
+			.addTag(IPTags.Fluids.gasoline)
+			.addTag(IETags.fluidPlantoil)
+			.addTag(IETags.fluidCreosote)
+			.addTag(IETags.fluidEthanol);
 	}
 }

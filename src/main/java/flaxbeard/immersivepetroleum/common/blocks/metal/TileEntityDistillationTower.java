@@ -489,8 +489,14 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 	@Override
 	public boolean additionalCanProcessCheck(MultiblockProcess<DistillationRecipe> process)
 	{
-		return true;
+		int outputAmount = 0;
+		for (FluidStack outputFluid : process.recipe.fluidOutput){
+			outputAmount += outputFluid.amount;
+		}
+		return (this.tanks[1].getCapacity() >= this.tanks[1].getFluidAmount() + outputAmount);
 	}
+
+
 
 	@Override
 	public void doProcessOutput(ItemStack output)

@@ -2,44 +2,46 @@ tile.immersivepetroleum.fluid_diesel.name=Дизельное топливо
 tile.immersivepetroleum.fluid_crude_oil.name=Нефть
 tile.immersivepetroleum.fluid_lubricant.name=Смазка
 tile.immersivepetroleum.fluid_gasoline.name=Бензин
+tile.immersivepetroleum.fluid_napalm.name=Напалм
 
 tile.immersivepetroleum.stone_decoration.asphalt.name=Асфальтобетон
 
 tile.immersivepetroleum.metal_device.automatic_lubricator.name=Смазочное устройство
-tile.immersivepetroleum.metal_device.gas_generator.name=Портативный генератор
+tile.immersivepetroleum.metal_device.gas_generator.name=Переносной генератор
 
 tile.immersivepetroleum.metal_multiblock.pumpjack.name=Штанговый насос
 tile.immersivepetroleum.metal_multiblock.distillation_tower.name=Ректификационная колонна
 tile.immersivepetroleum.metal_multiblock.pumpjack_parent.name=Штанговый насос
 tile.immersivepetroleum.metal_multiblock.distillation_tower_parent.name=Ректификационная колонна
 
-chat.immersivepetroleum.info.coresample.oil=%s мВ нефти
-chat.immersivepetroleum.info.coresample.noOil=Нет нефти
-chat.immersivepetroleum.info.coresample.oilRep=До %d мВ/тик %s
-chat.immersivepetroleum.info.schematic.noMultiblock=Работает с руководством инженера
-chat.immersivepetroleum.info.schematic.build0=Отображает проекции
-chat.immersivepetroleum.info.schematic.build1=Для создания %s
-chat.immersivepetroleum.info.schematic.center=По центру (%d, %d, %d)
-chat.immersivepetroleum.info.schematic.controls=%s поворот, %s + %s зеркальное отображение
+chat.immersivepetroleum.info.coresample.oil=%s mB: %s
+chat.immersivepetroleum.info.coresample.noOil=Жидкость не найдена
+chat.immersivepetroleum.info.coresample.oilRep=До %d mB/t, %s
+chat.immersivepetroleum.info.schematic.noMultiblock=Объединяется с руководством инженера
+chat.immersivepetroleum.info.schematic.build0=Отображает проекцию
+chat.immersivepetroleum.info.schematic.build1=для постройки %s
+chat.immersivepetroleum.info.schematic.center=Центрировано по (%d, %d, %d)
+chat.immersivepetroleum.info.schematic.controls=%s: поворот; %s+%s: отразить слева направо
 
-fluid.diesel=с дизельным топливом
-fluid.oil=с нефтью
-fluid.lubricant=со смазкой
-fluid.gasoline=с бензином
+fluid.diesel=Дизельное топливо
+fluid.oil=Нефть
+fluid.lubricant=Смазка
+fluid.gasoline=Бензин
+fluid.napalm=Напалм
 
 item.immersivepetroleum.material.bitumen.name=Битум
 item.immersivepetroleum.material.petcoke.name=Нефтяной кокс
-item.immersivepetroleum.upgrades.reinforced_hull.name=Укрепленный корпус
+item.immersivepetroleum.upgrades.reinforced_hull.name=Усиленный корпус
 item.immersivepetroleum.upgrades.icebreaker.name=Ледокольный нос
 item.immersivepetroleum.upgrades.tank.name=Расширенный топливный бак
 item.immersivepetroleum.upgrades.rudders.name=Маневровый руль
 item.immersivepetroleum.upgrades.paddles.name=Вёсла
 
-item.immersivepetroleum.schematic.name=%s Проектор
+item.immersivepetroleum.schematic.name=Проектор
 
 item.immersivepetroleum.speedboat.name=Моторная лодка
 
-item.immersivepetroleum.oil_can.name=Резервуар для смазки
+item.immersivepetroleum.oil_can.name=Банка для смазки
 
 itemGroup.immersivepetroleum=Immersive Petroleum
 
@@ -48,96 +50,99 @@ ie.manual.entry.blank_text=
 desc.immersiveengineering.info.multiblock.IP:DistillationTower=Ректификационная колонна
 desc.immersiveengineering.info.multiblock.IP:Pumpjack=Штанговый насос
 
-desc.immersiveengineering.info.multiblock.IE:AutoWorkbench=Автоматический верстак
-desc.immersiveengineering.info.multiblock.IE:AlloySmelter=Завод сплавов
+desc.immersiveengineering.info.multiblock.IE:AutoWorkbench=Автоверстак
+desc.immersiveengineering.info.multiblock.IE:AlloySmelter=Сплавная печь
 
-desc.immersivepetroleum.info.reservoir.oil=Нефтехранилище
-desc.immersivepetroleum.info.reservoir.aquifer=Водоносный пласт
+desc.immersivepetroleum.info.reservoir.oil=Залежи нефти
+desc.immersivepetroleum.info.reservoir.aquifer=Водоносный горизонт
 desc.immersivepetroleum.info.reservoir.lava=Магматическая камера
 
-desc.immersivepetroleum.flavour.upgrades.reinforced_hull=Обеспечивает устойчивость моторной лодке и повышает её здоровье
-desc.immersivepetroleum.flavour.upgrades.icebreaker=Позволяет моторной лодке уничтожать лед и наносить урон мобам
-desc.immersivepetroleum.flavour.upgrades.tank=Увеличивает ёмкость топливного бака на моторной лодке
-desc.immersivepetroleum.flavour.upgrades.rudders=Позволяет совершать трудные повороты на моторной лодке
-desc.immersivepetroleum.flavour.upgrades.paddles=Позволяют плыть на моторной лодке, когда нет топлива
+desc.immersivepetroleum.flavour.upgrades.reinforced_hull=Обеспечивает моторную лодку огнестойкостью и повышенной прочностью
+desc.immersivepetroleum.flavour.upgrades.icebreaker=Позволяет моторной лодке раскалывать лёд и наносить урон существам
+desc.immersivepetroleum.flavour.upgrades.tank=Увеличивает ёмкость топливного бака в моторной лодке
+desc.immersivepetroleum.flavour.upgrades.rudders=Уменьшает радиус поворота моторной лодки
+desc.immersivepetroleum.flavour.upgrades.paddles=Позволяют плыть на моторной лодке без топлива
 
 
 
 ie.manual.entry.distillationTower.name=Ректификационная колонна
 ie.manual.entry.distillationTower.subtext=Экологически недружелюбная
-ie.manual.entry.distillationTower0=Ректификационная колонна - крупная многоблочная структура, разделяющая нефть на фракции. Она строится, как показано на схеме и формируется ударом молота инженера по краснокаменному инженерному блоку.<br><br>Сырая нефть может быть загружена в ректификационную колонну через задний люк, помеченный синей точкой, где она будет нагреваться до тех пор, пока не распадётся на фракции. Производит дизельное топливо и имеет шанс производства битума, как побочного продукта.
-ie.manual.entry.distillationTower1=Ректификационная колонна использует <config;i;distillationTower_operationCost> Флакса на операцию, перегоняя 25мВ сырой нефти в дизельное топливо за тик. Полученное дизельное топливо можно вывести сбоку из люка, помеченного оранжевой точкой; битум же выводится спереди. Результаты перегонки можно использовать для <link;dieselgen;§o§nпроизводства §o§nэнергии§r> и крафта <link;asphalt;§o§nасфальтбетона§r> соответственно.<br><br>Подача редстоун-сигнала к панели управления спереди будет останавливать работу машины. Поведение панели управления можно инвертировать молотом инженера.
-ie.manual.entry.distillationTower2=Ниже приведены операции, которые может выполнять башня:
+ie.manual.entry.distillationTower0=Многоблочная конструкция, разделяющая нефть на фракции. Формируется молотом инженера на краснокаменном инженерном блоке.<br><br>Сырая нефть загружается через синий люк, где она нагревается до тех пор, пока не распадается на фракции. Производит дизельное топливо и имеет шанс производства битума, как побочного продукта.
+ie.manual.entry.distillationTower1=Использует <config;i;distillationTower_operationCost> RF на перегонку 25 mB сырой нефти в дизельное топливо за 1 такт. Полученное топливо выталкивается из оранжевого люка, битум выводится из переднего люка. Результаты перегонки можно использовать для <link;dieselgen;§o§nпроизводства_§o§nэнергии§r> и крафта <link;asphalt;§o§nасфальтобетона§r>.<br><br>Подача сигнала красного камня к терминалу спереди остановит машину (поведение инвертируется молотом инженера).
+ie.manual.entry.distillationTower2=Выполняемые операции:
 
 ie.manual.entry.pumpjack.name=Штанговый насос
-ie.manual.entry.pumpjack.subtext=Давай-давай, выкачивай!
-ie.manual.entry.pumpjack0=Штанговый насос - многоблочная структура, добывающая нефть из месторождений под коренной породой. Формируется ударом молота по тяжёлому инженерному блоку во втором слое.
-ie.manual.entry.pumpjack1=Штанговый насос использует <config;i;pumpjack_consumption> Флакса в тик для добычи <config;i;pumpjack_speed> мВ нефти в тик. Полученная нефть автоматически выталкивается с боковых портов, помеченных оранжевыми точками.<br><br>Средних размеров месторождение будет исчерпано примерно за <config;i;pumpjack_days> дней. Добавление большего количества штанговых насосов ускорит этот процесс<br><br>Подача редстоун-сигнала к панели управления будет останавливать работу машины. Поведение панели управления можно инвертировать молотом инженера.
+ie.manual.entry.pumpjack.subtext=Качай, качай!
+ie.manual.entry.pumpjack0=Многоблочная конструкция, добывающая нефть из месторождений под коренной породой. Формируется молотом инженера на тяжёлом инженерном блоке во втором слое.
+ie.manual.entry.pumpjack1=Использует <config;i;pumpjack_consumption> RF для добычи <config;i;pumpjack_speed> mB нефти за 1 такт. Полученная нефть выталкивается из оранжевых люков.<br><br>Месторождение средних размеров исчерпывается примерно за <config;i;pumpjack_days> дней. Добавление штанговых насосов ускорит процесс. <br><br>Подача сигнала красного камня к терминалу остановит машину (поведение инвертируется молотом инженера).
 
-ie.manual.entry.oil.name=Нефтяные резервуары
-ie.manual.entry.oil.subtext=Черное золото
-ie.manual.entry.oil0=Копаясь недалеко от коренной породы, вы можете наткнуться на скользкую черную горючую субстанцию - нефть. Пока вы будете строить гипотезы, что же ещё может быть спрятано под этими непроницаемыми скалами, вы не сможете самостоятельно справиться с найденными нефтяными запасами, так что стройте <link;pumpjack;§o§nсозданную §o§nименно §o§nдля §o§nэтого §o§nмашину§r> и накладывайте свои руки на сие ценное топливо
-ie.manual.entry.oil1=<link;minerals;§o§nКолонковый §o§nбур§r> поможет определить, может ли нефть быть найдена в этом чанке, и дает представление о размере найденного месторождения.<br><br>Несмотря на конечные запасы нефти в месторождении, следовые количества (вплоть до <config;i;oil_replenish> мВ/тик) все ещё могут собираться в истощённых месторождениях. Использование более чем одного штангового насоса в истощенных чанках не приносит никакой пользы.
-ie.manual.entry.oil2=%1$s %6$s<br>Содержит %3$s to %4$s мВ %2$s.%5$s
-ie.manual.entry.oilConsonant=A
-ie.manual.entry.oilVowel=В
-ie.manual.entry.oilDimValid=%3$s §l%1$s§r это тип резервуара жидкости, который можно найти в %2$s.
-ie.manual.entry.oilDimInvalid=%3$s §l%1$s§r это тип резервуара жидкости, который можно найти везде, но в %2$s.
-ie.manual.entry.oilDimAny=%2$s §l%1$s§r тип резервуара жидкости, который можно найти в любом измерении.
-ie.manual.entry.oilReplenish=<br>После истощения резервуара, %1$d мВ/тик %2$s может быть извлечено одним Штанговым насосом.
-ie.manual.entry.oilBiomeValid=Этот резервуар будет создаваться в %s.
-ie.manual.entry.oilBiomeInvalid=Этот резервуар будет генерироваться в любом биоме, за исключением %s.
-ie.manual.entry.oilBiomeAny=Этот резервуар будет генерироваться в любом биоме.
+ie.manual.entry.oil.name=Жидкие месторождения
+ie.manual.entry.oil.subtext=Чёрное золото
+ie.manual.entry.oil0=Копаясь вблизи коренной породы, вы можете наткнуться на скользкую чёрную горючую субстанцию - нефть. Нефть - это одна из многих жидкостей, которая находится под этим непроницаемым камнем, но до них вам вручную не добраться. С этим вам поможет созданная именно для этого <link;pumpjack;§o§nмашина§r>, которая позволит вам прикоснуться к содержимому этих месторождений.
+ie.manual.entry.oil1=<link;minerals;§o§nБуровая_§o§nустановка§r;1> определяет наличие месторождения в чанке и даёт представление о размере жидкости внутри него.<br><br>Несмотря на конечные запасы, следы жидкости всё ещё могут оставаться в истощённых месторождениях. Использование более одного штангового насоса в истощённых чанках не приносит пользы.
+ie.manual.entry.oil2=%1$s %6$s<br>В нём содержится %2$s в количестве от %3$s до %4$s mB.%5$s
+ie.manual.entry.oilConsonant=
+ie.manual.entry.oilVowel=
+ie.manual.entry.oilDimValid=§l%1$s§r - это природный резервуар, который можно найти в %2$s
+ie.manual.entry.oilDimInvalid=§l%1$s§r - это природный резервуар, который можно найти везде, кроме %2$s
+ie.manual.entry.oilDimAny=§l%1$s§r - это природный резервуар, который находится во всех измерениях
+ie.manual.entry.oilReplenish=<br>После истощения месторождения, %2$s можно докачивать Штанговым насосом со скоростью %1$d mB/t.
+ie.manual.entry.oilBiomeValid=, в биоме %s.
+ie.manual.entry.oilBiomeInvalid=и во всех биомах, за исключением %s.
+ie.manual.entry.oilBiomeAny=и во всех биомах.
 
 ie.manual.entry.asphalt.name=Асфальтобетон
-ie.manual.entry.asphalt.subtext=Материал для скоростных трасс
-ie.manual.entry.asphalt0=Асфальтобетон, удерживаемый вместе липким битумом, является более темной альтернативой обычному бетону. Он может быть получен из побочных продуктов переработки нефти в <link;distillationTower;§n§oректификационной §n§oколонне§r>.
+ie.manual.entry.asphalt.subtext=Материал для шоссе
+ie.manual.entry.asphalt0=§lАсфальтобетон§r, удерживаемый вместе липким битумом, является более тёмной альтернативой обычному бетону. Он производится из побочных продуктов переработки нефти в <link;distillationTower;§n§oРектификационной_§n§oколонне§r>.
 
 ie.manual.entry.schematics.name=Проектор
 ie.manual.entry.schematics.subtext=Бесценные инструкции
-ie.manual.entry.schematics0=Когда речь идет о создании крупных многоблочных структур, обращаться к Руководству Инженера снова и снова становится утомительным. Создавая проектор, Вы сможете проецировать схемы этих структур в мир, чтобы использовать их в качестве шаблона.
-ie.manual.entry.schematics1=Если вы переключайте руководство инженера на страницу многоблочной структуры, а затем соединяете его в верстаке вместе с Проектором, Вы устанавливаете внутренний слайд соответствующий той многоблочной структуре. Проектор будет действовать как трехмерное строительное руководство.
-ie.manual.entry.schematics2=При наличии проектора в руке будет отображена структура.При нажатии колесика мыши произойдет поворот конструкции, и при этом будут отображены ее зеркальные копии. Щелчок правой кнопкой мыши заблокирует изображение на месте, где оно будет отображаться до тех пор, пока проектор находится в вашем хотбар.<br><br>Щелчок правой кнопкой мыши проектором по заблокированному изображению разблокирует его.<br><br>В творческом режиме, зажав "shift" и нажатием правой кнопи мыши, проектор создаст многоблочную структуру.
+ie.manual.entry.schematics0=Когда речь идёт о создании крупных многоблочных конструкций, обращаться к руководству инженера снова и снова становится утомительным. §lПроектор§r может проецировать схемы этих конструкций в мир, чтобы использовать их в качестве шаблона.
+ie.manual.entry.schematics1=Если переключить руководство инженера на страницу многоблочной конструкции и объединить его с Проектором, то установится внутренний слайд соответствующий этой конструкции. Проектор будет действовать, как трёхмерное строительное руководство.
+ie.manual.entry.schematics2=При наличии проектора в руке конструкция будет отображена. Изображение активно только когда проектор находится в панели быстрого доступа.<br><br>Щелчок СКМ повернёт изображение.<br>Щелчок ПКМ блокирует и разблокирует изображение на месте.<br>В творческом режиме, нажатие "Красться"+ПКМ создаст конструкцию.
 
 ie.manual.entry.speedboat.name=Моторная лодка
-ie.manual.entry.speedboat.subtext=Гонщик
-ie.manual.entry.speedboat0=Теперь вы можете путешествовать по морю с высокой скоростью с помощью моторной лодки. Моторная катера работает с <link;distillationTower;§n§oGasoline§r> который может быть залит с помощью ведра или <link;jerrycan;§n§oJerrycan§r>. Бензин потребляется при вождении моторных лодок вперёд или назад. Удерживание клавиши "Ctrl" повысит скорость лодки, хотя и будет стоить более высокого расхода топлива и увеличенного радиуса поворота.
-ie.manual.entry.speedboat1=Как и другие устройства, моторная лодка может быть модифицирована в разделе <link;workbench;§o§nВерстак §o§nинженера§r>.<br><br>§6Расширенный топливный бак§r позволяет моторной лодке вмещать вдвое больше топлива.
-ie.manual.entry.speedboat2=Набор §6Маневровый руль§r даёт мотору способность менять направление гораздо быстрее, радикально улучшая обработку. С помощью этого обновления радиус поворота лодки будет снижен.
-ie.manual.entry.speedboat3=Навигация по холодным климатическим изменениям становится тривиальным заданием с помощью §6Ледокольного носа§r, что позволяет моторной лодке раскалывать лёд. В дополнение к своим преимуществам в области мобильности, ещё позволяет моторной лодке наносить урон монстрам, с которыми сталкивается.
-ie.manual.entry.speedboat4=Если Вы стремитесь исследовать вне этой сферы, или просто хотите сделать Вашу моторную лодку более стойкой, рассмотрите установку §6Укрепленного корпуса§r. Стальной корпус обеспечивает увеличение здоровья и сопротивление огню, что позволяет лодке плавать по обширным районам лавы.
-ie.manual.entry.speedboat5=Оборудуя Вашу моторной лодку парой §6Вёсел§r означает, что исчерпание топлива больше не является катастрофой. Если топливный бак на лодке пуст, Вы сможете плыть на ней как традиционной гребной шлюпке.
+ie.manual.entry.speedboat.subtext=Гонщик по волнам
+ie.manual.entry.speedboat0=Теперь вы можете путешествовать по морю с высокой скоростью с помощью §lмоторной лодки§r. Работает на <link;distillationTower;§n§oБензине§r>, который заливается из ведра или <link;jerrycan;§n§oКанистры§r>. Бензин потребляется при движении вперёд или назад. Удерживание клавиши "Бег" повысит скорость лодки, увеличив расход топлива.
+ie.manual.entry.speedboat1=Как и другие устройства, моторную лодку можно модифицировать в разделе <link;workbench;§o§nВерстака_§o§nинженера§r>.<br><br>§6Расширенный топливный бак§r позволяет моторной лодке вмещать в 2 раза больше топлива.
+ie.manual.entry.speedboat2=§6Маневровый руль§r даёт мотору способность менять направление быстрее, кардинально улучшая управляемость. С помощью этого обновления радиус поворота лодки будет уменьшен.
+ie.manual.entry.speedboat3=Навигация по холодному климату упрощается с помощью §6Ледокольного носа§r, который позволяет моторной лодке раскалывать лёд и наносить урон существам при столкновении.
+ie.manual.entry.speedboat4=Если вы стремитесь к путешествиям за пределами этого мира или просто хотите сделать моторную лодку более стойкой, рассмотрите установку §6Усиленного корпуса§r. Этот корпус увеличит прочность лодки и её сопротивление огню, что позволит ей плавать по лаве.
+ie.manual.entry.speedboat5=Оборудование моторной лодки парой §6Вёсел§r означает, что исчерпание топлива больше не является катастрофой. Если топливный бак на лодке закончится, вы сможете плыть на ней, как на обычной гребной шлюпке.
 
 ie.manual.entry.lubricant.name=Смазка
-ie.manual.entry.lubricant.subtext=Скольжение и скольжение
-ie.manual.entry.lubricant0=Ничьи машины несовершенны, даже Ваши собственные. Неизбежное трение между движущимися деталями мешает Вашим устройствам работать в их максимальной способности - это то, где Смазка проявляет себя. Она гарантирует, что машина будет работать в полную меру, <config;d;autoLubricant_speedup>раза увеличивает базовую скорость. <link;pumpjack;§n§oШтанговый насос§r>, <link;excavator;§n§oЭкскаватор§r>, и <link;crusher;§n§oДробитель§r> могут быть смазаны.
-ie.manual.entry.lubricant1=Смазку можно использовать для ручной смазки на машину. Нефтяная смазка является наиболее эффективной, но <link;squeezer;§n§oРастительное масло§r> также работает. Как только банка полна, просто щелкните правой кнопкой по допустимому блоку, чтобы смазать его.
-ie.manual.entry.lubricant2=Железные Големы могут также быть смазаны, излечив их и временно увеличив их скорость и силу. <br><br> <link;chemthrower;§o§nХимический §o§nМетатель§r> может также использоваться для примения смазки к блокам, хотя менее эффективно. Просто распылите смазочную жидкость на машину, и она начнет работать на максимальной скорости.
+ie.manual.entry.lubricant.subtext=Поскользим?
+ie.manual.entry.lubricant0=Ничьи машины несовершенны, даже ваши собственные. Неизбежное трение между движущимися деталями мешает устройствам работать с их максимальной отдачей - это то, где Смазка проявляет себя. Она гарантирует, что машина будет работать в полную меру, в <config;d;autoLubricant_speedup> раза увеличивая базовую скорость. Смазывать можно <link;pumpjack;§n§oШтанговый_насос§r>, <link;excavator;§n§oЭкскаватор§r> и <link;crusher;§n§oДробитель§r>.
+ie.manual.entry.lubricant1=§lБанка для смазки§r используется для смазки машин. Нефтяная смазка является наиболее эффективной, но <link;squeezer;§n§oРастительное_масло§r> тоже работает. Как только банка заполнится, щёлкните ПКМ по допустимому блоку, чтобы смазать его.
+ie.manual.entry.lubricant2=Железные големы тоже могут быть смазаны, временно излечив и увеличив их скорость и силу.<br><br><link;chemthrower;§o§nЖидкомёт§r> может также использоваться для применения смазки к блокам, хотя менее эффективно. Распылите смазочную жидкость на машину и она начнет работать на максимальной скорости.
 
 ie.manual.entry.automaticLubricator.name=Смазочное устройство
-ie.manual.entry.automaticLubricator.subtext=Свободные руки
-ie.manual.entry.automaticLubricator0=Вручную применяя <link;distillationTower;§n§oРектификационной колонны§r> к машинам может быть утомительным и часто неудачным. Автоматический смазчик сделает эти задача за Вас, как только вы присоединяете его к машины. Точка, к которой он должна быть прикреплен, выделяется, если Вы держете его в руке.
-ie.manual.entry.automaticLubricator1=Когда все правильно размещено, смазочные трубы сформируются вокруг машины. На данном этапе просто поставляйте Смазку или <link;squeezer;§n§oРастительное масло§r>.
+ie.manual.entry.automaticLubricator.subtext=Без использования рук
+ie.manual.entry.automaticLubricator0=Вручную применять <link;distillationTower;§n§oСмазку§r> к машинам - это утомительно и надоедливо. §lСмазочное устройство§r сделает эти задачи за вас, как только вы присоедините его к машине. Точка, к которой он должен быть прикреплён, выделяется, если вы держите его в руке.
+ie.manual.entry.automaticLubricator1=Когда всё правильно размещено, вокруг машины сформируются смазочные трубы. На данном этапе просто добавляйте Смазку или <link;squeezer;§n§oРастительное_масло§r>.
 
-ie.manual.entry.portableGenerator.name=Портативный генератор
-ie.manual.entry.portableGenerator.subtext=Подзаправимся
-ie.manual.entry.portableGenerator0=Портативный генератор — это мобильное решение для всех механизмов.  Этот генератор работает на <link;distillationTower;§n§oБензине§r> - производит <config;i;portableGenerator_flux> Flux/t энергию, и имеет внутреннюю батарею на 100 000 RF.
-ie.manual.entry.portableGenerator1=Портативный генератор может принять топливо, просто щелкнув правой кнопкой мыши ведре по нему. Кроме того, может переносить бензин или другое топливо. Мощность выводится непосредственно через lV или MV провода, коннекторы не требуются. Применение редстоун сигнала остановит работу.<br><br>"Shift" и щелчок правой кнопкой по генератору, заставят выпасть его, сохраняя всю энергию и топливо.
+ie.manual.entry.portableGenerator.name=Переносной генератор
+ie.manual.entry.portableGenerator.subtext=Подзарядимся?
+ie.manual.entry.portableGenerator0=Мобильное решение для всех механизмов. Работает на <link;distillationTower;§n§oБензине§r>. Производит <config;i;portableGenerator_flux> RF/t и имеет внутреннюю батарею на 100 000 RF.
+ie.manual.entry.portableGenerator1=Принимает топливо, щёлкнув по нему ПКМ ведром с топливом. Бензин или другое топливо также можно заливать сверху. Энергия выводится через низковольтные или средневольтные провода, коннекторы не требуются. Подача сигнала красного камня остановит генератор.<br><br>Нажатие "Красться"+ПКМ по генератору снимет его, сохраняя всю энергию и топливо.
+
+ie.manual.entry.napalm.name=Напалм
+ie.manual.entry.napalm.subtext=Берегись речного бога
+ie.manual.entry.napalm0=Чрезвычайно горючая субстанция. Производится в <link;mixer;§n§oСмесителе§r> с использованием <link;distillationTower;§n§oБензина§r> и трёх мер алюминиевой пыли. Почти неприменим, кроме бессмысленного уничтожения. При поджигании Напалма, огонь почти мгновенно распространится по его поверхности, позволяя быстро уничтожать лес. Также служит эффективным топливом в <link;chemthrower;§n§oЖидкомёте§r>.
 
 ie.manual.category.ip.name=Обработка нефти
-
-chat.immersivepetroleum.command.help.help=§6Usage: /ip help <command> [sub-commands ...]§r<br> To get more info on the specified command or, optionally, its sub commands
+chat.immersivepetroleum.command.help.help=§6Usage: /ip help <command> [sub-commands ...]§r<br> Для получения дополнительной информации для указанной команды или, по желанию, её подкомандах
 chat.immersivepetroleum.command.reservoir.help=§6Usage: /ip reservoir <list|get|set|setAmount|setCapacity>§r
-chat.immersivepetroleum.command.reservoir.list.help=§6Usage: /ip reservoir list§r<br> Lists all registered reservoirs
-chat.immersivepetroleum.command.reservoir.get.help=§6Usage: /ip reservoir get§r<br> Displays the reservoir for the chunk
-chat.immersivepetroleum.command.reservoir.set.help=§6Usage: /ip reservoir set [reservoir]§r<br> Sets a reservoir override for the chunk. Specify no reservoir to clear the override.
-chat.immersivepetroleum.command.reservoir.setAmount.help=§6Usage: /ip reservoir setAmount <number>§r<br> Set the amount of mB of fluid left inside the chunk.
-chat.immersivepetroleum.command.reservoir.setCapacity.help=§6Usage: /ip reservoir setCapacity <number>§r<br> Set the maximum amount of mB of fluid in the chunk.
-chat.immersivepetroleum.command.reservoir.get=Chunk contains: %1$s <br>Override: %2$s <br>Amount: %3$s
-chat.immersivepetroleum.command.reservoir.set.invalidReservoir=§cInvalid reservoir, '%1$s' is not a valid identifier. Use '/ip reservoir list' for a list of all identifiers.§r
-chat.immersivepetroleum.command.reservoir.set.sucess=Reservoir override set to '%1$s'
-chat.immersivepetroleum.command.reservoir.set.clear=Reservoir override (%1$s) cleared.
-chat.immersivepetroleum.command.reservoir.setAmount.NFE=Error, '%1$s' is not a valid number
-chat.immersivepetroleum.command.reservoir.setAmount.sucess=Reservoir amount set to '%1$s'
-chat.immersivepetroleum.command.reservoir.setCapacity.NFE=Error, '%1$s' is not a valid number
-chat.immersivepetroleum.command.reservoir.setCapacity.sucess=Reservoir capacity set to '%1$s'
+chat.immersivepetroleum.command.reservoir.list.help=§6Usage: /ip reservoir list§r<br> Перечисляет все зарегистрированные резервуары
+chat.immersivepetroleum.command.reservoir.get.help=§6Usage: /ip reservoir get§r<br> Отображает резервуар для чанка
+chat.immersivepetroleum.command.reservoir.set.help=§6Usage: /ip reservoir set [reservoir]§r<br> Устанавливает переопределение резервуара для чанка. Неуказание резервуара очищает переопределение.
+chat.immersivepetroleum.command.reservoir.setAmount.help=§Использование: /ip reservoir setAmount <number>§r<br> Устанавливает количество жидкости в mB, которое осталось в чанке
+chat.immersivepetroleum.command.reservoir.setCapacity.help=§Использование: /ip reservoir setCapacity <number>§r<br> Устанавливает максимальное количество жидкости в mB в чанке
+chat.immersivepetroleum.command.reservoir.get=Чанк содержит: %1$s <br>Переопределено: %2$s <br>Количество: %3$s
+chat.immersivepetroleum.command.reservoir.set.invalidReservoir=§cНедействительный резервуар, '%1$s' - недействительным идентификатор. Используй '/ip reservoir list' для списка всех идентификаторов.§r
+chat.immersivepetroleum.command.reservoir.set.sucess=Переопределение резервуара установлено на '%1$s'
+chat.immersivepetroleum.command.reservoir.set.clear=Переопределение резервуара (%1$s) очищено
+chat.immersivepetroleum.command.reservoir.setAmount.NFE=Ошибка, '%1$s' - недействительное число
+chat.immersivepetroleum.command.reservoir.setAmount.sucess=Количество резервуара установлено на '%1$s'
+chat.immersivepetroleum.command.reservoir.setCapacity.NFE=Ошибка, '%1$s' - недействительное число
+chat.immersivepetroleum.command.reservoir.setCapacity.sucess=Ёмкость резервуара установлена на '%1$s'		   

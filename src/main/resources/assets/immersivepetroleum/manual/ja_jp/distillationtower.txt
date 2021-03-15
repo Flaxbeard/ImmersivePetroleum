@@ -1,0 +1,9 @@
+蒸留塔
+環境に優しくない
+<&distillationtower0>蒸留塔は、原油をいくつかの副産物に分離する巨大なマルチブロック構造物です。 上の通りに構築し、レッドストーン機構ブロックにエンジニアのハンマーを使用することで構築できます。
+
+原油は、青い点がついた後部ハッチから蒸留塔に搬入することができ、いくつかの層に分離されるまで加熱されます。 この処理により様々な液体が生成され、また副産物として瀝青が生成されることがあります。<np>
+蒸留塔は、操作ごとに<config;i;distillationtower_operationcost>Fluxを使用し、ティック毎に25mBの原油をディーゼル、潤滑油、ガソリン、瀝青に変換します。 生成された液体は、オレンジの点が付いた横のハッチから出力され、瀝青は前のハッチから出力されます。
+
+ディーゼルは<link;diesel_generator;§o§nエネルギー生産§r>に、潤滑油は<link;immersivepetroleum:lubricant;§o§n機械の潤滑§r>に、ガソリンは<link;immersivepetroleum:portablegenerator;§o§n発電エンジン§r>、<link;immersivepetroleum:speedboat;§o§n乗り物§r>、<link;immersivepetroleum:napalm;§o§nナパーム§r>に使用できます。 瀝青は、<link;immersivepetroleum:asphalt;§o§nアスファルト§r>の材料に使えます。
+<&distillationtower1>以下は、蒸留塔が行う処理です:

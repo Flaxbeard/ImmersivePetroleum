@@ -23,11 +23,30 @@ public class DistillationTowerBlock extends IPMetalMultiblock<DistillationTowerT
 		if(!player.getHeldItem(hand).isEmpty()){
 			TileEntity te = world.getTileEntity(pos);
 			if(te instanceof DistillationTowerTileEntity){
-				BlockPos tPos = ((DistillationTowerTileEntity) te).posInMultiblock;
-				if((tPos.getY() == 1 && tPos.getX() == 3 && tPos.getZ() == 3) && hit.getFace() == Direction.UP){
+				DistillationTowerTileEntity tower = (DistillationTowerTileEntity) te;
+				BlockPos tPos = tower.posInMultiblock;
+				Direction facing = tower.getFacing();
+				
+				// Locations that don't require sneaking to avoid the GUI
+				
+				// Power input
+				if(DistillationTowerTileEntity.Energy_IN.contains(tPos) && hit.getFace() == Direction.UP){
 					return ActionResultType.FAIL;
 				}
-				if((tPos.getY() == 1 && tPos.getX() == 0 && tPos.getZ() == 3)){
+				
+				// Redstone controller input
+				if(DistillationTowerTileEntity.Redstone_IN.contains(tPos) && (tower.getIsMirrored() ? hit.getFace() == facing.rotateY() : hit.getFace() == facing.rotateYCCW())){
+					return ActionResultType.FAIL;
+				}
+				
+				// Fluid I/O Ports
+				if((tPos.equals(DistillationTowerTileEntity.Fluid_IN) && (tower.getIsMirrored() ? hit.getFace() == facing.rotateYCCW() : hit.getFace() == facing.rotateY()))
+				|| (tPos.equals(DistillationTowerTileEntity.Fluid_OUT) && hit.getFace() == facing.getOpposite())){
+					return ActionResultType.FAIL;
+				}
+				
+				// Item output port
+				if(tPos.equals(DistillationTowerTileEntity.Item_OUT) && (tower.getIsMirrored() ? hit.getFace() == facing.rotateY() : hit.getFace() == facing.rotateYCCW())){
 					return ActionResultType.FAIL;
 				}
 			}

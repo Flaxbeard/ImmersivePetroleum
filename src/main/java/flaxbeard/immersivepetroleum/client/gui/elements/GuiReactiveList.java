@@ -37,7 +37,7 @@ public class GuiReactiveList extends Button
 
 	private long prevWheelNano = 0;
 	private int targetEntry = -1;
-	private int hoverTimer = 0;
+	private float hoverTimer = 0;
 
 	public GuiReactiveList(Screen gui, int x, int y, int w, int h, IPressable handler, String... entries)
 	{
@@ -157,7 +157,7 @@ public class GuiReactiveList extends Button
 		for(int i = 0; i < Math.min(perPage, entries.length); i++)
 		{
 			int j = offset+i;
-			int col = textColor; // This is realy all that needed to be done
+			int col = textColor;
 			boolean selectionHover = isHovered&&mmY >= i*fr.FONT_HEIGHT&&mmY < (i+1)*fr.FONT_HEIGHT;
 			if(selectionHover)
 			{
@@ -168,8 +168,8 @@ public class GuiReactiveList extends Button
 					hoverTimer = 0;
 				}
 				else
-					hoverTimer++;
-				col = textHoverColor; // Same here
+					hoverTimer += 2.5 * partialTicks;
+				col = textHoverColor;
 			}
 			if(j > entries.length-1)
 				j = entries.length-1;
@@ -179,7 +179,7 @@ public class GuiReactiveList extends Button
 			{
 				if(selectionHover&&hoverTimer > 20)
 				{
-					int textOffset = (hoverTimer/10)%(s.length());
+					int textOffset = ((int)hoverTimer/10)%(s.length());
 					s = s.substring(textOffset)+" "+s.substring(0, textOffset);
 				}
 				s = fr.func_238412_a_(s, strWidth);

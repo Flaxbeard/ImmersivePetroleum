@@ -14,8 +14,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
-import blusunrize.immersiveengineering.client.gui.elements.GuiReactiveList;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.UnionMultiblock;
+import flaxbeard.immersivepetroleum.client.gui.elements.GuiReactiveList;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
 import flaxbeard.immersivepetroleum.common.util.projector.MultiblockProjection;
@@ -157,6 +157,8 @@ public class ProjectorScreen extends Screen{
 		this.listEntries = list.toArray(new String[0]);
 		GuiReactiveList guilist = new GuiReactiveList(this, this.guiLeft + 15, this.guiTop + 29, 89, 127, button -> listaction(button), this.listEntries);
 		guilist.setPadding(1, 1, 1, 1);
+		guilist.setTextColor(0);
+		guilist.setTextHoverColor(0x7F7FFF);
 		guilist.setTranslationFunc(str -> {
 			IMultiblock mb = this.multiblocks.get().get(Integer.valueOf(str));
 			if(mb instanceof UnionMultiblock && mb.getUniqueName().getPath().contains("excavator_demo")){

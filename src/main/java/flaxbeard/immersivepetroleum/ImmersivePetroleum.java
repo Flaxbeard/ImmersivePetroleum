@@ -73,7 +73,6 @@ public class ImmersivePetroleum{
 		IPContent.populate();
 		IPLootFunctions.modConstruction();
 		
-		proxy.construct();
 		proxy.registerContainersAndScreens();
 	}
 	

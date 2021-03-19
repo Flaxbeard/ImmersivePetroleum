@@ -19,6 +19,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.StringTextComponent;
 
+@SuppressWarnings("unused")
 public class GuiReactiveList extends Button
 {
 	private final Screen gui;

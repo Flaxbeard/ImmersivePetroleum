@@ -103,10 +103,6 @@ public class ClientProxy extends CommonProxy{
 	public static final KeyBinding keybind_preview_flip = new KeyBinding("key.immersivepetroleum.projector.flip", InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_M, "key.categories.immersivepetroleum");
 	
 	@Override
-	public void construct(){
-	}
-	
-	@Override
 	public void setup(){
 		RenderingRegistry.registerEntityRenderingHandler(SpeedboatEntity.TYPE, SpeedboatRenderer::new);
 	}
@@ -198,8 +194,83 @@ public class ClientProxy extends CommonProxy{
 		ClientRegistry.registerKeyBinding(keybind_preview_flip);
 	}
 	
+	@Override
+	public void postInit(){
+		ClientRegistry.bindTileEntityRenderer(DistillationTowerTileEntity.TYPE, MultiblockDistillationTowerRenderer::new);
+		ClientRegistry.bindTileEntityRenderer(PumpjackTileEntity.TYPE, MultiblockPumpjackRenderer::new);
+		ClientRegistry.bindTileEntityRenderer(AutoLubricatorTileEntity.TYPE, AutoLubricatorRenderer::new);
+	}
+	
 	/** ImmersivePetroleum's Manual Category */
 	private static InnerNode<ResourceLocation, ManualEntry> IP_CATEGORY;
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void onModelBakeEvent(ModelBakeEvent event){
+		ModelResourceLocation mLoc = new ModelResourceLocation(IEBlocks.StoneDecoration.coresample.getRegistryName(), "inventory");
+		IBakedModel model = event.getModelRegistry().get(mLoc);
+		if(model instanceof ModelCoresample){
+			// It'll be a while until that is in working conditions again
+			// event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
+		}
+	}
+	
+	@Override
+	public void renderTile(TileEntity te, IVertexBuilder iVertexBuilder, MatrixStack transform, IRenderTypeBuffer buffer){
+		TileEntityRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer((TileEntity) te);
+		
+		if(te instanceof PumpjackTileEntity){
+			transform.push();
+			transform.rotate(new Quaternion(0, -90, 0, true));
+			transform.translate(1, 1, -2);
+			
+			float pt = 0;
+			if(Minecraft.getInstance().player != null){
+				((PumpjackTileEntity) te).activeTicks = Minecraft.getInstance().player.ticksExisted;
+				pt = Minecraft.getInstance().getRenderPartialTicks();
+			}
+			
+			tesr.render(te, pt, transform, buffer, 0xF000F0, 0);
+			transform.pop();
+		}else{
+			transform.push();
+			transform.rotate(new Quaternion(0, -90, 0, true));
+			transform.translate(0, 1, -4);
+			
+			tesr.render(te, 0, transform, buffer, 0xF000F0, 0);
+			transform.pop();
+		}
+	}
+	
+	@Override
+	public void drawUpperHalfSlab(MatrixStack transform, ItemStack stack){
+		
+		// Render slabs on top half
+		BlockRendererDispatcher blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
+		BlockState state = IEBlocks.MetalDecoration.steelScaffolding.get(MetalScaffoldingType.STANDARD).getDefaultState();
+		IBakedModel model = blockRenderer.getBlockModelShapes().getModel(state);
+		
+		IRenderTypeBuffer.Impl buffers = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+		
+		transform.push();
+		transform.translate(0.0F, 0.5F, 1.0F);
+		blockRenderer.getBlockModelRenderer().renderModel(transform.getLast(), buffers.getBuffer(RenderType.getSolid()), state, model, 1.0F, 1.0F, 1.0F, -1, -1, EmptyModelData.INSTANCE);
+		transform.pop();
+	}
+	
+	@Override
+	public void openProjectorGui(Hand hand, ItemStack held){
+		Minecraft.getInstance().displayGuiScreen(new ProjectorScreen(hand, held));
+	}
+	
+	@Override
+	public World getClientWorld(){
+		return Minecraft.getInstance().world;
+	}
+	
+	@Override
+	public PlayerEntity getClientPlayer(){
+		return Minecraft.getInstance().player;
+	}
+	
 	public void setupManualPages(){
 		ManualInstance man = ManualHelper.getManual();
 		
@@ -208,18 +279,17 @@ public class ClientProxy extends CommonProxy{
 		pumpjack(modLoc("pumpjack"), 0);
 		distillation(modLoc("distillationtower"), 1);
 		handleReservoirManual(modLoc("reservoir"), 2);
-		
 		lubricant(modLoc("lubricant"), 3);
 		man.addEntry(IP_CATEGORY, modLoc("asphalt"), 4);
 		projector(modLoc("projector"), 5);
-		man.addEntry(IP_CATEGORY, modLoc("speedboat"), 6);
+		speedboat(modLoc("speedboat"), 6);
 		man.addEntry(IP_CATEGORY, modLoc("napalm"), 7);
 		generator(modLoc("portablegenerator"), 8);
 		autolube(modLoc("automaticlubricator"), 9);
 		flarestack(modLoc("flarestack"), 10);
 	}
 	
-	protected static void flarestack(ResourceLocation location, int priority){
+	private static void flarestack(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
@@ -228,7 +298,7 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	protected static void autolube(ResourceLocation location, int priority){
+	private static void autolube(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
@@ -237,7 +307,7 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	protected static void generator(ResourceLocation location, int priority){
+	private static void generator(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
@@ -246,7 +316,7 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	protected static void speedboat(ResourceLocation location, int priority){
+	private static void speedboat(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
@@ -260,7 +330,7 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	protected static void lubricant(ResourceLocation location, int priority){
+	private static void lubricant(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
@@ -269,7 +339,7 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	protected static void pumpjack(ResourceLocation location, int priority){
+	private static void pumpjack(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
@@ -278,7 +348,7 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	protected static void distillation(ResourceLocation location, int priority){
+	private static void distillation(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
@@ -306,7 +376,7 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	protected static void projector(ResourceLocation location, int priority){
+	private static void projector(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
 		ItemStack projectorWithNBT = new ItemStack(Items.projector);
@@ -319,7 +389,7 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	protected static void handleReservoirManual(ResourceLocation location, int priority){
+	private static void handleReservoirManual(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
@@ -414,80 +484,5 @@ public class ClientProxy extends CommonProxy{
 		String tanslatedSubtext = I18n.format("ie.manual.entry.reservoirs.subtitle");
 		String formattedContent = contentBuilder.toString().replaceAll("\r\n|\r|\n", "\n");
 		return new EntryData(translatedTitle, tanslatedSubtext, formattedContent);
-	}
-	
-	@Override
-	public void postInit(){
-		ClientRegistry.bindTileEntityRenderer(DistillationTowerTileEntity.TYPE, MultiblockDistillationTowerRenderer::new);
-		ClientRegistry.bindTileEntityRenderer(PumpjackTileEntity.TYPE, MultiblockPumpjackRenderer::new);
-		ClientRegistry.bindTileEntityRenderer(AutoLubricatorTileEntity.TYPE, AutoLubricatorRenderer::new);
-	}
-	
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public static void onModelBakeEvent(ModelBakeEvent event){
-		ModelResourceLocation mLoc = new ModelResourceLocation(IEBlocks.StoneDecoration.coresample.getRegistryName(), "inventory");
-		IBakedModel model = event.getModelRegistry().get(mLoc);
-		if(model instanceof ModelCoresample){
-			// It'll be a while until that is in working conditions again
-			// event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
-		}
-	}
-	
-	@Override
-	public void renderTile(TileEntity te, IVertexBuilder iVertexBuilder, MatrixStack transform, IRenderTypeBuffer buffer){
-		TileEntityRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer((TileEntity) te);
-		
-		if(te instanceof PumpjackTileEntity){
-			transform.push();
-			transform.rotate(new Quaternion(0, -90, 0, true));
-			transform.translate(1, 1, -2);
-			
-			float pt = 0;
-			if(Minecraft.getInstance().player != null){
-				((PumpjackTileEntity) te).activeTicks = Minecraft.getInstance().player.ticksExisted;
-				pt = Minecraft.getInstance().getRenderPartialTicks();
-			}
-			
-			tesr.render(te, pt, transform, buffer, 0xF000F0, 0);
-			transform.pop();
-		}else{
-			transform.push();
-			transform.rotate(new Quaternion(0, -90, 0, true));
-			transform.translate(0, 1, -4);
-			
-			tesr.render(te, 0, transform, buffer, 0xF000F0, 0);
-			transform.pop();
-		}
-	}
-	
-	@Override
-	public void drawUpperHalfSlab(MatrixStack transform, ItemStack stack){
-		
-		// Render slabs on top half
-		BlockRendererDispatcher blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
-		BlockState state = IEBlocks.MetalDecoration.steelScaffolding.get(MetalScaffoldingType.STANDARD).getDefaultState();
-		IBakedModel model = blockRenderer.getBlockModelShapes().getModel(state);
-		
-		IRenderTypeBuffer.Impl buffers = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-		
-		transform.push();
-		transform.translate(0.0F, 0.5F, 1.0F);
-		blockRenderer.getBlockModelRenderer().renderModel(transform.getLast(), buffers.getBuffer(RenderType.getSolid()), state, model, 1.0F, 1.0F, 1.0F, -1, -1, EmptyModelData.INSTANCE);
-		transform.pop();
-	}
-	
-	@Override
-	public World getClientWorld(){
-		return Minecraft.getInstance().world;
-	}
-	
-	@Override
-	public PlayerEntity getClientPlayer(){
-		return Minecraft.getInstance().player;
-	}
-	
-	@Override
-	public void openProjectorGui(Hand hand, ItemStack held){
-		Minecraft.getInstance().displayGuiScreen(new ProjectorScreen(hand, held));
 	}
 }

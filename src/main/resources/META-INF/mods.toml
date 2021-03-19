@@ -4,17 +4,17 @@ issueTrackerURL="https://github.com/Flaxbeard/ImmersivePetroleum/issues"
 license="All rights reserved"
 
 [[mods]] #mandatory
-modId="immersivepetroleum"
-version="${version}"
-displayName="Immersive Petroleum"
-displayURL="https://minecraft.curseforge.com/projects/immersive-petroleum"
-authors="Flaxbeard"
-description="Adds oil and oil processing features to Immersive Engineering."
-logoFile="logo.png"
-#updateJSONURL=""
-#credits=""
+	modId="immersivepetroleum"
+	version="${version}"
+	displayName="Immersive Petroleum"
+	displayURL="https://minecraft.curseforge.com/projects/immersive-petroleum"
+	authors="Flaxbeard"
+	description="Adds oil and oil processing features to Immersive Engineering."
+	logoFile="logo.png"
+	#updateJSONURL=""
+	#credits=""
 
-[[dependencies.immersiveengineering]]
+[[dependencies.immersivepetroleum]]
 	modId="immersiveengineering"
 	mandatory=true
 	versionRange="[1.16.5-4.2.2-132,)"

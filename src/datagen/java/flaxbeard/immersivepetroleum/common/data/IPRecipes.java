@@ -194,7 +194,7 @@ public class IPRecipes extends RecipeProvider{
 			.key('C', IEItems.Ingredients.componentSteel)
 			.key('P', IEBlocks.MetalDevices.fluidPipe)
 			.key('A', IEBlocks.MetalDevices.fluidPlacer)
-			.key('F', Items.FIRE_CHARGE)
+			.key('F', Items.FLINT_AND_STEEL)
 			.patternLine("IFI")
 			.patternLine("CAC")
 			.patternLine("IPI")

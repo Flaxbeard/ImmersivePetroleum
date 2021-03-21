@@ -1,6 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
-import blusunrize.immersiveengineering.common.blocks.IEBaseTileEntity;
+import blusunrize.immersiveengineering.api.wires.impl.ImmersiveConnectableTileEntity;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IReadOnPlacement;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
@@ -80,12 +80,10 @@ public class GasGeneratorBlock extends IPBlockBase{
 	
 	@Override
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit){
-		if(!worldIn.isRemote){
-			TileEntity te = worldIn.getTileEntity(pos);
-			if(te instanceof IPlayerInteraction){
-				if(((IPlayerInteraction) te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), (float) hit.getHitVec().x, (float) hit.getHitVec().y, (float) hit.getHitVec().z)){
-					return ActionResultType.SUCCESS;
-				}
+		TileEntity te = worldIn.getTileEntity(pos);
+		if(te instanceof IPlayerInteraction){
+			if(((IPlayerInteraction) te).interact(hit.getFace(), player, handIn, player.getHeldItem(handIn), (float) hit.getHitVec().x, (float) hit.getHitVec().y, (float) hit.getHitVec().z)){
+				return ActionResultType.SUCCESS;
 			}
 		}
 		return ActionResultType.FAIL;
@@ -98,8 +96,8 @@ public class GasGeneratorBlock extends IPBlockBase{
 			if(te instanceof IReadOnPlacement){
 				((IReadOnPlacement) te).readOnPlacement(placer, stack);
 				
-				if(te instanceof IEBaseTileEntity){
-					((IEBaseTileEntity) te).markContainingBlockForUpdate(null);
+				if(te instanceof ImmersiveConnectableTileEntity){
+					((ImmersiveConnectableTileEntity) te).markDirty();
 				}
 			}
 		}

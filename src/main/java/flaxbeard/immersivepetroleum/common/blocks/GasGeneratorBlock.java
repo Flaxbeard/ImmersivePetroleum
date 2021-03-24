@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
-import blusunrize.immersiveengineering.api.wires.impl.ImmersiveConnectableTileEntity;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IReadOnPlacement;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
@@ -95,10 +94,6 @@ public class GasGeneratorBlock extends IPBlockBase{
 			TileEntity te = worldIn.getTileEntity(pos);
 			if(te instanceof IReadOnPlacement){
 				((IReadOnPlacement) te).readOnPlacement(placer, stack);
-				
-				if(te instanceof ImmersiveConnectableTileEntity){
-					((ImmersiveConnectableTileEntity) te).markDirty();
-				}
 			}
 		}
 	}

@@ -55,7 +55,7 @@ public class OilCanItem extends IPItemBase{
 				TextFormatting rarity = att.getRarity() == Rarity.COMMON ? TextFormatting.GRAY : att.getRarity().color;
 				
 				ITextComponent out = ((IFormattableTextComponent) fluid.getDisplayName()).mergeStyle(rarity)
-						.append(new StringTextComponent(": " + fluid.getAmount() + "/8000mB").mergeStyle(TextFormatting.GRAY));
+						.appendSibling(new StringTextComponent(": " + fluid.getAmount() + "/8000mB").mergeStyle(TextFormatting.GRAY));
 				tooltip.add(out);
 			}else{
 				tooltip.add(new StringTextComponent(I18n.format(Lib.DESC_FLAVOUR + "drill.empty")));

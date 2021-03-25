@@ -202,7 +202,7 @@ public class DebugItem extends IPItemBase{
 						MultiFluidTank tank = tower.tanks[DistillationTowerTileEntity.TANK_OUTPUT];
 						for(int i = 0;i < tank.fluids.size();i++){
 							FluidStack fstack = tank.fluids.get(i);
-							tankInText.appendString(" ").append(fstack.getDisplayName()).appendString(" " + fstack.getAmount() + "mB,");
+							tankInText.appendString(" ").appendSibling(fstack.getDisplayName()).appendString(" " + fstack.getAmount() + "mB,");
 						}
 					}
 					
@@ -211,11 +211,11 @@ public class DebugItem extends IPItemBase{
 						MultiFluidTank tank = tower.tanks[DistillationTowerTileEntity.TANK_INPUT];
 						for(int i = 0;i < tank.fluids.size();i++){
 							FluidStack fstack = tank.fluids.get(i);
-							tankOutText.appendString(" ").append(fstack.getDisplayName()).appendString(" " + fstack.getAmount() + "mB,");
+							tankOutText.appendString(" ").appendSibling(fstack.getDisplayName()).appendString(" " + fstack.getAmount() + "mB,");
 						}
 					}
 					
-					player.sendMessage(new StringTextComponent("DistillationTower:\n").append(tankInText).append(tankOutText), Util.DUMMY_UUID);
+					player.sendMessage(new StringTextComponent("DistillationTower:\n").appendSibling(tankInText).appendSibling(tankOutText), Util.DUMMY_UUID);
 				}
 				return ActionResultType.PASS;
 			}
@@ -279,7 +279,7 @@ public class DebugItem extends IPItemBase{
 					out.appendString((lube.isSlave ? "Slave" : "Master") + ", ");
 					out.appendString((lube.predictablyDraining ? "Predictably Draining, " : ""));
 					if(!lube.tank.isEmpty()){
-						out.append(lube.tank.getFluid().getDisplayName()).appendString(" " + lube.tank.getFluidAmount() + "/" + lube.tank.getCapacity() + "mB");
+						out.appendSibling(lube.tank.getFluid().getDisplayName()).appendString(" " + lube.tank.getFluidAmount() + "/" + lube.tank.getCapacity() + "mB");
 					}else{
 						out.appendString("Empty");
 					}
@@ -323,7 +323,7 @@ public class DebugItem extends IPItemBase{
 		if(fluid == FluidStack.EMPTY){
 			textOut.appendString("Tank: Empty");
 		}else{
-			textOut.appendString("Tank: " + fluid.getAmount() + "/" + speedboatEntity.getMaxFuel() + "mB of ").append(fluid.getDisplayName());
+			textOut.appendString("Tank: " + fluid.getAmount() + "/" + speedboatEntity.getMaxFuel() + "mB of ").appendSibling(fluid.getDisplayName());
 		}
 		
 		IFormattableTextComponent upgradesText = new StringTextComponent("\n");
@@ -333,10 +333,10 @@ public class DebugItem extends IPItemBase{
 			if(upgrade == null || upgrade == ItemStack.EMPTY){
 				upgradesText.appendString("Upgrade " + (++i) + ": Empty\n");
 			}else{
-				upgradesText.appendString("Upgrade " + (i++) + ": ").append(upgrade.getDisplayName()).appendString("\n");
+				upgradesText.appendString("Upgrade " + (i++) + ": ").appendSibling(upgrade.getDisplayName()).appendString("\n");
 			}
 		}
-		textOut.append(upgradesText);
+		textOut.appendSibling(upgradesText);
 		
 		player.sendMessage(textOut, Util.DUMMY_UUID);
 	}

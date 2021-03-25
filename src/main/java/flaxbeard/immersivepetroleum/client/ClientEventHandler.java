@@ -291,8 +291,8 @@ public class ClientEventHandler{
 							}
 							
 							debugOut.add(toText("Distillation Tower").mergeStyle(TextFormatting.GOLD)
-									.append(toText(tower.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED))
-									.append(toText(tower.shouldRenderAsActive() ? " (Active)" : "").mergeStyle(TextFormatting.GREEN)));
+									.appendSibling(toText(tower.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED))
+									.appendSibling(toText(tower.shouldRenderAsActive() ? " (Active)" : "").mergeStyle(TextFormatting.GREEN)));
 							debugOut.add(toText(tower.energyStorage.getEnergyStored() + "/" + tower.energyStorage.getMaxEnergyStored() + "RF"));
 							
 							{
@@ -329,7 +329,7 @@ public class ClientEventHandler{
 							MatrixStack matrix = event.getMatrixStack();
 							matrix.push();
 							for(int i = 0;i < debugOut.size();i++){
-								ClientUtils.font().func_243246_a(matrix, debugOut.get(i), 2, 2 + (i * (ClientUtils.font().FONT_HEIGHT + 2)), -1);
+								ClientUtils.font().drawText(matrix, debugOut.get(i), 2, 2 + (i * (ClientUtils.font().FONT_HEIGHT + 2)), -1);
 							}
 							matrix.pop();
 						}
@@ -391,7 +391,7 @@ public class ClientEventHandler{
 										int fy = event.getWindow().getScaledHeight() / 2 + 8 + i * ClientUtils.font().FONT_HEIGHT;
 										
 										IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-										ClientUtils.font().func_238416_a_(LanguageMap.getInstance().func_241870_a(display), fx, fy, 0xFFFFFFFF, true, event.getMatrixStack().getLast().getMatrix(), buffer, false, 0, 0xF000F0);
+										ClientUtils.font().drawEntityText(LanguageMap.getInstance().func_241870_a(display), fx, fy, 0xFFFFFFFF, true, event.getMatrixStack().getLast().getMatrix(), buffer, false, 0, 0xF000F0);
 										buffer.finish();
 									}
 								}

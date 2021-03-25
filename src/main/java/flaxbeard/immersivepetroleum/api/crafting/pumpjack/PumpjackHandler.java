@@ -138,7 +138,7 @@ public class PumpjackHandler{
 		if(worldInfo == null){
 			ReservoirType res = null;
 			
-			Random r = SharedSeedRandom.seedSlimeChunk(coords.x, coords.z, ((ISeedReader) world).getSeed(), 90210L);
+			Random r = SharedSeedRandom.createSlimeChunkSpawningSeed(coords.x, coords.z, ((ISeedReader) world).getSeed(), 90210L);
 			boolean empty = (r.nextDouble() > IPServerConfig.EXTRACTION.reservoir_chance.get());
 			double size = r.nextDouble();
 			int query = r.nextInt();

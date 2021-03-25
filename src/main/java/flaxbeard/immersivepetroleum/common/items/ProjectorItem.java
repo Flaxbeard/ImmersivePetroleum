@@ -139,9 +139,9 @@ public class ProjectorItem extends IPItemBase{
 				tooltip.add(flip);
 			}else{
 				ITextComponent text = new StringTextComponent("[")
-						.append(new TranslationTextComponent("desc.immersivepetroleum.info.projector.holdshift"))
+						.appendSibling(new TranslationTextComponent("desc.immersivepetroleum.info.projector.holdshift"))
 						.appendString("] ")
-						.append(new TranslationTextComponent("desc.immersivepetroleum.info.projector.holdshift.text"))
+						.appendSibling(new TranslationTextComponent("desc.immersivepetroleum.info.projector.holdshift.text"))
 						.mergeStyle(TextFormatting.DARK_AQUA);
 				tooltip.add(text);
 			}
@@ -156,9 +156,9 @@ public class ProjectorItem extends IPItemBase{
 				tooltip.add(ctrl2);
 			}else{
 				ITextComponent text = new StringTextComponent("[")
-						.append(new TranslationTextComponent("desc.immersivepetroleum.info.projector.holdctrl"))
+						.appendSibling(new TranslationTextComponent("desc.immersivepetroleum.info.projector.holdctrl"))
 						.appendString("] ")
-						.append(new TranslationTextComponent("desc.immersivepetroleum.info.projector.holdctrl.text"))
+						.appendSibling(new TranslationTextComponent("desc.immersivepetroleum.info.projector.holdctrl.text"))
 						.mergeStyle(TextFormatting.DARK_PURPLE);
 				tooltip.add(text);
 			}

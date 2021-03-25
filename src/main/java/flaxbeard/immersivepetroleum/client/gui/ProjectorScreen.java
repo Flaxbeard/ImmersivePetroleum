@@ -10,7 +10,6 @@ import java.util.function.Consumer;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
@@ -333,9 +332,8 @@ public class ProjectorScreen extends Screen{
 		}
 		
 		@Override
-		public void renderButton(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+		public void renderWidget(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
 			Minecraft.getInstance().getTextureManager().bindTexture(GUI_TEXTURE);
-			RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 			if(isHovered()){
 				fill(matrix, this.x, this.y + 1, this.x + this.iconSize, this.y + this.iconSize - 1, 0xAF7F7FFF);
 			}
@@ -440,9 +438,8 @@ public class ProjectorScreen extends Screen{
 		}
 		
 		@Override
-		public void renderButton(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+		public void renderWidget(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
 			Minecraft.getInstance().getTextureManager().bindTexture(GUI_TEXTURE);
-			RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 			if(isHovered()){
 				fill(matrix, this.x, this.y + 1, this.x + this.iconSize, this.y + this.iconSize - 1, 0xAF7F7FFF);
 			}

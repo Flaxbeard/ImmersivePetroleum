@@ -159,7 +159,7 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 					entityboat.readTank(itemstack.getTag());
 				}
 				
-				if(worldIn.getCollisionShapes(entityboat, entityboat.getBoundingBox().grow(-0.1D)).findFirst().isPresent()){
+				if(worldIn.getBlockCollisionShapes(entityboat, entityboat.getBoundingBox().grow(-0.1D)).findFirst().isPresent()){
 					return new ActionResult<ItemStack>(ActionResultType.FAIL, itemstack);
 				}else{
 					if(!worldIn.isRemote){
@@ -238,7 +238,7 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 					if(first){
 						tooltip.add(new TranslationTextComponent("desc.immersivepetroleum.flavour.speedboat0").mergeStyle(TextFormatting.GRAY));
 					}
-					tooltip.add(new StringTextComponent("  ").append(upgrade.getDisplayName()).mergeStyle(TextFormatting.DARK_GRAY));
+					tooltip.add(new StringTextComponent("  ").appendSibling(upgrade.getDisplayName()).mergeStyle(TextFormatting.DARK_GRAY));
 					first = false;
 				}
 			}

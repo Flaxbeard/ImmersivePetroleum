@@ -13,6 +13,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
+import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
 import blusunrize.immersiveengineering.common.blocks.stone.CoresampleTileEntity;
 import blusunrize.immersiveengineering.common.items.BuzzsawItem;
 import blusunrize.immersiveengineering.common.items.ChemthrowerItem;
@@ -274,65 +275,79 @@ public class ClientEventHandler{
 			ItemStack off = player.getHeldItem(Hand.OFF_HAND);
 			
 			if((main != ItemStack.EMPTY && main.getItem() == IPContent.debugItem) || (off != ItemStack.EMPTY && off.getItem() == IPContent.debugItem)){
-				if(ClientUtils.mc().objectMouseOver != null){
-					RayTraceResult rt = ClientUtils.mc().objectMouseOver;
+				RayTraceResult rt = ClientUtils.mc().objectMouseOver;
+				
+				if(rt != null && rt.getType() == RayTraceResult.Type.BLOCK){
+					BlockRayTraceResult result = (BlockRayTraceResult) rt;
+					World world = player.world;
 					
-					if(rt != null && rt.getType() == RayTraceResult.Type.BLOCK){
-						BlockRayTraceResult result = (BlockRayTraceResult) rt;
-						World world = player.world;
-						
-						List<ITextComponent> debugOut = new ArrayList<>();
-						
-						TileEntity te = world.getTileEntity(result.getPos());
-						if(te instanceof DistillationTowerTileEntity){
-							DistillationTowerTileEntity tower = (DistillationTowerTileEntity) te;
-							if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
-								tower = tower.master();
-							}
-							
-							debugOut.add(toText("Distillation Tower").mergeStyle(TextFormatting.GOLD)
-									.appendSibling(toText(tower.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED))
-									.appendSibling(toText(tower.shouldRenderAsActive() ? " (Active)" : "").mergeStyle(TextFormatting.GREEN)));
-							debugOut.add(toText(tower.energyStorage.getEnergyStored() + "/" + tower.energyStorage.getMaxEnergyStored() + "RF"));
-							
-							{
-								debugOut.add(toText("Input Fluid").mergeStyle(TextFormatting.UNDERLINE));
-								
-								MultiFluidTank tank = tower.tanks[DistillationTowerTileEntity.TANK_INPUT];
-								if(tank.fluids.size() > 0){
-									for(int i = 0;i < tank.fluids.size();i++){
-										FluidStack fstack = tank.fluids.get(i);
-										debugOut.add(toText("  " + fstack.getDisplayName().getString() + " (" + fstack.getAmount() + "mB)"));
-									}
-								}else{
-									debugOut.add(toText("  Empty"));
-								}
-							}
-							
-							{
-								debugOut.add(toText("Output Fluid(s)").mergeStyle(TextFormatting.UNDERLINE));
-								
-								MultiFluidTank tank = tower.tanks[DistillationTowerTileEntity.TANK_OUTPUT];
-								if(tank.fluids.size() > 0){
-									for(int i = 0;i < tank.fluids.size();i++){
-										FluidStack fstack = tank.fluids.get(i);
-										debugOut.add(toText("  " + fstack.getDisplayName().getString() + " (" + fstack.getAmount() + "mB)"));
-									}
-								}else{
-									debugOut.add(toText("  Empty"));
-								}
-							}
-							
+					List<ITextComponent> debugOut = new ArrayList<>();
+					
+					TileEntity te = world.getTileEntity(result.getPos());
+					if(te instanceof DistillationTowerTileEntity){
+						DistillationTowerTileEntity tower = (DistillationTowerTileEntity) te;
+						if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
+							tower = tower.master();
 						}
 						
-						if(!debugOut.isEmpty()){
-							MatrixStack matrix = event.getMatrixStack();
+						debugOut.add(toText("Distillation Tower").mergeStyle(TextFormatting.GOLD)
+								.appendSibling(toText(tower.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED))
+								.appendSibling(toText(tower.shouldRenderAsActive() ? " (Active)" : "").mergeStyle(TextFormatting.GREEN)));
+						debugOut.add(toText(tower.energyStorage.getEnergyStored() + "/" + tower.energyStorage.getMaxEnergyStored() + "RF"));
+						
+						{
+							debugOut.add(toText("Input Fluid").mergeStyle(TextFormatting.UNDERLINE));
+							
+							MultiFluidTank tank = tower.tanks[DistillationTowerTileEntity.TANK_INPUT];
+							if(tank.fluids.size() > 0){
+								for(int i = 0;i < tank.fluids.size();i++){
+									FluidStack fstack = tank.fluids.get(i);
+									debugOut.add(toText("  " + fstack.getDisplayName().getString() + " (" + fstack.getAmount() + "mB)"));
+								}
+							}else{
+								debugOut.add(toText("  Empty"));
+							}
+						}
+						
+						{
+							debugOut.add(toText("Output Fluid(s)").mergeStyle(TextFormatting.UNDERLINE));
+							
+							MultiFluidTank tank = tower.tanks[DistillationTowerTileEntity.TANK_OUTPUT];
+							if(tank.fluids.size() > 0){
+								for(int i = 0;i < tank.fluids.size();i++){
+									FluidStack fstack = tank.fluids.get(i);
+									debugOut.add(toText("  " + fstack.getDisplayName().getString() + " (" + fstack.getAmount() + "mB)"));
+								}
+							}else{
+								debugOut.add(toText("  Empty"));
+							}
+						}
+						
+					}
+					
+					if(!debugOut.isEmpty()){
+						if(te instanceof MultiblockPartTileEntity){
+							BlockPos pos = ((MultiblockPartTileEntity<?>)te).posInMultiblock;
+							BlockPos hit = result.getPos();
+							debugOut.add(0, toText("World XYZ: "+hit.getX()+", "+hit.getY()+", "+hit.getZ()));
+							debugOut.add(1, toText("Template XYZ: "+pos.getX()+", "+pos.getY()+", "+pos.getZ()));
+						}
+						
+						MatrixStack matrix = event.getMatrixStack();
+						matrix.push();
+						for(int i = 0;i < debugOut.size();i++){
+							int w = ClientUtils.font().getStringWidth(debugOut.get(i).getString());
+							int yOff = i * (ClientUtils.font().FONT_HEIGHT + 2);
+							
 							matrix.push();
-							for(int i = 0;i < debugOut.size();i++){
-								ClientUtils.font().drawText(matrix, debugOut.get(i), 2, 2 + (i * (ClientUtils.font().FONT_HEIGHT + 2)), -1);
-							}
+							matrix.translate(0, 0, -1);
+							ClientUtils.drawColouredRect(1, 1 + yOff, w+1, 10, 0xAF_4F4F4F, matrix);
 							matrix.pop();
+							
+							// Draw string without shadow
+							ClientUtils.font().drawText(matrix, debugOut.get(i), 2, 2 + yOff, -1);
 						}
+						matrix.pop();
 					}
 				}
 			}

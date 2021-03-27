@@ -170,13 +170,11 @@ public class FlarestackTileEntity extends TileEntity implements ITickableTileEnt
 			}
 		}else{
 			boolean lastActive = this.isActive;
-			
-			if(this.tank.getFluidAmount() > 0){
-				if(this.tank.drain(100, FluidAction.EXECUTE).getAmount() > 0 && !this.isActive){
+			this.isActive = false;
+			if(!this.world.isBlockPowered(this.pos) && this.tank.getFluidAmount() > 0){
+				if(this.tank.drain(100, FluidAction.EXECUTE).getAmount() > 0){
 					this.isActive = true;
 				}
-			}else if(this.isActive){
-				this.isActive = false;
 			}
 			
 			if(this.isActive && this.world.getGameTime() % 10 == 0){
@@ -193,7 +191,7 @@ public class FlarestackTileEntity extends TileEntity implements ITickableTileEnt
 				}
 			}
 			
-			if(lastActive != this.isActive){
+			if(lastActive != this.isActive || (!this.world.isRemote && this.isActive)){
 				markDirty();
 			}
 		}

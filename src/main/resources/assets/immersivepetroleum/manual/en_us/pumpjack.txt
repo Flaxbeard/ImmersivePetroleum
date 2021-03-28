@@ -5,4 +5,4 @@ The Pumpjack Tower uses <config;i;pumpjack_consumption> Flux/t to pump Crude Oil
 
 The average Oil deposit will take <config;i;pumpjack_days> days to deplete, though adding more Pumpjacks can speed the process.
 
-Applying a redstone signal to the control panel will halt the machine's process, this behavior can be inverted by use of the Engineer's Hammer.
+Applying a redstone signal to the control panel will halt the machine's process, this behavior can be inverted by use of the Screwdriver.

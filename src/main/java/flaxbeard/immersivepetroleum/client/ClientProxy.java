@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +32,7 @@ import blusunrize.lib.manual.TextSplitter;
 import blusunrize.lib.manual.Tree.InnerNode;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
@@ -73,6 +75,8 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ITag;
+import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -297,6 +301,24 @@ public class ClientProxy extends CommonProxy{
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.addSpecialElement("flarestack0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.flarestack)));
+		builder.addSpecialElement("flarestack1", 0, () -> {
+			Set<ITag<Fluid>> fluids = FlarestackHandler.getSet();
+			List<ITextComponent[]> list = new ArrayList<ITextComponent[]>();
+			for(ITag<Fluid> tag:fluids){
+				if(tag instanceof INamedTag){
+					List<Fluid> fl = ((INamedTag<Fluid>) tag).getAllElements();
+					for(Fluid f:fl){
+						ITextComponent[] entry = new ITextComponent[]{
+								StringTextComponent.EMPTY, new FluidStack(f, 1).getDisplayName()
+						};
+						
+						list.add(entry);
+					}
+				}
+			}
+			
+			return new ManualElementTable(man, list.toArray(new ITextComponent[0][]), false);
+		});
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -358,23 +380,23 @@ public class ClientProxy extends CommonProxy{
 		builder.addSpecialElement("distillationtower0", 0, () -> new ManualElementMultiblock(man, DistillationTowerMultiblock.INSTANCE));
 		builder.addSpecialElement("distillationtower1", 0, () -> {
 			Collection<DistillationRecipe> recipeList = DistillationRecipe.recipes.values();
-			List<ITextComponent[]> l = new ArrayList<ITextComponent[]>();
+			List<ITextComponent[]> list = new ArrayList<ITextComponent[]>();
 			for(DistillationRecipe recipe:recipeList){
 				boolean first = true;
 				for(FluidStack output:recipe.getFluidOutputs()){
 					ITextComponent outputName = output.getDisplayName();
 					
-					ITextComponent[] array = new ITextComponent[]{
+					ITextComponent[] entry = new ITextComponent[]{
 							first ? new StringTextComponent(recipe.getInputFluid().getAmount() + "mB ").appendSibling(recipe.getInputFluid().getMatchingFluidStacks().get(0).getDisplayName()) : StringTextComponent.EMPTY,
 									new StringTextComponent(output.getAmount() + "mB ").appendSibling(outputName)
 					};
 					
-					l.add(array);
+					list.add(entry);
 					first = false;
 				}
 			}
 			
-			return new ManualElementTable(man, l.toArray(new ITextComponent[0][]), false);
+			return new ManualElementTable(man, list.toArray(new ITextComponent[0][]), false);
 		});
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);

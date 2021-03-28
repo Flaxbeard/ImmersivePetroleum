@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,5 +47,9 @@ public class FlarestackHandler{
 	 */
 	public static boolean isBurnable(@Nonnull FluidStack fluidstack){
 		return !fluidstack.isEmpty() && isBurnable(fluidstack.getFluid());
+	}
+	
+	public static Set<ITag<Fluid>> getSet(){
+		return Collections.unmodifiableSet(burnables);
 	}
 }

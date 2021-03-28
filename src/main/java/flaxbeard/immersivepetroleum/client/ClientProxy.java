@@ -491,7 +491,7 @@ public class ClientProxy extends CommonProxy{
 			String fluidName = "";
 			Fluid fluid = type.getFluid();
 			if(fluid != null){
-				fluidName = new FluidStack(fluid, 1).getDisplayName().getUnformattedComponentText();
+				fluidName = new FluidStack(fluid, 1).getDisplayName().getString();
 			}
 			
 			String repRate = "";

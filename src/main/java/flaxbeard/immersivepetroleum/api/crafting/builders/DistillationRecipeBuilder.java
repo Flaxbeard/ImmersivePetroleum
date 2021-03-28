@@ -73,16 +73,8 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 		return this;
 	}
 	
-	/** Defaults to 1 when loading the recipe in-game (including reload) */
-	@Override
-	public DistillationRecipeBuilder setTime(int time){
-		return super.setTime(time);
-	}
-	
-	/** Defaults to 2048 when loading the recipe in-game (including reload) */
-	@Override
-	public DistillationRecipeBuilder setEnergy(int energy){
-		return super.setEnergy(energy);
+	public DistillationRecipeBuilder setTimeAndEnergy(int time, int energy){
+		return setTime(time).setEnergy(energy);
 	}
 	
 	public DistillationRecipeBuilder addInput(ITag.INamedTag<Fluid> fluidTag, int amount){

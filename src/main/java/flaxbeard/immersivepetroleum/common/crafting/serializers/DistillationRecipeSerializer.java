@@ -49,14 +49,8 @@ public class DistillationRecipeSerializer extends IERecipeSerializer<Distillatio
 		for(int i = 0;i < chances.size();i++)
 			array1[i] = chances.get(i);
 		
-		int energy = 2048;
-		if(json.has("energy"))
-			energy = JSONUtils.getInt(json, "energy");
-		
-		int time = 1;
-		if(json.has("time")){
-			time = JSONUtils.getInt(json, "time");
-		}
+		int energy = JSONUtils.getInt(json, "energy");
+		int time = JSONUtils.getInt(json, "time");
 		
 		return new DistillationRecipe(recipeId, fluidOutput, array0, input, energy, time, array1);
 	}

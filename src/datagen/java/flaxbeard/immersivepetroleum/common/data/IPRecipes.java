@@ -59,24 +59,16 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void reservoirs(){
-		ReservoirTypeBuilder.builder("aquifer")
-			.setFluid(Fluids.WATER)
-			.min(5000.000)
-			.max(10000.000)
-			.trace(0.006)
-			.weight(30)
-			.addDimensions(false, DimensionType.OVERWORLD.getLocation()) // false = Whitelist, true = blacklist
-//			.addDimensions(true, DimensionType.OVERWORLD.getRegistryName()) // Will crash the generator, only one or the other but not both at the same time
-//			.addBiomes(false, new ResourceLocation[]{}) // Just for demonstration purposes.
+		ReservoirTypeBuilder.builder("aquifer", Fluids.WATER, 5000.000, 10000.000, 0.006, 30)
+			.addDimensions(false, DimensionType.OVERWORLD.getLocation())
 			.build(this.out, rl("reservoirs/aquifer"));
 		
-		// Shorthand for the above. (name   fluid                      min       max        trace  weight)
 		ReservoirTypeBuilder.builder("oil", IPContent.Fluids.crudeOil, 2500.000, 15000.000, 0.006, 40)
-			.addDimensions(true, DimensionType.THE_END.getLocation()) // false = Whitelist, true = blacklist
+			.addDimensions(true, DimensionType.THE_END.getLocation())
 			.build(this.out, rl("reservoirs/oil"));
 		
 		ReservoirTypeBuilder.builder("lava", Fluids.LAVA, 250.000, 1000.000, 0.0, 30)
-			.addDimensions(true, DimensionType.THE_END.getLocation()) // false = Whitelist, true = blacklist
+			.addDimensions(true, DimensionType.THE_END.getLocation())
 			.build(this.out, rl("reservoirs/lava"));
 	}
 	
@@ -89,7 +81,7 @@ public class IPRecipes extends RecipeProvider{
 				new FluidStack(IPContent.Fluids.gasoline, 39)})
 			.addByproduct(new ItemStack(IPContent.Items.bitumen), 0.07)
 			.addInput(IPTags.Fluids.crudeOil, 75)
-			.setEnergy(2048)
+			.setTimeAndEnergy(1, 2048)
 			.build(this.out, rl("distillationtower/oilcracking"));
 	}
 	

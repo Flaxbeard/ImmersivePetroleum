@@ -7,7 +7,6 @@ import java.util.Map;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
@@ -19,7 +18,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
-public class DistillationRecipe extends MultiblockRecipe{
+public class DistillationRecipe extends IPMultiblockRecipe{
 	public static final IRecipeType<DistillationRecipe> TYPE = IRecipeType.register(ImmersivePetroleum.MODID + ":distillationtower");
 	public static Map<ResourceLocation, DistillationRecipe> recipes = new HashMap<>();
 	
@@ -45,9 +44,6 @@ public class DistillationRecipe extends MultiblockRecipe{
 	protected final ItemStack[] itemOutput;
 	protected final double[] chances;
 	
-	protected int totalProcessTime;
-	protected int totalProcessEnergy;
-	
 	public DistillationRecipe(ResourceLocation id, FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidTagInput input, int energy, int time, double[] chances){
 		super(ItemStack.EMPTY, TYPE, id);
 		this.fluidOutput = fluidOutput;
@@ -59,8 +55,8 @@ public class DistillationRecipe extends MultiblockRecipe{
 		this.fluidOutputList = Arrays.asList(this.fluidOutput);
 		this.outputList = NonNullList.from(ItemStack.EMPTY, itemOutput);
 		
-		this.totalProcessEnergy = (int) Math.floor(energy * IPServerConfig.REFINING.distillationTower_energyModifier.get());
-		this.totalProcessTime = (int) Math.floor(time * IPServerConfig.REFINING.distillationTower_timeModifier.get());
+		timeAndEnergy(time, energy);
+		modifyTimeAndEnergy(IPServerConfig.REFINING.distillationTower_energyModifier::get, IPServerConfig.REFINING.distillationTower_timeModifier::get);
 	}
 	
 	@Override
@@ -71,16 +67,6 @@ public class DistillationRecipe extends MultiblockRecipe{
 	@Override
 	public int getMultipleProcessTicks(){
 		return 0;
-	}
-	
-	@Override
-	public int getTotalProcessTime(){
-		return this.totalProcessTime;
-	}
-	
-	@Override
-	public int getTotalProcessEnergy(){
-		return this.totalProcessEnergy;
 	}
 	
 	@Override

@@ -76,6 +76,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -138,14 +139,16 @@ public class ClientProxy extends CommonProxy{
 					int oil_min = 1000000;
 					int oil_max = 5000000;
 					for(ReservoirType type:PumpjackHandler.reservoirs.values()){
-						if(type.name.equals("resAmount")){
+						if(type.name.equals("oil")){
 							oil_min = type.minSize;
 							oil_max = type.maxSize;
 							break;
 						}
 					}
 					
-					return Integer.valueOf((((oil_max + oil_min) / 2) + oil_min) / (IPServerConfig.EXTRACTION.pumpjack_speed.get() * 24000));
+					float averageSize = (oil_min + oil_max) / 2F;
+					float pumpspeed = IPServerConfig.EXTRACTION.pumpjack_speed.get();
+					return Integer.valueOf(MathHelper.floor((averageSize / pumpspeed) / 24000F));
 				}
 				case "autolubricant_speedup":{
 					return Double.valueOf(1.25D);

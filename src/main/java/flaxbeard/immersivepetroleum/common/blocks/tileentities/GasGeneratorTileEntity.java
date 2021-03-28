@@ -69,15 +69,11 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	protected WireType wireType;
 	protected boolean isActive = false;
 	protected Direction facing = Direction.NORTH;
-	protected FluxStorage energyStorage = new FluxStorage(getMaxStorage(), getMaxInput(), getMaxOutput());
+	protected FluxStorage energyStorage = new FluxStorage(getMaxStorage(), Integer.MAX_VALUE, getMaxOutput());
 	protected FluidTank tank = new FluidTank(FLUX_CAPACITY, fluid -> (fluid != null && fluid != FluidStack.EMPTY && FuelHandler.isValidFuel(fluid.getFluid())));
 	
 	public GasGeneratorTileEntity(){
 		super(TYPE);
-	}
-	
-	public int getMaxInput(){
-		return IEServerConfig.MACHINES.lvCapConfig.input.getAsInt();
 	}
 	
 	public int getMaxOutput(){
@@ -180,7 +176,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	
 	@Override
 	public int getAvailableEnergy(){
-		return this.energyStorage.getEnergyStored();
+		return getMaxOutput();
 	}
 	
 	@Override

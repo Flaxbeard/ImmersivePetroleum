@@ -168,7 +168,7 @@ public class IPRecipes extends RecipeProvider{
 			.addCriterion("has_iron_plate", hasItem(IETags.getTagsFor(EnumMetals.IRON).plate))
 			.addCriterion("has_"+toPath(IEBlocks.MetalDevices.capacitorLV), hasItem(IEBlocks.MetalDevices.capacitorLV))
 			.addCriterion("has_"+toPath(IEBlocks.MetalDecoration.generator), hasItem(IEBlocks.MetalDecoration.generator))
-			.build(this.out, rl("generator"));
+			.build(this.out, rl("gas_generator"));
 		
 		ShapedRecipeBuilder.shapedRecipe(Blocks.auto_lubricator)
 			.key('G', Tags.Items.GLASS)

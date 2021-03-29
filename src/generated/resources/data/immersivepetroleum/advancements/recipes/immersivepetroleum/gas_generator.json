@@ -2,7 +2,7 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "immersivepetroleum:generator"
+      "immersivepetroleum:gas_generator"
     ]
   },
   "criteria": {
@@ -39,7 +39,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "immersivepetroleum:generator"
+        "recipe": "immersivepetroleum:gas_generator"
       }
     }
   },

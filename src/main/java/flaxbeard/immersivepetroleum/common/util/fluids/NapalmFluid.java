@@ -11,6 +11,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
 public class NapalmFluid extends IPFluid{
@@ -46,6 +47,11 @@ public class NapalmFluid extends IPFluid{
 			}
 		};
 		return block;
+	}
+	
+	@Override
+	public int getTickRate(IWorldReader p_205569_1_){
+		return 10;
 	}
 	
 	public void processFire(World world, BlockPos pos){

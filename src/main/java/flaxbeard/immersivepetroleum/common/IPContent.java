@@ -52,6 +52,7 @@ import flaxbeard.immersivepetroleum.common.lubehandlers.PumpjackLubricationHandl
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
+import flaxbeard.immersivepetroleum.common.util.fluids.CrudeOilFluid;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import flaxbeard.immersivepetroleum.common.util.fluids.NapalmFluid;
 import net.minecraft.block.Block;
@@ -120,7 +121,7 @@ public class IPContent{
 	public static void populate(){
 		IPContent.debugItem = new DebugItem();
 		
-		Fluids.crudeOil = new IPFluid("oil", 1000, 2250);
+		Fluids.crudeOil = new CrudeOilFluid();
 		Fluids.diesel = new IPFluid("diesel", 789, 1750);
 		Fluids.lubricant = new IPFluid("lubricant", 925, 1000);
 		Fluids.gasoline = new IPFluid("gasoline", 789, 1200);

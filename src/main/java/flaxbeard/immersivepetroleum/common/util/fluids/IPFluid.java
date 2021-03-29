@@ -27,6 +27,7 @@ import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.state.StateHolder;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
@@ -95,9 +96,13 @@ public class IPFluid extends FlowingFluid{
 	
 	@Override
 	protected FluidAttributes createAttributes(){
-		FluidAttributes.Builder builder = FluidAttributes.builder(this.stillTexture, this.flowingTexture);
+		FluidAttributes.Builder builder = FluidAttributes.builder(this.stillTexture, this.flowingTexture)
+				.overlay(this.stillTexture)
+				.sound(SoundEvents.ITEM_BUCKET_FILL, SoundEvents.ITEM_BUCKET_EMPTY);
+		
 		if(this.buildAttributes != null)
 			this.buildAttributes.accept(builder);
+		
 		return builder.build(this);
 	}
 	
@@ -173,6 +178,8 @@ public class IPFluid extends FlowingFluid{
 	public static Consumer<FluidAttributes.Builder> createBuilder(int density, int viscosity){
 		return builder -> builder.viscosity(viscosity).density(density);
 	}
+	
+	// STATIC CLASSES
 	
 	public static class IPFluidBlock extends FlowingFluidBlock{
 		private static IPFluid tmp = null;

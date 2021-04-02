@@ -479,11 +479,16 @@ public class ProjectorItem extends IPItemBase{
 				for(RenderInfo rInfo:toRender){
 					switch(rInfo.layer){
 						case ALL:{ // All / Slice
-							float alpha = heldStack.getItem() == rInfo.getState().getBlock().asItem() ? 0.75F : 0.25F;
+							boolean held = heldStack.getItem() == rInfo.getState().getBlock().asItem();
+							float alpha = held ? 0.55F : 0.25F;
 							
 							matrix.push();
 							{
 								renderPhantom(matrix, projection.getMultiblockBlockAccess(), world, rInfo.templatePos, rInfo.worldPos, rInfo.settings.getRotation(), settings.isMirrored(), flicker, alpha, partialTicks);
+								
+								if(held){
+									renderCenteredOutlineBox(matrix, 0xAFAFAF, flicker);
+								}
 							}
 							matrix.pop();
 							break;

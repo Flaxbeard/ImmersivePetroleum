@@ -428,19 +428,19 @@ public class ProjectorItem extends IPItemBase{
 						return true; // breaks the internal loop
 					}
 					
-					if(isPlaced.booleanValue()){ // Render only slices when
-													// placed
+					if(isPlaced.booleanValue()){ // Render only slices when placed
 						if(layer == currentLayer.getValue()){
 							boolean skip = false;
 							BlockState toCompare = world.getBlockState(info.tPos.add(hit));
-							if(info.blockAccess.getBlockState(info.templatePos).getBlock() == toCompare.getBlock()){
+							BlockState tState = info.blockAccess.getBlockState(info.templatePos).rotate(world, info.tPos.add(hit), info.settings.getRotation());
+							if(tState == toCompare){
 								toRender.add(new RenderInfo(RenderInfo.Layer.PERFECT, info.blockAccess, info.templatePos, info.settings, info.tPos));
 								goodBlocks.increment();
 								skip = true;
 							}else{
 								// Making it this far only needs an air check,
 								// the other already proved to be false.
-								if(toCompare.getBlock() != Blocks.AIR){
+								if(!toCompare.isAir(info.blockAccess, info.tPos.add(hit))){
 									toRender.add(new RenderInfo(RenderInfo.Layer.BAD, info.blockAccess, info.templatePos, info.settings, info.tPos));
 									skip = true;
 								}

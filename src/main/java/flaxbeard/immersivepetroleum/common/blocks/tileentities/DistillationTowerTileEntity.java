@@ -251,7 +251,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 				}
 			}
 			
-			update |= FluidUtil.getFluidHandler(this.world, getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite()), getFacing().getOpposite()).map(output -> {
+			update |= FluidUtil.getFluidHandler(this.world, getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite()), getFacing()).map(output -> {
 				boolean ret = false;
 				if(this.tanks[TANK_OUTPUT].fluids.size() > 0){
 					List<FluidStack> toDrain = new ArrayList<>();

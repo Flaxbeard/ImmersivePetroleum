@@ -32,7 +32,6 @@ import flaxbeard.immersivepetroleum.common.util.projector.Settings;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings.Mode;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -443,8 +442,9 @@ public class ProjectorItem extends IPItemBase{
 								if(!toCompare.isAir(info.blockAccess, info.tPos.add(hit))){
 									toRender.add(new RenderInfo(RenderInfo.Layer.BAD, info.blockAccess, info.templatePos, info.settings, info.tPos));
 									skip = true;
+								}else{
+									badBlocks.increment();
 								}
-								badBlocks.increment();
 							}
 							
 							if(!skip){

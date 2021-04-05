@@ -1,8 +1,5 @@
 Motorboat
 Wave rider
-§4§l§nDisabled due to being broken!§r
-
-You'll get back your beloved boat at some point, don't you worry!<np>
 <&speedboat0>You can now travel the seas at high speed with the help of the Motorboat. The Motorboat runs off of <link;immersivepetroleum:distillationtower;§n§oGasoline§r> which may be added with a bucket or <link;jerrycan;§n§oJerrycan§r>. Gasoline is consumed while driving the Motorboat forwards or backwards. Holding the jump key will increase the speed of the boat, albeit at the cost of higher fuel consumption and increased turn radius.
 <&speedboat1>Like other devices, the Motorboat can be modified in the <link;workbench;§o§nEngineer's §o§nWorkbench§r>.
 

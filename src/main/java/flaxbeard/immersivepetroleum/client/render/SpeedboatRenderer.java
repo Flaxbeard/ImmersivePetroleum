@@ -105,19 +105,6 @@ public class SpeedboatRenderer extends EntityRenderer<SpeedboatEntity>{
 		return armored ? textureArmor : texture;
 	}
 	
-	public void renderMultipass(SpeedboatEntity entity, double x, double y, double z, float yaw, float partialTicks, MatrixStack transform){
-		transform.push();
-		{
-			transform.translate(x, y + 0.375F, z);
-			this.setupRotation(entity, yaw, partialTicks, transform);
-			
-			// bindTexture(texture);
-			
-			// modelBoat.renderMultipass(0.0625F);
-		}
-		transform.pop();
-	}
-	
 	public void setupRotation(SpeedboatEntity boat, float entityYaw, float partialTicks, MatrixStack matrix){
 		matrix.rotate(Vector3f.YP.rotationDegrees(180.0F - entityYaw));
 		float f = (float) boat.getTimeSinceHit() - partialTicks;

@@ -2,7 +2,7 @@ package flaxbeard.immersivepetroleum.common.network;
 
 import java.util.function.Supplier;
 
-import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
+import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
@@ -33,8 +33,8 @@ public class MessageConsumeBoatFuel implements INetMessage{
 			if(con.getDirection().getReceptionSide() == LogicalSide.SERVER && con.getSender() != null){
 				Entity entity = con.getSender().getRidingEntity();
 				
-				if(entity instanceof SpeedboatEntity){
-					SpeedboatEntity boat = (SpeedboatEntity) entity;
+				if(entity instanceof MotorboatEntity){
+					MotorboatEntity boat = (MotorboatEntity) entity;
 					FluidStack fluid = boat.getContainedFluid();
 					
 					if(fluid != null && fluid != FluidStack.EMPTY)

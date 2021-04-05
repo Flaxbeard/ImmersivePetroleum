@@ -22,7 +22,7 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTil
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
-import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
+import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import flaxbeard.immersivepetroleum.common.util.fluids.NapalmFluid;
 import net.minecraft.block.BlockState;
@@ -114,8 +114,8 @@ public class CommonEventHandler{
 	public void handleBoatImmunity(LivingAttackEvent event){
 		if(event.getSource() == DamageSource.LAVA || event.getSource() == DamageSource.ON_FIRE || event.getSource() == DamageSource.IN_FIRE){
 			LivingEntity entity = event.getEntityLiving();
-			if(entity.getRidingEntity() instanceof SpeedboatEntity){
-				SpeedboatEntity boat = (SpeedboatEntity) entity.getRidingEntity();
+			if(entity.getRidingEntity() instanceof MotorboatEntity){
+				MotorboatEntity boat = (MotorboatEntity) entity.getRidingEntity();
 				if(boat.isFireproof){
 					event.setCanceled(true);
 					return;
@@ -133,8 +133,8 @@ public class CommonEventHandler{
 	@SubscribeEvent
 	public void handleBoatImmunity(PlayerTickEvent event){
 		PlayerEntity entity = event.player;
-		if(entity.isBurning() && entity.getRidingEntity() instanceof SpeedboatEntity){
-			SpeedboatEntity boat = (SpeedboatEntity) entity.getRidingEntity();
+		if(entity.isBurning() && entity.getRidingEntity() instanceof MotorboatEntity){
+			MotorboatEntity boat = (MotorboatEntity) entity.getRidingEntity();
 			if(boat.isFireproof){
 				entity.extinguish();
 				boat.setFlag(0, false);
@@ -152,9 +152,9 @@ public class CommonEventHandler{
 			return;
 		}
 		
-		if(event.getEntityMounting() instanceof LivingEntity && event.getEntityBeingMounted() instanceof SpeedboatEntity){
+		if(event.getEntityMounting() instanceof LivingEntity && event.getEntityBeingMounted() instanceof MotorboatEntity){
 			if(event.isDismounting()){
-				SpeedboatEntity boat = (SpeedboatEntity) event.getEntityBeingMounted();
+				MotorboatEntity boat = (MotorboatEntity) event.getEntityBeingMounted();
 				
 				if(boat.isFireproof){
 					FluidState fluidstate = event.getWorldObj().getBlockState(new BlockPos(boat.getPositionVec().add(0.5, 0, 0.5))).getFluidState();

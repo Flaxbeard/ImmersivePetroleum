@@ -3,8 +3,8 @@ package flaxbeard.immersivepetroleum.client.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import flaxbeard.immersivepetroleum.client.model.ModelSpeedboat;
-import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
+import flaxbeard.immersivepetroleum.client.model.ModelMotorboat;
+import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -19,20 +19,20 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;;
 
 @OnlyIn(Dist.CLIENT)
-public class SpeedboatRenderer extends EntityRenderer<SpeedboatEntity>{
+public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 	private static ResourceLocation texture = rl("textures/models/boat_motor.png");
 	private static ResourceLocation textureArmor = rl("textures/models/boat_motor_armor.png");
 	
 	/** instance of ModelBoat for rendering */
-	protected final ModelSpeedboat modelBoat = new ModelSpeedboat();
+	protected final ModelMotorboat modelBoat = new ModelMotorboat();
 	
-	public SpeedboatRenderer(EntityRendererManager renderManagerIn){
+	public MotorboatRenderer(EntityRendererManager renderManagerIn){
 		super(renderManagerIn);
 		this.shadowSize = 0.8F;
 	}
 	
 	@Override
-	public void render(SpeedboatEntity entity, float entityYaw, float partialTicks, MatrixStack matrix, IRenderTypeBuffer bufferIn, int packedLight){
+	public void render(MotorboatEntity entity, float entityYaw, float partialTicks, MatrixStack matrix, IRenderTypeBuffer bufferIn, int packedLight){
 		matrix.push();
 		{
 			matrix.translate(0.0D, 0.375D, 0.0D);
@@ -97,7 +97,7 @@ public class SpeedboatRenderer extends EntityRenderer<SpeedboatEntity>{
 	}
 	
 	@Override
-	public ResourceLocation getEntityTexture(SpeedboatEntity entity){
+	public ResourceLocation getEntityTexture(MotorboatEntity entity){
 		return texture;
 	}
 	
@@ -105,7 +105,7 @@ public class SpeedboatRenderer extends EntityRenderer<SpeedboatEntity>{
 		return armored ? textureArmor : texture;
 	}
 	
-	public void setupRotation(SpeedboatEntity boat, float entityYaw, float partialTicks, MatrixStack matrix){
+	public void setupRotation(MotorboatEntity boat, float entityYaw, float partialTicks, MatrixStack matrix){
 		matrix.rotate(Vector3f.YP.rotationDegrees(180.0F - entityYaw));
 		float f = (float) boat.getTimeSinceHit() - partialTicks;
 		float f1 = boat.getDamageTaken() - partialTicks;

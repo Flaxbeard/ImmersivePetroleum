@@ -35,7 +35,7 @@ import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
-import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
+import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -420,8 +420,8 @@ public class ClientEventHandler{
 						}
 						case ENTITY:{
 							EntityRayTraceResult rtr = (EntityRayTraceResult) mop;
-							if(rtr.getEntity() instanceof SpeedboatEntity){
-								String[] text = ((SpeedboatEntity) rtr.getEntity()).getOverlayText(player, mop);
+							if(rtr.getEntity() instanceof MotorboatEntity){
+								String[] text = ((MotorboatEntity) rtr.getEntity()).getOverlayText(player, mop);
 								
 								if(text != null && text.length > 0){
 									FontRenderer font = ClientUtils.font();
@@ -451,7 +451,7 @@ public class ClientEventHandler{
 			PlayerEntity player = ClientUtils.mc().player;
 			MatrixStack matrix = event.getMatrixStack();
 			
-			if(player.getRidingEntity() instanceof SpeedboatEntity){
+			if(player.getRidingEntity() instanceof MotorboatEntity){
 				int offset = 0;
 				boolean holdingDebugItem = false;
 				for(Hand hand:Hand.values()){
@@ -478,7 +478,7 @@ public class ClientEventHandler{
 					int scaledWidth = ClientUtils.mc().getMainWindow().getScaledWidth();
 					int scaledHeight = ClientUtils.mc().getMainWindow().getScaledHeight();
 					
-					SpeedboatEntity boat = (SpeedboatEntity) player.getRidingEntity();
+					MotorboatEntity boat = (MotorboatEntity) player.getRidingEntity();
 					IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
 					IVertexBuilder builder = ItemOverlayUtils.getHudElementsBuilder(buffer);
 					
@@ -549,8 +549,8 @@ public class ClientEventHandler{
 	@SubscribeEvent
 	public void handleBoatImmunity(RenderBlockOverlayEvent event){
 		PlayerEntity entity = event.getPlayer();
-		if(event.getOverlayType() == OverlayType.FIRE && entity.isBurning() && entity.getRidingEntity() instanceof SpeedboatEntity){
-			SpeedboatEntity boat = (SpeedboatEntity) entity.getRidingEntity();
+		if(event.getOverlayType() == OverlayType.FIRE && entity.isBurning() && entity.getRidingEntity() instanceof MotorboatEntity){
+			MotorboatEntity boat = (MotorboatEntity) entity.getRidingEntity();
 			if(boat.isFireproof){
 				event.setCanceled(true);
 			}
@@ -560,8 +560,8 @@ public class ClientEventHandler{
 	@SubscribeEvent
 	public void handleFireRender(RenderPlayerEvent.Pre event){
 		PlayerEntity entity = event.getPlayer();
-		if(entity.isBurning() && entity.getRidingEntity() instanceof SpeedboatEntity){
-			SpeedboatEntity boat = (SpeedboatEntity) entity.getRidingEntity();
+		if(entity.isBurning() && entity.getRidingEntity() instanceof MotorboatEntity){
+			MotorboatEntity boat = (MotorboatEntity) entity.getRidingEntity();
 			if(boat.isFireproof){
 				entity.extinguish();
 			}

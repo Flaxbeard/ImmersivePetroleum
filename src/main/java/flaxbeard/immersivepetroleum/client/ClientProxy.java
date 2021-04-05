@@ -41,7 +41,7 @@ import flaxbeard.immersivepetroleum.client.gui.ProjectorScreen;
 import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
-import flaxbeard.immersivepetroleum.client.render.SpeedboatRenderer;
+import flaxbeard.immersivepetroleum.client.render.MotorboatRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
@@ -50,7 +50,7 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTower
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
-import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
+import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import net.minecraft.block.BlockState;
@@ -109,7 +109,7 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void setup(){
-		RenderingRegistry.registerEntityRenderingHandler(SpeedboatEntity.TYPE, SpeedboatRenderer::new);
+		RenderingRegistry.registerEntityRenderingHandler(MotorboatEntity.TYPE, MotorboatRenderer::new);
 	}
 	
 	@Override

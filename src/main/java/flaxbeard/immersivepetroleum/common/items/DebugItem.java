@@ -21,7 +21,7 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTil
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
-import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
+import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
 import net.minecraft.block.BlockState;
@@ -312,7 +312,7 @@ public class DebugItem extends IPItemBase{
 		return ActionResultType.PASS;
 	}
 	
-	public void onSpeedboatClick(SpeedboatEntity speedboatEntity, PlayerEntity player, ItemStack debugStack){
+	public void onSpeedboatClick(MotorboatEntity speedboatEntity, PlayerEntity player, ItemStack debugStack){
 		if(speedboatEntity.world.isRemote || DebugItem.getMode(debugStack) != Modes.INFO_SPEEDBOAT){
 			return;
 		}

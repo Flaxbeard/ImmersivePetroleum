@@ -39,13 +39,13 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileE
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.cfg.ConfigUtils;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
-import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
+import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import flaxbeard.immersivepetroleum.common.items.IPItemBase;
 import flaxbeard.immersivepetroleum.common.items.IPUpgradeItem;
 import flaxbeard.immersivepetroleum.common.items.OilCanItem;
 import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
-import flaxbeard.immersivepetroleum.common.items.SpeedboatItem;
+import flaxbeard.immersivepetroleum.common.items.MotorboatItem;
 import flaxbeard.immersivepetroleum.common.lubehandlers.CrusherLubricationHandler;
 import flaxbeard.immersivepetroleum.common.lubehandlers.ExcavatorLubricationHandler;
 import flaxbeard.immersivepetroleum.common.lubehandlers.PumpjackLubricationHandler;
@@ -142,7 +142,7 @@ public class IPContent{
 		
 		Items.bitumen = new IPItemBase("bitumen");
 		Items.oil_can = new OilCanItem("oil_can");
-		Items.speedboat = new SpeedboatItem("speedboat");
+		Items.speedboat = new MotorboatItem("speedboat");
 		
 		BoatUpgrades.reinforced_hull = new IPUpgradeItem("reinforced_hull", "BOAT");
 		BoatUpgrades.ice_breaker = new IPUpgradeItem("icebreaker", "BOAT");
@@ -286,7 +286,7 @@ public class IPContent{
 	@SubscribeEvent
 	public static void registerEntityTypes(RegistryEvent.Register<EntityType<?>> event){
 		try{
-			event.getRegistry().register(SpeedboatEntity.TYPE);
+			event.getRegistry().register(MotorboatEntity.TYPE);
 		}catch(Throwable e){
 			log.error("Failed to register Speedboat Entity. {}", e.getMessage());
 			throw e;

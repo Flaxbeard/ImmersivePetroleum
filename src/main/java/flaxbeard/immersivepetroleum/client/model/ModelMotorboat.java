@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import com.google.common.collect.ImmutableList;
 
-import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
+import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import net.minecraft.client.renderer.entity.model.SegmentedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.item.BoatEntity;
@@ -13,7 +13,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class ModelSpeedboat extends SegmentedModel<SpeedboatEntity>{
+public class ModelMotorboat extends SegmentedModel<MotorboatEntity>{
 	private final ImmutableList<ModelRenderer> list;
 	
 	/**
@@ -36,7 +36,7 @@ public class ModelSpeedboat extends SegmentedModel<SpeedboatEntity>{
 	public ModelRenderer ruddersBase;
 	public ModelRenderer[] paddles = new ModelRenderer[2];
 	
-	public ModelSpeedboat(){
+	public ModelMotorboat(){
 		this.boatSides[0] = (new ModelRenderer(this, 0, 0)).setTextureSize(128, 64);
 		this.boatSides[1] = (new ModelRenderer(this, 0, 19)).setTextureSize(128, 64);
 		this.boatSides[2] = (new ModelRenderer(this, 0, 27)).setTextureSize(128, 64);
@@ -208,8 +208,8 @@ public class ModelSpeedboat extends SegmentedModel<SpeedboatEntity>{
 	}
 	
 	@Override
-	public void setRotationAngles(SpeedboatEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
-		SpeedboatEntity boatEntity = (SpeedboatEntity) entityIn;
+	public void setRotationAngles(MotorboatEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
+		MotorboatEntity boatEntity = (MotorboatEntity) entityIn;
 		
 		this.setPaddleRotationAngles(boatEntity, 0, limbSwing, boatEntity.isEmergency());
 		this.setPaddleRotationAngles(boatEntity, 1, limbSwing, boatEntity.isEmergency());

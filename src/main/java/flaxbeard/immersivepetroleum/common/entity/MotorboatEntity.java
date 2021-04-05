@@ -10,7 +10,7 @@ import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
-import flaxbeard.immersivepetroleum.common.items.SpeedboatItem;
+import flaxbeard.immersivepetroleum.common.items.MotorboatItem;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageConsumeBoatFuel;
 import flaxbeard.immersivepetroleum.common.util.IPItemStackHandler;
@@ -64,12 +64,12 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpawnData{
+public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpawnData{
 	
-	public static final EntityType<SpeedboatEntity> TYPE = createType();
+	public static final EntityType<MotorboatEntity> TYPE = createType();
 	
-	private static EntityType<SpeedboatEntity> createType(){
-		EntityType<SpeedboatEntity> ret = EntityType.Builder.<SpeedboatEntity>create(SpeedboatEntity::new, EntityClassification.MISC)
+	private static EntityType<MotorboatEntity> createType(){
+		EntityType<MotorboatEntity> ret = EntityType.Builder.<MotorboatEntity>create(MotorboatEntity::new, EntityClassification.MISC)
 				.size(1.375F, 0.5625F)
 				.build(ImmersivePetroleum.MODID + ":speedboat");
 		ret.setRegistryName(ImmersivePetroleum.MODID, "speedboat");
@@ -84,13 +84,13 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	 * Storage for {@link ResourceLocation} using
 	 * {@link ResourceLocation#toString()}
 	 */
-	static final DataParameter<String> TANK_FLUID = EntityDataManager.createKey(SpeedboatEntity.class, DataSerializers.STRING);
-	static final DataParameter<Integer> TANK_AMOUNT = EntityDataManager.createKey(SpeedboatEntity.class, DataSerializers.VARINT);
+	static final DataParameter<String> TANK_FLUID = EntityDataManager.createKey(MotorboatEntity.class, DataSerializers.STRING);
+	static final DataParameter<Integer> TANK_AMOUNT = EntityDataManager.createKey(MotorboatEntity.class, DataSerializers.VARINT);
 	
-	static final DataParameter<ItemStack> UPGRADE_0 = EntityDataManager.createKey(SpeedboatEntity.class, DataSerializers.ITEMSTACK);
-	static final DataParameter<ItemStack> UPGRADE_1 = EntityDataManager.createKey(SpeedboatEntity.class, DataSerializers.ITEMSTACK);
-	static final DataParameter<ItemStack> UPGRADE_2 = EntityDataManager.createKey(SpeedboatEntity.class, DataSerializers.ITEMSTACK);
-	static final DataParameter<ItemStack> UPGRADE_3 = EntityDataManager.createKey(SpeedboatEntity.class, DataSerializers.ITEMSTACK);
+	static final DataParameter<ItemStack> UPGRADE_0 = EntityDataManager.createKey(MotorboatEntity.class, DataSerializers.ITEMSTACK);
+	static final DataParameter<ItemStack> UPGRADE_1 = EntityDataManager.createKey(MotorboatEntity.class, DataSerializers.ITEMSTACK);
+	static final DataParameter<ItemStack> UPGRADE_2 = EntityDataManager.createKey(MotorboatEntity.class, DataSerializers.ITEMSTACK);
+	static final DataParameter<ItemStack> UPGRADE_3 = EntityDataManager.createKey(MotorboatEntity.class, DataSerializers.ITEMSTACK);
 	
 	public boolean isFireproof = false;
 	public boolean hasIcebreaker = false;
@@ -101,11 +101,11 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	public float lastMoving;
 	public float propellerRotation = 0F;
 	
-	public SpeedboatEntity(World world){
+	public MotorboatEntity(World world){
 		this(TYPE, world);
 	}
 	
-	public SpeedboatEntity(World world, double x, double y, double z){
+	public MotorboatEntity(World world, double x, double y, double z){
 		this(TYPE, world);
 		setPosition(x, y, z);
 		this.prevPosX = x;
@@ -113,7 +113,7 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 		this.prevPosZ = z;
 	}
 	
-	public SpeedboatEntity(EntityType<SpeedboatEntity> type, World world){
+	public MotorboatEntity(EntityType<MotorboatEntity> type, World world){
 		super(type, world);
 		this.preventEntitySpawning = true;
 	}
@@ -291,7 +291,7 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 				boolean isCreativePlayer = isPlayer && ((PlayerEntity) source.getImmediateSource()).abilities.isCreativeMode;
 				if((isCreativePlayer || getDamageTaken() > 40.0F) && (!this.isFireproof || isPlayer) || (getDamageTaken() > 240.0F)){
 					if(!isCreativePlayer && this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)){
-						SpeedboatItem item = (SpeedboatItem) getItemBoat();
+						MotorboatItem item = (MotorboatItem) getItemBoat();
 						ItemStack stack = new ItemStack(item, 1);
 						
 						IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElse(null);

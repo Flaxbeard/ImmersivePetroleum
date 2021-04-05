@@ -46,11 +46,29 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRec
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
 		
 		if(recipe.getInputFluid() != null){
-			guiFluidStacks.init(0, true, 9, 19, 20, 51, 100, false, this.tankOverlay);
-			guiFluidStacks.set(0, recipe.getInputFluid().getMatchingFluidStacks());
+			int total = 0;
+			List<FluidStack> list = recipe.getInputFluid().getMatchingFluidStacks();
+			if(!list.isEmpty()){
+				for(FluidStack f:list){
+					total += f.getAmount();
+				}
+			}else{
+				total = 100;
+			}
+			guiFluidStacks.init(0, true, 9, 19, 20, 51, total, false, this.tankOverlay);
+			guiFluidStacks.set(0, list);
 		}
 		
-		guiFluidStacks.init(1, false, 61, 21, 16, 47, 100, false, null);
-		guiFluidStacks.set(1, recipe.getFluidOutputs());
+		int total = 0;
+		List<FluidStack> list = recipe.getFluidOutputs();
+		if(!list.isEmpty()){
+			for(FluidStack f:list){
+				total += f.getAmount();
+			}
+		}else{
+			total = 100;
+		}
+		guiFluidStacks.init(1, false, 61, 21, 16, 47, total, false, null);
+		guiFluidStacks.set(1, list);
 	}
 }

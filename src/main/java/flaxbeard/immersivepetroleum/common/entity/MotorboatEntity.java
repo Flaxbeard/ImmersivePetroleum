@@ -69,9 +69,7 @@ public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	public static final EntityType<MotorboatEntity> TYPE = createType();
 	
 	private static EntityType<MotorboatEntity> createType(){
-		EntityType<MotorboatEntity> ret = EntityType.Builder.<MotorboatEntity>create(MotorboatEntity::new, EntityClassification.MISC)
-				.size(1.375F, 0.5625F)
-				.build(ImmersivePetroleum.MODID + ":speedboat");
+		EntityType<MotorboatEntity> ret = EntityType.Builder.<MotorboatEntity> create(MotorboatEntity::new, EntityClassification.MISC).size(1.375F, 0.5625F).build(ImmersivePetroleum.MODID + ":speedboat");
 		ret.setRegistryName(ImmersivePetroleum.MODID, "speedboat");
 		return ret;
 	}
@@ -372,7 +370,7 @@ public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 			return ActionResultType.SUCCESS;
 		}
 		
-		if(!this.world.isRemote && !player.isSneaking() && this.outOfControlTicks < 60.0F && !player.isRidingOrBeingRiddenBy(this)){
+		if(!this.world.isRemote && !player.isSneaking() && this.outOfControlTicks < 60.0F && !player.isRidingSameEntity(this)){
 			player.startRiding(this);
 			return ActionResultType.SUCCESS;
 		}
@@ -493,8 +491,7 @@ public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 		
 		float xO = (float) (MathHelper.sin(-this.rotationYaw * 0.017453292F));
 		float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F));
-		Vector3f vec = new Vector3f(xO, zO, 0.0F);
-		vec.normalize();
+		Vector3f vec = normalizeVector(new Vector3f(xO, zO, 0.0F));
 		
 		if(this.hasIcebreaker && !isEmergency()){
 			AxisAlignedBB bb = getBoundingBox().grow(0.1);
@@ -510,9 +507,9 @@ public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 							BlockState BlockState = this.world.getBlockState(mutableBlockPos2);
 							
 							Vector3f vec2 = new Vector3f((float) (i + 0.5f - getPosX()), (float) (k + 0.5f - getPosZ()), 0.0F);
-							vec2.normalize();
+							normalizeVector(vec2);
 							
-							float sim = vec2.dot(vec);
+							float sim = dotVector(vec2, vec);
 							
 							if(BlockState.getBlock() == Blocks.ICE && sim > .3f){
 								this.world.destroyBlock(mutableBlockPos2, false);
@@ -541,9 +538,9 @@ public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 						if(this.hasIcebreaker){
 							if(entity instanceof LivingEntity && !(entity instanceof PlayerEntity) && this.getControllingPassenger() instanceof PlayerEntity){
 								Vector3f vec2 = new Vector3f((float) (entity.getPosX() - getPosX()), (float) (entity.getPosZ() - getPosZ()), 0.0F);
-								vec2.normalize();
+								normalizeVector(vec2);
 								
-								float sim = vec2.dot(vec);
+								float sim = dotVector(vec2, vec);
 								
 								if(sim > .5f){
 									Vector3d motion = entity.getMotion();
@@ -556,6 +553,23 @@ public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 				}
 			}
 		}
+	}
+	
+	/** Because fuck you for making that client side only */
+	private Vector3f normalizeVector(Vector3f vec){
+		float f = vec.getX() * vec.getX() + vec.getY() * vec.getY() + vec.getZ() * vec.getZ();
+		if(!((double) f < 1.0E-5D)){
+			float f1 = 1 / MathHelper.sqrt(f);
+			vec.setX(vec.getX() * f1);
+			vec.setX(vec.getY() * f1);
+			vec.setX(vec.getZ() * f1);
+		}
+		return vec;
+	}
+	
+	/** Because fuck you for making that client side only */
+	private float dotVector(Vector3f a, Vector3f b){
+		return a.getX() * b.getX() + a.getY() * b.getY() + a.getZ() * b.getZ();
 	}
 	
 	@Override

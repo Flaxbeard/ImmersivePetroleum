@@ -18,7 +18,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
@@ -220,8 +219,6 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 	
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		tooltip.add(new StringTextComponent("DO NOT USE! It's broken!").mergeStyle(TextFormatting.RED, TextFormatting.BOLD, TextFormatting.UNDERLINE));
-		
 		if(ItemNBTHelper.hasKey(stack, "tank")){
 			FluidStack fs = FluidStack.loadFluidStackFromNBT(ItemNBTHelper.getTagCompound(stack, "tank"));
 			if(fs != null){
@@ -245,10 +242,5 @@ public class SpeedboatItem extends IPItemBase implements IUpgradeableTool{
 		}
 		
 		super.addInformation(stack, worldIn, tooltip, flagIn);
-	}
-	
-	@Override
-	public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items){
-		// TODO Speedboat is Functional? REMOVE THIS!
 	}
 }

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PME",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "tag": "forge:treated_wood"
+    },
+    "E": {
+      "item": "immersiveengineering:light_engineering"
+    },
+    "M": {
+      "item": "immersiveengineering:component_iron"
+    }
+  },
+  "result": {
+    "item": "immersivepetroleum:speedboat"
+  }
+}

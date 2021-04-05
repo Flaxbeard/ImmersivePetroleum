@@ -3,72 +3,106 @@ package flaxbeard.immersivepetroleum.client.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.client.model.ModelSpeedboat;
 import flaxbeard.immersivepetroleum.common.entity.SpeedboatEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;;
 
 @OnlyIn(Dist.CLIENT)
 public class SpeedboatRenderer extends EntityRenderer<SpeedboatEntity>{
-	private static String texture = "immersivepetroleum:textures/models/boat_motor.png";
-	private static String textureArmor = "immersivepetroleum:textures/models/boat_motor_armor.png";
+	private static ResourceLocation texture = rl("textures/models/boat_motor.png");
+	private static ResourceLocation textureArmor = rl("textures/models/boat_motor_armor.png");
 	
 	/** instance of ModelBoat for rendering */
-	protected ModelSpeedboat modelBoat = new ModelSpeedboat();
+	protected final ModelSpeedboat modelBoat = new ModelSpeedboat();
 	
 	public SpeedboatRenderer(EntityRendererManager renderManagerIn){
 		super(renderManagerIn);
-		this.shadowSize = 0.5F;
+		this.shadowSize = 0.8F;
 	}
 	
 	@Override
-	public void render(SpeedboatEntity entity, float entityYaw, float partialTicks, MatrixStack transform, IRenderTypeBuffer bufferIn, int packedLightIn){
-		transform.push();
+	public void render(SpeedboatEntity entity, float entityYaw, float partialTicks, MatrixStack matrix, IRenderTypeBuffer bufferIn, int packedLight){
+		matrix.push();
 		{
-			transform.translate(entity.getPositionVec().x, entity.getPositionVec().y, entity.getPositionVec().z);
+			matrix.translate(0.0D, 0.375D, 0.0D);
+			this.setupRotation(entity, entityYaw, partialTicks, matrix);
+			this.modelBoat.setRotationAngles(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F);
 			
-			this.setupRotation(entity, entityYaw, partialTicks, transform);
-			ClientUtils.bindTexture(entity.isFireproof ? textureArmor : texture);
 			if(entity.isInLava()){
-				transform.translate(0, -3.9F / 16F, 0);
+				matrix.translate(0, -3.9F / 16F, 0);
 			}
 			
-			IVertexBuilder ivertexbuilder = bufferIn.getBuffer(this.modelBoat.getRenderType(this.getEntityTexture(entity)));
-			this.modelBoat.render(transform, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-			// this.modelBoat.render(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+			this.modelBoat.render(matrix, bufferIn.getBuffer(this.modelBoat.getRenderType(getEntityTexture(entity.isFireproof))), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+			
+			if(entity.hasPaddles){
+				IVertexBuilder vbuilder_normal = bufferIn.getBuffer(this.modelBoat.getRenderType(texture));
+				
+				this.modelBoat.paddles[0].render(matrix, vbuilder_normal, packedLight, OverlayTexture.NO_OVERLAY);
+				this.modelBoat.paddles[1].render(matrix, vbuilder_normal, packedLight, OverlayTexture.NO_OVERLAY);
+			}
+			
+			IVertexBuilder vbuilder_armored = bufferIn.getBuffer(this.modelBoat.getRenderType(textureArmor));
 			
 			if(entity.hasIcebreaker){
-				ClientUtils.bindTexture(textureArmor);
-				// this.modelBoat.renderIcebreaker(0.0625F); // TODO
+				this.modelBoat.icebreak.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
 			}
 			
 			if(entity.hasRudders){
-				ClientUtils.bindTexture(textureArmor);
-				// this.modelBoat.renderRudders(entity, 0.0625F); // TODO
+				this.modelBoat.ruddersBase.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
+				
+				float pr = entity.propellerRotation;
+				
+				if(entity.isLeftInDown() && pr > -1){
+					pr = pr - 0.1F * Minecraft.getInstance().getRenderPartialTicks();
+				}
+				
+				if(entity.isRightInDown() && pr < 1){
+					pr = pr + 0.1F * Minecraft.getInstance().getRenderPartialTicks();
+				}
+				
+				if(!entity.isLeftInDown() && !entity.isRightInDown()){
+					pr = (float) (pr * Math.pow(0.7F, Minecraft.getInstance().getRenderPartialTicks()));
+				}
+				
+				this.modelBoat.rudder2.rotateAngleY = (float) Math.toRadians(pr * 20f);
+				this.modelBoat.rudder1.rotateAngleY = (float) Math.toRadians(pr * 20f);
+				
+				this.modelBoat.rudder1.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
+				this.modelBoat.rudder2.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
 			}
 			
 			if(entity.hasTank){
-				ClientUtils.bindTexture(textureArmor);
-				// this.modelBoat.renderTank(0.0625F); // TODO
+				this.modelBoat.tank.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
 			}
 			
-			if(entity.hasPaddles){
-				ClientUtils.bindTexture(texture);
-				// this.modelBoat.renderPaddles(entity, 0.0625F, partialTicks);
-				// // TODO
+			if(!entity.canSwim()){
+				IVertexBuilder vbuilder_mask = bufferIn.getBuffer(RenderType.getWaterMask());
+				this.modelBoat.noWaterRenderer().render(matrix, vbuilder_mask, packedLight, OverlayTexture.NO_OVERLAY);
 			}
 		}
-		transform.pop();
+		matrix.pop();
 		
-		super.render(entity, entityYaw, partialTicks, transform, bufferIn, packedLightIn);
+		super.render(entity, entityYaw, partialTicks, matrix, bufferIn, packedLight);
+	}
+	
+	@Override
+	public ResourceLocation getEntityTexture(SpeedboatEntity entity){
+		return texture;
+	}
+	
+	public ResourceLocation getEntityTexture(boolean armored){
+		return armored ? textureArmor : texture;
 	}
 	
 	public void renderMultipass(SpeedboatEntity entity, double x, double y, double z, float yaw, float partialTicks, MatrixStack transform){
@@ -77,20 +111,15 @@ public class SpeedboatRenderer extends EntityRenderer<SpeedboatEntity>{
 			transform.translate(x, y + 0.375F, z);
 			this.setupRotation(entity, yaw, partialTicks, transform);
 			
-			ClientUtils.bindTexture(texture);
+			// bindTexture(texture);
 			
-			// modelBoat.renderMultipass(0.0625F); // TODO
+			// modelBoat.renderMultipass(0.0625F);
 		}
 		transform.pop();
 	}
 	
-	@Override
-	public ResourceLocation getEntityTexture(SpeedboatEntity entity){
-		return new ResourceLocation(texture);
-	}
-	
-	public void setupRotation(SpeedboatEntity boat, float yaw, float partialTicks, MatrixStack transform){
-		transform.rotate(new Quaternion(0.0F, 180.0F - yaw, 0.0F, true));
+	public void setupRotation(SpeedboatEntity boat, float entityYaw, float partialTicks, MatrixStack matrix){
+		matrix.rotate(Vector3f.YP.rotationDegrees(180.0F - entityYaw));
 		float f = (float) boat.getTimeSinceHit() - partialTicks;
 		float f1 = boat.getDamageTaken() - partialTicks;
 		
@@ -99,17 +128,18 @@ public class SpeedboatRenderer extends EntityRenderer<SpeedboatEntity>{
 		}
 		
 		if(f > 0.0F){
-			transform.rotate(new Quaternion(MathHelper.sin(f) * f * f1 / 10.0F * (float) boat.getForwardDirection(), 0.0F, 0.0F, true));
+			matrix.rotate(new Quaternion(MathHelper.sin(f) * f * f1 / 10.0F * (float) boat.getForwardDirection(), 0.0F, 0.0F, true));
 		}
 		
 		if(boat.isBoosting){
-			transform.rotate(new Quaternion(3, 0, 0, true));
+			matrix.rotate(new Quaternion(3, 0, 0, true));
 		}
 		
-		transform.scale(-1.0F, -1.0F, 1.0F);
+		matrix.scale(-1.0F, -1.0F, 1.0F);
+		matrix.rotate(Vector3f.YP.rotationDegrees(90.0F));
 	}
 	
-	public void setupTranslation(MatrixStack transform, double x, double y, double z){
-		transform.translate(x, y + 0.375F, z);
+	private static ResourceLocation rl(String str){
+		return new ResourceLocation("immersivepetroleum", str);
 	}
 }

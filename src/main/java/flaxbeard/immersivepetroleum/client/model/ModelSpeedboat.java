@@ -16,15 +16,17 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class ModelSpeedboat extends SegmentedModel<SpeedboatEntity>{
 	private final ImmutableList<ModelRenderer> list;
 	
-	public ModelRenderer[] boatSides = new ModelRenderer[5];
 	/**
 	 * Part of the model rendered to make it seem like there's no water in the
 	 * boat
 	 */
-	public ModelRenderer noWater;
-	public ModelRenderer motor;
-	public ModelRenderer propeller;
-	public ModelRenderer propellerAssembly;
+	private ModelRenderer noWater;
+	
+	private ModelRenderer[] boatSides = new ModelRenderer[5];
+	private ModelRenderer motor;
+	private ModelRenderer propeller;
+	private ModelRenderer propellerAssembly;
+	
 	public ModelRenderer icebreak;
 	public ModelRenderer coreSampleBoat;
 	public ModelRenderer coreSampleBoatDrill;
@@ -72,16 +74,9 @@ public class ModelSpeedboat extends SegmentedModel<SpeedboatEntity>{
 		ImmutableList.Builder<ModelRenderer> builder = ImmutableList.builder();
 		
 		builder.addAll(Arrays.asList(this.boatSides));
-		builder.addAll(Arrays.asList(this.paddles));
 		builder.addAll(Arrays.asList(
 				this.motor,
-				this.propeller,
-				this.propellerAssembly,
-				this.icebreak,
-				this.tank,
-				this.rudder1,
-				this.rudder1,
-				this.ruddersBase));
+				this.propellerAssembly));
 		
 		this.list = builder.build();
 	}
@@ -220,15 +215,6 @@ public class ModelSpeedboat extends SegmentedModel<SpeedboatEntity>{
 		this.setPaddleRotationAngles(boatEntity, 1, limbSwing, boatEntity.isEmergency());
 	}
 	
-	@Override
-	public Iterable<ModelRenderer> getParts(){
-		return this.list;
-	}
-	
-	public ModelRenderer noWaterRenderer(){
-		return this.noWater;
-	}
-	
 	public void setPaddleRotationAngles(BoatEntity boat, int paddle, float limbSwing, boolean rowing){
 		if(rowing){
 			float f = boat.getRowingTime(paddle, limbSwing);
@@ -254,6 +240,18 @@ public class ModelSpeedboat extends SegmentedModel<SpeedboatEntity>{
 				model.rotateAngleY = (float) Math.PI - model.rotateAngleY;
 			}
 		}
+	}
+	
+	/**
+	 * Only contains the base shape
+	 */
+	@Override
+	public Iterable<ModelRenderer> getParts(){
+		return this.list;
+	}
+	
+	public ModelRenderer noWaterRenderer(){
+		return this.noWater;
 	}
 	
 	// TODO Speedboat: This whole section below; Move to SpeedboatRenderer?

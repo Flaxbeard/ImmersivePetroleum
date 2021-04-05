@@ -9,6 +9,7 @@ import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.crafting.builders.MixerRecipeBuilder;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
+import blusunrize.immersiveengineering.common.blocks.IEBlocks.MetalDecoration;
 import blusunrize.immersiveengineering.common.crafting.fluidaware.IngredientFluidStack;
 import blusunrize.immersiveengineering.common.items.IEItems;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
@@ -218,7 +219,6 @@ public class IPRecipes extends RecipeProvider{
 			.addCriterion("has_treated_planks", hasItem(IETags.getItemTag(IETags.treatedWood)))
 			.build(out);
 		
-		/* // TODO Speedboat is Functional? UNCOMMENT THIS!
 		ShapedRecipeBuilder.shapedRecipe(IPContent.Items.speedboat)
 			.key('P', IETags.getItemTag(IETags.treatedWood))
 			.key('E', IEBlocks.MetalDecoration.engineeringLight)
@@ -228,7 +228,6 @@ public class IPRecipes extends RecipeProvider{
 			.addCriterion("has_treated_planks", hasItem(IETags.getItemTag(IETags.treatedWood)))
 			.addCriterion("has_"+toPath(MetalDecoration.engineeringLight), hasItem(MetalDecoration.engineeringLight))
 			.build(this.out);
-		*/
 	}
 	
 	private ResourceLocation rl(String str){

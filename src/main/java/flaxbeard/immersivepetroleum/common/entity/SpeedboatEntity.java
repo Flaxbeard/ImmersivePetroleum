@@ -66,11 +66,14 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpawnData{
 	
-	public static final EntityType<SpeedboatEntity> TYPE = EntityType.Builder.<SpeedboatEntity> create(SpeedboatEntity::new, EntityClassification.MISC)
-			.size(1.375F, 0.5625F)
-			.build(ImmersivePetroleum.MODID + ":speedboat");
-	static{
-		TYPE.setRegistryName(ImmersivePetroleum.MODID, "speedboat");
+	public static final EntityType<SpeedboatEntity> TYPE = createType();
+	
+	private static EntityType<SpeedboatEntity> createType(){
+		EntityType<SpeedboatEntity> ret = EntityType.Builder.<SpeedboatEntity>create(SpeedboatEntity::new, EntityClassification.MISC)
+				.size(1.375F, 0.5625F)
+				.build(ImmersivePetroleum.MODID + ":speedboat");
+		ret.setRegistryName(ImmersivePetroleum.MODID, "speedboat");
+		return ret;
 	}
 	
 	public static DataParameter<Byte> getFlags(){
@@ -142,6 +145,22 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 			this.dataManager.set(UPGRADE_2, o2);
 			this.dataManager.set(UPGRADE_3, o3);
 		}
+	}
+	
+	public boolean isLeftDown(){
+		return this.leftInputDown;
+	}
+	
+	public boolean isRightDown(){
+		return this.rightInputDown;
+	}
+	
+	public boolean isForwardDown(){
+		return this.forwardInputDown;
+	}
+	
+	public boolean isBackDown(){
+		return this.backInputDown;
 	}
 	
 	@Override
@@ -253,7 +272,7 @@ public class SpeedboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	
 	@Override
 	public double getMountedYOffset(){
-		return isInLava() ? -0.1D + 3.9F / 16F : -0.1D;
+		return isInLava() ? -0.1D + (3.9F / 16F) : -0.1D;
 	}
 	
 	@Override

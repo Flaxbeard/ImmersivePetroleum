@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "immersivepetroleum:petcoke_items_to_block"
+    ]
+  },
+  "criteria": {
+    "has_petcoke_item": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:coal_petcoke"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "immersivepetroleum:petcoke_items_to_block"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_petcoke_item",
+      "has_the_recipe"
+    ]
+  ]
+}

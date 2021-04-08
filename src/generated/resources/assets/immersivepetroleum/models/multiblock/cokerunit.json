@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "texture": "immersivepetroleum:multiblock/cokerunit",
+    "particle": "immersivepetroleum:multiblock/cokerunit"
+  },
+  "loader": "forge:obj",
+  "model": "immersivepetroleum:models/multiblock/obj/cokerunit.obj",
+  "detectCullableFaces": false,
+  "flip-v": true
+}

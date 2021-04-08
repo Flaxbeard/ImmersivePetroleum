@@ -18,6 +18,7 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.GasGeneratorBlock;
+import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
@@ -77,9 +78,11 @@ public class IPBlockStates extends BlockStateProvider{
 		// Multiblocks
 		distillationtower();
 		pumpjack();
+		cokerunit();
 		
 		// "Normal" Blocks
 		simpleBlockWithItem(IPContent.Blocks.asphalt);
+		simpleBlockWithItem(IPContent.Blocks.petcoke);
 		gasGenerator();
 		
 		autolubricator();
@@ -114,6 +117,17 @@ public class IPBlockStates extends BlockStateProvider{
 		BlockModelBuilder mirrored = multiblockModel(IPContent.Multiblock.pumpjack, modelMirrored, texture, "_mirrored", PumpjackMultiblock.INSTANCE, true);
 		
 		createMultiblock(IPContent.Multiblock.pumpjack, normal, mirrored, texture);
+	}
+	
+	private void cokerunit(){
+		ResourceLocation texture = modLoc("multiblock/cokerunit");
+		ResourceLocation modelNormal = modLoc("models/multiblock/obj/cokerunit.obj");
+		ResourceLocation modelMirrored = modLoc("models/multiblock/obj/cokerunit_mirrored.obj");
+		
+		BlockModelBuilder normal = multiblockModel(IPContent.Multiblock.cokerunit, modelNormal, texture, "", CokerUnitMultiblock.INSTANCE, false);
+		BlockModelBuilder mirrored = multiblockModel(IPContent.Multiblock.cokerunit, modelMirrored, texture, "_mirrored", CokerUnitMultiblock.INSTANCE, true);
+		
+		createMultiblock(IPContent.Multiblock.cokerunit, normal, mirrored, texture);
 	}
 	
 	private BlockModelBuilder multiblockModel(Block block, ResourceLocation model, ResourceLocation texture, String add, TemplateMultiblock mb, boolean mirror){

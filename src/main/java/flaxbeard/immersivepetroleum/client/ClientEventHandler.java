@@ -34,6 +34,8 @@ import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.Reserv
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
@@ -58,6 +60,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
@@ -80,11 +83,12 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class ClientEventHandler{
 	@SubscribeEvent
 	public void renderLast(RenderWorldLastEvent event){
-		MatrixStack transform = event.getMatrixStack();
+		MatrixStack transform=event.getMatrixStack();
 		Minecraft mc = Minecraft.getInstance();
 		
 		/*
@@ -328,6 +332,44 @@ public class ClientEventHandler{
 							}
 						}
 						
+					}else if(te instanceof CokerUnitTileEntity){
+						CokerUnitTileEntity coker = (CokerUnitTileEntity) te;
+						if(!coker.offsetToMaster.equals(BlockPos.ZERO)){
+							coker = coker.master();
+						}
+						
+						debugOut.add(toText("Coker Unit ").mergeStyle(TextFormatting.GOLD)
+								.appendSibling(toText(coker.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED))
+								.appendSibling(toText(coker.shouldRenderAsActive() ? " (Active)" : "").mergeStyle(TextFormatting.GREEN)));
+						debugOut.add(toText(coker.energyStorage.getEnergyStored() + "/" + coker.energyStorage.getMaxEnergyStored() + "RF"));
+						
+						{
+							FluidTank tank = coker.bufferTanks[CokerUnitTileEntity.TANK_INPUT];
+							FluidStack fs = tank.getFluid();
+							debugOut.add(toText("In Buffer: " + (fs.getAmount() + "/" + tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
+						}
+						
+						{
+							FluidTank tank = coker.bufferTanks[CokerUnitTileEntity.TANK_OUTPUT];
+							FluidStack fs = tank.getFluid();
+							debugOut.add(toText("Out Buffer: " + (fs.getAmount() + "/" + tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
+						}
+						
+						for(int i = 0;i < coker.chambers.length;i++){
+							CokingChamber chamber = coker.chambers[i];
+							FluidTank tank = chamber.getTank();
+							FluidStack fs = tank.getFluid();
+							
+							float completed = chamber.getTotalAmount() > 0 ? 100 * (chamber.getOutputAmount() / (float)chamber.getTotalAmount()) : 0;
+							
+							debugOut.add(toText("Chamber " + i).mergeStyle(TextFormatting.UNDERLINE, TextFormatting.AQUA));
+							debugOut.add(toText("State: " + chamber.getState().toString()));
+							debugOut.add(toText("  Tank: " + (fs.getAmount() + "/" + tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
+							debugOut.add(toText("  Content: " + chamber.getTotalAmount() + " / " + chamber.getCapacity()).appendString(" (" + chamber.getInputItem().getDisplayName().getString() + ")"));
+							debugOut.add(toText("  Out: " + chamber.getOutputItem().getDisplayName().getString()));
+							debugOut.add(toText("  " + MathHelper.floor(completed) + "% Completed. (Raw: " + completed + ")"));
+							
+						}
 					}
 					
 					if(!debugOut.isEmpty()){
@@ -530,7 +572,7 @@ public class ClientEventHandler{
 								
 								Vector3d vec = boat.getMotion();
 								
-								float speed = (float) (Math.sqrt(vec.x * vec.x + vec.z * vec.z));
+								float speed=(float)(Math.sqrt(vec.x*vec.x + vec.z*vec.z));
 								
 								String out0 = String.format(Locale.US, "Fuel: %s/%sMB", amount, capacity);
 								String out1 = String.format(Locale.US, "Speed: %.2f", speed);

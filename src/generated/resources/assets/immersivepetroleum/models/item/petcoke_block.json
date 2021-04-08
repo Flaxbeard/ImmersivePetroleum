@@ -1,0 +1,6 @@
+{
+  "parent": "immersivepetroleum:block/petcoke_block",
+  "textures": {
+    "particle": "immersivepetroleum:block/petcoke_block"
+  }
+}

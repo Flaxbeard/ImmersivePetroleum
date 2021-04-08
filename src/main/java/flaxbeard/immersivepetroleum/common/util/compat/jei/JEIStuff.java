@@ -3,9 +3,12 @@ package flaxbeard.immersivepetroleum.common.util.compat.jei;
 import java.util.ArrayList;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.compat.jei.distillation.CokerUnitRecipeCategory;
 import flaxbeard.immersivepetroleum.common.util.compat.jei.distillation.DistillationRecipeCategory;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -31,20 +34,24 @@ public class JEIStuff implements IModPlugin{
 		IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
 		
 		registration.addRecipeCategories(new DistillationRecipeCategory(guiHelper));
+		registration.addRecipeCategories(new CokerUnitRecipeCategory(guiHelper));
 	}
 	
 	@Override
 	public void registerRecipes(IRecipeRegistration registration){
 		registration.addRecipes(new ArrayList<>(DistillationRecipe.recipes.values()), DistillationRecipeCategory.ID);
+		registration.addRecipes(new ArrayList<>(CokerUnitRecipe.recipes.values()), CokerUnitRecipeCategory.ID);
 	}
 	
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration){
 		registration.addRecipeCatalyst(new ItemStack(IPContent.Multiblock.distillationtower), DistillationRecipeCategory.ID);
+		registration.addRecipeCatalyst(new ItemStack(IPContent.Multiblock.cokerunit), CokerUnitRecipeCategory.ID);
 	}
 	
 	@Override
 	public void registerGuiHandlers(IGuiHandlerRegistration registration){
 		registration.addRecipeClickArea(DistillationTowerScreen.class, 85, 19, 18, 51, DistillationRecipeCategory.ID);
+		registration.addRecipeClickArea(CokerUnitScreen.class, 59, 21, 82, 67, CokerUnitRecipeCategory.ID);
 	}
 }

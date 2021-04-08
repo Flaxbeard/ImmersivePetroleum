@@ -36,6 +36,7 @@ import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
+import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
 import flaxbeard.immersivepetroleum.client.gui.ProjectorScreen;
 import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
@@ -51,6 +52,7 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntit
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
+import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import net.minecraft.block.BlockState;
@@ -117,6 +119,7 @@ public class ClientProxy extends CommonProxy{
 		super.registerContainersAndScreens();
 		
 		registerScreen(new ResourceLocation(ImmersivePetroleum.MODID, "distillationtower"), DistillationTowerScreen::new);
+		registerScreen(new ResourceLocation(ImmersivePetroleum.MODID, "cokerunit"), CokerUnitScreen::new);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -132,6 +135,9 @@ public class ClientProxy extends CommonProxy{
 			switch(str){
 				case "distillationtower_operationcost":{
 					return Integer.valueOf((int) (2048 * IPServerConfig.REFINING.distillationTower_energyModifier.get()));
+				}
+				case "coker_operationcost":{
+					return Integer.valueOf((int) (1024 * IPServerConfig.REFINING.cokerUnit_energyModifier.get()));
 				}
 				case "pumpjack_consumption":{
 					return IPServerConfig.EXTRACTION.pumpjack_consumption.get();
@@ -285,9 +291,12 @@ public class ClientProxy extends CommonProxy{
 		
 		pumpjack(modLoc("pumpjack"), 0);
 		distillation(modLoc("distillationtower"), 1);
-		handleReservoirManual(modLoc("reservoir"), 2);
-		lubricant(modLoc("lubricant"), 3);
-		man.addEntry(IP_CATEGORY, modLoc("asphalt"), 4);
+		coker(modLoc("cokerunit"), 2);
+		
+		handleReservoirManual(modLoc("reservoir"), 3);
+		
+		lubricant(modLoc("lubricant"), 4);
+		man.addEntry(IP_CATEGORY, modLoc("asphalt"), 5);
 		projector(modLoc("projector"), 5);
 		speedboat(modLoc("speedboat"), 6);
 		man.addEntry(IP_CATEGORY, modLoc("napalm"), 7);
@@ -402,7 +411,16 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	private static void projector(ResourceLocation location, int priority){
+	protected static void coker(ResourceLocation location, int priority){
+		ManualInstance man = ManualHelper.getManual();
+		
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement("cokerunit0", 0, () -> new ManualElementMultiblock(man, CokerUnitMultiblock.INSTANCE));
+		builder.readFromFile(location);
+		man.addEntry(IP_CATEGORY, builder.create(), priority);
+	}
+	
+	protected static void projector(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
 		ItemStack projectorWithNBT = new ItemStack(Items.projector);

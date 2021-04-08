@@ -18,6 +18,7 @@ import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
@@ -190,6 +191,20 @@ public class DebugItem extends IPItemBase{
 		
 		TileEntity te = context.getWorld().getTileEntity(context.getPos());
 		switch(mode){
+			case GENERAL_TEST:{
+				if(context.getWorld().isRemote){
+					// Client
+				}else{
+					// Server
+				}
+				
+				if(te instanceof CokerUnitTileEntity){
+					CokerUnitTileEntity.updateShapes = true;
+					return ActionResultType.SUCCESS;
+				}
+
+				return ActionResultType.PASS;
+			}
 			case INFO_TE_DISTILLATION_TOWER:{
 				if(te instanceof DistillationTowerTileEntity && !context.getWorld().isRemote){
 					DistillationTowerTileEntity tower = (DistillationTowerTileEntity) te;
@@ -437,6 +452,7 @@ public class DebugItem extends IPItemBase{
 		RESERVOIR_BIG_SCAN("Scan 5 Block Radius Area"),
 		CLEAR_RESERVOIR_CACHE("Clear Reservoir Cache"),
 		REFRESH_ALL_IPMODELS("Refresh all IPModels"),
+		GENERAL_TEST("You may not want to trigger this.")
 		;
 		
 		public final String display;

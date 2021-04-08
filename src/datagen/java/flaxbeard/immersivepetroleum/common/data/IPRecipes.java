@@ -7,13 +7,18 @@ import java.util.function.Consumer;
 import blusunrize.immersiveengineering.api.EnumMetals;
 import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
+import blusunrize.immersiveengineering.api.crafting.builders.ArcFurnaceRecipeBuilder;
+import blusunrize.immersiveengineering.api.crafting.builders.BlastFurnaceFuelBuilder;
+import blusunrize.immersiveengineering.api.crafting.builders.CrusherRecipeBuilder;
 import blusunrize.immersiveengineering.api.crafting.builders.MixerRecipeBuilder;
+import blusunrize.immersiveengineering.api.crafting.builders.SqueezerRecipeBuilder;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks.MetalDecoration;
 import blusunrize.immersiveengineering.common.crafting.fluidaware.IngredientFluidStack;
 import blusunrize.immersiveengineering.common.items.IEItems;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
+import flaxbeard.immersivepetroleum.api.crafting.builders.CokerUnitRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.ReservoirTypeBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
@@ -23,6 +28,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
 import net.minecraft.data.ShapedRecipeBuilder;
+import net.minecraft.data.ShapelessRecipeBuilder;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -50,6 +56,7 @@ public class IPRecipes extends RecipeProvider{
 		blockRecipes();
 		speedboatUpgradeRecipes();
 		distillationRecipes();
+		cokerRecipes();
 		reservoirs();
 		
 		MixerRecipeBuilder.builder(IPContent.Fluids.napalm, 500)
@@ -84,6 +91,62 @@ public class IPRecipes extends RecipeProvider{
 			.addInput(IPTags.Fluids.crudeOil, 75)
 			.setTimeAndEnergy(1, 2048)
 			.build(this.out, rl("distillationtower/oilcracking"));
+	}
+	
+	/** Contains everything related to Petcoke */
+	private void cokerRecipes(){
+		CokerUnitRecipeBuilder.builder(new ItemStack(IPContent.Items.petcoke), IPTags.Fluids.diesel, 27)
+			.addInputItem(IPTags.Items.bitumen, 2)
+			.addInputFluid(FluidTags.WATER, 125)
+			.setTimeAndEnergy(30, 1024)
+			.build(this.out, rl("coking/petcoke"));
+		
+		// Petcoke Compression and Decompression
+		ShapedRecipeBuilder.shapedRecipe(IPContent.Blocks.petcoke)
+			.key('c', IPTags.Items.petcoke)
+			.patternLine("ccc")
+			.patternLine("ccc")
+			.patternLine("ccc")
+			.addCriterion("has_petcoke_item", hasItem(IPTags.Items.petcoke))
+			.build(this.out, rl("petcoke_items_to_block"));
+		ShapelessRecipeBuilder.shapelessRecipe(IPContent.Items.petcoke, 9)
+			.addIngredient(IPTags.getItemTag(IPTags.Blocks.petcoke))
+			.addCriterion("has_petcoke_block", hasItem(IPTags.getItemTag(IPTags.Blocks.petcoke)))
+			.build(this.out, rl("petcoke_block_to_items"));
+		
+		// Registering Petcoke as Fuel for the Blastfurnace
+		BlastFurnaceFuelBuilder.builder(IPTags.Items.petcoke)
+			.setTime(1200)
+			.build(this.out, rl("blastfurnace/fuel_petcoke"));
+		BlastFurnaceFuelBuilder.builder(IPTags.getItemTag(IPTags.Blocks.petcoke))
+			.setTime(12000)
+			.build(this.out, rl("blastfurnace/fuel_petcoke_block"));
+		
+		// Petcoke Dust recipes
+		CrusherRecipeBuilder.builder(IPTags.Items.petcokeDust, 1)
+			.addInput(IPTags.Items.petcoke)
+			.setEnergy(2400)
+			.build(this.out, rl("crusher/petcoke"));
+		CrusherRecipeBuilder.builder(IPTags.Items.petcokeDust, 9)
+			.addInput(IPTags.Items.petcokeStorage)
+			.setEnergy(4800)
+			.build(this.out, rl("crusher/petcoke_block"));
+		
+		// Petcoke dust and Iron Ingot to make Steel Ingot
+		ArcFurnaceRecipeBuilder.builder(IETags.getTagsFor(EnumMetals.STEEL).ingot, 1)
+			.addIngredient("input", Tags.Items.INGOTS_IRON)
+			.addInput(IPTags.Items.petcokeDust)
+			.addSlag(IETags.slag, 1)
+			.setTime(400)
+			.setEnergy(204800)
+			.build(out, rl("arcfurnace/steel"));
+		
+		// 8 Petcoke Dust to 1 HOP Graphite Dust
+		SqueezerRecipeBuilder.builder()
+			.addResult(new IngredientWithSize(IETags.hopGraphiteDust))
+			.addInput(new IngredientWithSize(IPTags.Items.petcokeDust, 8))
+			.setEnergy(19200)
+			.build(out, rl("squeezer/graphite_dust"));
 	}
 	
 	private void speedboatUpgradeRecipes(){

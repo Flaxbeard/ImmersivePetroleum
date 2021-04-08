@@ -10,6 +10,7 @@
 	"block.immersivepetroleum.fluid_napalm": "Napalm",
 	
 	"block.immersivepetroleum.asphalt": "Asphalt Concrete",
+	"block.immersivepetroleum.petcoke_block": "Block of Petcoke",
 	
 	"block.immersivepetroleum.auto_lubricator": "Automatic Lubricator",
 	"block.immersivepetroleum.gas_generator": "Portable Generator",
@@ -17,6 +18,7 @@
 	
 	"block.immersivepetroleum.pumpjack": "Pumpjack",
 	"block.immersivepetroleum.distillationtower": "Distillation Tower",
+	"block.immersivepetroleum.cokerunit": "Coker",
 	
 	"fluid.immersivepetroleum.diesel": "Diesel",
 	"fluid.immersivepetroleum.oil": "Crude Oil",
@@ -33,6 +35,7 @@
 	
 	"item.immersivepetroleum.bitumen": "Bitumen",
 	"item.immersivepetroleum.petcoke": "Petcoke",
+	"item.immersivepetroleum.petcoke_dust": "Petcoke Dust",
 	"item.immersivepetroleum.diesel_bucket": "Bucket of Diesel",
 	"item.immersivepetroleum.oil_bucket": "Bucket of Crude Oil",
 	"item.immersivepetroleum.lubricant_bucket": "Bucket of Lubricant",
@@ -50,6 +53,7 @@
 	"_comment":"Replaced the IP with IE to save me from headaches. ~TwistedGate",
 	"desc.immersiveengineering.info.multiblock.IE:DistillationTower": "Distillation Tower",
 	"desc.immersiveengineering.info.multiblock.IE:Pumpjack": "Pumpjack",
+	"desc.immersiveengineering.info.multiblock.IE:CokerUnit": "Coker",
 	
 	"desc.immersivepetroleum.info.reservoir.oil": "Oil Reservoir",
 	"desc.immersivepetroleum.info.reservoir.aquifer": "Aquifer",

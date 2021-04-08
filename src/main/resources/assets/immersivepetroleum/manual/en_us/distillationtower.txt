@@ -9,5 +9,6 @@ Crude Oil can be input into the Distillation Tower at the back hatch marked with
 
 The Distillation Tower uses <config;i;distillationtower_operationcost> Flux per operation, converting up to 75 mB of Crude Oil to Diesel, Lubricant, Gasoline, and Bitumen per tick. The produced fluid mix is output from the side hatch marked with an orange dot; the Bitumen through the front hatch.<np>
 
-Diesel can be used for <link;diesel_generator;§o§npower §o§nproduction§r>, Lubricant for <link;immersivepetroleum:lubricant;§o§noiling §o§nmachines§r>, and Gasoline for <link;immersivepetroleum:portablegenerator;§o§npowering §o§nengines§r> <link;immersivepetroleum:speedboat;§o§nvehicles§r>, or <link;immersivepetroleum:napalm;§o§nNapalm§r>. Bitumen is used to make <link;immersivepetroleum:asphalt;§o§nAsphalt§r>.<np>
+Diesel can be used for <link;diesel_generator;§o§npower §o§nproduction§r>, Lubricant for <link;immersivepetroleum:lubricant;§o§noiling §o§nmachines§r>, and Gasoline for <link;immersivepetroleum:portablegenerator;§o§npowering §o§nengines§r> <link;immersivepetroleum:speedboat;§o§nvehicles§r>, or <link;immersivepetroleum:napalm;§o§nNapalm§r>.
+Bitumen is used to make <link;immersivepetroleum:asphalt;§o§nAsphalt§r> and can be processed further to get Petroleum Coke in the <link;immersivepetroleum:cokerunit;§o§nCoker§r>.<np>
 <&distillationtower1>Below are the operations the Distillation Tower can perform:

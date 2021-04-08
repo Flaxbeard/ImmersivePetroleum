@@ -32,7 +32,7 @@ import flaxbeard.immersivepetroleum.common.blocks.DistillationTowerBlock;
 import flaxbeard.immersivepetroleum.common.blocks.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
-import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
+import flaxbeard.immersivepetroleum.common.blocks.PetcokeBlock;
 import flaxbeard.immersivepetroleum.common.blocks.PumpjackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
@@ -60,17 +60,13 @@ import flaxbeard.immersivepetroleum.common.util.fluids.CrudeOilFluid;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import flaxbeard.immersivepetroleum.common.util.fluids.NapalmFluid;
 import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -149,17 +145,7 @@ public class IPContent{
 		Multiblock.cokerunit = new CokerUnitBlock();
 		
 		Blocks.asphalt = new AsphaltBlock();
-		Blocks.petcoke = new IPBlockBase("petcoke_block", Block.Properties.create(Material.ROCK).sound(SoundType.STONE).setRequiresTool().harvestTool(ToolType.PICKAXE).hardnessAndResistance(2, 10)){
-			@Override
-			protected BlockItem createBlockItem(){
-				return new IPBlockItemBase(this, new Item.Properties().group(ImmersivePetroleum.creativeTab)){
-					@Override
-					public int getBurnTime(ItemStack itemStack){
-						return 32000; // TODO Compress this eventually
-					}
-				};
-			}
-		};
+		Blocks.petcoke = new PetcokeBlock();
 		Blocks.gas_generator=new GasGeneratorBlock();
 		
 		Blocks.auto_lubricator = new AutoLubricatorBlock("auto_lubricator");

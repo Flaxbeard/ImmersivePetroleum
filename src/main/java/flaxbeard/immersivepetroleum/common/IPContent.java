@@ -162,11 +162,11 @@ public class IPContent{
 		};
 		Items.petcokedust = new IPItemBase("petcoke_dust");
 		
-		BoatUpgrades.reinforced_hull = new IPUpgradeItem("reinforced_hull", "BOAT");
-		BoatUpgrades.ice_breaker = new IPUpgradeItem("icebreaker", "BOAT");
-		BoatUpgrades.tank = new IPUpgradeItem("tank", "BOAT");
-		BoatUpgrades.rudders = new IPUpgradeItem("rudders", "BOAT");
-		BoatUpgrades.paddles = new IPUpgradeItem("paddles", "BOAT");
+		BoatUpgrades.reinforced_hull = new IPUpgradeItem("reinforced_hull", MotorboatItem.UPGRADE_TYPE);
+		BoatUpgrades.ice_breaker = new IPUpgradeItem("icebreaker", MotorboatItem.UPGRADE_TYPE);
+		BoatUpgrades.tank = new IPUpgradeItem("tank", MotorboatItem.UPGRADE_TYPE);
+		BoatUpgrades.rudders = new IPUpgradeItem("rudders", MotorboatItem.UPGRADE_TYPE);
+		BoatUpgrades.paddles = new IPUpgradeItem("paddles", MotorboatItem.UPGRADE_TYPE);
 		
 		Items.projector = new ProjectorItem("projector");
 	}

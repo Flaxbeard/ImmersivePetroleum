@@ -37,12 +37,14 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
-	static final String Upgrade_Type = "BOAT";
+	public static final String UPGRADE_TYPE = "MOTORBOAT";
+	
 	public MotorboatItem(String name){
 		super(name, new Item.Properties().maxStackSize(1).group(ImmersivePetroleum.creativeTab));
 	}
@@ -83,20 +85,15 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 				ItemStack u = handler.getStackInSlot(i);
 				if(!u.isEmpty() && u.getItem() instanceof IUpgrade){
 					IUpgrade upg = (IUpgrade) u.getItem();
-					if(upg.getUpgradeTypes(u).contains(Upgrade_Type) && upg.canApplyUpgrades(stack, u)){
+					if(upg.getUpgradeTypes(u).contains(UPGRADE_TYPE) && upg.canApplyUpgrades(stack, u)){
 						upg.applyUpgrades(stack, u, nbt);
 					}
 				}
 			}
 			
-			return nbt;
-		}).orElse(null);
-		
-		if(upgradeTag != null){
-			ItemNBTHelper.setTagCompound(stack, "upgrades", upgradeTag);
-		}
-		
-		this.finishUpgradeRecalculation(stack);
+			ItemNBTHelper.setTagCompound(stack, "upgrades", nbt);
+			this.finishUpgradeRecalculation(stack);
+		});
 	}
 	
 	@Override
@@ -208,9 +205,9 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 		IItemHandler inv = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
 		if(inv != null){
 			return new Slot[]{
-					new IESlot.Upgrades(container, inv, 0, 78, 35 - 5, Upgrade_Type, stack, true, getWorld, getPlayer),
-					new IESlot.Upgrades(container, inv, 1, 98, 35 + 5, Upgrade_Type, stack, true, getWorld, getPlayer),
-					new IESlot.Upgrades(container, inv, 2, 118, 35 - 5, Upgrade_Type, stack, true, getWorld, getPlayer)
+					new IESlot.Upgrades(container, inv, 0, 78, 35 - 5, UPGRADE_TYPE, stack, true, getWorld, getPlayer),
+					new IESlot.Upgrades(container, inv, 1, 98, 35 + 5, UPGRADE_TYPE, stack, true, getWorld, getPlayer),
+					new IESlot.Upgrades(container, inv, 2, 118, 35 - 5, UPGRADE_TYPE, stack, true, getWorld, getPlayer)
 			};
 		}else{
 			return new Slot[0];

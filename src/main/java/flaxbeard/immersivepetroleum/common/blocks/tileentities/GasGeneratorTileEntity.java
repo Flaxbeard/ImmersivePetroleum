@@ -16,7 +16,6 @@ import blusunrize.immersiveengineering.api.TargetingInfo;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import blusunrize.immersiveengineering.api.wires.Connection;
 import blusunrize.immersiveengineering.api.wires.ConnectionPoint;
-import blusunrize.immersiveengineering.api.wires.ConnectorTileHelper;
 import blusunrize.immersiveengineering.api.wires.IImmersiveConnectable;
 import blusunrize.immersiveengineering.api.wires.WireType;
 import blusunrize.immersiveengineering.api.wires.impl.ImmersiveConnectableTileEntity;
@@ -245,9 +244,6 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 		super.remove();
 		if(this.fluidHandler != null)
 			this.fluidHandler.invalidate();
-		
-		// TODO Temporary Solution from Malte, until it's sorted out.
-		ConnectorTileHelper.remove(world, this);
 	}
 	
 	@Override

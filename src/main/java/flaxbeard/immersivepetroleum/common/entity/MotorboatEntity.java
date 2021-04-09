@@ -636,25 +636,36 @@ public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 				Vector3d motion = this.getMotion().add((double) (MathHelper.sin(-this.rotationYaw * ((float) Math.PI / 180F)) * f), 0.0D, (double) (MathHelper.cos(this.rotationYaw * ((float) Math.PI / 180F)) * f));
 				
 				if(this.leftInputDown || this.rightInputDown){
-					float speed = (float) Math.sqrt(motion.x * motion.x + motion.z * motion.z);
-					
-					if(this.leftInputDown){
-						this.deltaRotation -= 1.1F * speed * (this.hasRudders ? 1.5F : 1F) * (this.isBoosting ? 0.5F : 1) * (this.backInputDown && !this.forwardInputDown ? 2F : 1F);
-						if(this.propellerRotation > -1F){
-							this.propellerRotation -= 0.2F;
-						}
-					}
+					float speed = MathHelper.sqrt(motion.x * motion.x + motion.z * motion.z);
 					
 					if(this.rightInputDown){
 						this.deltaRotation += 1.1F * speed * (this.hasRudders ? 1.5F : 1F) * (this.isBoosting ? 0.5F : 1) * (this.backInputDown && !this.forwardInputDown ? 2F : 1F);
+						if(this.propellerRotation > -1F){
+							this.propellerRotation -= 0.2F;
+							
+							if(this.propellerRotation < -1F){
+								this.propellerRotation = -1.0F;
+							}
+						}
+					}
+					
+					if(this.leftInputDown){
+						this.deltaRotation -= 1.1F * speed * (this.hasRudders ? 1.5F : 1F) * (this.isBoosting ? 0.5F : 1) * (this.backInputDown && !this.forwardInputDown ? 2F : 1F);
 						if(this.propellerRotation < 1F){
 							this.propellerRotation += 0.2F;
+							
+							if(this.propellerRotation > 1F){
+								this.propellerRotation = 1.0F;
+							}
 						}
 					}
 				}
 				
-				if(!this.leftInputDown && !this.rightInputDown){
+				if(!this.leftInputDown && !this.rightInputDown && this.propellerRotation != 0.0F){
 					this.propellerRotation *= 0.7F;
+					if(this.propellerRotation < 1.0E-2F && this.propellerRotation > -1.0E-2F){
+						this.propellerRotation = 0;
+					}
 				}
 				
 				this.rotationYaw += this.deltaRotation;
@@ -686,7 +697,7 @@ public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 		FluidStack fluid = getContainedFluid();
 		if(fluid != FluidStack.EMPTY){
 			int consumeAmount = FuelHandler.getBoatFuelUsedPerTick(fluid.getFluid());
-			return fluid.getAmount() <= consumeAmount && this.hasPaddles;
+			return fluid.getAmount() < consumeAmount && this.hasPaddles;
 		}
 		
 		return this.hasPaddles;

@@ -62,7 +62,6 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 				this.modelBoat.ruddersBase.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
 				
 				float pr = entity.propellerRotation;
-				
 				if(entity.isLeftInDown() && pr > -1){
 					pr = pr - 0.1F * Minecraft.getInstance().getRenderPartialTicks();
 				}
@@ -75,8 +74,8 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 					pr = (float) (pr * Math.pow(0.7F, Minecraft.getInstance().getRenderPartialTicks()));
 				}
 				
-				this.modelBoat.rudder2.rotateAngleY = (float) Math.toRadians(pr * 20f);
 				this.modelBoat.rudder1.rotateAngleY = (float) Math.toRadians(pr * 20f);
+				this.modelBoat.rudder2.rotateAngleY = (float) Math.toRadians(pr * 20f);
 				
 				this.modelBoat.rudder1.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
 				this.modelBoat.rudder2.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);

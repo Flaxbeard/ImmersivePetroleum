@@ -20,12 +20,12 @@ public class ModelMotorboat extends SegmentedModel<MotorboatEntity>{
 	 * Part of the model rendered to make it seem like there's no water in the
 	 * boat
 	 */
-	private ModelRenderer noWater;
+	public ModelRenderer noWater;
 	
-	private ModelRenderer[] boatSides = new ModelRenderer[5];
-	private ModelRenderer motor;
-	private ModelRenderer propeller;
-	private ModelRenderer propellerAssembly;
+	public ModelRenderer[] boatSides = new ModelRenderer[5];
+	public ModelRenderer motor;
+	public ModelRenderer propeller;
+	public ModelRenderer propellerAssembly;
 	
 	public ModelRenderer icebreak;
 	public ModelRenderer coreSampleBoat;
@@ -81,7 +81,6 @@ public class ModelMotorboat extends SegmentedModel<MotorboatEntity>{
 		this.list = builder.build();
 	}
 	
-	// TODO Not sure if this is still a good idea now
 	public void refresh(){
 		motor = new ModelRenderer(this, 104, 0).setTextureSize(128, 64);
 		motor.addBox(-19.0F, -8.0F, -3, 6, 5, 6, 0.0F);

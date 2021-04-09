@@ -63,6 +63,7 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 	}
 	
 	@Nullable
+	@Override
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing){
 		if(this.first){
 			int idealSize = getSlots();

@@ -36,6 +36,8 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -76,9 +78,14 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	
 	@Override
 	public void recalculateUpgrades(ItemStack stack, World w, PlayerEntity player){
+		if(w.isRemote){
+			return;
+		}
+		
 		clearUpgrades(stack);
 		
-		CompoundNBT upgradeTag = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).map((handler) -> {
+		LazyOptional<IItemHandler> lazy = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		lazy.ifPresent(handler -> {
 			CompoundNBT nbt = new CompoundNBT();
 			
 			for(int i = 0;i < handler.getSlots();i++){
@@ -92,7 +99,7 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 			}
 			
 			ItemNBTHelper.setTagCompound(stack, "upgrades", nbt);
-			this.finishUpgradeRecalculation(stack);
+			finishUpgradeRecalculation(stack);
 		});
 	}
 	
@@ -214,6 +221,7 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 		}
 	}
 	
+	@OnlyIn(Dist.CLIENT)
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		if(ItemNBTHelper.hasKey(stack, "tank")){
@@ -223,8 +231,8 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 			}
 		}
 		
-		IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElse(null);
-		if(handler != null && handler instanceof IPItemStackHandler){
+		LazyOptional<IItemHandler> lazy = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		lazy.ifPresent(handler -> {
 			boolean first = true;
 			for(int i = 0;i < handler.getSlots();i++){
 				ItemStack upgrade = handler.getStackInSlot(i);
@@ -236,7 +244,7 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 					first = false;
 				}
 			}
-		}
+		});
 		
 		super.addInformation(stack, worldIn, tooltip, flagIn);
 	}

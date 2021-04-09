@@ -140,16 +140,16 @@ public class IPContent{
 		Blocks.dummyPipe = new BlockDummy("dummy_pipe");
 		Blocks.dummyConveyor = new BlockDummy("dummy_conveyor");
 		
-		Multiblock.distillationtower = new DistillationTowerBlock();
-		Multiblock.pumpjack = new PumpjackBlock();
-		Multiblock.cokerunit = new CokerUnitBlock();
-		
 		Blocks.asphalt = new AsphaltBlock();
 		Blocks.petcoke = new PetcokeBlock();
 		Blocks.gas_generator=new GasGeneratorBlock();
 		
 		Blocks.auto_lubricator = new AutoLubricatorBlock("auto_lubricator");
 		Blocks.flarestack = new FlarestackBlock();
+		
+		Multiblock.distillationtower = new DistillationTowerBlock();
+		Multiblock.pumpjack = new PumpjackBlock();
+		Multiblock.cokerunit = new CokerUnitBlock();
 		
 		Items.bitumen = new IPItemBase("bitumen");
 		Items.oil_can = new OilCanItem("oil_can");

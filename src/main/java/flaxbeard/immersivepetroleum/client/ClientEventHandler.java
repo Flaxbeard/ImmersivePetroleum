@@ -560,25 +560,28 @@ public class ClientEventHandler{
 					
 					buffer.finish();
 					
-					if(holdingDebugItem){
+					if(holdingDebugItem && Minecraft.getInstance().fontRenderer != null){
 						matrix.push();
 						{
 							matrix.translate(dx, dy, 0);
 							FontRenderer font = Minecraft.getInstance().fontRenderer;
-							if(font != null){
-								int capacity = boat.getMaxFuel();
-								FluidStack fs = boat.getContainedFluid();
-								int amount = fs == FluidStack.EMPTY || fs.getFluid() == null ? 0 : fs.getAmount();
-								
-								Vector3d vec = boat.getMotion();
-								
-								float speed=(float)(Math.sqrt(vec.x*vec.x + vec.z*vec.z));
-								
-								String out0 = String.format(Locale.US, "Fuel: %s/%sMB", amount, capacity);
-								String out1 = String.format(Locale.US, "Speed: %.2f", speed);
-								font.drawStringWithShadow(matrix, out0, -90, -94, 0xFFFFFFFF);
-								font.drawStringWithShadow(matrix, out1, -90, -85, 0xFFFFFFFF);
-							}
+							
+							int capacity = boat.getMaxFuel();
+							FluidStack fs = boat.getContainedFluid();
+							int amount = fs == FluidStack.EMPTY || fs.getFluid() == null ? 0 : fs.getAmount();
+							
+							Vector3d vec = boat.getMotion();
+							
+							float rot = boat.propellerRotation;
+							
+							float speed = MathHelper.sqrt(vec.x * vec.x + vec.z * vec.z);
+							
+							String out0 = String.format(Locale.US, "Fuel: %s/%sMB", amount, capacity);
+							String out1 = String.format(Locale.US, "Speed: %.2f", speed);
+							String out2 = String.format(Locale.US, "Rot: %s", rot);
+							font.drawStringWithShadow(matrix, out0, -90, -104, 0xFFFFFFFF);
+							font.drawStringWithShadow(matrix, out1, -90, -95, 0xFFFFFFFF);
+							font.drawStringWithShadow(matrix, out2, -90, -86, 0xFFFFFFFF);
 						}
 						matrix.pop();
 					}

@@ -84,7 +84,7 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 		
 		clearUpgrades(stack);
 		
-		LazyOptional<IItemHandler> lazy = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		LazyOptional<IItemHandler> lazy = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
 		lazy.ifPresent(handler -> {
 			CompoundNBT nbt = new CompoundNBT();
 			
@@ -183,7 +183,7 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	}
 	
 	protected NonNullList<ItemStack> getContainedItems(ItemStack stack){
-		IItemHandler handler = (IItemHandler) stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElse(null);
+		IItemHandler handler = (IItemHandler) stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
 		
 		if(handler == null){
 			ImmersivePetroleum.log.info("No valid inventory handler found for " + stack);
@@ -231,7 +231,7 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 			}
 		}
 		
-		LazyOptional<IItemHandler> lazy = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		LazyOptional<IItemHandler> lazy = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
 		lazy.ifPresent(handler -> {
 			boolean first = true;
 			for(int i = 0;i < handler.getSlots();i++){

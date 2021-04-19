@@ -8,6 +8,7 @@ package flaxbeard.immersivepetroleum.common.util;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import blusunrize.immersiveengineering.api.utils.CapabilityUtils;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -17,15 +18,23 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class IPItemStackHandler extends ItemStackHandler implements ICapabilityProvider{
-	private boolean first = true;
 	@Nonnull
 	private Runnable onChange = () -> {
 	};
 	
 	public IPItemStackHandler(){
+		super();
+		int idealSize = getSlots();
+		NonNullList<ItemStack> list = NonNullList.withSize(idealSize, ItemStack.EMPTY);
+		for(int i = 0;i < Math.min(this.stacks.size(), idealSize);++i){
+			list.set(i, this.stacks.get(i));
+		}
+		
+		this.stacks = list;
 	}
 	
 	@Override
@@ -58,29 +67,12 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 		this.onChange.run();
 	}
 	
-	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable Direction facing){
-		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
-	}
+	LazyOptional<IItemHandler> handler = CapabilityUtils.constantOptional(this);
 	
 	@Nullable
 	@Override
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing){
-		if(this.first){
-			int idealSize = getSlots();
-			NonNullList<ItemStack> list = NonNullList.withSize(idealSize, ItemStack.EMPTY);
-			for(int i = 0;i < Math.min(this.stacks.size(), idealSize);++i){
-				list.set(i, this.stacks.get(i));
-			}
-			
-			this.stacks = list;
-			this.first = false;
-		}
-		
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			return LazyOptional.of(() -> this).cast();
-		}
-		
-		return LazyOptional.empty();
+		return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.orEmpty(capability, handler);
 	}
 	
 	public NonNullList<ItemStack> getContainedItems(){

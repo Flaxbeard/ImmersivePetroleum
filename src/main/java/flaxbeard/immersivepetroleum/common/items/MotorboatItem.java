@@ -231,20 +231,23 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 			}
 		}
 		
-		LazyOptional<IItemHandler> lazy = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-		lazy.ifPresent(handler -> {
-			boolean first = true;
-			for(int i = 0;i < handler.getSlots();i++){
-				ItemStack upgrade = handler.getStackInSlot(i);
-				if(upgrade != null && upgrade != ItemStack.EMPTY){
-					if(first){
-						tooltip.add(new TranslationTextComponent("desc.immersivepetroleum.flavour.speedboat0").mergeStyle(TextFormatting.GRAY));
+		// The fact that i even have to do this is questionably
+		if(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY != null){
+			LazyOptional<IItemHandler> lazy = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+			lazy.ifPresent(handler -> {
+				boolean first = true;
+				for(int i = 0;i < handler.getSlots();i++){
+					ItemStack upgrade = handler.getStackInSlot(i);
+					if(upgrade != null && upgrade != ItemStack.EMPTY){
+						if(first){
+							tooltip.add(new TranslationTextComponent("desc.immersivepetroleum.flavour.speedboat0").mergeStyle(TextFormatting.GRAY));
+						}
+						tooltip.add(new StringTextComponent("  ").appendSibling(upgrade.getDisplayName()).mergeStyle(TextFormatting.DARK_GRAY));
+						first = false;
 					}
-					tooltip.add(new StringTextComponent("  ").appendSibling(upgrade.getDisplayName()).mergeStyle(TextFormatting.DARK_GRAY));
-					first = false;
 				}
-			}
-		});
+			});
+		}
 		
 		super.addInformation(stack, worldIn, tooltip, flagIn);
 	}

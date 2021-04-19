@@ -102,14 +102,16 @@ minecraft {
 dependencies {
 	minecraft "net.minecraftforge:forge:1.16.5-36.1.0"
 	
-	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-pre.34")
-	//compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-pre.34:api")
-	datagenCompile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-pre.34:datagen")
+	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-pre.52")
+	//compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-pre.52:api")
+	datagenCompile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-pre.52:datagen")
 	
 	compile fg.deobf(group: "com.blamejared.crafttweaker", name: "CraftTweaker-1.16.5", version: "7.1.0.103")
 	
 	compileOnly fg.deobf("mezz.jei:jei-1.16.3:7.6.0.49:api")
 	
+	// Comment out these two befor trying to do anything with the Data Generator
+	// You'll see why if you don't..
 	runtimeOnly fg.deobf('com.feed_the_beast.mods:ftb-gui-library:1.0.0.18')
 	runtimeOnly fg.deobf("mezz.jei:jei-1.16.3:7.6.0.49")
 }

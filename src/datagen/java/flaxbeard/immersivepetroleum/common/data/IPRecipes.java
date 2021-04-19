@@ -16,6 +16,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks.MetalDecoration;
 import blusunrize.immersiveengineering.common.crafting.fluidaware.IngredientFluidStack;
 import blusunrize.immersiveengineering.common.items.IEItems;
+import blusunrize.immersiveengineering.data.recipebuilder.FluidAwareShapedRecipeBuilder;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.api.crafting.builders.CokerUnitRecipeBuilder;
@@ -199,7 +200,7 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void blockRecipes(){
-		ShapedRecipeBuilder.shapedRecipe(Blocks.asphalt, 8)
+		FluidAwareShapedRecipeBuilder.builder(Blocks.asphalt, 8)
 			.key('C', IPContent.Items.bitumen)
 			.key('S', Tags.Items.SAND)
 			.key('G', Tags.Items.GRAVEL)
@@ -210,7 +211,7 @@ public class IPRecipes extends RecipeProvider{
 			.addCriterion("has_bitumen", hasItem(IPContent.Items.bitumen))
 			.build(this.out, rl("asphalt"));
 		
-		ShapedRecipeBuilder.shapedRecipe(Blocks.asphalt, 12)
+		FluidAwareShapedRecipeBuilder.builder(Blocks.asphalt, 12)
 			.key('C', IPContent.Items.bitumen)
 			.key('S', IEItems.Ingredients.slag)
 			.key('G', Tags.Items.GRAVEL)

@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package flaxbeard.immersivepetroleum.common.util;
 
 import javax.annotation.Nonnull;
@@ -22,10 +17,10 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class IPItemStackHandler extends ItemStackHandler implements ICapabilityProvider{
-	@Nonnull
-	private Runnable onChange = () -> {
-	};
+	private static final Runnable EMPTY_RUN = () -> {};
 	
+	@Nonnull
+	private Runnable onChange = EMPTY_RUN;
 	public IPItemStackHandler(){
 		super();
 		int idealSize = getSlots();
@@ -43,23 +38,11 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 	}
 	
 	public void setTile(TileEntity tile){
-		if(tile != null){
-			this.onChange = tile::markDirty;
-		}else{
-			this.onChange = () -> {
-			};
-		}
-		
+		this.onChange = tile != null ? tile::markDirty : EMPTY_RUN;
 	}
 	
 	public void setInventoryForUpdate(IInventory inv){
-		if(inv != null){
-			this.onChange = inv::markDirty;
-		}else{
-			this.onChange = () -> {
-			};
-		}
-		
+		this.onChange = inv != null ? inv::markDirty : EMPTY_RUN;
 	}
 	
 	protected void onContentsChanged(int slot){

@@ -32,9 +32,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -58,12 +56,11 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	
 	@Override
 	public CompoundNBT getUpgrades(ItemStack stack){
-		return ItemNBTHelper.getTagCompound(stack, "upgrades");
+		return new CompoundNBT();
 	}
 	
 	@Override
 	public void clearUpgrades(ItemStack stack){
-		ItemNBTHelper.remove(stack, "upgrades");
 	}
 	
 	@Override
@@ -98,7 +95,6 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 				}
 			}
 			
-			ItemNBTHelper.setTagCompound(stack, "upgrades", nbt);
 			finishUpgradeRecalculation(stack);
 		});
 	}
@@ -229,24 +225,6 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 			if(fs != null){
 				tooltip.add(((IFormattableTextComponent) fs.getDisplayName()).appendString(": " + fs.getAmount() + "mB").mergeStyle(TextFormatting.GRAY));
 			}
-		}
-		
-		// The fact that i even have to do this is questionably
-		if(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY != null){
-			LazyOptional<IItemHandler> lazy = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-			lazy.ifPresent(handler -> {
-				boolean first = true;
-				for(int i = 0;i < handler.getSlots();i++){
-					ItemStack upgrade = handler.getStackInSlot(i);
-					if(upgrade != null && upgrade != ItemStack.EMPTY){
-						if(first){
-							tooltip.add(new TranslationTextComponent("desc.immersivepetroleum.flavour.speedboat0").mergeStyle(TextFormatting.GRAY));
-						}
-						tooltip.add(new StringTextComponent("  ").appendSibling(upgrade.getDisplayName()).mergeStyle(TextFormatting.DARK_GRAY));
-						first = false;
-					}
-				}
-			});
 		}
 		
 		super.addInformation(stack, worldIn, tooltip, flagIn);

@@ -439,7 +439,7 @@ public class ProjectorItem extends IPItemBase{
 							}else{
 								// Making it this far only needs an air check,
 								// the other already proved to be false.
-								if(!toCompare.isAir(info.blockAccess, info.tPos.add(hit))){
+								if(!toCompare.getBlockState().getBlock().isAir(toCompare.getBlockState(), info.blockAccess, info.tPos.add(hit))){
 									toRender.add(new RenderInfo(RenderInfo.Layer.BAD, info.blockAccess, info.templatePos, info.settings, info.tPos));
 									skip = true;
 								}else{

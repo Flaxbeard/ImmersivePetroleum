@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.api.event;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
-import flaxbeard.immersivepetroleum.common.util.projector.MultiblockProjection.IMultiblockBlockReader;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Rotation;
@@ -20,8 +19,8 @@ public class ProjectorEvent extends Event{
 	
 	@Cancelable
 	public static class PlaceBlock extends ProjectorEvent{
-		public PlaceBlock(IMultiblockBlockReader blockAccess, BlockPos templatePos, World world, BlockPos worldPos, BlockState state, Rotation rotation){
-			super(blockAccess, templatePos, world, worldPos, state, rotation);
+		public PlaceBlock(IMultiblock multiblock, World templateWorld, BlockPos templatePos, World world, BlockPos worldPos, BlockState state, Rotation rotation){
+			super(multiblock, templateWorld, templatePos, world, worldPos, state, rotation);
 		}
 		
 		public void setBlockState(BlockState state){
@@ -35,15 +34,15 @@ public class ProjectorEvent extends Event{
 	
 	@Cancelable
 	public static class PlaceBlockPost extends ProjectorEvent{
-		public PlaceBlockPost(IMultiblockBlockReader blockAccess, BlockPos templatePos, World world, BlockPos worldPos, BlockState state, Rotation rotation){
-			super(blockAccess, templatePos, world, worldPos, state, rotation);
+		public PlaceBlockPost(IMultiblock multiblock, World templateWorld, BlockPos templatePos, World world, BlockPos worldPos, BlockState state, Rotation rotation){
+			super(multiblock, templateWorld, templatePos, world, worldPos, state, rotation);
 		}
 	}
 	
 	@Cancelable
 	public static class RenderBlock extends ProjectorEvent{
-		public RenderBlock(IMultiblockBlockReader blockAccess, BlockPos templatePos, World world, BlockPos worldPos, BlockState state, Rotation rotation){
-			super(blockAccess, templatePos, world, worldPos, state, rotation);
+		public RenderBlock(IMultiblock multiblock, World templateWorld, BlockPos templatePos, World world, BlockPos worldPos, BlockState state, Rotation rotation){
+			super(multiblock, templateWorld, templatePos, world, worldPos, state, rotation);
 		}
 		
 		public void setState(BlockState state){
@@ -55,37 +54,39 @@ public class ProjectorEvent extends Event{
 		}
 	}
 	
-	protected World world;
+	protected IMultiblock multiblock;
+	protected World realWorld;
+	protected World templateWorld;
 	protected Rotation rotation;
-	protected IMultiblockBlockReader blockAccess;
 	protected BlockPos worldPos;
 	protected BlockPos templatePos;
 	protected BlockState state;
 	
-	public ProjectorEvent(IMultiblockBlockReader blockAccess, BlockPos templatePos, World world, BlockPos worldPos, BlockState state, Rotation rotation){
+	public ProjectorEvent(IMultiblock multiblock, World templateWorld, BlockPos templatePos, World world, BlockPos worldPos, BlockState state, Rotation rotation){
 		super();
-		this.world = world;
-		this.blockAccess = blockAccess;
+		this.multiblock = multiblock;
+		this.realWorld = world;
+		this.templateWorld = templateWorld;
 		this.worldPos = worldPos;
 		this.templatePos = templatePos;
 		this.state = state;
 		this.rotation = rotation;
 	}
 	
+	public IMultiblock getMultiblock(){
+		return multiblock;
+	}
+	
 	public World getWorld(){
-		return this.world;
+		return this.realWorld;
+	}
+	
+	public World getTemplateWorld(){
+		return this.templateWorld;
 	}
 	
 	public Rotation getRotation(){
 		return this.rotation;
-	}
-	
-	public IMultiblockBlockReader getMultiblockBlockAccess(){
-		return this.blockAccess;
-	}
-	
-	public IMultiblock getMultiblock(){
-		return this.blockAccess.getMultiblock();
 	}
 	
 	public BlockPos getWorldPos(){
@@ -102,6 +103,6 @@ public class ProjectorEvent extends Event{
 	
 	/** Always returns the BlockState found in the Template */
 	public BlockState getTemplateState(){
-		return this.blockAccess.getBlockState(this.templatePos);
+		return this.templateWorld.getBlockState(this.templatePos);
 	}
 }

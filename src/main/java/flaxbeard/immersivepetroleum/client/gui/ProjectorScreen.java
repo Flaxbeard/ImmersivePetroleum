@@ -13,12 +13,11 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
+import blusunrize.immersiveengineering.api.utils.TemplateWorldCreator;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.UnionMultiblock;
 import flaxbeard.immersivepetroleum.client.gui.elements.GuiReactiveList;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
-import flaxbeard.immersivepetroleum.common.util.projector.MultiblockProjection;
-import flaxbeard.immersivepetroleum.common.util.projector.MultiblockProjection.IMultiblockBlockReader;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -44,6 +43,7 @@ import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.template.Template;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
@@ -67,7 +67,8 @@ public class ProjectorScreen extends Screen{
 	private int guiTop;
 	
 	private Lazy<List<IMultiblock>> multiblocks;
-	private IMultiblockBlockReader blockAccess;
+	private World templateWorld;
+	private IMultiblock multiblock;
 	private GuiReactiveList list;
 	private String[] listEntries;
 	
@@ -256,8 +257,9 @@ public class ProjectorScreen extends Screen{
 						}
 						matrix.pop();
 					}else{
-						if(this.blockAccess == null || (this.blockAccess.getMultiblock().getUniqueName().equals(mb.getUniqueName()))){
-							this.blockAccess = MultiblockProjection.getBlockAccessFor(mb);
+						if(this.templateWorld == null || (!this.multiblock.getUniqueName().equals(mb.getUniqueName()))){
+							this.templateWorld = TemplateWorldCreator.CREATOR.getValue().makeWorld(mb.getStructure(null), pos -> true);
+							this.multiblock = mb;
 						}
 						
 						final BlockRendererDispatcher blockRender = Minecraft.getInstance().getBlockRendererDispatcher();
@@ -270,7 +272,7 @@ public class ProjectorScreen extends Screen{
 									matrix.translate(info.pos.getX(), info.pos.getY(), info.pos.getZ());
 									int overlay = OverlayTexture.NO_OVERLAY;
 									IModelData modelData = EmptyModelData.INSTANCE;
-									TileEntity te = this.blockAccess.getTileEntity(info.pos);
+									TileEntity te = this.templateWorld.getTileEntity(info.pos);
 									if(te != null){
 										modelData = te.getModelData();
 									}

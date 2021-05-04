@@ -36,6 +36,7 @@ public class IPTags{
 	public static class Fluids{
 		public static final ITag.INamedTag<Fluid> crudeOil = createFluidWrapper(forgeLoc("crude_oil"));
 		public static final ITag.INamedTag<Fluid> diesel = createFluidWrapper(forgeLoc("diesel"));
+		public static final ITag.INamedTag<Fluid> diesel_sulfur = createFluidWrapper(forgeLoc("diesel_sulfur"));
 		public static final ITag.INamedTag<Fluid> gasoline = createFluidWrapper(forgeLoc("gasoline"));
 		public static final ITag.INamedTag<Fluid> lubricant = createFluidWrapper(forgeLoc("lubricant"));
 		public static final ITag.INamedTag<Fluid> napalm = createFluidWrapper(forgeLoc("napalm"));

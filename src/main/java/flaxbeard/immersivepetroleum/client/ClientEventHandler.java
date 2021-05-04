@@ -37,6 +37,7 @@ import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import net.minecraft.block.BlockState;
@@ -83,6 +84,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class ClientEventHandler{
@@ -370,6 +372,24 @@ public class ClientEventHandler{
 							debugOut.add(toText("  " + MathHelper.floor(completed) + "% Completed. (Raw: " + completed + ")"));
 							
 						}
+					}else if(te instanceof HydrotreaterTileEntity){
+						HydrotreaterTileEntity treater = (HydrotreaterTileEntity) te;
+						if(!treater.offsetToMaster.equals(BlockPos.ZERO)){
+							treater = treater.master();
+						}
+						
+						debugOut.add(toText("Sulfur Recovery Unit ").mergeStyle(TextFormatting.GOLD)
+								.appendSibling(toText(treater.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED))
+								.appendSibling(toText(treater.shouldRenderAsActive() ? " (Active)" : "").mergeStyle(TextFormatting.GREEN)));
+						debugOut.add(toText(treater.energyStorage.getEnergyStored() + "/" + treater.energyStorage.getMaxEnergyStored() + "RF"));
+						
+						IFluidTank[] tanks = treater.getInternalTanks();
+						if(tanks != null && tanks.length > 0){
+							for(int i = 0;i < tanks.length;i++){
+								FluidStack fs = tanks[i].getFluid();
+								debugOut.add(toText("Tank " + i + ": " + (fs.getAmount() + "/" + tanks[i].getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
+							}
+						}
 					}
 					
 					if(!debugOut.isEmpty()){
@@ -387,12 +407,11 @@ public class ClientEventHandler{
 							int yOff = i * (ClientUtils.font().FONT_HEIGHT + 2);
 							
 							matrix.push();
-							matrix.translate(0, 0, -1);
-							ClientUtils.drawColouredRect(1, 1 + yOff, w+1, 10, 0xAF_4F4F4F, matrix);
-							matrix.pop();
-							
+							matrix.translate(0, 0, 1);
+							ClientUtils.drawColouredRect(1, 1 + yOff, w+1, 10, 0xAF_000000, matrix);
 							// Draw string without shadow
 							ClientUtils.font().drawText(matrix, debugOut.get(i), 2, 2 + yOff, -1);
+							matrix.pop();
 						}
 						matrix.pop();
 					}

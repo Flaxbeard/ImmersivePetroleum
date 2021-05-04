@@ -90,6 +90,8 @@ public class IPServerConfig{
 		public final ConfigValue<Double> distillationTower_timeModifier;
 		public final ConfigValue<Double> cokerUnit_energyModifier;
 		public final ConfigValue<Double> cokerUnit_timeModifier;
+		public final ConfigValue<Double> hydrotreater_energyModifier;
+		public final ConfigValue<Double> hydrotreater_timeModifier;
 		Refining(ForgeConfigSpec.Builder builder){
 			builder.push("Refining");
 			
@@ -108,6 +110,14 @@ public class IPServerConfig{
 			cokerUnit_timeModifier = builder
 					.comment("A modifier to apply to the time of every Coker recipe. Can't be lower than 1, default=1")
 					.define("cokerUnit_timeModifier", Double.valueOf(1.0));
+			
+			hydrotreater_energyModifier = builder
+					.comment("A modifier to apply to the energy costs of every Sulfur Recovery Unit recipe, default=1")
+					.define("hydrotreater_energyModifier", Double.valueOf(1.0));
+			
+			hydrotreater_timeModifier = builder
+					.comment("A modifier to apply to the time of every Sulfur Recovery Unit recipe. Can't be lower than 1, default=1")
+					.define("hydrotreater_timeModifier", Double.valueOf(1.0));
 			
 			builder.pop();
 		}

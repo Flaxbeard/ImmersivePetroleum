@@ -1,0 +1,13 @@
+Sulfur Recovery Unit
+Smell of Fireworks
+<&hydrotreater0>The Sulfur Recovery Unit (SRU) is a multiblock machine that seperates Sulfur from Sulfurized Diesel by using Hydrogen and Oxygen gained from the Electrolysis of Water.
+
+It uses <config;i;hydrotreater_operationcost> Flux per operation<np>
+It is built as shown and formed by using the Engineering's Hammer on the Heavy Engineering Block in the Center
+
+Applying a redstone signal to the control panel will halt the machine's process, this behavior can be inverted by use of the Screwdriver.<np>
+
+Sulfurized Diesel is pumped into the port at the front.
+Water is pumped into the port at the top.
+Sulfur is dumped out the left side.
+Diesel is pumped out of the top port on the left side.

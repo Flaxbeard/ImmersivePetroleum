@@ -39,6 +39,7 @@ public class IPBlockLoot extends LootGenerator implements IDataProvider{
 		
 		registerMultiblock(IPContent.Multiblock.distillationtower);
 		registerMultiblock(IPContent.Multiblock.pumpjack);
+		registerMultiblock(IPContent.Multiblock.hydrotreater);
 	}
 	
 	private void registerMultiblock(Block b){

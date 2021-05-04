@@ -26,15 +26,18 @@ public class BlockRenderLayers{
 		RenderTypeLookup.setRenderLayer(IPContent.Multiblock.distillationtower, RenderType.getCutout());
 		RenderTypeLookup.setRenderLayer(IPContent.Multiblock.pumpjack, RenderType.getCutout());
 		RenderTypeLookup.setRenderLayer(IPContent.Multiblock.cokerunit, RenderType.getCutout());
+		RenderTypeLookup.setRenderLayer(IPContent.Multiblock.hydrotreater, RenderType.getCutout());
 		
 		RenderTypeLookup.setRenderLayer(IPContent.Fluids.crudeOil, RenderType.getTranslucent());
 		RenderTypeLookup.setRenderLayer(IPContent.Fluids.diesel, RenderType.getTranslucent());
+		RenderTypeLookup.setRenderLayer(IPContent.Fluids.diesel_sulfur, RenderType.getTranslucent());
 		RenderTypeLookup.setRenderLayer(IPContent.Fluids.gasoline, RenderType.getTranslucent());
 		RenderTypeLookup.setRenderLayer(IPContent.Fluids.lubricant, RenderType.getTranslucent());
 		RenderTypeLookup.setRenderLayer(IPContent.Fluids.napalm, RenderType.getTranslucent());
 		
 		RenderTypeLookup.setRenderLayer(IPContent.Fluids.crudeOil.getFlowingFluid(), RenderType.getTranslucent());
 		RenderTypeLookup.setRenderLayer(IPContent.Fluids.diesel.getFlowingFluid(), RenderType.getTranslucent());
+		RenderTypeLookup.setRenderLayer(IPContent.Fluids.diesel_sulfur.getFlowingFluid(), RenderType.getTranslucent());
 		RenderTypeLookup.setRenderLayer(IPContent.Fluids.gasoline.getFlowingFluid(), RenderType.getTranslucent());
 		RenderTypeLookup.setRenderLayer(IPContent.Fluids.lubricant.getFlowingFluid(), RenderType.getTranslucent());
 		RenderTypeLookup.setRenderLayer(IPContent.Fluids.napalm.getFlowingFluid(), RenderType.getTranslucent());

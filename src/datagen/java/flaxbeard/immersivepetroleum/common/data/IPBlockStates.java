@@ -20,6 +20,7 @@ import flaxbeard.immersivepetroleum.common.blocks.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
+import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
 import net.minecraft.block.Block;
@@ -79,6 +80,7 @@ public class IPBlockStates extends BlockStateProvider{
 		distillationtower();
 		pumpjack();
 		cokerunit();
+		hydrotreater();
 		
 		// "Normal" Blocks
 		simpleBlockWithItem(IPContent.Blocks.asphalt);
@@ -128,6 +130,17 @@ public class IPBlockStates extends BlockStateProvider{
 		BlockModelBuilder mirrored = multiblockModel(IPContent.Multiblock.cokerunit, modelMirrored, texture, "_mirrored", CokerUnitMultiblock.INSTANCE, true);
 		
 		createMultiblock(IPContent.Multiblock.cokerunit, normal, mirrored, texture);
+	}
+	
+	private void hydrotreater(){
+		ResourceLocation texture = modLoc("multiblock/hydrotreater");
+		ResourceLocation modelNormal = modLoc("models/multiblock/obj/hydrotreater.obj");
+		ResourceLocation modelMirrored = modLoc("models/multiblock/obj/hydrotreater_mirrored.obj");
+		
+		BlockModelBuilder normal = multiblockModel(IPContent.Multiblock.hydrotreater, modelNormal, texture, "", HydroTreaterMultiblock.INSTANCE, false);
+		BlockModelBuilder mirrored = multiblockModel(IPContent.Multiblock.hydrotreater, modelMirrored, texture, "_mirrored", HydroTreaterMultiblock.INSTANCE, true);
+		
+		createMultiblock(IPContent.Multiblock.hydrotreater, normal, mirrored, texture);
 	}
 	
 	private BlockModelBuilder multiblockModel(Block block, ResourceLocation model, ResourceLocation texture, String add, TemplateMultiblock mb, boolean mirror){

@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 import blusunrize.immersiveengineering.api.EnumMetals;
 import blusunrize.immersiveengineering.api.IETags;
+import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.crafting.builders.ArcFurnaceRecipeBuilder;
 import blusunrize.immersiveengineering.api.crafting.builders.BlastFurnaceFuelBuilder;
@@ -22,6 +23,7 @@ import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.api.crafting.builders.CokerUnitRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.ReservoirTypeBuilder;
+import flaxbeard.immersivepetroleum.api.crafting.builders.SulfurRecoveryRecipeBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Blocks;
 import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
@@ -58,6 +60,7 @@ public class IPRecipes extends RecipeProvider{
 		speedboatUpgradeRecipes();
 		distillationRecipes();
 		cokerRecipes();
+		hydrotreaterRecipes();
 		reservoirs();
 		
 		MixerRecipeBuilder.builder(IPContent.Fluids.napalm, 500)
@@ -86,7 +89,7 @@ public class IPRecipes extends RecipeProvider{
 		
 		DistillationRecipeBuilder.builder(new FluidStack[]{
 				new FluidStack(IPContent.Fluids.lubricant, 9),
-				new FluidStack(IPContent.Fluids.diesel, 27),
+				new FluidStack(IPContent.Fluids.diesel_sulfur, 27),
 				new FluidStack(IPContent.Fluids.gasoline, 39)})
 			.addByproduct(new ItemStack(IPContent.Items.bitumen), 0.07)
 			.addInput(IPTags.Fluids.crudeOil, 75)
@@ -148,6 +151,14 @@ public class IPRecipes extends RecipeProvider{
 			.addInput(new IngredientWithSize(IPTags.Items.petcokeDust, 8))
 			.setEnergy(19200)
 			.build(out, rl("squeezer/graphite_dust"));
+	}
+	
+	private void hydrotreaterRecipes(){
+		SulfurRecoveryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.diesel, 10), 512, 1)
+			.addInputFluid(new FluidTagInput(IPTags.Fluids.diesel_sulfur, 10))
+			.addSecondaryInputFluid(FluidTags.WATER, 10)
+			.addItemWithChance(new ItemStack(IEItems.Ingredients.dustSulfur), 0.02)
+			.build(out, rl("hydrotreater/sulfur_recovery"));
 	}
 	
 	private void speedboatUpgradeRecipes(){

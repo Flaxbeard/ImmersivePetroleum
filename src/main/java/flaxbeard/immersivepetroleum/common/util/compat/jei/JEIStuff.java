@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
 import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.util.compat.jei.distillation.CokerUnitRecipeCategory;
 import flaxbeard.immersivepetroleum.common.util.compat.jei.distillation.DistillationRecipeCategory;
+import flaxbeard.immersivepetroleum.common.util.compat.jei.hydrotreater.SulfurRecoveryRecipeCategory;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -35,18 +37,21 @@ public class JEIStuff implements IModPlugin{
 		
 		registration.addRecipeCategories(new DistillationRecipeCategory(guiHelper));
 		registration.addRecipeCategories(new CokerUnitRecipeCategory(guiHelper));
+		registration.addRecipeCategories(new SulfurRecoveryRecipeCategory(guiHelper));
 	}
 	
 	@Override
 	public void registerRecipes(IRecipeRegistration registration){
 		registration.addRecipes(new ArrayList<>(DistillationRecipe.recipes.values()), DistillationRecipeCategory.ID);
 		registration.addRecipes(new ArrayList<>(CokerUnitRecipe.recipes.values()), CokerUnitRecipeCategory.ID);
+		registration.addRecipes(new ArrayList<>(SulfurRecoveryRecipe.recipes.values()), SulfurRecoveryRecipeCategory.ID);
 	}
 	
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration){
 		registration.addRecipeCatalyst(new ItemStack(IPContent.Multiblock.distillationtower), DistillationRecipeCategory.ID);
 		registration.addRecipeCatalyst(new ItemStack(IPContent.Multiblock.cokerunit), CokerUnitRecipeCategory.ID);
+		registration.addRecipeCatalyst(new ItemStack(IPContent.Multiblock.hydrotreater), SulfurRecoveryRecipeCategory.ID);
 	}
 	
 	@Override

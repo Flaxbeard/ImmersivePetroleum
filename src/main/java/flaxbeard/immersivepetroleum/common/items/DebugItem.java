@@ -202,7 +202,7 @@ public class DebugItem extends IPItemBase{
 					CokerUnitTileEntity.updateShapes = true;
 					return ActionResultType.SUCCESS;
 				}
-
+				
 				return ActionResultType.PASS;
 			}
 			case INFO_TE_DISTILLATION_TOWER:{

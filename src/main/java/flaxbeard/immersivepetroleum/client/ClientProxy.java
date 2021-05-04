@@ -54,6 +54,7 @@ import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
+import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -138,6 +139,9 @@ public class ClientProxy extends CommonProxy{
 				}
 				case "coker_operationcost":{
 					return Integer.valueOf((int) (1024 * IPServerConfig.REFINING.cokerUnit_energyModifier.get()));
+				}
+				case "hydrotreater_operationcost":{
+					return Integer.valueOf((int) (512 * IPServerConfig.REFINING.hydrotreater_energyModifier.get()));
 				}
 				case "pumpjack_consumption":{
 					return IPServerConfig.EXTRACTION.pumpjack_consumption.get();
@@ -292,6 +296,7 @@ public class ClientProxy extends CommonProxy{
 		pumpjack(modLoc("pumpjack"), 0);
 		distillation(modLoc("distillationtower"), 1);
 		coker(modLoc("cokerunit"), 2);
+		hydrotreater(modLoc("hydrotreater"), 3);
 		
 		handleReservoirManual(modLoc("reservoir"), 3);
 		
@@ -416,6 +421,15 @@ public class ClientProxy extends CommonProxy{
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.addSpecialElement("cokerunit0", 0, () -> new ManualElementMultiblock(man, CokerUnitMultiblock.INSTANCE));
+		builder.readFromFile(location);
+		man.addEntry(IP_CATEGORY, builder.create(), priority);
+	}
+	
+	protected static void hydrotreater(ResourceLocation location, int priority){
+		ManualInstance man = ManualHelper.getManual();
+		
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement("hydrotreater0", 0, () -> new ManualElementMultiblock(man, HydroTreaterMultiblock.INSTANCE));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}

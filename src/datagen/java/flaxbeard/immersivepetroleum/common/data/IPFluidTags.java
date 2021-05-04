@@ -17,7 +17,11 @@ public class IPFluidTags extends FluidTagsProvider{
 	@Override
 	protected void registerTags(){
 		getOrCreateBuilder(IPTags.Fluids.diesel)
-			.add(IPContent.Fluids.diesel);
+			.add(IPContent.Fluids.diesel)
+			.add(IPContent.Fluids.diesel_sulfur);
+		
+		getOrCreateBuilder(IPTags.Fluids.diesel_sulfur)
+			.add(IPContent.Fluids.diesel_sulfur);
 		
 		getOrCreateBuilder(IPTags.Fluids.gasoline)
 			.add(IPContent.Fluids.gasoline);
@@ -34,6 +38,7 @@ public class IPFluidTags extends FluidTagsProvider{
 		getOrCreateBuilder(IPTags.Utility.burnableInFlarestack)
 			.addTag(IPTags.Fluids.lubricant)
 			.addTag(IPTags.Fluids.diesel)
+			.addTag(IPTags.Fluids.diesel_sulfur)
 			.addTag(IPTags.Fluids.gasoline)
 			.addTag(IETags.fluidPlantoil)
 			.addTag(IETags.fluidCreosote)

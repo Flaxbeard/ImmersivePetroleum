@@ -15,10 +15,11 @@ import net.minecraft.util.math.vector.Vector3i;
 public class MultiblockAwareGuiContainer<T extends PoweredMultiblockTileEntity<T, ?>> extends IEBaseContainer<T>{
 	static final Vector3i ONE = new Vector3i(1, 1, 1);
 	
-	protected IETemplateMultiblock template;
+	protected BlockPos templateSize;
 	public MultiblockAwareGuiContainer(PlayerInventory inventoryPlayer, T tile, int id, IETemplateMultiblock template){
 		super(inventoryPlayer, tile, id);
-		this.template = template;
+		
+		this.templateSize = new BlockPos(template.getSize(this.tile.getWorldNonnull())).subtract(ONE);
 	}
 	
 	/**
@@ -32,10 +33,8 @@ public class MultiblockAwareGuiContainer<T extends PoweredMultiblockTileEntity<T
 	@Override
 	public boolean canInteractWith(PlayerEntity player){
 		if(inv != null){
-			Vector3i size = this.template.getSize(this.tile.getWorldNonnull());
-			
 			BlockPos min = this.tile.getBlockPosForPos(BlockPos.ZERO);
-			BlockPos max = this.tile.getBlockPosForPos(new BlockPos(size).subtract(ONE));
+			BlockPos max = this.tile.getBlockPosForPos(this.templateSize);
 			
 			AxisAlignedBB box = new AxisAlignedBB(min, max).grow(getMaxDistance());
 			

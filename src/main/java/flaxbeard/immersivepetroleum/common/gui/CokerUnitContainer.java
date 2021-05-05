@@ -2,12 +2,11 @@ package flaxbeard.immersivepetroleum.common.gui;
 
 import static flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.TANK_INPUT;
 
-import blusunrize.immersiveengineering.common.gui.IEBaseContainer;
 import blusunrize.immersiveengineering.common.gui.IESlot;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.Inventory;
-import net.minecraft.entity.player.PlayerEntity;
+import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
@@ -16,9 +15,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class CokerUnitContainer extends IEBaseContainer<CokerUnitTileEntity>{
-	public CokerUnitContainer(int id, PlayerInventory inventoryPlayer, final CokerUnitTileEntity tile){
-		super(inventoryPlayer, tile, id);
+public class CokerUnitContainer extends MultiblockAwareGuiContainer<CokerUnitTileEntity>{
+	public CokerUnitContainer(int id, PlayerInventory playerInventory, final CokerUnitTileEntity tile){
+		super(playerInventory, tile, id, CokerUnitMultiblock.INSTANCE);
 		
 		addSlot(new CokerInput(this, this.inv, Inventory.INPUT.id(), 20, 71));
 		addSlot(new IESlot.FluidContainer(this, this.inv, Inventory.INPUT_FILLED.id(), 9, 14, 2){
@@ -48,19 +47,14 @@ public class CokerUnitContainer extends IEBaseContainer<CokerUnitTileEntity>{
 		// Player Inventory
 		for(int i = 0;i < 3;i++){
 			for(int j = 0;j < 9;j++){
-				addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 20 + j * 18, 105 + i * 18));
+				addSlot(new Slot(playerInventory, j + i * 9 + 9, 20 + j * 18, 105 + i * 18));
 			}
 		}
 		
 		// Hotbar
 		for(int i = 0;i < 9;i++){
-			addSlot(new Slot(inventoryPlayer, i, 20 + i * 18, 163));
+			addSlot(new Slot(playerInventory, i, 20 + i * 18, 163));
 		}
-	}
-	
-	@Override
-	public boolean canInteractWith(PlayerEntity player){
-		return inv != null;
 	}
 	
 	class CokerInput extends IESlot{

@@ -155,8 +155,8 @@ public class IPRecipes extends RecipeProvider{
 	
 	private void hydrotreaterRecipes(){
 		SulfurRecoveryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.diesel, 10), 512, 1)
-			.addInputFluid(new FluidTagInput(IPTags.Fluids.diesel_sulfur, 10))
-			.addSecondaryInputFluid(FluidTags.WATER, 10)
+			.addInputFluid(new FluidTagInput(IPTags.Fluids.diesel_sulfur, 7))
+			.addSecondaryInputFluid(FluidTags.WATER, 7)
 			.addItemWithChance(new ItemStack(IEItems.Ingredients.dustSulfur), 0.02)
 			.build(out, rl("hydrotreater/sulfur_recovery"));
 	}

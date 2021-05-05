@@ -8,11 +8,11 @@
   },
   "input": {
     "tag": "forge:diesel_sulfur",
-    "amount": 10
+    "amount": 7
   },
   "secondary_input": {
     "tag": "minecraft:water",
-    "amount": 10
+    "amount": 7
   },
   "secondary_result": {
     "item": "immersiveengineering:dust_sulfur",

@@ -10,6 +10,7 @@ import blusunrize.immersiveengineering.common.gui.IEBaseContainer;
 import blusunrize.immersiveengineering.common.gui.IESlot;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
@@ -52,5 +53,10 @@ public class DistillationTowerContainer extends IEBaseContainer<DistillationTowe
 		for(int i = 0;i < 9;i++){
 			addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 143));
 		}
+	}
+	
+	@Override
+	public boolean canInteractWith(PlayerEntity player){
+		return inv != null;
 	}
 }

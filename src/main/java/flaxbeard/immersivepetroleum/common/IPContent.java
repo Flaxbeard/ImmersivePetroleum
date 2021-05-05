@@ -1,11 +1,7 @@
 package flaxbeard.immersivepetroleum.common;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,12 +31,6 @@ import flaxbeard.immersivepetroleum.common.blocks.HydrotreaterBlock;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.blocks.PetcokeBlock;
 import flaxbeard.immersivepetroleum.common.blocks.PumpjackBlock;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.FlarestackTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.cfg.ConfigUtils;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
@@ -69,8 +59,6 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -223,59 +211,6 @@ public class IPContent{
 		LubricatedHandler.registerLubricatedTile(PumpjackTileEntity.class, PumpjackLubricationHandler::new);
 		LubricatedHandler.registerLubricatedTile(ExcavatorTileEntity.class, ExcavatorLubricationHandler::new);
 		LubricatedHandler.registerLubricatedTile(CrusherTileEntity.class, CrusherLubricationHandler::new);
-	}
-	
-	@SubscribeEvent
-	public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event){
-		registerTile(event, DistillationTowerTileEntity.class, Multiblock.distillationtower);
-		registerTile(event, PumpjackTileEntity.class, Multiblock.pumpjack);
-		registerTile(event, CokerUnitTileEntity.class, Multiblock.cokerunit);
-		registerTile(event, HydrotreaterTileEntity.class, Multiblock.hydrotreater);
-		registerTile(event, FlarestackTileEntity.class, Blocks.flarestack);
-		registerTile(event, AutoLubricatorTileEntity.class, Blocks.auto_lubricator);
-		registerTile(event, GasGeneratorTileEntity.class, Blocks.gas_generator);
-	}
-	
-	/**
-	 * @param event
-	 * @param tile the TileEntity class to register.
-	 * 
-	 *        <pre>
-	 * Requires <code>public static TileEntityType TYPE;</code> field in the class.
-	 *        </pre>
-	 * 
-	 * @param valid
-	 */
-	public static <T extends TileEntity> void registerTile(RegistryEvent.Register<TileEntityType<?>> event, Class<T> tile, Block... valid){
-		String s = tile.getSimpleName();
-		s = s.substring(0, s.indexOf("TileEntity")).toLowerCase(Locale.ENGLISH);
-		
-		TileEntityType<T> type = createType(tile, valid);
-		type.setRegistryName(ImmersivePetroleum.MODID, s);
-		event.getRegistry().register(type);
-		
-		try{
-			tile.getField("TYPE").set(null, type);
-		}catch(NoSuchFieldException | IllegalAccessException e){
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-		
-		log.debug("Registered TileEntity: {} as {}", tile, type.getRegistryName());
-	}
-	
-	private static <T extends TileEntity> TileEntityType<T> createType(Class<T> typeClass, Block... valid){
-		Set<Block> validSet = new HashSet<>(Arrays.asList(valid));
-		TileEntityType<T> type = new TileEntityType<>(() -> {
-			try{
-				return typeClass.newInstance();
-			}catch(InstantiationException | IllegalAccessException e){
-				e.printStackTrace();
-			}
-			return null;
-		}, validSet, null);
-		
-		return type;
 	}
 	
 	@SubscribeEvent

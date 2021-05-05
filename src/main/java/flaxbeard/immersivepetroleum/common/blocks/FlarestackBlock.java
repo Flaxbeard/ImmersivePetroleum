@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.FlarestackTileEntity;
+import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -142,7 +142,7 @@ public class FlarestackBlock extends IPBlockBase{
 	
 	@Override
 	public TileEntity createTileEntity(BlockState state, IBlockReader world){
-		return FlarestackTileEntity.TYPE.create();
+		return IPTileTypes.FLARE.get().create();
 	}
 	
 	public static class FlarestackBlockItem extends IPBlockItemBase{

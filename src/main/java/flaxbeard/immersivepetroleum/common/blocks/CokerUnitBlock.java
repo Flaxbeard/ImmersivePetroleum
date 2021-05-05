@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
+import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
@@ -15,7 +16,7 @@ import net.minecraft.world.World;
 
 public class CokerUnitBlock extends IPMetalMultiblock<CokerUnitTileEntity>{
 	public CokerUnitBlock(){
-		super("cokerunit", () -> CokerUnitTileEntity.TYPE);
+		super("cokerunit", () -> IPTileTypes.COKER.get());
 	}
 	
 	@Override

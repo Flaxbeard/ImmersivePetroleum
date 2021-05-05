@@ -19,9 +19,8 @@ import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTi
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
-import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
-import net.minecraft.block.Block;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.ItemStackHelper;
@@ -36,7 +35,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
@@ -50,12 +48,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<DistillationTowerTileEntity, DistillationRecipe> implements IInteractionObjectIE, IBlockBounds{
-	/**
-	 * Do not Touch! Taken care of by
-	 * {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)}
-	 */
-	public static TileEntityType<DistillationTowerTileEntity> TYPE;
-	
 	/** Input Tank ID */
 	public static final int TANK_INPUT = 0;
 	
@@ -100,7 +92,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	
 	@Override
 	public TileEntityType<?> getType(){
-		return TYPE;
+		return IPTileTypes.TOWER.get();
 	}
 	
 	@Override

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
+import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
@@ -12,7 +13,6 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -24,16 +24,11 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class FlarestackTileEntity extends TileEntity implements ITickableTileEntity{
-	public static TileEntityType<FlarestackTileEntity> TYPE;
-	
 	protected boolean isActive;
 	protected FluidTank tank = new FluidTank(1000, fstack -> (fstack != null && FlarestackHandler.isBurnable(fstack)));
-	public FlarestackTileEntity(){
-		this(TYPE);
-	}
 	
-	public FlarestackTileEntity(TileEntityType<?> tileEntityTypeIn){
-		super(tileEntityTypeIn);
+	public FlarestackTileEntity(){
+		super(IPTileTypes.FLARE.get());
 	}
 	
 	public boolean isActive(){

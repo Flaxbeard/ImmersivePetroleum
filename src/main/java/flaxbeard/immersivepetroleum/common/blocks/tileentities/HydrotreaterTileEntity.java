@@ -14,9 +14,8 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBou
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
-import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
-import net.minecraft.block.Block;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -29,7 +28,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
@@ -40,12 +38,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe> implements IBlockBounds{
-	/**
-	 * Do not Touch! Taken care of by
-	 * {@link IPContent#registerTile(RegistryEvent.Register, Class, Block...)}
-	 */
-	public static TileEntityType<HydrotreaterTileEntity> TYPE;
-
 	/** Input Fluid Tank A<br> */
 	public static final int TANK_INPUT_A = 0;
 	
@@ -81,7 +73,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 	
 	@Override
 	public TileEntityType<?> getType(){
-		return TYPE;
+		return IPTileTypes.TREATER.get();
 	}
 	
 	@Override

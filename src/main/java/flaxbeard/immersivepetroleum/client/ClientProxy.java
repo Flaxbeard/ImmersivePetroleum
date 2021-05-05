@@ -46,8 +46,7 @@ import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
+import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
@@ -209,13 +208,10 @@ public class ClientProxy extends CommonProxy{
 		
 		keybind_preview_flip.setKeyConflictContext(KeyConflictContext.IN_GAME);
 		ClientRegistry.registerKeyBinding(keybind_preview_flip);
-	}
-	
-	@Override
-	public void postInit(){
-		ClientRegistry.bindTileEntityRenderer(DistillationTowerTileEntity.TYPE, MultiblockDistillationTowerRenderer::new);
-		ClientRegistry.bindTileEntityRenderer(PumpjackTileEntity.TYPE, MultiblockPumpjackRenderer::new);
-		ClientRegistry.bindTileEntityRenderer(AutoLubricatorTileEntity.TYPE, AutoLubricatorRenderer::new);
+		
+		ClientRegistry.bindTileEntityRenderer(IPTileTypes.TOWER.get(), MultiblockDistillationTowerRenderer::new);
+		ClientRegistry.bindTileEntityRenderer(IPTileTypes.PUMP.get(), MultiblockPumpjackRenderer::new);
+		ClientRegistry.bindTileEntityRenderer(IPTileTypes.AUTOLUBE.get(), AutoLubricatorRenderer::new);
 	}
 	
 	/** ImmersivePetroleum's Manual Category */

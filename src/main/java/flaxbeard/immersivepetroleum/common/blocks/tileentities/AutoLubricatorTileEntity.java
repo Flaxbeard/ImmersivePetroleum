@@ -12,6 +12,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
+import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.AutoLubricatorBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
@@ -24,7 +25,6 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -45,8 +45,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class AutoLubricatorTileEntity extends TileEntity implements ITickableTileEntity, IPlayerInteraction, IBlockOverlayText, ITileDrop{
-	public static TileEntityType<AutoLubricatorTileEntity> TYPE;
-	
 	public boolean isSlave;
 	public boolean isActive;
 	public boolean predictablyDraining = false;
@@ -54,11 +52,7 @@ public class AutoLubricatorTileEntity extends TileEntity implements ITickableTil
 	public FluidTank tank = new FluidTank(8000, fluid -> (fluid != null && LubricantHandler.isValidLube(fluid.getFluid())));
 	
 	public AutoLubricatorTileEntity(){
-		this(TYPE);
-	}
-	
-	public AutoLubricatorTileEntity(TileEntityType<?> tileEntityTypeIn){
-		super(tileEntityTypeIn);
+		super(IPTileTypes.AUTOLUBE.get());
 	}
 	
 	@Override

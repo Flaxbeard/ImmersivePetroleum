@@ -10,6 +10,7 @@ import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
+import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.cfg.IPClientConfig;
 import flaxbeard.immersivepetroleum.common.cfg.IPCommonConfig;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
@@ -72,6 +73,8 @@ public class ImmersivePetroleum{
 		
 		IPContent.populate();
 		IPLootFunctions.modConstruction();
+		
+		IPTileTypes.REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 		
 		proxy.registerContainersAndScreens();
 	}

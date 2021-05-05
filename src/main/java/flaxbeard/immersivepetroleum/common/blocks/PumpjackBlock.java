@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
+import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,7 +13,7 @@ import net.minecraft.world.World;
 
 public class PumpjackBlock extends IPMetalMultiblock<PumpjackTileEntity>{
 	public PumpjackBlock(){
-		super("pumpjack", () -> PumpjackTileEntity.TYPE);
+		super("pumpjack", () -> IPTileTypes.PUMP.get());
 	}
 	
 	@Override

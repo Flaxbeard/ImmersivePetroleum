@@ -89,7 +89,7 @@ public class IPRecipes extends RecipeProvider{
 		
 		DistillationRecipeBuilder.builder(new FluidStack[]{
 				new FluidStack(IPContent.Fluids.lubricant, 9),
-				new FluidStack(IPContent.Fluids.diesel_sulfur, 27),
+				new FluidStack(IPContent.Fluids.diesel_sulfur, 14),
 				new FluidStack(IPContent.Fluids.gasoline, 39)})
 			.addByproduct(new ItemStack(IPContent.Items.bitumen), 0.07)
 			.addInput(IPTags.Fluids.crudeOil, 75)

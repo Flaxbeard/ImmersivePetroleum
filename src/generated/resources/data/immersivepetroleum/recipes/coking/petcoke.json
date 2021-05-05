@@ -4,7 +4,7 @@
     "item": "immersivepetroleum:petcoke"
   },
   "resultfluid": {
-    "tag": "forge:diesel",
+    "tag": "forge:diesel_sulfur",
     "amount": 27
   },
   "input": {

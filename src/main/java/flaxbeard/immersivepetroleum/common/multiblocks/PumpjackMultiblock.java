@@ -7,6 +7,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.client.utils.RenderUtils;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
@@ -68,7 +69,7 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 			if(world != null){
 				transform.push();
 				transform.translate(1, 0, 0);
-				ClientUtils.renderModelTESRFast(this.list, buffer.getBuffer(RenderType.getSolid()), transform, 0xF000F0, OverlayTexture.NO_OVERLAY);
+				RenderUtils.renderModelTESRFast(this.list, buffer.getBuffer(RenderType.getSolid()), transform, 0xF000F0, OverlayTexture.NO_OVERLAY);
 				
 				transform.push();
 				transform.translate(-1, -1, -1);

@@ -13,6 +13,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.ItemOverlayUtils;
+import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
 import blusunrize.immersiveengineering.common.blocks.stone.CoresampleTileEntity;
@@ -402,13 +403,16 @@ public class ClientEventHandler{
 						
 						MatrixStack matrix = event.getMatrixStack();
 						matrix.push();
+						IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
 						for(int i = 0;i < debugOut.size();i++){
 							int w = ClientUtils.font().getStringWidth(debugOut.get(i).getString());
 							int yOff = i * (ClientUtils.font().FONT_HEIGHT + 2);
 							
 							matrix.push();
 							matrix.translate(0, 0, 1);
-							ClientUtils.drawColouredRect(1, 1 + yOff, w+1, 10, 0xAF_000000, matrix);
+							// TODO Great, there goes the background for the text lol
+							GuiHelper.drawColouredRect(1, 1 + yOff, w+1, 10, 0xAF_000000, buffer, matrix);
+							buffer.finish();
 							// Draw string without shadow
 							ClientUtils.font().drawText(matrix, debugOut.get(i), 2, 2 + yOff, -1);
 							matrix.pop();
@@ -551,13 +555,7 @@ public class ClientEventHandler{
 					matrix.push();
 					{
 						matrix.translate(dx, dy, 0);
-						int w = 31;
-						int h = 62;
-						float uMin = 179 / 256f;
-						float uMax = 210 / 256f;
-						float vMin = 9 / 256f;
-						float vMax = 71 / 256f;
-						ClientUtils.drawTexturedRect(builder, matrix, -24, -68, w, h, 1, 1, 1, 1, uMin, uMax, vMin, vMax);
+						GuiHelper.drawTexturedRect(builder, matrix, -24, -68, 31, 62, 256f, 179, 210, 9, 71);
 						
 						matrix.translate(-23, -37, 0);
 						int capacity = boat.getMaxFuel();
@@ -568,11 +566,11 @@ public class ClientEventHandler{
 							float angle = 83 - (166 * amount / cap);
 							matrix.push();
 							matrix.rotate(new Quaternion(0, 0, angle, true));
-							ClientUtils.drawTexturedRect(builder, matrix, 6, -2, 24, 4, 1, 1, 1, 1, 91 / 256f, 123 / 256f, 80 / 256f, 87 / 256f);
+							GuiHelper.drawTexturedRect(builder, matrix, 6, -2, 24, 4, 256f, 91, 123, 80, 87);
 							matrix.pop();
 							matrix.translate(23, 37, 0);
 							
-							ClientUtils.drawTexturedRect(builder, matrix, -41, -73, 53, 72, 1, 1, 1, 1, 8 / 256f, 61 / 256f, 4 / 256f, 76 / 256f);
+							GuiHelper.drawTexturedRect(builder, matrix, -41, -73, 53, 72, 256f, 8, 61, 4, 76);
 						}
 					}
 					matrix.pop();

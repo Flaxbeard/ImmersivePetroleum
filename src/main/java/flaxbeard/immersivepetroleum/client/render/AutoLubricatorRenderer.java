@@ -3,7 +3,7 @@ package flaxbeard.immersivepetroleum.client.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
@@ -53,20 +53,20 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 				IVertexBuilder builder = bufferIn.getBuffer(RenderType.getTranslucent());
 				
 				float h = height * level;
-				ClientUtils.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
+				GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
 				transform.rotate(new Quaternion(0, 90, 0, true));
 				transform.translate(-7.98, 0, 0);
-				ClientUtils.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
+				GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
 				transform.rotate(new Quaternion(0, 90, 0, true));
 				transform.translate(-7.98, 0, 0);
-				ClientUtils.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
+				GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
 				transform.rotate(new Quaternion(0, 90, 0, true));
 				transform.translate(-7.98, 0, 0);
-				ClientUtils.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
+				GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
 				if(h < height){
 					transform.rotate(new Quaternion(90, 0, 0, true));
 					transform.translate(0, 0, -h);
-					ClientUtils.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, 8);
+					GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, 8);
 				}
 			}
 			transform.pop();

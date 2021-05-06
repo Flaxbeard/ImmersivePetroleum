@@ -14,16 +14,18 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
+import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
 import flaxbeard.immersivepetroleum.common.gui.CokerUnitContainer;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
-	static final String GUI_TEXTURE = "immersivepetroleum:textures/gui/coker.png";
+	static final ResourceLocation GUI_TEXTURE = new ResourceLocation("immersivepetroleum", "textures/gui/coker.png");
 	
 	CokerUnitTileEntity tile;
 	public CokerUnitScreen(CokerUnitContainer inventorySlotsIn, PlayerInventory inv, ITextComponent title){
@@ -35,20 +37,20 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 	}
 	
 	@Override
-	public void render(MatrixStack transform, int mx, int my, float partialTicks){
-		this.renderBackground(transform);
-		super.render(transform, mx, my, partialTicks);
-		this.renderHoveredTooltip(transform, mx, my);
+	public void render(MatrixStack matrix, int mx, int my, float partialTicks){
+		this.renderBackground(matrix);
+		super.render(matrix, mx, my, partialTicks);
+		this.renderHoveredTooltip(matrix, mx, my);
 		
 		List<ITextComponent> tooltip = new ArrayList<>();
 		
 		// Buffer tank displays
-		ClientUtils.handleGuiTank(transform, tile.bufferTanks[TANK_INPUT], guiLeft + 32, guiTop + 14, 16, 47, 0, 0, 0, 0, mx, my, GUI_TEXTURE, tooltip);
-		ClientUtils.handleGuiTank(transform, tile.bufferTanks[TANK_OUTPUT], guiLeft + 152, guiTop + 14, 16, 47, 0, 0, 0, 0, mx, my, GUI_TEXTURE, tooltip);
+		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_INPUT], guiLeft + 32, guiTop + 14, 16, 47, 0, 0, 0, 0, mx, my, GUI_TEXTURE, tooltip);
+		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_OUTPUT], guiLeft + 152, guiTop + 14, 16, 47, 0, 0, 0, 0, mx, my, GUI_TEXTURE, tooltip);
 		
 		// Chamber Stats
-		chamberDisplay(transform, guiLeft + 74, guiTop + 24, 6, 38, CHAMBER_A, mx, my, partialTicks, tooltip);
-		chamberDisplay(transform, guiLeft + 120, guiTop + 24, 6, 38, CHAMBER_B, mx, my, partialTicks, tooltip);
+		chamberDisplay(matrix, guiLeft + 74, guiTop + 24, 6, 38, CHAMBER_A, mx, my, partialTicks, tooltip);
+		chamberDisplay(matrix, guiLeft + 120, guiTop + 24, 6, 38, CHAMBER_B, mx, my, partialTicks, tooltip);
 		
 		// Power Stored
 		if(mx > guiLeft + 167 && mx < guiLeft + 175 && my > guiTop + 66 && my < guiTop + 88){
@@ -56,7 +58,7 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 		}
 		
 		if(!tooltip.isEmpty()){
-			GuiUtils.drawHoveringText(transform, tooltip, mx, my, width, height, -1, font);
+			GuiUtils.drawHoveringText(matrix, tooltip, mx, my, width, height, -1, font);
 		}
 	}
 	
@@ -74,7 +76,7 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 		this.blit(matrix, x, y + scale - off, 206, 51 + (scale - off), 6, off);
 		
 		// Chamber Tank
-		ClientUtils.handleGuiTank(matrix, chamber.getTank(), x, y, 6, 38, 0, 0, 0, 0, mx, my, GUI_TEXTURE, null);
+		GuiHelper.handleGuiTank(matrix, chamber.getTank(), x, y, 6, 38, 0, 0, 0, 0, mx, my, GUI_TEXTURE, null);
 		
 		// Debugging Tooltip
 		/*if((mx >= x && mx < x + w) && (my >= y && my < y + h)){
@@ -93,17 +95,17 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 	}
 	
 	@Override
-	protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mx, int my){
+	protected void drawGuiContainerBackgroundLayer(MatrixStack matrix, float partialTicks, int mx, int my){
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		ClientUtils.bindTexture(GUI_TEXTURE);
-		this.blit(matrixStack, guiLeft, guiTop, 0, 0, xSize, ySize);
+		this.blit(matrix, guiLeft, guiTop, 0, 0, xSize, ySize);
 		
-		ClientUtils.handleGuiTank(matrixStack, tile.bufferTanks[TANK_INPUT], guiLeft + 32, guiTop + 14, 16, 47, 202, 2, 16, 47, mx, my, GUI_TEXTURE, null);
-		ClientUtils.handleGuiTank(matrixStack, tile.bufferTanks[TANK_OUTPUT], guiLeft + 152, guiTop + 14, 16, 47, 202, 2, 16, 47, mx, my, GUI_TEXTURE, null);
+		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_INPUT], guiLeft + 32, guiTop + 14, 16, 47, 202, 2, 16, 47, mx, my, GUI_TEXTURE, null);
+		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_OUTPUT], guiLeft + 152, guiTop + 14, 16, 47, 202, 2, 16, 47, mx, my, GUI_TEXTURE, null);
 		
 		int x = guiLeft + 168;
 		int y = guiTop + 67;
 		int stored = (int) (tile.energyStorage.getEnergyStored() / (float) tile.energyStorage.getMaxEnergyStored() * 21);
-		ClientUtils.drawGradientRect(x, y + 21 - stored, x + 7, y + 21, 0xffb51500, 0xff600b00);
+		fillGradient(matrix, x, y + 21 - stored, x + 7, y + 21, 0xffb51500, 0xff600b00);
 	}
 }

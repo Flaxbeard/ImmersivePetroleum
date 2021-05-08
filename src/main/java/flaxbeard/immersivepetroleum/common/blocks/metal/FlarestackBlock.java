@@ -1,10 +1,12 @@
-package flaxbeard.immersivepetroleum.common.blocks;
+package flaxbeard.immersivepetroleum.common.blocks.metal;
 
 import java.util.Collections;
 import java.util.List;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
+import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
+import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;

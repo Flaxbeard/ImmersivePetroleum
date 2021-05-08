@@ -1,5 +1,6 @@
-package flaxbeard.immersivepetroleum.common.blocks;
+package flaxbeard.immersivepetroleum.common.blocks.metal;
 
+import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;

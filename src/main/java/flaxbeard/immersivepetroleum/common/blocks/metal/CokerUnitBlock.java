@@ -1,6 +1,7 @@
-package flaxbeard.immersivepetroleum.common.blocks;
+package flaxbeard.immersivepetroleum.common.blocks.metal;
 
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
+import flaxbeard.immersivepetroleum.common.blocks.IPMetalMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;

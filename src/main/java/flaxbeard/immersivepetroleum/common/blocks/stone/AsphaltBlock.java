@@ -1,8 +1,9 @@
-package flaxbeard.immersivepetroleum.common.blocks;
+package flaxbeard.immersivepetroleum.common.blocks.stone;
 
 import java.util.List;
 import java.util.Locale;
 
+import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;

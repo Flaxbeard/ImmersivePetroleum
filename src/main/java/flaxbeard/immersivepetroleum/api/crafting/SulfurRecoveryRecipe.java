@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
@@ -21,7 +20,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
-public class SulfurRecoveryRecipe extends MultiblockRecipe{
+public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
 	public static final IRecipeType<SulfurRecoveryRecipe> TYPE = IRecipeType.register(ImmersivePetroleum.MODID + ":hydrotreater");
 	
 	public static Map<ResourceLocation, SulfurRecoveryRecipe> recipes = new HashMap<>();
@@ -77,10 +76,6 @@ public class SulfurRecoveryRecipe extends MultiblockRecipe{
 	@Nullable
 	public final FluidTagInput inputFluidSecondary;
 	
-	
-	protected int totalProcessTime;
-	protected int totalProcessEnergy;
-	
 	public SulfurRecoveryRecipe(ResourceLocation id, FluidStack output, ItemStack outputItem, FluidTagInput inputFluid, @Nullable FluidTagInput inputFluidSecondary, double chance, int energy, int time){
 		super(ItemStack.EMPTY, TYPE, id);
 		this.output = output;
@@ -89,26 +84,16 @@ public class SulfurRecoveryRecipe extends MultiblockRecipe{
 		this.inputFluidSecondary = inputFluidSecondary;
 		this.chance = chance;
 		
-		this.totalProcessEnergy = (int) Math.floor(energy * IPServerConfig.REFINING.hydrotreater_energyModifier.get());
-		this.totalProcessTime = (int) Math.floor(time * IPServerConfig.REFINING.hydrotreater_timeModifier.get());
-		
 		this.fluidOutputList = Arrays.asList(output);
 		this.fluidInputList = Arrays.asList(inputFluidSecondary != null ? new FluidTagInput[]{inputFluid, inputFluidSecondary} : new FluidTagInput[]{inputFluid});
+		
+		timeAndEnergy(time, energy);
+		modifyTimeAndEnergy(IPServerConfig.REFINING.hydrotreater_energyModifier::get, IPServerConfig.REFINING.hydrotreater_energyModifier::get);
 	}
 	
 	@Override
 	public int getMultipleProcessTicks(){
 		return 0;
-	}
-	
-	@Override
-	public int getTotalProcessTime(){
-		return this.totalProcessTime;
-	}
-	
-	@Override
-	public int getTotalProcessEnergy(){
-		return this.totalProcessEnergy;
 	}
 	
 	public FluidTagInput getInputFluid(){

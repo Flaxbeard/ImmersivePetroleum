@@ -22,8 +22,8 @@ public abstract class IPMultiblockRecipe extends MultiblockRecipe{
 	
 	@Override
 	public void modifyTimeAndEnergy(DoubleSupplier timeModifier, DoubleSupplier energyModifier){
-		final Lazy<Integer> oldTime = totalProcessTime;
-		final Lazy<Integer> oldEnergy = totalProcessEnergy;
+		final Lazy<Integer> oldTime = this.totalProcessTime;
+		final Lazy<Integer> oldEnergy = this.totalProcessEnergy;
 		this.totalProcessTime = Lazy.of(() -> (int) (Math.max(1, oldTime.get() * timeModifier.getAsDouble())));
 		this.totalProcessEnergy = Lazy.of(() -> (int) (Math.max(1, oldEnergy.get() * energyModifier.getAsDouble())));
 	}

@@ -9,7 +9,6 @@ import javax.annotation.Nonnull;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
@@ -20,7 +19,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
-public class CokerUnitRecipe extends MultiblockRecipe{
+public class CokerUnitRecipe extends IPMultiblockRecipe{
 	public static final IRecipeType<CokerUnitRecipe> TYPE = IRecipeType.register(ImmersivePetroleum.MODID + ":cokerunit");
 	
 	public static Map<ResourceLocation, CokerUnitRecipe> recipes = new HashMap<>();
@@ -91,9 +90,6 @@ public class CokerUnitRecipe extends MultiblockRecipe{
 	public final IngredientWithSize inputItem;
 	public final FluidTagInput inputFluid;
 	
-	protected int totalProcessTime;
-	protected int totalProcessEnergy;
-	
 	public CokerUnitRecipe(ResourceLocation id, ItemStack outputItem, FluidTagInput outputFluid, IngredientWithSize inputItem, FluidTagInput inputFluid, int energy, int time){
 		super(ItemStack.EMPTY, TYPE, id);
 		this.inputFluid = inputFluid;
@@ -101,23 +97,13 @@ public class CokerUnitRecipe extends MultiblockRecipe{
 		this.outputFluid = outputFluid;
 		this.outputItem = outputItem;
 		
-		this.totalProcessEnergy = (int) Math.floor(energy * IPServerConfig.REFINING.cokerUnit_energyModifier.get());
-		this.totalProcessTime = (int) Math.floor(time * IPServerConfig.REFINING.cokerUnit_timeModifier.get());
+		timeAndEnergy(time, energy);
+		modifyTimeAndEnergy(IPServerConfig.REFINING.cokerUnit_energyModifier::get, IPServerConfig.REFINING.cokerUnit_timeModifier::get);
 	}
 	
 	@Override
 	public int getMultipleProcessTicks(){
 		return 0;
-	}
-	
-	@Override
-	public int getTotalProcessTime(){
-		return this.totalProcessTime;
-	}
-	
-	@Override
-	public int getTotalProcessEnergy(){
-		return this.totalProcessEnergy;
 	}
 	
 	@Override

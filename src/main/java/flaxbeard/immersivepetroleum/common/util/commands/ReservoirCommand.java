@@ -34,9 +34,6 @@ public class ReservoirCommand{
 		LiteralArgumentBuilder<CommandSource> lab = Commands.literal("reservoir")
 				.requires(source -> source.hasPermissionLevel(4));
 		
-		lab.then(Commands.literal("list")
-				.executes(source -> list(source.getSource().asPlayer())));
-		
 		lab.then(Commands.literal("get")
 				.executes(source -> get(source.getSource().asPlayer())));
 		
@@ -51,17 +48,6 @@ public class ReservoirCommand{
 						.executes(context -> setCapacity(context.getSource().asPlayer(), context.getArgument("capacity", Integer.class)))));
 		
 		return lab;
-	}
-	
-	static int list(ServerPlayerEntity playerEntity){
-		String s = "";
-		int i = 0;
-		for(ReservoirType res:PumpjackHandler.reservoirs.values()){
-			s += ((i++) > 0 ? ", " : "") + res.name;
-		}
-		
-		playerEntity.sendMessage(new StringTextComponent(s), Util.DUMMY_UUID);
-		return Command.SINGLE_SUCCESS;
 	}
 	
 	static int get(ServerPlayerEntity playerEntity){

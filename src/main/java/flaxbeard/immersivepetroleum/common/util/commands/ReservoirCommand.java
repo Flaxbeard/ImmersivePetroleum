@@ -32,6 +32,10 @@ public class ReservoirCommand{
 	
 	public static LiteralArgumentBuilder<CommandSource> create(){
 		LiteralArgumentBuilder<CommandSource> lab = Commands.literal("reservoir")
+				.executes(source -> {
+					CommandUtils.sendHelp(source.getSource(), "");
+					return Command.SINGLE_SUCCESS;
+				})
 				.requires(source -> source.hasPermissionLevel(4));
 		
 		lab.then(Commands.literal("get")
@@ -40,10 +44,18 @@ public class ReservoirCommand{
 		lab.then(setReservoir());
 		
 		lab.then(Commands.literal("setAmount")
+				.executes(source -> {
+					CommandUtils.sendHelp(source.getSource(), ".setAmount");
+					return Command.SINGLE_SUCCESS;
+				})
 				.then(Commands.argument("amount", IntegerArgumentType.integer(0, Integer.MAX_VALUE))
 						.executes(context -> setAmount(context.getSource().asPlayer(), context.getArgument("amount", Integer.class)))));
 		
 		lab.then(Commands.literal("setCapacity")
+				.executes(source -> {
+					CommandUtils.sendHelp(source.getSource(), ".setCapacity");
+					return Command.SINGLE_SUCCESS;
+				})
 				.then(Commands.argument("capacity", IntegerArgumentType.integer(0, Integer.MAX_VALUE))
 						.executes(context -> setCapacity(context.getSource().asPlayer(), context.getArgument("capacity", Integer.class)))));
 		
@@ -79,9 +91,10 @@ public class ReservoirCommand{
 			return Command.SINGLE_SUCCESS;
 		}));
 		
-		LiteralArgumentBuilder<CommandSource> set = Commands.literal("set");
-		set.then(nameArg);
-		return set;
+		return Commands.literal("set").executes(source -> {
+			CommandUtils.sendHelp(source.getSource(), ".set");
+			return Command.SINGLE_SUCCESS;
+		}).then(nameArg);
 	}
 	
 	static void setReservoir(CommandContext<CommandSource> context, int xChunk, int zChunk){
@@ -153,14 +166,5 @@ public class ReservoirCommand{
 	static ReservoirWorldInfo getOilWorldInfo(ServerPlayerEntity playerEntity){
 		ChunkPos coords = new ChunkPos(playerEntity.getPosition());
 		return PumpjackHandler.getOrCreateOilWorldInfo(playerEntity.getEntityWorld(), coords.x, coords.z);
-	}
-	
-	static ChunkPos getChunkCoords(ServerPlayerEntity playerEntity){
-		return new ChunkPos(playerEntity.getPosition());
-	}
-	
-	@Deprecated // TODO Maybe add this somewhere again?
-	static String getHelp(String subIdent){
-		return "chat.immersivepetroleum.command.reservoir" + subIdent + ".help";
 	}
 }

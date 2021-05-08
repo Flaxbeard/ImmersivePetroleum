@@ -83,6 +83,7 @@ public class IPRenderTypes{
 	
 	public static IRenderTypeBuffer disableLighting(IRenderTypeBuffer in){
 		return type -> {
+			@SuppressWarnings("deprecation")
 			RenderType rt = new RenderType(
 					ImmersivePetroleum.MODID + ":" + type + "_no_lighting",
 					type.getVertexFormat(),

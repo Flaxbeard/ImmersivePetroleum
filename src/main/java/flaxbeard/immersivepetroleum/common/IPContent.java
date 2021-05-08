@@ -35,6 +35,10 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntit
 import flaxbeard.immersivepetroleum.common.cfg.ConfigUtils;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
+import flaxbeard.immersivepetroleum.common.fluids.CrudeOilFluid;
+import flaxbeard.immersivepetroleum.common.fluids.DieselFluid;
+import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
+import flaxbeard.immersivepetroleum.common.fluids.NapalmFluid;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import flaxbeard.immersivepetroleum.common.items.IPItemBase;
 import flaxbeard.immersivepetroleum.common.items.IPUpgradeItem;
@@ -49,10 +53,6 @@ import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblo
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
-import flaxbeard.immersivepetroleum.common.util.fluids.CrudeOilFluid;
-import flaxbeard.immersivepetroleum.common.util.fluids.DieselFluid;
-import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
-import flaxbeard.immersivepetroleum.common.util.fluids.NapalmFluid;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;

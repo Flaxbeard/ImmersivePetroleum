@@ -146,27 +146,27 @@ public class ReservoirTypeBuilder extends IEFinishedRecipe<ReservoirTypeBuilder>
 	public ReservoirTypeBuilder addDimensions(boolean isBlacklist, ResourceLocation... dimensions){
 		if(isBlacklist){
 			if(dimensions != null && dimensions.length > 0){
-				
 				if(this.dimWhitelist.size() > 0)
 					throw new IllegalArgumentException("Cannot set a whitelist and blacklist at the same time.");
 				
-				for(ResourceLocation rl:dimensions)
-					if(rl != null)
-						if(!this.dimBlacklist.contains(new JsonPrimitive(rl.toString()))) // Avoid
-																							// duplicates
-							this.dimBlacklist.add(rl.toString());
+				// Avoid duplicates
+				for(ResourceLocation rl:dimensions){
+					if(rl != null && !this.dimBlacklist.contains(new JsonPrimitive(rl.toString()))){
+						this.dimBlacklist.add(rl.toString());
+					}
+				}
 			}
 		}else{
 			if(dimensions != null && dimensions.length > 0){
-				
 				if(this.dimBlacklist.size() > 0)
 					throw new IllegalArgumentException("Cannot set a whitelist and blacklist at the same time.");
 				
-				for(ResourceLocation rl:dimensions)
-					if(rl != null)
-						if(!this.dimWhitelist.contains(new JsonPrimitive(rl.toString()))) // Avoid
-																							// duplicates
-							this.dimWhitelist.add(rl.toString());
+				// Avoid duplicates
+				for(ResourceLocation rl:dimensions){
+					if(rl != null && !this.dimWhitelist.contains(new JsonPrimitive(rl.toString()))){
+						this.dimWhitelist.add(rl.toString());
+					}
+				}
 			}
 		}
 		return this;
@@ -186,27 +186,27 @@ public class ReservoirTypeBuilder extends IEFinishedRecipe<ReservoirTypeBuilder>
 	public ReservoirTypeBuilder addBiomes(boolean isBlacklist, ResourceLocation... biomes){
 		if(isBlacklist){
 			if(biomes != null && biomes.length > 0){
-				
 				if(this.bioWhitelist.size() > 0)
 					throw new IllegalArgumentException("Cannot set a whitelist and blacklist at the same time.");
 				
-				for(ResourceLocation rl:biomes)
-					if(rl != null)
-						if(!this.bioBlacklist.contains(new JsonPrimitive(rl.toString()))) // Avoid
-																							// duplicates
-							this.bioBlacklist.add(rl.toString());
+				// Avoid duplicates
+				for(ResourceLocation rl:biomes){
+					if(rl != null && !this.bioBlacklist.contains(new JsonPrimitive(rl.toString()))){
+						this.bioBlacklist.add(rl.toString());
+					}
+				}
 			}
 		}else{
 			if(biomes != null && biomes.length > 0){
-				
 				if(this.bioBlacklist.size() > 0)
 					throw new IllegalArgumentException("Cannot set a whitelist and blacklist at the same time.");
 				
-				for(ResourceLocation rl:biomes)
-					if(rl != null)
-						if(!this.bioWhitelist.contains(new JsonPrimitive(rl.toString()))) // Avoid
-																							// duplicates
-							this.bioWhitelist.add(rl.toString());
+				// Avoid duplicates
+				for(ResourceLocation rl:biomes){
+					if(rl != null && !this.bioWhitelist.contains(new JsonPrimitive(rl.toString()))){
+						this.bioWhitelist.add(rl.toString());
+					}
+				}
 			}
 		}
 		return this;

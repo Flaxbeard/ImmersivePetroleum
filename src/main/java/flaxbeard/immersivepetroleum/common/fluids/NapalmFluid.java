@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.util.fluids;
+package flaxbeard.immersivepetroleum.common.fluids;
 
 import java.util.ArrayList;
 

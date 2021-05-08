@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.util.fluids.IPFluid;
+import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;

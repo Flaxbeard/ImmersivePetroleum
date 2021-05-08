@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.util.fluids;
+package flaxbeard.immersivepetroleum.common.fluids;
 
 public class DieselFluid extends IPFluid{
 	public DieselFluid(String name){

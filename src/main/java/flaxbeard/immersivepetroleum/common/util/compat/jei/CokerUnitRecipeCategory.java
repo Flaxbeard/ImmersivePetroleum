@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.util.compat.jei.distillation;
+package flaxbeard.immersivepetroleum.common.util.compat.jei;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -9,7 +9,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.util.compat.jei.IPRecipeCategory;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawable;

@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.util.compat.jei.distillation;
+package flaxbeard.immersivepetroleum.common.util.compat.jei;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.List;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.util.compat.jei.IPRecipeCategory;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawableStatic;

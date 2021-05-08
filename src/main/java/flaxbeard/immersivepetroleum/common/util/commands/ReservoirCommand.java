@@ -87,14 +87,13 @@ public class ReservoirCommand{
 			ServerPlayerEntity player = command.getSource().asPlayer();
 			setReservoir(command, player.getPosition().getX() >> 4, player.getPosition().getZ() >> 4);
 			return Command.SINGLE_SUCCESS;
-		});
-		nameArg.then(Commands.argument("location", ColumnPosArgument.columnPos()).executes(command -> {
-			ColumnPos pos = command.getArgument("location", ColumnPos.class);
+		}).then(Commands.argument("location", ColumnPosArgument.columnPos()).executes(command -> {
+			ColumnPos pos = ColumnPosArgument.fromBlockPos(command, "location");
 			setReservoir(command, pos.x, pos.z);
 			return Command.SINGLE_SUCCESS;
 		}));
 		
-		LiteralArgumentBuilder<CommandSource> set = Commands.literal("setTest");
+		LiteralArgumentBuilder<CommandSource> set = Commands.literal("set");
 		set.then(nameArg);
 		return set;
 	}

@@ -22,13 +22,16 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class IPTileTypes{
 	public static final DeferredRegister<TileEntityType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, ImmersivePetroleum.MODID);
 	
-	public static final RegistryObject<TileEntityType<AutoLubricatorTileEntity>> AUTOLUBE = register("autolubricator", AutoLubricatorTileEntity::new, IPContent.Blocks.auto_lubricator);
-	public static final RegistryObject<TileEntityType<CokerUnitTileEntity>> COKER = register("cokerunit", CokerUnitTileEntity::new, IPContent.Multiblock.cokerunit);
-	public static final RegistryObject<TileEntityType<DistillationTowerTileEntity>> TOWER = register("distillationtower", DistillationTowerTileEntity::new, IPContent.Multiblock.distillationtower);
-	public static final RegistryObject<TileEntityType<HydrotreaterTileEntity>> TREATER = register("hydrotreater", HydrotreaterTileEntity::new, IPContent.Multiblock.hydrotreater);
+	// Multiblocks
 	public static final RegistryObject<TileEntityType<PumpjackTileEntity>> PUMP = register("pumpjack", PumpjackTileEntity::new, IPContent.Multiblock.pumpjack);
-	public static final RegistryObject<TileEntityType<FlarestackTileEntity>> FLARE = register("flarestack", FlarestackTileEntity::new, IPContent.Blocks.flarestack);
+	public static final RegistryObject<TileEntityType<DistillationTowerTileEntity>> TOWER = register("distillationtower", DistillationTowerTileEntity::new, IPContent.Multiblock.distillationtower);
+	public static final RegistryObject<TileEntityType<CokerUnitTileEntity>> COKER = register("cokerunit", CokerUnitTileEntity::new, IPContent.Multiblock.cokerunit);
+	public static final RegistryObject<TileEntityType<HydrotreaterTileEntity>> TREATER = register("hydrotreater", HydrotreaterTileEntity::new, IPContent.Multiblock.hydrotreater);
+	
+	// Normal Blocks
 	public static final RegistryObject<TileEntityType<GasGeneratorTileEntity>> GENERATOR = register("gasgenerator", GasGeneratorTileEntity::new, IPContent.Blocks.gas_generator);
+	public static final RegistryObject<TileEntityType<AutoLubricatorTileEntity>> AUTOLUBE = register("autolubricator", AutoLubricatorTileEntity::new, IPContent.Blocks.auto_lubricator);
+	public static final RegistryObject<TileEntityType<FlarestackTileEntity>> FLARE = register("flarestack", FlarestackTileEntity::new, IPContent.Blocks.flarestack);
 	
 	private static <T extends TileEntity> RegistryObject<TileEntityType<T>> register(String name, Supplier<T> factory, Block... valid){
 		return REGISTER.register(name, () -> new TileEntityType<>(factory, ImmutableSet.copyOf(valid), null));

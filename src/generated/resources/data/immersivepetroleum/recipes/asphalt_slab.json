@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "tag": "forge:asphalt"
+    }
+  },
+  "result": {
+    "item": "immersivepetroleum:asphalt_slab",
+    "count": 6
+  }
+}

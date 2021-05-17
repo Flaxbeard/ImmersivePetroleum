@@ -24,10 +24,13 @@ import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblo
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import net.minecraft.block.Block;
+import net.minecraft.block.SlabBlock;
+import net.minecraft.block.StairsBlock;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.Property;
+import net.minecraft.state.properties.SlabType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.ResourceLocation;
@@ -83,7 +86,11 @@ public class IPBlockStates extends BlockStateProvider{
 		hydrotreater();
 		
 		// "Normal" Blocks
+		ResourceLocation rl = modLoc("block/asphalt");
 		simpleBlockWithItem(IPContent.Blocks.asphalt);
+		slabWithItem(IPContent.Blocks.asphalt_slab, rl);
+		stairsWithItem(IPContent.Blocks.asphalt_stair, rl);
+		
 		simpleBlockWithItem(IPContent.Blocks.petcoke);
 		gasGenerator();
 		
@@ -97,6 +104,33 @@ public class IPBlockStates extends BlockStateProvider{
 			
 			getVariantBuilder(f.block).partialState().setModels(new ConfiguredModel(model));
 		}
+	}
+	
+	private void stairsWithItem(StairsBlock block, ResourceLocation texture){
+		String name = block.getRegistryName().toString();
+		
+		ModelFile stairs = models().stairs(name, texture, texture, texture);
+		ModelFile stairsInner = models().stairsInner(name + "_inner", texture, texture, texture);
+		ModelFile stairsOuter = models().stairsOuter(name + "_outer", texture, texture, texture);
+		
+		stairsBlock(block, stairs, stairsInner, stairsOuter);
+		
+		getItemBuilder(block).parent(stairs)
+			.texture("particle", texture);
+	}
+	
+	private void slabWithItem(SlabBlock block, ResourceLocation texture){
+		ModelFile bottom = models().slab(getPath(block), texture, texture, texture);
+		ModelFile top = models().slabTop(getPath(block) + "_top", texture, texture, texture);
+		ModelFile doubleslab = models().getExistingFile(texture);
+		
+		getVariantBuilder(block)
+			.partialState().with(SlabBlock.TYPE, SlabType.BOTTOM).addModels(new ConfiguredModel(bottom))
+			.partialState().with(SlabBlock.TYPE, SlabType.TOP).addModels(new ConfiguredModel(top))
+			.partialState().with(SlabBlock.TYPE, SlabType.DOUBLE).addModels(new ConfiguredModel(doubleslab));
+		
+		getItemBuilder(block).parent(bottom)
+			.texture("particle", texture);
 	}
 	
 	private void distillationtower(){

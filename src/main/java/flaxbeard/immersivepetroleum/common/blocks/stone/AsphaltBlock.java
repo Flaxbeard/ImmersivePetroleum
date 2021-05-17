@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Locale;
 
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
+import flaxbeard.immersivepetroleum.common.blocks.IPBlockSlab;
+import flaxbeard.immersivepetroleum.common.blocks.IPBlockStairs;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -26,6 +28,24 @@ public class AsphaltBlock extends IPBlockBase{
 	
 	@Override
 	public float getSpeedFactor(){
+		return speedFactor();
+	}
+	
+	@Override
+	public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+		tooltip(stack, worldIn, tooltip, flagIn);
+		super.addInformation(stack, worldIn, tooltip, flagIn);
+	}
+	
+	public static void tooltip(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+		if(IPServerConfig.MISCELLANEOUS.asphalt_speed.get()){
+			IFormattableTextComponent out = new TranslationTextComponent("desc.immersivepetroleum.flavour.asphalt", String.format(Locale.ENGLISH, "%.1f%%", (SPEED_FACTOR * 100 - 100))).mergeStyle(TextFormatting.GRAY);
+			
+			tooltip.add(out);
+		}
+	}
+	
+	public static float speedFactor(){
 		if(!IPServerConfig.MISCELLANEOUS.asphalt_speed.get()){
 			return 1.0F;
 		}
@@ -33,14 +53,37 @@ public class AsphaltBlock extends IPBlockBase{
 		return SPEED_FACTOR;
 	}
 	
-	@Override
-	public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		if(IPServerConfig.MISCELLANEOUS.asphalt_speed.get()){
-			IFormattableTextComponent out = new TranslationTextComponent("desc.immersivepetroleum.flavour.asphalt", String.format(Locale.ENGLISH, "%.1f", (SPEED_FACTOR * 100 - 100)) + "%").mergeStyle(TextFormatting.GRAY);
-			
-			tooltip.add(out);
+	public static class AsphaltSlab extends IPBlockSlab<AsphaltBlock>{
+		public AsphaltSlab(AsphaltBlock base){
+			super(base);
 		}
 		
-		super.addInformation(stack, worldIn, tooltip, flagIn);
+		@Override
+		public float getSpeedFactor(){
+			return speedFactor();
+		}
+		
+		@Override
+		public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+			tooltip(stack, worldIn, tooltip, flagIn);
+			super.addInformation(stack, worldIn, tooltip, flagIn);
+		}
+	}
+	
+	public static class AsphaltStairs extends IPBlockStairs<AsphaltBlock>{
+		public AsphaltStairs(AsphaltBlock base){
+			super(base);
+		}
+		
+		@Override
+		public float getSpeedFactor(){
+			return speedFactor();
+		}
+		
+		@Override
+		public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+			tooltip(stack, worldIn, tooltip, flagIn);
+			super.addInformation(stack, worldIn, tooltip, flagIn);
+		}
 	}
 }

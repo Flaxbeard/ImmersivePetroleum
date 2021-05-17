@@ -90,6 +90,8 @@ public class IPContent{
 	
 	public static class Blocks{
 		public static IPBlockBase asphalt;
+		public static AsphaltBlock.AsphaltSlab asphalt_slab;
+		public static AsphaltBlock.AsphaltStairs asphalt_stair;
 		public static IPBlockBase petcoke;
 		
 		public static IPBlockBase gas_generator;
@@ -135,9 +137,13 @@ public class IPContent{
 		Blocks.dummyPipe = new BlockDummy("dummy_pipe");
 		Blocks.dummyConveyor = new BlockDummy("dummy_conveyor");
 		
-		Blocks.asphalt = new AsphaltBlock();
 		Blocks.petcoke = new PetcokeBlock();
-		Blocks.gas_generator=new GasGeneratorBlock();
+		Blocks.gas_generator = new GasGeneratorBlock();
+		
+		AsphaltBlock asphalt = new AsphaltBlock();
+		Blocks.asphalt = asphalt;
+		Blocks.asphalt_slab = new AsphaltBlock.AsphaltSlab(asphalt);
+		Blocks.asphalt_stair = new AsphaltBlock.AsphaltStairs(asphalt);
 		
 		Blocks.auto_lubricator = new AutoLubricatorBlock("auto_lubricator");
 		Blocks.flarestack = new FlarestackBlock();
@@ -179,7 +185,7 @@ public class IPContent{
 		ChemthrowerHandler.registerEffect(IPTags.Fluids.lubricant, new LubricantEffect());
 		ChemthrowerHandler.registerEffect(IPTags.Fluids.lubricant, new ChemthrowerEffect_Potion(null, 0, IEPotions.slippery, 60, 1));
 		ChemthrowerHandler.registerEffect(IETags.fluidPlantoil, new LubricantEffect());
-
+		
 		ChemthrowerHandler.registerFlammable(IPTags.Fluids.crudeOil);
 		ChemthrowerHandler.registerEffect(IPTags.Fluids.crudeOil, new ChemthrowerEffect_Potion(null, 0, IEPotions.flammable, 60, 1));
 		
@@ -196,7 +202,7 @@ public class IPContent{
 		
 		ConfigUtils.addFuel(IPServerConfig.GENERATION.fuels.get());
 		ConfigUtils.addBoatFuel(IPServerConfig.MISCELLANEOUS.boat_fuels.get());
-
+		
 		DieselHandler.registerFuel(IPTags.Fluids.diesel, 320);
 		DieselHandler.registerDrillFuel(IPTags.Fluids.diesel);
 		

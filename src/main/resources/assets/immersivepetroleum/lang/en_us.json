@@ -10,6 +10,8 @@
 	"block.immersivepetroleum.fluid_napalm": "Napalm",
 	
 	"block.immersivepetroleum.asphalt": "Asphalt Concrete",
+	"block.immersivepetroleum.asphalt_slab": "Asphalt Concrete Slab",
+	"block.immersivepetroleum.asphalt_stairs": "Asphalt Concrete Stairs",
 	"block.immersivepetroleum.petcoke_block": "Block of Petcoke",
 	
 	"block.immersivepetroleum.auto_lubricator": "Automatic Lubricator",

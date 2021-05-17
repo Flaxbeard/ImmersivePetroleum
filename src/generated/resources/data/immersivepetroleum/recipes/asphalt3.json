@@ -1,0 +1,15 @@
+{
+  "type": "immersiveengineering:shaped_fluid",
+  "pattern": [
+    "S",
+    "S"
+  ],
+  "key": {
+    "S": {
+      "item": "immersivepetroleum:asphalt_slab"
+    }
+  },
+  "result": {
+    "item": "immersivepetroleum:asphalt"
+  }
+}

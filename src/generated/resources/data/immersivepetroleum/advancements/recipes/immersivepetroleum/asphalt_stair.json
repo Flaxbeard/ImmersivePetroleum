@@ -2,7 +2,7 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "immersivepetroleum:asphalt"
+      "immersivepetroleum:asphalt_stair"
     ]
   },
   "criteria": {
@@ -29,7 +29,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "immersivepetroleum:asphalt"
+        "recipe": "immersivepetroleum:asphalt_stair"
       }
     }
   },

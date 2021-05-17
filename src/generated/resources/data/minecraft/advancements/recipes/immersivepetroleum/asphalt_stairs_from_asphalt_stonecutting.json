@@ -2,26 +2,16 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "immersivepetroleum:asphalt"
+      "minecraft:asphalt_stairs_from_asphalt_stonecutting"
     ]
   },
   "criteria": {
-    "has_bitumen": {
+    "has_asphalt": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "immersivepetroleum:bitumen"
-          }
-        ]
-      }
-    },
-    "has_slag": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "item": "immersiveengineering:slag"
+            "item": "immersivepetroleum:asphalt"
           }
         ]
       }
@@ -29,14 +19,13 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "immersivepetroleum:asphalt"
+        "recipe": "minecraft:asphalt_stairs_from_asphalt_stonecutting"
       }
     }
   },
   "requirements": [
     [
-      "has_bitumen",
-      "has_slag",
+      "has_asphalt",
       "has_the_recipe"
     ]
   ]

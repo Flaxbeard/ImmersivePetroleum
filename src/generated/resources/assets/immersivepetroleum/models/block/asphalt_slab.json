@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "side": "immersivepetroleum:block/asphalt",
+    "bottom": "immersivepetroleum:block/asphalt",
+    "top": "immersivepetroleum:block/asphalt"
+  }
+}

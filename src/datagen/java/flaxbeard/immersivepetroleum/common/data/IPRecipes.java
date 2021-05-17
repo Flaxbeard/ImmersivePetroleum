@@ -32,9 +32,11 @@ import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
 import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.data.ShapelessRecipeBuilder;
+import net.minecraft.data.SingleItemRecipeBuilder;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
@@ -220,6 +222,7 @@ public class IPRecipes extends RecipeProvider{
 			.patternLine("GBG")
 			.patternLine("SCS")
 			.addCriterion("has_bitumen", hasItem(IPContent.Items.bitumen))
+			.addCriterion("has_slag", hasItem(IEItems.Ingredients.slag))
 			.build(this.out, rl("asphalt"));
 		
 		FluidAwareShapedRecipeBuilder.builder(Blocks.asphalt, 12)
@@ -233,6 +236,39 @@ public class IPRecipes extends RecipeProvider{
 			.addCriterion("has_bitumen", hasItem(IPContent.Items.bitumen))
 			.addCriterion("has_slag", hasItem(IEItems.Ingredients.slag))
 			.build(this.out, rl("asphalt"));
+		
+		ShapedRecipeBuilder.shapedRecipe(Blocks.asphalt_stair, 6)
+			.key('A', IPTags.getItemTag(IPTags.Blocks.asphalt))
+			.patternLine("A  ")
+			.patternLine("AA ")
+			.patternLine("AAA")
+			.addCriterion("has_bitumen", hasItem(IPContent.Items.bitumen))
+			.addCriterion("has_slag", hasItem(IEItems.Ingredients.slag))
+			.build(this.out, rl("asphalt_stair"));
+		
+		ShapedRecipeBuilder.shapedRecipe(Blocks.asphalt_slab, 6)
+			.key('A', IPTags.getItemTag(IPTags.Blocks.asphalt))
+			.patternLine("AAA")
+			.addCriterion("has_bitumen", hasItem(IPContent.Items.bitumen))
+			.addCriterion("has_slag", hasItem(IEItems.Ingredients.slag))
+			.build(this.out, rl("asphalt_slab"));
+		
+		FluidAwareShapedRecipeBuilder.builder(Blocks.asphalt, 1)
+			.key('S', Blocks.asphalt_slab)
+			.patternLine("S")
+			.patternLine("S")
+			.addCriterion("has_bitumen", hasItem(IPContent.Items.bitumen))
+			.addCriterion("has_slag", hasItem(IEItems.Ingredients.slag))
+			.build(this.out, rl("asphalt"));
+		
+		SingleItemRecipeBuilder.stonecuttingRecipe(Ingredient.fromItems(Blocks.asphalt), Blocks.asphalt_slab, 2)
+			.addCriterion("has_asphalt", hasItem(Blocks.asphalt))
+			.build(this.out, "asphalt_slab_from_asphalt_stonecutting");
+		
+		SingleItemRecipeBuilder.stonecuttingRecipe(Ingredient.fromItems(Blocks.asphalt), Blocks.asphalt_stair)
+			.addCriterion("has_asphalt", hasItem(Blocks.asphalt))
+			.build(this.out, "asphalt_stairs_from_asphalt_stonecutting");
+		
 		
 		ShapedRecipeBuilder.shapedRecipe(Blocks.gas_generator)
 			.key('P', IETags.getTagsFor(EnumMetals.IRON).plate)

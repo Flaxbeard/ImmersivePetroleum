@@ -8,8 +8,6 @@ import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -23,7 +21,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class FlarestackTileEntity extends TileEntity implements ITickableTileEntity{
+public class FlarestackTileEntity extends IPTileEntityBase implements ITickableTileEntity{
 	protected boolean isActive;
 	protected FluidTank tank = new FluidTank(1000, fstack -> (fstack != null && FlarestackHandler.isBurnable(fstack)));
 	
@@ -36,42 +34,16 @@ public class FlarestackTileEntity extends TileEntity implements ITickableTileEnt
 	}
 	
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
-		
+	public void readCustom(BlockState state, CompoundNBT nbt){
 		this.isActive = nbt.getBoolean("active");
 		this.tank.readFromNBT(nbt.getCompound("tank"));
 	}
 	
 	@Override
-	public CompoundNBT write(CompoundNBT compound){
-		super.write(compound);
-		
+	public void writeCustom(CompoundNBT compound){
 		compound.putBoolean("active", this.isActive);
 		CompoundNBT tank = this.tank.writeToNBT(new CompoundNBT());
 		compound.put("tank", tank);
-		
-		return compound;
-	}
-	
-	@Override
-	public SUpdateTileEntityPacket getUpdatePacket(){
-		return new SUpdateTileEntityPacket(this.pos, 3, getUpdateTag());
-	}
-	
-	@Override
-	public void handleUpdateTag(BlockState state, CompoundNBT tag){
-		read(state, tag);
-	}
-	
-	@Override
-	public CompoundNBT getUpdateTag(){
-		return write(new CompoundNBT());
-	}
-	
-	@Override
-	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt){
-		read(getBlockState(), pkt.getNbtCompound());
 	}
 	
 	public void readTank(CompoundNBT nbt){

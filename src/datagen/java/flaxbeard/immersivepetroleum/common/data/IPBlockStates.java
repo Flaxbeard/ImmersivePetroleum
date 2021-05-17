@@ -18,6 +18,7 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorBlock;
+import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltRamp;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
@@ -29,6 +30,7 @@ import net.minecraft.block.StairsBlock;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.state.EnumProperty;
+import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.Property;
 import net.minecraft.state.properties.SlabType;
 import net.minecraft.util.Direction;
@@ -86,13 +88,9 @@ public class IPBlockStates extends BlockStateProvider{
 		hydrotreater();
 		
 		// "Normal" Blocks
-		ResourceLocation rl = modLoc("block/asphalt");
-		simpleBlockWithItem(IPContent.Blocks.asphalt);
-		slabWithItem(IPContent.Blocks.asphalt_slab, rl);
-		stairsWithItem(IPContent.Blocks.asphalt_stair, rl);
-		
 		simpleBlockWithItem(IPContent.Blocks.petcoke);
 		gasGenerator();
+		asphaltBlocks();
 		
 		autolubricator();
 		flarestack();
@@ -104,6 +102,13 @@ public class IPBlockStates extends BlockStateProvider{
 			
 			getVariantBuilder(f.block).partialState().setModels(new ConfiguredModel(model));
 		}
+	}
+	
+	private void asphaltBlocks(){
+		ResourceLocation texture = modLoc("block/asphalt");
+		simpleBlockWithItem(IPContent.Blocks.asphalt);
+		slabWithItem(IPContent.Blocks.asphalt_slab, texture);
+		stairsWithItem(IPContent.Blocks.asphalt_stair, texture);
 	}
 	
 	private void stairsWithItem(StairsBlock block, ResourceLocation texture){

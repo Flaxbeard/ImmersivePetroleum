@@ -30,6 +30,8 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.HydrotreaterBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltBlock;
+import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltSlab;
+import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltStairs;
 import flaxbeard.immersivepetroleum.common.blocks.stone.PetcokeBlock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.cfg.ConfigUtils;
@@ -90,8 +92,8 @@ public class IPContent{
 	
 	public static class Blocks{
 		public static IPBlockBase asphalt;
-		public static AsphaltBlock.AsphaltSlab asphalt_slab;
-		public static AsphaltBlock.AsphaltStairs asphalt_stair;
+		public static AsphaltSlab asphalt_slab;
+		public static AsphaltStairs asphalt_stair;
 		public static IPBlockBase petcoke;
 		
 		public static IPBlockBase gas_generator;
@@ -142,8 +144,8 @@ public class IPContent{
 		
 		AsphaltBlock asphalt = new AsphaltBlock();
 		Blocks.asphalt = asphalt;
-		Blocks.asphalt_slab = new AsphaltBlock.AsphaltSlab(asphalt);
-		Blocks.asphalt_stair = new AsphaltBlock.AsphaltStairs(asphalt);
+		Blocks.asphalt_slab = new AsphaltSlab(asphalt);
+		Blocks.asphalt_stair = new AsphaltStairs(asphalt);
 		
 		Blocks.auto_lubricator = new AutoLubricatorBlock("auto_lubricator");
 		Blocks.flarestack = new FlarestackBlock();

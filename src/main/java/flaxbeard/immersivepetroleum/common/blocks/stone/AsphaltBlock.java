@@ -18,14 +18,18 @@ import net.minecraft.world.IBlockReader;
 import net.minecraftforge.common.ToolType;
 
 public class AsphaltBlock extends IPBlockBase{
-	private static final float SPEED_FACTOR = 1.20F;
+	protected static final float SPEED_FACTOR = 1.20F;
 	
 	public AsphaltBlock(){
 		this("asphalt");
 	}
 	
 	protected AsphaltBlock(String name){
-		super(name, Block.Properties.create(Material.ROCK).speedFactor(SPEED_FACTOR).hardnessAndResistance(2.0F, 10.0F).harvestTool(ToolType.PICKAXE).sound(SoundType.STONE));
+		this(name, Block.Properties.create(Material.ROCK).speedFactor(SPEED_FACTOR).hardnessAndResistance(2.0F, 10.0F).harvestTool(ToolType.PICKAXE).sound(SoundType.STONE));
+	}
+	
+	protected AsphaltBlock(String name, Block.Properties props){
+		super(name, props);
 	}
 	
 	@Override

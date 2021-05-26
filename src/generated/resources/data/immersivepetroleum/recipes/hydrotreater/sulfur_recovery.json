@@ -4,7 +4,7 @@
   "energy": 512,
   "result": {
     "fluid": "immersivepetroleum:diesel",
-    "amount": 10
+    "amount": 7
   },
   "input": {
     "tag": "forge:diesel_sulfur",

@@ -22,6 +22,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -83,5 +84,5 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 		}
 	}
 	
-	final Quaternion rot = new Quaternion(0, 90, 0, true);
+	final Quaternion rot = new Quaternion(new Vector3f(0F, 1F, 0F), 90, true);
 }

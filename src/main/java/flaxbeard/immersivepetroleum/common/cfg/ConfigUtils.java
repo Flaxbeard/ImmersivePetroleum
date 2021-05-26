@@ -9,9 +9,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class ConfigUtils{
 	
-	public static void addFuel(List<String> fuels){
-		for(int i = 0;i < fuels.size();i++){
-			String str = fuels.get(i);
+	public static void addFuel(List<? extends String> list){
+		for(int i = 0;i < list.size();i++){
+			String str = list.get(i);
 			
 			if(str.isEmpty())
 				continue;
@@ -67,9 +67,9 @@ public class ConfigUtils{
 		}
 	}
 	
-	public static void addBoatFuel(List<String> fuels){
-		for(int i = 0;i < fuels.size();i++){
-			String str = fuels.get(i);
+	public static void addBoatFuel(List<? extends String> list){
+		for(int i = 0;i < list.size();i++){
+			String str = list.get(i);
 			
 			if(str.isEmpty())
 				continue;

@@ -124,22 +124,22 @@ public class IPServerConfig{
 	}
 	
 	public static class Generation{
-		public final ConfigValue<List<String>> fuels;
+		public final ConfigValue<List<? extends String>> fuels;
 		Generation(ForgeConfigSpec.Builder builder){
 			builder.push("Generation");
 			
 			fuels = builder
 					.comment("List of Portable Generator fuels. Format: fluid_name, mb_used_per_tick, flux_produced_per_tick")
-					.define("fuels", Arrays.asList(new String[]{
+					.defineList("fuels", Arrays.asList(new String[]{
 							"immersivepetroleum:gasoline, 5, 256"
-					}));
+					}), o -> true);
 			
 			builder.pop();
 		}
 	}
 	
 	public static class Miscellaneous{
-		public final ConfigValue<List<String>> boat_fuels;
+		public final ConfigValue<List<? extends String>> boat_fuels;
 		public final BooleanValue autounlock_recipes;
 		public final BooleanValue asphalt_speed;
 		Miscellaneous(ForgeConfigSpec.Builder builder){
@@ -147,9 +147,9 @@ public class IPServerConfig{
 			
 			boat_fuels = builder
 					.comment("List of Motorboat fuels. Format: fluid_name, mb_used_per_tick")
-					.define("boat_fuels", Arrays.asList(new String[]{
+					.defineList("boat_fuels", Arrays.asList(new String[]{
 							"immersivepetroleum:gasoline, 1"
-					}));
+					}), o -> true);
 			
 			autounlock_recipes = builder
 					.comment("Automatically unlock IP recipes for new players, default=true")

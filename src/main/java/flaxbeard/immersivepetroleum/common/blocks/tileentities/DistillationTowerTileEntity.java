@@ -36,7 +36,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
@@ -213,13 +212,9 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 					for(int i = outTank.getFluidTypes() - 1;i >= 0;i--){
 						FluidStack fs = outTank.getFluidInTank(i);
 						
-						if(fs.getAmount() >= FluidAttributes.BUCKET_VOLUME){
-							ItemStack filledContainer = fillFluidContainer(fs, this.inventory.get(INV_2), this.inventory.get(INV_3));
+						if(fs.getAmount() > 0){
+							ItemStack filledContainer = fillFluidContainer(outTank, fs, this.inventory.get(INV_2), this.inventory.get(INV_3));
 							if(!filledContainer.isEmpty()){
-								FluidStack copy = fs.copy();
-								copy.setAmount(FluidAttributes.BUCKET_VOLUME);
-								outTank.drain(copy, FluidAction.EXECUTE);
-								
 								if(this.inventory.get(INV_3).getCount() == 1 && !Utils.isFluidContainerFull(filledContainer)){
 									this.inventory.set(INV_3, filledContainer.copy());
 								}else{
@@ -278,11 +273,11 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	 * FluidStack based version of {@link blusunrize.immersiveengineering.common.util.Utils#fillFluidContainer(IFluidHandler, ItemStack, ItemStack, PlayerEntity)}
 	 * minus the useless bits :D
 	 */
-	static ItemStack fillFluidContainer(FluidStack fluid, ItemStack containerIn, ItemStack containerOut){
+	static ItemStack fillFluidContainer(IFluidTank tank, FluidStack fluid, ItemStack containerIn, ItemStack containerOut){
 		if(containerIn == null || containerIn.isEmpty())
 			return ItemStack.EMPTY;
 		
-		FluidActionResult result = tryFillContainer(containerIn, fluid, Integer.MAX_VALUE, false);
+		FluidActionResult result = tryFillContainer(tank, fluid, containerIn, false);
 		if(result.isSuccess()){
 			final ItemStack full = result.getResult();
 			if((containerOut.isEmpty() || ItemHandlerHelper.canItemStacksStack(containerOut, full))){
@@ -290,7 +285,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 					return ItemStack.EMPTY;
 				}
 				
-				result = tryFillContainer(containerIn, fluid, Integer.MAX_VALUE, true);
+				result = tryFillContainer(tank, fluid, containerIn, true);
 				if(result.isSuccess()){
 					return result.getResult();
 				}
@@ -304,14 +299,16 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	 * FluidStack based version of {@link net.minecraftforge.fluids.FluidUtil#tryFillContainer(ItemStack, IFluidHandler, int, PlayerEntity, boolean)}
 	 * minus the useless bits :D
 	 */
-	static FluidActionResult tryFillContainer(@Nonnull ItemStack container, FluidStack fluidSource, int maxAmount, boolean doFill){
+	static FluidActionResult tryFillContainer(IFluidTank tank, FluidStack fluidSource, @Nonnull ItemStack container, boolean doFill){
 		ItemStack containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1);
 		return FluidUtil.getFluidHandler(containerCopy).map(containerFluidHandler -> {
 			
-			int fillableAmount = containerFluidHandler.fill(fluidSource, IFluidHandler.FluidAction.SIMULATE);
+			int fillableAmount = containerFluidHandler.fill(fluidSource, FluidAction.SIMULATE);
 			if(fillableAmount > 0){
 				if(doFill){
-					containerFluidHandler.fill(fluidSource, IFluidHandler.FluidAction.EXECUTE);
+					FluidStack fs = new FluidStack(fluidSource, Math.min(fluidSource.getAmount(), fillableAmount));
+					containerFluidHandler.fill(fs, FluidAction.EXECUTE);
+					tank.drain(fs, FluidAction.EXECUTE);
 				}
 				
 				ItemStack resultContainer = containerFluidHandler.getContainer();

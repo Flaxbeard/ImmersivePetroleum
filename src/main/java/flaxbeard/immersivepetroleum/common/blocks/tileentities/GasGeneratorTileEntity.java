@@ -173,7 +173,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 	
 	@Override
 	public int getAvailableEnergy(){
-		return getMaxOutput();
+		return Math.min(getMaxOutput(), this.energyStorage.getEnergyStored());
 	}
 	
 	@Override

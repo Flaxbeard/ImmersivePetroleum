@@ -99,7 +99,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	private boolean hasPipes(){
 		if(IPServerConfig.EXTRACTION.required_pipes.get()){
 			BlockPos basePos = getBlockPosForPos(Down_Port);
-			for(int y = basePos.getY() - 2;y > 0;y--){
+			for(int y = basePos.getY() - 1;y > 0;y--){
 				BlockPos pos = new BlockPos(basePos.getX(), y, basePos.getZ());
 				BlockState state = this.world.getBlockState(pos);
 				

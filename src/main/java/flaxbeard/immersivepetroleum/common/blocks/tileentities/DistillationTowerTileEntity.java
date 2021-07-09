@@ -410,7 +410,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		
 		TileEntity te = world.getTileEntity(outputpos);
 		if(te!=null){
-			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
+			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputdir.getOpposite()).orElse(null);
 			if(handler!=null){
 				output = ItemHandlerHelper.insertItem(handler, output, false);
 			}

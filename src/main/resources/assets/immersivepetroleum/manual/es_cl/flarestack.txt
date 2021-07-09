@@ -1,0 +1,6 @@
+§lAntorcha de quemado§r
+§oQuema tus problemas§r
+<&flarestack0>Este sencillo dispositivo quema el exceso de líquidos o indeseados a una velocidad de 100mB/t que se bombean a través del fondo.
+
+Se puede apagar aplicando una señal de redstone a su base.<np>
+<&flarestack1>A continuación se muestra una lista de fluidos que pueden ser procesados por la §lantorcha de quemado§r

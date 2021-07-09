@@ -1,0 +1,7 @@
+§lLubricante§r
+§oDeslizar y resbalar§r
+Las máquinas de nadie son perfectas, ni siquiera las suyas. La inevitable fricción entre las piezas móviles impide que sus dispositivos funcionen al máximo de su capacidad: ahí es donde entra en juego el §llubricante§r. Garantizará que una máquina conectada funcione a pleno rendimiento, <config;d;autolubricant_speedup>x es su velocidad base. Las §1<link;immersivepetroleum:pumpjack;unidades de bombeo>§r, las §1<link;excavator;excavadoras>§r, y las §1<link;crusher;trituradoras>§r pueden ser lubricadas.
+<&lubricant1>La §llata de lubricante§r puede utilizarse para aplicar manualmente un fluido lubricante a una máquina. El §llubricante de petróleo§r es el más eficaz, pero el §1<link;squeezer;aceite vegetal>§r también funciona. Una vez que la lata esté llena, basta con hacer clic derecho en un bloque válido para lubricarlo. Mientras se acelera, la máquina goteará visiblemente.
+Los §lgólems de hierro§r también pueden ser lubricados, curándolos y aumentando temporalmente su velocidad y fuerza.
+
+Un §1<link;chemthrower;lanzador químico>§r también puede utilizarse para aplicar lubricante a los bloques, aunque con menos eficacia. Basta con rociar un fluido lubricante válido en una máquina y ésta comenzará a funcionar a toda velocidad.

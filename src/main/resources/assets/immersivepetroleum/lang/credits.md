@@ -3,3 +3,4 @@ LOCALIZATION
 	- de_DE: Vexatos
 	- ru_RU: McModder, lBlitzl
 	- ja_JP: aiun
+	- es_es: Nekrodamus(FrannDzs)

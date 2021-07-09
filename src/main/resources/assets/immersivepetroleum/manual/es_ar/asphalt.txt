@@ -1,0 +1,3 @@
+§lHormigón asfáltico§r
+§oMaterial para carreteras§r
+<&asphalt0>El §lhormigón asfáltico§r, unido por el pegajoso betún, es una alternativa de color más oscuro al §lhormigón§r normal. Puede producirse utilizando los subproductos del procesamiento del §lpetróleo crudo§r en la §1<link;immersivepetroleum:distillationtower;torre de destilación>§r.

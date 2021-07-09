@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
@@ -165,6 +166,6 @@ public class IPServerConfig{
 	
 	@SubscribeEvent
 	public static void onConfigReload(ModConfigEvent ev){
-		
+		FuelHandler.onConfigReload(ev);
 	}
 }

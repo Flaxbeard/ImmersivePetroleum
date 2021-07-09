@@ -7,8 +7,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.cfg.ConfigUtils;
+import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.config.ModConfig.ModConfigEvent;
 
 public class FuelHandler{
 	protected static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/FuelHandler");
@@ -88,5 +91,18 @@ public class FuelHandler{
 	
 	public static Map<ResourceLocation, Integer> getFuelFluxesPerTick(){
 		return portableGenPowerTick;
+	}
+	
+	public static void onConfigReload(ModConfigEvent ev){
+		if(ev.getConfig().getSpec() != IPServerConfig.ALL){
+			return;
+		}
+		
+		portableGenAmountTick.clear();
+		portableGenPowerTick.clear();
+		motorboatAmountTick.clear();
+		
+		ConfigUtils.addFuel(IPServerConfig.GENERATION.fuels.get());
+		ConfigUtils.addBoatFuel(IPServerConfig.MISCELLANEOUS.boat_fuels.get());
 	}
 }

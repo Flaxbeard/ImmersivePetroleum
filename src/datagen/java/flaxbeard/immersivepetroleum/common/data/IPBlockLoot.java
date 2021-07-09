@@ -32,6 +32,8 @@ public class IPBlockLoot extends LootGenerator implements IDataProvider{
 	@Override
 	protected void registerTables(){
 		registerSelfDropping(IPContent.Blocks.asphalt);
+		registerSelfDropping(IPContent.Blocks.asphalt_slab);
+		registerSelfDropping(IPContent.Blocks.asphalt_stair);
 		registerSelfDropping(IPContent.Blocks.flarestack);
 		
 		register(IPContent.Blocks.gas_generator, tileDrop());

@@ -39,6 +39,7 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEnti
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import net.minecraft.block.BlockState;
@@ -334,6 +335,17 @@ public class ClientEventHandler{
 								debugOut.add(toText("  Empty"));
 							}
 						}
+						
+					}else if(te instanceof PumpjackTileEntity){
+						PumpjackTileEntity pump = (PumpjackTileEntity) te;
+						if(!pump.offsetToMaster.equals(BlockPos.ZERO)){
+							pump = pump.master();
+						}
+						
+						debugOut.add(toText("Pumpjack ").mergeStyle(TextFormatting.GOLD)
+								.appendSibling(toText(pump.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED))
+								.appendSibling(toText(pump.shouldRenderAsActive() ? " (Active)" : "").mergeStyle(TextFormatting.GREEN)));
+						debugOut.add(toText(pump.energyStorage.getEnergyStored() + "/" + pump.energyStorage.getMaxEnergyStored() + "RF"));
 						
 					}else if(te instanceof CokerUnitTileEntity){
 						CokerUnitTileEntity coker = (CokerUnitTileEntity) te;

@@ -182,7 +182,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 				int available = getFluidAmount();
 				int residual = getResidualFluid();
 				if(available > 0 || residual > 0){
-					int oilAmnt = getFluidAmount() <= 0 ? residual : getFluidAmount();
+					int oilAmnt = available <= 0 ? residual : available;
 					
 					FluidStack out = new FluidStack(getFluidType(), Math.min(IPServerConfig.EXTRACTION.pumpjack_speed.get(), oilAmnt));
 					Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();

@@ -184,7 +184,6 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 				if(available > 0 || residual > 0){
 					int oilAmnt = getFluidAmount() <= 0 ? residual : getFluidAmount();
 					
-					this.energyStorage.extractEnergy(consumption, false);
 					FluidStack out = new FluidStack(getFluidType(), Math.min(IPServerConfig.EXTRACTION.pumpjack_speed.get(), oilAmnt));
 					Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
 					BlockPos outputPos = master().getBlockPosForPos(East_Port).offset(facing);
@@ -211,6 +210,9 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 						}
 					}
 					
+					if(active){
+						this.energyStorage.extractEnergy(consumption, false);
+					}
 					this.activeTicks++;
 				}
 			}

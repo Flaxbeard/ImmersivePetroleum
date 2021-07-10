@@ -16,8 +16,7 @@ import net.minecraftforge.fml.config.ModConfig.ModConfigEvent;
 public class FuelHandler{
 	protected static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/FuelHandler");
 	
-	static final Map<ResourceLocation, Integer> portableGenAmountTick = new HashMap<>();
-	static final Map<ResourceLocation, Integer> portableGenPowerTick = new HashMap<>();
+	static final Map<ResourceLocation, Values> portablegen = new HashMap<>();
 	
 	static final Map<ResourceLocation, Integer> motorboatAmountTick = new HashMap<>();
 	
@@ -35,8 +34,7 @@ public class FuelHandler{
 	
 	public static void registerPortableGeneratorFuel(ResourceLocation fuelRL, int fluxPerTick, int mbPerTick){
 		if(fuelRL != null && !fuelRL.toString().isEmpty()){
-			portableGenAmountTick.put(fuelRL, mbPerTick);
-			portableGenPowerTick.put(fuelRL, fluxPerTick);
+			portablegen.put(fuelRL, new Values(fluxPerTick, mbPerTick));
 			
 			log.info("Added {} as Portable Generator Fuel. ({}RF/t {}mB/t)", fuelRL, fluxPerTick, mbPerTick);
 		}
@@ -51,10 +49,11 @@ public class FuelHandler{
 	}
 	
 	public static boolean isValidBoatFuel(Fluid fuel){
-		if(fuel != null)
-			return motorboatAmountTick.containsKey(fuel.getRegistryName());
-		
-		return false;
+		return fuel != null ? motorboatAmountTick.containsKey(fuel.getRegistryName()) : false;
+	}
+	
+	public static boolean isValidFuel(Fluid fuel){
+		return fuel != null ? portablegen.containsKey(fuel.getRegistryName()) : false;
 	}
 	
 	public static int getBoatFuelUsedPerTick(Fluid fuel){
@@ -68,29 +67,14 @@ public class FuelHandler{
 		if(!isValidFuel(fuel))
 			return 0;
 		
-		return portableGenAmountTick.get(fuel.getRegistryName());
+		return portablegen.get(fuel.getRegistryName()).mbPerTick;
 	}
 	
 	public static int getFluxGeneratedPerTick(Fluid fuel){
 		if(!isValidFuel(fuel))
 			return 0;
 		
-		return portableGenPowerTick.get(fuel.getRegistryName());
-	}
-	
-	public static boolean isValidFuel(Fluid fuel){
-		if(fuel != null)
-			return portableGenAmountTick.containsKey(fuel.getRegistryName());
-		
-		return false;
-	}
-	
-	public static Map<ResourceLocation, Integer> getFuelAmountsPerTick(){
-		return portableGenAmountTick;
-	}
-	
-	public static Map<ResourceLocation, Integer> getFuelFluxesPerTick(){
-		return portableGenPowerTick;
+		return portablegen.get(fuel.getRegistryName()).fluxPerTick;
 	}
 	
 	public static void onConfigReload(ModConfigEvent ev){
@@ -98,11 +82,19 @@ public class FuelHandler{
 			return;
 		}
 		
-		portableGenAmountTick.clear();
-		portableGenPowerTick.clear();
+		portablegen.clear();
 		motorboatAmountTick.clear();
 		
 		ConfigUtils.addFuel(IPServerConfig.GENERATION.fuels.get());
 		ConfigUtils.addBoatFuel(IPServerConfig.MISCELLANEOUS.boat_fuels.get());
+	}
+	
+	private static class Values{
+		final int fluxPerTick;
+		final int mbPerTick;
+		Values(int fluxPerTick, int mbPerTick){
+			this.fluxPerTick = fluxPerTick;
+			this.mbPerTick = mbPerTick;
+		}
 	}
 }

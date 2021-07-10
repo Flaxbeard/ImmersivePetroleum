@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -167,16 +166,7 @@ public class ClientProxy extends CommonProxy{
 					return Double.valueOf(1.25D);
 				}
 				case "portablegenerator_flux":{
-					Map<ResourceLocation, Integer> map = FuelHandler.getFuelFluxesPerTick();
-					if(map.size() > 0){
-						for(ResourceLocation loc:map.keySet()){
-							if(loc.toString().contains("gasoline")){
-								return map.get(loc);
-							}
-						}
-					}
-					
-					return Integer.valueOf(-1);
+					return FuelHandler.getFluxGeneratedPerTick(IPContent.Fluids.gasoline.getFluid());
 				}
 				default:
 					break;

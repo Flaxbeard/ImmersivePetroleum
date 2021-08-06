@@ -44,6 +44,15 @@ public class OilCanItem extends IPItemBase{
 	}
 	
 	@Override
+	public ICapabilityProvider initCapabilities(ItemStack stack, CompoundNBT nbt){
+		if(!stack.isEmpty()){
+			return new FluidHandlerItemStack(stack, 8000);
+		}
+		
+		return null;
+	}
+	
+	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		if(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY == null)
@@ -61,6 +70,55 @@ public class OilCanItem extends IPItemBase{
 				tooltip.add(new StringTextComponent(I18n.format(Lib.DESC_FLAVOUR + "drill.empty")));
 			}
 		});
+	}
+	
+	@Override
+	public ActionResultType onItemUse(ItemUseContext context){
+		ItemStack stack = context.getItem();
+		PlayerEntity player = context.getPlayer();
+		Hand hand = context.getHand();
+		World world = context.getWorld();
+		BlockPos pos = context.getPos();
+		
+		if(!world.isRemote){
+			TileEntity tileEntity = world.getTileEntity(pos);
+			if(tileEntity != null){
+				IFluidHandler cap = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).orElse(null);
+				
+				if(cap != null && FluidUtil.interactWithFluidHandler(player, hand, cap)){
+					return ActionResultType.SUCCESS;
+				}else{
+					ActionResultType ret = FluidUtil.getFluidHandler(stack).map(handler -> {
+						if(handler instanceof FluidHandlerItemStack){
+							FluidHandlerItemStack can = (FluidHandlerItemStack) handler;
+							
+							if(can.getFluid() != null && LubricantHandler.isValidLube(can.getFluid().getFluid())){
+								int amountNeeded = (LubricantHandler.getLubeAmount(can.getFluid().getFluid()) * 5 * 20);
+								if(can.getFluid().getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getTileEntity(pos), 20 * 30)){
+									player.playSound(SoundEvents.ITEM_BUCKET_EMPTY, 1f, 1f);
+									if(!player.isCreative()){
+										can.drain(amountNeeded, FluidAction.EXECUTE);
+									}
+									return ActionResultType.SUCCESS;
+								}
+							}
+						}
+						
+						return ActionResultType.PASS;
+					}).orElse(ActionResultType.PASS);
+					
+					return ret;
+				}
+			}
+		}
+		
+		return ActionResultType.PASS;
+	}
+	
+	@Override
+	public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker){
+		this.itemInteractionForEntity(stack, (PlayerEntity) null, target, Hand.MAIN_HAND);
+		return true;
 	}
 	
 	@Override
@@ -93,49 +151,6 @@ public class OilCanItem extends IPItemBase{
 	}
 	
 	@Override
-	public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker){
-		this.itemInteractionForEntity(stack, (PlayerEntity) null, target, Hand.MAIN_HAND);
-		return true;
-	}
-	
-	@Override
-	public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context){
-		PlayerEntity player = context.getPlayer();
-		Hand hand = context.getHand();
-		World world = context.getWorld();
-		BlockPos pos = context.getPos();
-		
-		ActionResultType ret = ActionResultType.PASS;
-		TileEntity tileEntity = world.getTileEntity(pos);
-		if(tileEntity != null){
-			IFluidHandler cap = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).orElse(null);
-			
-			if(cap != null && FluidUtil.interactWithFluidHandler(player, hand, cap)){
-				ret = ActionResultType.SUCCESS;
-			}else{
-				ret = ActionResultType.FAIL;
-			}
-		}else{
-			FluidUtil.getFluidHandler(stack).ifPresent(con -> {
-				if(con instanceof FluidHandlerItemStack){
-					FluidHandlerItemStack handler = (FluidHandlerItemStack) con;
-					
-					if(handler.getFluid() != null && LubricantHandler.isValidLube(handler.getFluid().getFluid())){
-						int amountNeeded = (LubricantHandler.getLubeAmount(handler.getFluid().getFluid()) * 5 * 20);
-						if(handler.getFluid().getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getTileEntity(pos), 20 * 30)){
-							player.playSound(SoundEvents.ITEM_BUCKET_EMPTY, 1f, 1f);
-							if(!player.isCreative()){
-								handler.drain(amountNeeded, FluidAction.EXECUTE);
-							}
-						}
-					}
-				}
-			});
-		}
-		return ret;
-	}
-	
-	@Override
 	public boolean hasContainerItem(ItemStack stack){
 		return ItemNBTHelper.hasKey(stack, "jerrycanDrain") || FluidUtil.getFluidContained(stack).isPresent();
 	}
@@ -155,10 +170,5 @@ public class OilCanItem extends IPItemBase{
 			return ret;
 		}
 		return stack;
-	}
-	
-	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, CompoundNBT nbt){
-		return new FluidHandlerItemStack(stack, 8000);
 	}
 }

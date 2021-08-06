@@ -120,6 +120,7 @@ public class LubricatedHandler{
 		
 		if(getHandlerForTile(tile) != null){
 			BlockPos pos = tile.getPos();
+			
 			for(int i = 0;i < lubricatedTiles.size();i++){
 				LubricatedTileInfo info = lubricatedTiles.get(i);
 				if(info.pos.equals(pos) && info.world == tile.getWorld().getDimensionKey()){
@@ -140,10 +141,13 @@ public class LubricatedHandler{
 					return true;
 				}
 			}
+			
 			LubricatedTileInfo lti = new LubricatedTileInfo(tile.getWorld().getDimensionKey(), tile.getPos(), ticks);
 			lubricatedTiles.add(lti);
+			
 			return true;
 		}
+		
 		return false;
 	}
 	

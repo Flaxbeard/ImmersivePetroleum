@@ -9,12 +9,9 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationH
 import flaxbeard.immersivepetroleum.client.model.IPModel;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
-import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -101,8 +98,11 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 			float r1 = (world.rand.nextFloat() - .5F) * 2F;
 			float r2 = (world.rand.nextFloat() - .5F) * 2F;
 			float r3 = world.rand.nextFloat();
-			BlockState n = Fluids.lubricant.block.getDefaultState();
-			world.addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, n), x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
+			//BlockState n = Fluids.lubricant.block.getDefaultState();
+			//world.addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, n), x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
+			
+			// Because making your own particles is so convoluted and confusing
+			world.addParticle(ParticleTypes.DRIPPING_HONEY, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
 		}
 	}
 	

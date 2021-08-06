@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.client;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -15,7 +14,6 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.ItemOverlayUtils;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
-import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
 import blusunrize.immersiveengineering.common.blocks.stone.CoresampleTileEntity;
 import blusunrize.immersiveengineering.common.items.BuzzsawItem;
 import blusunrize.immersiveengineering.common.items.ChemthrowerItem;
@@ -27,7 +25,6 @@ import blusunrize.immersiveengineering.common.items.RevolverItem;
 import blusunrize.immersiveengineering.common.items.SpeedloaderItem;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
@@ -35,11 +32,6 @@ import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.Reserv
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import net.minecraft.block.BlockState;
@@ -67,13 +59,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.LanguageMap;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -86,8 +76,6 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class ClientEventHandler{
 	@SubscribeEvent
@@ -277,167 +265,6 @@ public class ClientEventHandler{
 				}
 			}
 		}
-	}
-	
-	@SubscribeEvent
-	public void renderDebuggingOverlay(RenderGameOverlayEvent.Post event){
-		if(ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
-			PlayerEntity player = ClientUtils.mc().player;
-			
-			ItemStack main = player.getHeldItem(Hand.MAIN_HAND);
-			ItemStack off = player.getHeldItem(Hand.OFF_HAND);
-			
-			if((main != ItemStack.EMPTY && main.getItem() == IPContent.debugItem) || (off != ItemStack.EMPTY && off.getItem() == IPContent.debugItem)){
-				RayTraceResult rt = ClientUtils.mc().objectMouseOver;
-				
-				if(rt != null && rt.getType() == RayTraceResult.Type.BLOCK){
-					BlockRayTraceResult result = (BlockRayTraceResult) rt;
-					World world = player.world;
-					
-					List<ITextComponent> debugOut = new ArrayList<>();
-					
-					TileEntity te = world.getTileEntity(result.getPos());
-					if(te instanceof DistillationTowerTileEntity){
-						DistillationTowerTileEntity tower = (DistillationTowerTileEntity) te;
-						if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
-							tower = tower.master();
-						}
-						
-						debugOut.add(toText("Distillation Tower").mergeStyle(TextFormatting.GOLD)
-								.appendSibling(toText(tower.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED))
-								.appendSibling(toText(tower.shouldRenderAsActive() ? " (Active)" : "").mergeStyle(TextFormatting.GREEN)));
-						debugOut.add(toText(tower.energyStorage.getEnergyStored() + "/" + tower.energyStorage.getMaxEnergyStored() + "RF"));
-						
-						{
-							debugOut.add(toText("Input Fluid").mergeStyle(TextFormatting.UNDERLINE));
-							
-							MultiFluidTank tank = tower.tanks[DistillationTowerTileEntity.TANK_INPUT];
-							if(tank.fluids.size() > 0){
-								for(int i = 0;i < tank.fluids.size();i++){
-									FluidStack fstack = tank.fluids.get(i);
-									debugOut.add(toText("  " + fstack.getDisplayName().getString() + " (" + fstack.getAmount() + "mB)"));
-								}
-							}else{
-								debugOut.add(toText("  Empty"));
-							}
-						}
-						
-						{
-							debugOut.add(toText("Output Fluid(s)").mergeStyle(TextFormatting.UNDERLINE));
-							
-							MultiFluidTank tank = tower.tanks[DistillationTowerTileEntity.TANK_OUTPUT];
-							if(tank.fluids.size() > 0){
-								for(int i = 0;i < tank.fluids.size();i++){
-									FluidStack fstack = tank.fluids.get(i);
-									debugOut.add(toText("  " + fstack.getDisplayName().getString() + " (" + fstack.getAmount() + "mB)"));
-								}
-							}else{
-								debugOut.add(toText("  Empty"));
-							}
-						}
-						
-					}else if(te instanceof PumpjackTileEntity){
-						PumpjackTileEntity pump = (PumpjackTileEntity) te;
-						if(!pump.offsetToMaster.equals(BlockPos.ZERO)){
-							pump = pump.master();
-						}
-						
-						debugOut.add(toText("Pumpjack ").mergeStyle(TextFormatting.GOLD)
-								.appendSibling(toText(pump.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED))
-								.appendSibling(toText(pump.shouldRenderAsActive() ? " (Active)" : "").mergeStyle(TextFormatting.GREEN)));
-						debugOut.add(toText(pump.energyStorage.getEnergyStored() + "/" + pump.energyStorage.getMaxEnergyStored() + "RF"));
-						
-					}else if(te instanceof CokerUnitTileEntity){
-						CokerUnitTileEntity coker = (CokerUnitTileEntity) te;
-						if(!coker.offsetToMaster.equals(BlockPos.ZERO)){
-							coker = coker.master();
-						}
-						
-						debugOut.add(toText("Coker Unit ").mergeStyle(TextFormatting.GOLD)
-								.appendSibling(toText(coker.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED))
-								.appendSibling(toText(coker.shouldRenderAsActive() ? " (Active)" : "").mergeStyle(TextFormatting.GREEN)));
-						debugOut.add(toText(coker.energyStorage.getEnergyStored() + "/" + coker.energyStorage.getMaxEnergyStored() + "RF"));
-						
-						{
-							FluidTank tank = coker.bufferTanks[CokerUnitTileEntity.TANK_INPUT];
-							FluidStack fs = tank.getFluid();
-							debugOut.add(toText("In Buffer: " + (fs.getAmount() + "/" + tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
-						}
-						
-						{
-							FluidTank tank = coker.bufferTanks[CokerUnitTileEntity.TANK_OUTPUT];
-							FluidStack fs = tank.getFluid();
-							debugOut.add(toText("Out Buffer: " + (fs.getAmount() + "/" + tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
-						}
-						
-						for(int i = 0;i < coker.chambers.length;i++){
-							CokingChamber chamber = coker.chambers[i];
-							FluidTank tank = chamber.getTank();
-							FluidStack fs = tank.getFluid();
-							
-							float completed = chamber.getTotalAmount() > 0 ? 100 * (chamber.getOutputAmount() / (float)chamber.getTotalAmount()) : 0;
-							
-							debugOut.add(toText("Chamber " + i).mergeStyle(TextFormatting.UNDERLINE, TextFormatting.AQUA));
-							debugOut.add(toText("State: " + chamber.getState().toString()));
-							debugOut.add(toText("  Tank: " + (fs.getAmount() + "/" + tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
-							debugOut.add(toText("  Content: " + chamber.getTotalAmount() + " / " + chamber.getCapacity()).appendString(" (" + chamber.getInputItem().getDisplayName().getString() + ")"));
-							debugOut.add(toText("  Out: " + chamber.getOutputItem().getDisplayName().getString()));
-							debugOut.add(toText("  " + MathHelper.floor(completed) + "% Completed. (Raw: " + completed + ")"));
-							
-						}
-					}else if(te instanceof HydrotreaterTileEntity){
-						HydrotreaterTileEntity treater = (HydrotreaterTileEntity) te;
-						if(!treater.offsetToMaster.equals(BlockPos.ZERO)){
-							treater = treater.master();
-						}
-						
-						debugOut.add(toText("Sulfur Recovery Unit ").mergeStyle(TextFormatting.GOLD)
-								.appendSibling(toText(treater.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED))
-								.appendSibling(toText(treater.shouldRenderAsActive() ? " (Active)" : "").mergeStyle(TextFormatting.GREEN)));
-						debugOut.add(toText(treater.energyStorage.getEnergyStored() + "/" + treater.energyStorage.getMaxEnergyStored() + "RF"));
-						
-						IFluidTank[] tanks = treater.getInternalTanks();
-						if(tanks != null && tanks.length > 0){
-							for(int i = 0;i < tanks.length;i++){
-								FluidStack fs = tanks[i].getFluid();
-								debugOut.add(toText("Tank " + i + ": " + (fs.getAmount() + "/" + tanks[i].getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
-							}
-						}
-					}
-					
-					if(!debugOut.isEmpty()){
-						if(te instanceof MultiblockPartTileEntity){
-							BlockPos pos = ((MultiblockPartTileEntity<?>)te).posInMultiblock;
-							BlockPos hit = result.getPos();
-							debugOut.add(0, toText("World XYZ: "+hit.getX()+", "+hit.getY()+", "+hit.getZ()));
-							debugOut.add(1, toText("Template XYZ: "+pos.getX()+", "+pos.getY()+", "+pos.getZ()));
-						}
-						
-						MatrixStack matrix = event.getMatrixStack();
-						matrix.push();
-						IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-						for(int i = 0;i < debugOut.size();i++){
-							int w = ClientUtils.font().getStringWidth(debugOut.get(i).getString());
-							int yOff = i * (ClientUtils.font().FONT_HEIGHT + 2);
-							
-							matrix.push();
-							matrix.translate(0, 0, 1);
-							// TODO Great, there goes the background for the text lol
-							GuiHelper.drawColouredRect(1, 1 + yOff, w+1, 10, 0xAF_000000, buffer, matrix);
-							buffer.finish();
-							// Draw string without shadow
-							ClientUtils.font().drawText(matrix, debugOut.get(i), 2, 2 + yOff, -1);
-							matrix.pop();
-						}
-						matrix.pop();
-					}
-				}
-			}
-		}
-	}
-	
-	private IFormattableTextComponent toText(String string){
-		return new StringTextComponent(string);
 	}
 	
 	@SubscribeEvent

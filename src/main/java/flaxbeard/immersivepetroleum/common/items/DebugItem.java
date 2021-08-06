@@ -18,7 +18,6 @@ import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
@@ -198,11 +197,6 @@ public class DebugItem extends IPItemBase{
 					// Server
 				}
 				
-				if(te instanceof CokerUnitTileEntity){
-					CokerUnitTileEntity.updateShapes = true;
-					return ActionResultType.SUCCESS;
-				}
-				
 				return ActionResultType.PASS;
 			}
 			case INFO_TE_DISTILLATION_TOWER:{
@@ -231,23 +225,6 @@ public class DebugItem extends IPItemBase{
 					}
 					
 					player.sendMessage(new StringTextComponent("DistillationTower:\n").appendSibling(tankInText).appendSibling(tankOutText), Util.DUMMY_UUID);
-				}
-				return ActionResultType.PASS;
-			}
-			case INFO_TE_DISTILLATION_TOWER_STEP:{
-				if(te instanceof DistillationTowerTileEntity && !context.getWorld().isRemote){
-					DistillationTowerTileEntity tower = (DistillationTowerTileEntity) te;
-					if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
-						tower = tower.master();
-					}
-					
-					if(!tower.enableStepping){
-						tower.enableStepping = true;
-						player.sendMessage(new StringTextComponent("Enabled Stepping."), Util.DUMMY_UUID);
-					}else{
-						tower.step++;
-						player.sendMessage(new StringTextComponent("Ticked."), Util.DUMMY_UUID);
-					}
 				}
 				return ActionResultType.PASS;
 			}
@@ -447,7 +424,6 @@ public class DebugItem extends IPItemBase{
 		INFO_TE_GASGEN("Info: Portable Generator."),
 		INFO_TE_MULTIBLOCK("Info: Powered Multiblock."),
 		INFO_TE_DISTILLATION_TOWER("Info: Distillation Tower."),
-		INFO_TE_DISTILLATION_TOWER_STEP("Info: Manual DT Ticking."),
 		RESERVOIR("Create/Get Reservoir"),
 		RESERVOIR_BIG_SCAN("Scan 5 Block Radius Area"),
 		CLEAR_RESERVOIR_CACHE("Clear Reservoir Cache"),

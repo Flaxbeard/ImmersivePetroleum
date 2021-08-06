@@ -134,23 +134,8 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		return ItemStackHelper.saveAllItems(new CompoundNBT(), list);
 	}
 	
-	// DEBUGGING
-	public boolean enableStepping = false;
-	public int step = 0;
-	public boolean step(){
-		if(this.step > 0){
-			this.step--;
-			return true;
-		}
-		return false;
-	}
-	
 	@Override
 	public void tick(){
-		if(this.enableStepping && !step()){
-			return;
-		}
-		
 		if(this.cooldownTicks > 0){
 			this.cooldownTicks--;
 		}

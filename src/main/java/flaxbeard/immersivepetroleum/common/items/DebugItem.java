@@ -52,6 +52,26 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
 
 public class DebugItem extends IPItemBase{
+	protected static enum Modes{
+		DISABLED("Disabled"),
+		INFO_SPEEDBOAT("Info: Speedboat."),
+		INFO_TE_AUTOLUBE("Info: AutoLubricator."),
+		INFO_TE_GASGEN("Info: Portable Generator."),
+		INFO_TE_MULTIBLOCK("Info: Powered Multiblock."),
+		INFO_TE_DISTILLATION_TOWER("Info: Distillation Tower."),
+		RESERVOIR("Create/Get Reservoir"),
+		RESERVOIR_BIG_SCAN("Scan 5 Block Radius Area"),
+		CLEAR_RESERVOIR_CACHE("Clear Reservoir Cache"),
+		REFRESH_ALL_IPMODELS("Refresh all IPModels"),
+		GENERAL_TEST("You may not want to trigger this.")
+		;
+		
+		public final String display;
+		private Modes(String display){
+			this.display = display;
+		}
+	}
+	
 	public DebugItem(){
 		super("debug");
 	}
@@ -414,26 +434,6 @@ public class DebugItem extends IPItemBase{
 					}
 				}
 			}
-		}
-	}
-	
-	protected static enum Modes{
-		DISABLED("Disabled"),
-		INFO_SPEEDBOAT("Info: Speedboat."),
-		INFO_TE_AUTOLUBE("Info: AutoLubricator."),
-		INFO_TE_GASGEN("Info: Portable Generator."),
-		INFO_TE_MULTIBLOCK("Info: Powered Multiblock."),
-		INFO_TE_DISTILLATION_TOWER("Info: Distillation Tower."),
-		RESERVOIR("Create/Get Reservoir"),
-		RESERVOIR_BIG_SCAN("Scan 5 Block Radius Area"),
-		CLEAR_RESERVOIR_CACHE("Clear Reservoir Cache"),
-		REFRESH_ALL_IPMODELS("Refresh all IPModels"),
-		GENERAL_TEST("You may not want to trigger this.")
-		;
-		
-		public final String display;
-		private Modes(String display){
-			this.display = display;
 		}
 	}
 }

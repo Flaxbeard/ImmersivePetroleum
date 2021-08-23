@@ -143,14 +143,7 @@ public class ProjectorScreen extends Screen{
 		
 		// Lazy search based on content
 		list.removeIf(str -> {
-			IMultiblock mb = this.multiblocks.get().get(Integer.valueOf(str));
-			String name;
-			if(mb instanceof UnionMultiblock && mb.getUniqueName().getPath().contains("excavator_demo")){
-				name = I18n.format("desc.immersiveengineering.info.multiblock.IE:Excavator") + "2";
-			}else{
-				name = I18n.format("desc.immersiveengineering.info.multiblock.IE:" + ProjectorItem.getActualMBName(mb));
-			}
-			
+			String name = getMBName(Integer.valueOf(str));
 			return !name.toLowerCase().contains(this.searchField.getText().toLowerCase());
 		});
 		
@@ -159,13 +152,7 @@ public class ProjectorScreen extends Screen{
 		guilist.setPadding(1, 1, 1, 1);
 		guilist.setTextColor(0);
 		guilist.setTextHoverColor(0x7F7FFF);
-		guilist.setTranslationFunc(str -> {
-			IMultiblock mb = this.multiblocks.get().get(Integer.valueOf(str));
-			if(mb instanceof UnionMultiblock && mb.getUniqueName().getPath().contains("excavator_demo")){
-				return I18n.format("desc.immersiveengineering.info.multiblock.IE:Excavator") + "2";
-			}
-			return I18n.format("desc.immersiveengineering.info.multiblock.IE:" + ProjectorItem.getActualMBName(mb));
-		});
+		guilist.setTranslationFunc(str -> getMBName(Integer.valueOf(str)));
 		
 		if(!exists){
 			this.list = addButton(guilist);
@@ -177,6 +164,14 @@ public class ProjectorScreen extends Screen{
 		this.list = guilist;
 		if(a != -1) this.buttons.set(a, this.list);
 		if(b != -1) this.children.set(b, this.list);
+	}
+	
+	private String getMBName(int index){
+		IMultiblock mb = this.multiblocks.get().get(index);
+		if(mb instanceof UnionMultiblock && mb.getUniqueName().getPath().contains("excavator_demo")){
+			return I18n.format("desc.immersiveengineering.info.multiblock.IE:Excavator") + "2";
+		}
+		return I18n.format("desc.immersiveengineering.info.multiblock.IE:" + ProjectorItem.getActualMBName(mb));
 	}
 	
 	@Override

@@ -22,6 +22,8 @@ repositories {
 	maven {	name = "BlameJared";	url = "https://maven.blamejared.com/" }         // IE & CT Files
 	maven { name = "DVS1 Maven FS"; url = "https://dvs1.progwml6.com/files/maven" } // JEI & Tinkers Files
 	maven { url = 'https://maven.latmod.com/' }                                     // Needed for JEI
+	
+	flatDir { dirs 'flatdir' }
 }
 
 sourceSets {
@@ -102,9 +104,9 @@ minecraft {
 dependencies {
 	minecraft "net.minecraftforge:forge:1.16.5-36.1.0"
 	
-	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-135")
+	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.2-137")
 	//compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-135:api")
-	datagenCompile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-135:datagen")
+	datagenCompile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.2-137:datagen")
 	
 	compile fg.deobf(group: "com.blamejared.crafttweaker", name: "CraftTweaker-1.16.5", version: "7.1.0.103")
 	

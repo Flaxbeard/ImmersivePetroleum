@@ -141,6 +141,14 @@ public class ProjectorScreen extends Screen{
 			}
 		}
 		
+		// Sorting in alphabetical order
+		list.sort((a, b) ->{
+			String nameA = getMBName(Integer.valueOf(a));
+			String nameB = getMBName(Integer.valueOf(b));
+			
+			return nameA.compareToIgnoreCase(nameB);
+		});
+		
 		// Lazy search based on content
 		list.removeIf(str -> {
 			String name = getMBName(Integer.valueOf(str));

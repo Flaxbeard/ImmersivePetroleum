@@ -113,7 +113,7 @@ public class ReservoirCommand{
 		}
 		
 		info.overrideType = reservoir;
-		IPSaveData.setDirty();
+		IPSaveData.markInstanceAsDirty();
 		sender.sendFeedback(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.set.sucess", reservoir.name), true);
 	}
 	
@@ -132,7 +132,7 @@ public class ReservoirCommand{
 		
 		info.overrideType = reservoir;
 		playerEntity.sendMessage(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.set.sucess", reservoir.name), Util.DUMMY_UUID);
-		IPSaveData.setDirty();
+		IPSaveData.markInstanceAsDirty();
 		
 		return Command.SINGLE_SUCCESS;
 	}
@@ -146,7 +146,7 @@ public class ReservoirCommand{
 		
 		info.current = amount;
 		playerEntity.sendMessage(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.setAmount.sucess", Integer.toString(amount)), Util.DUMMY_UUID);
-		IPSaveData.setDirty();
+		IPSaveData.markInstanceAsDirty();
 		
 		return Command.SINGLE_SUCCESS;
 	}
@@ -158,7 +158,7 @@ public class ReservoirCommand{
 		
 		info.capacity = amount;
 		playerEntity.sendMessage(new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.setCapacity.sucess", Integer.toString(amount)), Util.DUMMY_UUID);
-		IPSaveData.setDirty();
+		IPSaveData.markInstanceAsDirty();
 		
 		return Command.SINGLE_SUCCESS;
 	}

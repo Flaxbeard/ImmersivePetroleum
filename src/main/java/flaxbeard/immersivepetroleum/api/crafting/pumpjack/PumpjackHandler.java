@@ -199,7 +199,7 @@ public class PumpjackHandler{
 	public static void depleteFluid(World world, int chunkX, int chunkZ, int amount){
 		ReservoirWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
 		info.current = Math.max(info.current - amount, 0);
-		IPSaveData.setDirty();
+		IPSaveData.markInstanceAsDirty();
 	}
 	
 	/**

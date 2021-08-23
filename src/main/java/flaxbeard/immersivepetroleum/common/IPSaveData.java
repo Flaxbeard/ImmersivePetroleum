@@ -12,7 +12,6 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.world.storage.WorldSavedData;
 
 public class IPSaveData extends WorldSavedData{
-	private static IPSaveData INSTANCE;
 	public static final String dataName = "ImmersivePetroleum-SaveData";
 	
 	public IPSaveData(){
@@ -65,7 +64,10 @@ public class IPSaveData extends WorldSavedData{
 		return nbt;
 	}
 	
-	public static void setDirty(){
+	
+	private static IPSaveData INSTANCE;
+	
+	public static void markInstanceAsDirty(){
 		INSTANCE.markDirty();
 	}
 	

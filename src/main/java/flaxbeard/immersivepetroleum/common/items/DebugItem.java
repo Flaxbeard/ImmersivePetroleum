@@ -148,7 +148,7 @@ public class DebugItem extends IPItemBase{
 					PumpjackHandler.reservoirsCache.clear();
 					PumpjackHandler.recalculateChances();
 					
-					IPSaveData.setDirty();
+					IPSaveData.markInstanceAsDirty();
 					
 					playerIn.sendStatusMessage(new StringTextComponent("Cleared Oil Cache. (Removed " + contentSize + ")"), true);
 					

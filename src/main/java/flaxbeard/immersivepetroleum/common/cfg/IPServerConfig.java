@@ -7,7 +7,6 @@ import java.util.List;
 import com.electronwill.nightconfig.core.Config;
 import com.google.common.base.Preconditions;
 
-import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -44,7 +43,7 @@ public class IPServerConfig{
 			try{
 				Field childConfig = ForgeConfigSpec.class.getDeclaredField("childConfig");
 				childConfig.setAccessible(true);
-				rawConfig = (Config) childConfig.get(IEServerConfig.CONFIG_SPEC);
+				rawConfig = (Config) childConfig.get(ALL);
 				Preconditions.checkNotNull(rawConfig);
 			}catch(Exception x){
 				throw new RuntimeException(x);

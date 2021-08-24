@@ -101,6 +101,7 @@ public class ProjectorScreen extends Screen{
 		
 		addButton(new ConfirmButton(this.guiLeft + 115, this.guiTop + 10, but -> {
 			ItemStack held = Minecraft.getInstance().player.getHeldItem(this.hand);
+			this.settings.setMode(Settings.Mode.PROJECTION);
 			this.settings.applyTo(held);
 			this.settings.sendPacketToServer(this.hand);
 			Minecraft.getInstance().currentScreen.closeScreen();

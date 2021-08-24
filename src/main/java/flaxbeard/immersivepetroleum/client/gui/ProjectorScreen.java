@@ -21,6 +21,7 @@ import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -100,11 +101,16 @@ public class ProjectorScreen extends Screen{
 		this.searchField = addButton(new SearchField(this.font, this.guiLeft + 25, this.guiTop + 13));
 		
 		addButton(new ConfirmButton(this.guiLeft + 115, this.guiTop + 10, but -> {
-			ItemStack held = Minecraft.getInstance().player.getHeldItem(this.hand);
+			ClientPlayerEntity player = Minecraft.getInstance().player;
+			
 			this.settings.setMode(Settings.Mode.PROJECTION);
+			
+			ItemStack held = player.getHeldItem(this.hand);
 			this.settings.applyTo(held);
 			this.settings.sendPacketToServer(this.hand);
 			Minecraft.getInstance().currentScreen.closeScreen();
+			
+			player.sendStatusMessage(this.settings.getMode().getTranslated(), true);
 		}));
 		addButton(new CancelButton(this.guiLeft + 115, this.guiTop + 34, but -> {
 			Minecraft.getInstance().currentScreen.closeScreen();

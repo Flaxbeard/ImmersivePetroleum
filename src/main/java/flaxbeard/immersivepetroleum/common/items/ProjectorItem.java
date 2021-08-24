@@ -618,6 +618,9 @@ public class ProjectorItem extends IPItemBase{
 						float red = (i >> 16 & 0xFF) / 255F;
 						float green = (i >> 8 & 0xFF) / 255F;
 						float blue = (i & 0xFF) / 255F;
+						
+						modelData = ibakedmodel.getModelData(rInfo.templateWorld, rInfo.tBlockInfo.pos, state, modelData);
+						
 						blockRenderer.renderModel(matrix.getLast(), buffer.getBuffer(RenderType.getTranslucent()), state, ibakedmodel, red, green, blue, 0xF000F0, OverlayTexture.NO_OVERLAY, modelData);
 						
 					}else if(blockrendertype == BlockRenderType.ENTITYBLOCK_ANIMATED){

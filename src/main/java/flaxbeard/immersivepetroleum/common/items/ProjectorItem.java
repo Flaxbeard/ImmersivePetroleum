@@ -111,8 +111,11 @@ public class ProjectorItem extends IPItemBase{
 			tooltip.add(new TranslationTextComponent("desc.immersivepetroleum.info.projector.build1", new TranslationTextComponent("desc.immersiveengineering.info.multiblock.IE:" + name)));
 			
 			if(isPressing(GLFW.GLFW_KEY_LEFT_SHIFT) || isPressing(GLFW.GLFW_KEY_RIGHT_SHIFT)){
+				ITextComponent title = new TranslationTextComponent("desc.immersivepetroleum.info.projector.holdshift.text").mergeStyle(TextFormatting.DARK_AQUA);
+				tooltip.add(title);
+				
 				ITextComponent mbSize = new TranslationTextComponent("desc.immersivepetroleum.info.projector.size", size.getX(), size.getY(), size.getZ()).mergeStyle(TextFormatting.DARK_GRAY);
-				tooltip.add(mbSize);
+				tooltip.add(indent(mbSize));
 				
 				Direction dir = Direction.byHorizontalIndex(settings.getRotation().ordinal());
 				ITextComponent rotation = new TranslationTextComponent("desc.immersivepetroleum.info.projector.rotated." + dir).mergeStyle(TextFormatting.DARK_GRAY);
@@ -129,11 +132,12 @@ public class ProjectorItem extends IPItemBase{
 					int y = settings.getPos().getY();
 					int z = settings.getPos().getZ();
 					
-					tooltip.add(new TranslationTextComponent("desc.immersivepetroleum.info.projector.center", x, y, z).mergeStyle(TextFormatting.DARK_GRAY));
+					ITextComponent centerText = new TranslationTextComponent("desc.immersivepetroleum.info.projector.center", x, y, z).mergeStyle(TextFormatting.DARK_GRAY);
+					tooltip.add(indent(centerText));
 				}
 				
-				tooltip.add(rotation);
-				tooltip.add(flip);
+				tooltip.add(indent(rotation));
+				tooltip.add(indent(flip));
 			}else{
 				ITextComponent text = new StringTextComponent("[")
 						.appendSibling(new TranslationTextComponent("desc.immersivepetroleum.info.projector.holdshift"))
@@ -144,13 +148,15 @@ public class ProjectorItem extends IPItemBase{
 			}
 			
 			if(isPressing(GLFW.GLFW_KEY_LEFT_CONTROL) || isPressing(GLFW.GLFW_KEY_RIGHT_CONTROL)){
+				ITextComponent title = new TranslationTextComponent("desc.immersivepetroleum.info.projector.holdctrl.text").mergeStyle(TextFormatting.DARK_PURPLE);
 				ITextComponent ctrl0 = new TranslationTextComponent("desc.immersivepetroleum.info.projector.control1").mergeStyle(TextFormatting.DARK_GRAY);
 				ITextComponent ctrl1 = new TranslationTextComponent("desc.immersivepetroleum.info.projector.control2", ClientProxy.keybind_preview_flip.func_238171_j_()).mergeStyle(TextFormatting.DARK_GRAY);
 				ITextComponent ctrl2 = new TranslationTextComponent("desc.immersivepetroleum.info.projector.control3").mergeStyle(TextFormatting.DARK_GRAY);
 				
-				tooltip.add(ctrl0);
-				tooltip.add(ctrl1);
-				tooltip.add(ctrl2);
+				tooltip.add(title);
+				tooltip.add(indent(ctrl0));
+				tooltip.add(indent(ctrl1));
+				tooltip.add(indent(ctrl2));
 			}else{
 				ITextComponent text = new StringTextComponent("[")
 						.appendSibling(new TranslationTextComponent("desc.immersivepetroleum.info.projector.holdctrl"))
@@ -162,6 +168,10 @@ public class ProjectorItem extends IPItemBase{
 		}else{
 			tooltip.add(new TranslationTextComponent("desc.immersivepetroleum.info.projector.noMultiblock"));
 		}
+	}
+	
+	private ITextComponent indent(ITextComponent text){
+		return new StringTextComponent("  ").appendSibling(text);
 	}
 	
 	/** Find the key that is being pressed while minecraft is in focus */

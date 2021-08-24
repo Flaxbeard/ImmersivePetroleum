@@ -93,11 +93,11 @@
 	"desc.immersivepetroleum.info.projector.mode_0": "Selection Mode",
 	"desc.immersivepetroleum.info.projector.mode_1": "Projection Mode",
 	
-	"desc.immersivepetroleum.info.projector.holdshift": "Hold Shift",
-	"desc.immersivepetroleum.info.projector.holdshift.text": "For stats",
+	"desc.immersivepetroleum.info.projector.holdshift": "Shift",
+	"desc.immersivepetroleum.info.projector.holdshift.text": "Stats",
 	
-	"desc.immersivepetroleum.info.projector.holdctrl": "Hold Ctrl",
-	"desc.immersivepetroleum.info.projector.holdctrl.text": "For control scheme",
+	"desc.immersivepetroleum.info.projector.holdctrl": "Ctrl",
+	"desc.immersivepetroleum.info.projector.holdctrl.text": "Keybinds",
 	
 	"desc.immersivepetroleum.info.projector.control1": "Shift + Scroll-UP/DOWN to Rotate",
 	"desc.immersivepetroleum.info.projector.control2": "%s to Mirror",

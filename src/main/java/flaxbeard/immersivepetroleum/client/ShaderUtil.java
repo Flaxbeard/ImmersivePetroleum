@@ -65,10 +65,10 @@ public class ShaderUtil{
 			return 0;
 		}
 		
-		if(ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == GL11.GL_FALSE){
-			System.out.println("BAD: " + getLogInfo(program));
-			return 0;
-		}
+//		if(ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == GL11.GL_FALSE){
+//			System.out.println("BAD: " + getLogInfo(program));
+//			return 0;
+//		}
 		
 		return program;
 	}

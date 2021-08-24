@@ -288,6 +288,14 @@ public class ProjectorItem extends IPItemBase{
 							BlockState tstate1 = event.getState();
 							
 							if(world.setBlockState(realPos, tstate1)){
+								if(tstate0 == tstate1 && info.tBlockInfo.nbt != null){
+									TileEntity te = world.getTileEntity(realPos);
+									
+									te.mirror(info.settings.getMirror());
+									te.rotate(info.settings.getRotation());
+									te.markDirty();
+								}
+								
 								ProjectorEvent.PlaceBlockPost postEvent = new ProjectorEvent.PlaceBlockPost(info.multiblock, info.templateWorld, event.getTemplatePos(), world, realPos, tstate1, settings.getRotation());
 								MinecraftForge.EVENT_BUS.post(postEvent);
 							}
@@ -429,6 +437,12 @@ public class ProjectorItem extends IPItemBase{
 							BlockPos realPos = info.tPos.add(hit);
 							BlockState toCompare = world.getBlockState(realPos);
 							BlockState tState = info.getModifiedState(world, realPos);
+							
+							TileEntity te = info.templateWorld.getTileEntity(realPos);
+							if(te != null){
+								te.mirror(info.settings.getMirror());
+								te.rotate(info.settings.getRotation());
+							}
 							
 							boolean skip = false;
 							if(tState == toCompare){

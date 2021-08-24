@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -67,7 +67,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
@@ -279,18 +278,19 @@ public class ProjectorItem extends IPItemBase{
 						hit.setAndOffset(hit, 0, -2, 0);
 					}
 					
-					Predicate<MultiblockProjection.Info> pred = layer -> {
-						BlockState tstate = layer.templateWorld.getBlockState(layer.templatePos);
-						tstate = tstate.rotate(world, pos, settings.getRotation());
+					// Creative Placement
+					BiPredicate<Integer, MultiblockProjection.Info> pred = (layer, info) -> {
+						BlockPos realPos = info.tPos.add(hit);
+						BlockState tstate0 = info.getModifiedState(world, realPos);
 						
-						ProjectorEvent.PlaceBlock event = new ProjectorEvent.PlaceBlock(layer.multiblock, layer.templateWorld, layer.templatePos, world, layer.tPos, tstate, settings.getRotation());
+						ProjectorEvent.PlaceBlock event = new ProjectorEvent.PlaceBlock(info.multiblock, info.templateWorld, info.tBlockInfo.pos, world, realPos, tstate0, settings.getRotation());
 						if(!MinecraftForge.EVENT_BUS.post(event)){
-							tstate = event.getState();
+							BlockState tstate1 = event.getState();
 							
-							world.setBlockState(layer.tPos.add(hit), tstate);
-							
-							ProjectorEvent.PlaceBlockPost postEvent = new ProjectorEvent.PlaceBlockPost(layer.multiblock, layer.templateWorld, event.getTemplatePos(), world, layer.tPos, event.getState(), settings.getRotation());
-							MinecraftForge.EVENT_BUS.post(postEvent);
+							if(world.setBlockState(realPos, tstate1)){
+								ProjectorEvent.PlaceBlockPost postEvent = new ProjectorEvent.PlaceBlockPost(info.multiblock, info.templateWorld, event.getTemplatePos(), world, realPos, tstate1, settings.getRotation());
+								MinecraftForge.EVENT_BUS.post(postEvent);
+							}
 						}
 						
 						return false; // Don't ever skip a step.
@@ -299,9 +299,7 @@ public class ProjectorItem extends IPItemBase{
 					MultiblockProjection projection = new MultiblockProjection(world, settings.getMultiblock());
 					projection.setFlip(settings.isMirrored());
 					projection.setRotation(settings.getRotation());
-					for(int i = 0;i < projection.getLayerCount();i++){
-						projection.process(i, pred);
-					}
+					projection.processAll(pred);
 				}
 				
 				return ActionResultType.SUCCESS;
@@ -414,7 +412,7 @@ public class ProjectorItem extends IPItemBase{
 				projection.setRotation(settings.getRotation());
 				projection.setFlip(settings.isMirrored());
 				
-				final List<RenderInfo> toRender = new ArrayList<>();
+				final List<Pair<RenderLayer, MultiblockProjection.Info>> toRender = new ArrayList<>();
 				final MutableInt currentLayer = new MutableInt();
 				final MutableInt badBlocks = new MutableInt();
 				final MutableInt goodBlocks = new MutableInt();
@@ -428,32 +426,33 @@ public class ProjectorItem extends IPItemBase{
 					
 					if(isPlaced.booleanValue()){ // Render only slices when placed
 						if(layer == currentLayer.getValue()){
+							BlockPos realPos = info.tPos.add(hit);
+							BlockState toCompare = world.getBlockState(realPos);
+							BlockState tState = info.getModifiedState(world, realPos);
+							
 							boolean skip = false;
-							BlockState toCompare = world.getBlockState(info.tPos.add(hit));
-							BlockState tState = info.templateWorld.getBlockState(info.templatePos).rotate(world, info.tPos.add(hit), info.settings.getRotation());
 							if(tState == toCompare){
-								toRender.add(new RenderInfo(RenderInfo.Layer.PERFECT, info));
+								toRender.add(Pair.of(RenderLayer.PERFECT, info));
 								goodBlocks.increment();
 								skip = true;
 							}else{
 								// Making it this far only needs an air check,
 								// the other already proved to be false.
-								if(!toCompare.getBlockState().getBlock().isAir(toCompare.getBlockState(), info.templateWorld, info.tPos.add(hit))){
-									toRender.add(new RenderInfo(RenderInfo.Layer.BAD, info));
+								if(!toCompare.getBlock().isAir(toCompare, info.templateWorld, realPos)){
+									toRender.add(Pair.of(RenderLayer.BAD, info));
 									skip = true;
 								}else{
 									badBlocks.increment();
 								}
 							}
 							
-							if(!skip){
-								toRender.add(new RenderInfo(RenderInfo.Layer.ALL, info));
+							if(skip){
+								return false;
 							}
 						}
-					}else{ // Render all when not placed
-						toRender.add(new RenderInfo(RenderInfo.Layer.ALL, info));
 					}
 					
+					toRender.add(Pair.of(RenderLayer.ALL, info));
 					return false;
 				};
 				projection.processAll(bipred);
@@ -466,19 +465,21 @@ public class ProjectorItem extends IPItemBase{
 				matrix.translate(hit.getX(), hit.getY(), hit.getZ());
 				
 				toRender.sort((a, b) -> {
-					if(a.layer.ordinal() > b.layer.ordinal()){
+					if(a.getLeft().ordinal() > b.getLeft().ordinal()){
 						return 1;
-					}else if(a.layer.ordinal() < b.layer.ordinal()){
+					}else if(a.getLeft().ordinal() < b.getLeft().ordinal()){
 						return -1;
 					}
 					return 0;
 				});
 				
 				ItemStack heldStack = player.getHeldItemMainhand();
-				for(RenderInfo rInfo:toRender){
-					switch(rInfo.layer){
+				for(Pair<RenderLayer, MultiblockProjection.Info> pair:toRender){
+					MultiblockProjection.Info rInfo = pair.getRight();
+					
+					switch(pair.getLeft()){
 						case ALL:{ // All / Slice
-							boolean held = heldStack.getItem() == rInfo.getState().getBlock().asItem();
+							boolean held = heldStack.getItem() == rInfo.getRawState().getBlock().asItem();
 							float alpha = held ? 0.55F : 0.25F;
 							
 							matrix.push();
@@ -495,7 +496,7 @@ public class ProjectorItem extends IPItemBase{
 						case BAD:{ // Bad block
 							matrix.push();
 							{
-								matrix.translate(rInfo.worldPos.getX(), rInfo.worldPos.getY(), rInfo.worldPos.getZ());
+								matrix.translate(rInfo.tPos.getX(), rInfo.tPos.getY(), rInfo.tPos.getZ());
 								
 								renderCenteredOutlineBox(matrix, 0xFF0000, flicker);
 							}
@@ -503,9 +504,9 @@ public class ProjectorItem extends IPItemBase{
 							break;
 						}
 						case PERFECT:{
-							int x = rInfo.worldPos.getX();
-							int y = rInfo.worldPos.getY();
-							int z = rInfo.worldPos.getZ();
+							int x = rInfo.tPos.getX();
+							int y = rInfo.tPos.getY();
+							int z = rInfo.tPos.getZ();
 							
 							min.setPos(
 									(x < min.getX() ? x : min.getX()),
@@ -561,29 +562,25 @@ public class ProjectorItem extends IPItemBase{
 			}
 		}
 		
-		private static void renderPhantom(MatrixStack matrix, World world, RenderInfo rInfo, boolean mirror, float flicker, float alpha, float partialTicks){
-			renderPhantom(matrix, rInfo.multiblock, rInfo.templateWorld, world, rInfo.templatePos, rInfo.worldPos, rInfo.settings.getRotation(), mirror, flicker, alpha, partialTicks);
-		}
-		
-		private static void renderPhantom(MatrixStack matrix, IMultiblock multiblock, World templateWorld, World world, BlockPos templatePos, BlockPos worldPos, Rotation rotation, boolean mirror, float flicker, float alpha, float partialTicks){
+		private static void renderPhantom(MatrixStack matrix, World realWorld, MultiblockProjection.Info rInfo, boolean mirror, float flicker, float alpha, float partialTicks){
 			BlockRendererDispatcher dispatcher = ClientUtils.mc().getBlockRendererDispatcher();
 			BlockModelRenderer blockRenderer = dispatcher.getBlockModelRenderer();
 			BlockColors blockColors = ClientUtils.mc().getBlockColors();
 			
 			// Centers the preview block
-			matrix.translate(worldPos.getX(), worldPos.getY(), worldPos.getZ());
+			matrix.translate(rInfo.tPos.getX(), rInfo.tPos.getY(), rInfo.tPos.getZ());
 			
 			IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
 			
-			BlockState state = templateWorld.getBlockState(templatePos);
-			state = state.rotate(world, worldPos, rotation);
+			BlockState state = rInfo.getModifiedState(realWorld, rInfo.tPos);
 			
-			ProjectorEvent.RenderBlock renderEvent = new ProjectorEvent.RenderBlock(multiblock, templateWorld, templatePos, world, worldPos, state, rotation);
+			ProjectorEvent.RenderBlock renderEvent = new ProjectorEvent.RenderBlock(rInfo.multiblock, rInfo.templateWorld, rInfo.tBlockInfo.pos, realWorld, rInfo.tPos, state, rInfo.settings.getRotation());
 			if(!MinecraftForge.EVENT_BUS.post(renderEvent)){
 				state = renderEvent.getState();
+				state.updateNeighbours(realWorld, rInfo.tPos, 3);
 				
 				IModelData modelData = EmptyModelData.INSTANCE;
-				TileEntity te = templateWorld.getTileEntity(templatePos);
+				TileEntity te = rInfo.templateWorld.getTileEntity(rInfo.tBlockInfo.pos);
 				if(te != null){
 					te.cachedBlockState = state;
 					modelData = te.getModelData();
@@ -802,29 +799,7 @@ public class ProjectorItem extends IPItemBase{
 		}
 	}
 	
-	private static class RenderInfo{
-		public final Layer layer;
-		public final IMultiblock multiblock;
-		public final World templateWorld;
-		public final BlockPos templatePos;
-		public final BlockPos worldPos;
-		public final PlacementSettings settings;
-		
-		public RenderInfo(Layer layer, MultiblockProjection.Info info){
-			this.layer = layer;
-			this.multiblock = info.multiblock;
-			this.templateWorld = info.templateWorld;
-			this.templatePos = info.templatePos;
-			this.settings = info.settings;
-			this.worldPos = info.tPos;
-		}
-		
-		public BlockState getState(){
-			return this.templateWorld.getBlockState(this.templatePos);
-		}
-		
-		public static enum Layer{
-			ALL, BAD, PERFECT;
-		}
+	public static enum RenderLayer{
+		ALL, BAD, PERFECT;
 	}
 }

@@ -12,6 +12,7 @@ import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultib
 import blusunrize.immersiveengineering.api.utils.TemplateWorldCreator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -145,9 +146,7 @@ public class MultiblockProjection{
 		
 		List<Template.BlockInfo> blocks = this.layers.get(layer);
 		for(Template.BlockInfo info:blocks){
-			BlockPos transformedPos = Template.transformedBlockPos(this.settings, info.pos).subtract(this.offset);
-			
-			if(predicate.test(new Info(this.multiblock, this.templateWorld, this.settings, info.pos, transformedPos))){
+			if(predicate.test(new Info(this, info))){
 				return true;
 			}
 		}
@@ -168,9 +167,7 @@ public class MultiblockProjection{
 		for(int layer = 0;layer < getLayerCount();layer++){
 			List<Template.BlockInfo> blocks = this.layers.get(layer);
 			for(Template.BlockInfo info:blocks){
-				BlockPos transformedPos = Template.transformedBlockPos(this.settings, info.pos).subtract(this.offset);
-				
-				if(predicate.test(layer, new Info(this.multiblock, this.templateWorld, this.settings, info.pos, transformedPos))){
+				if(predicate.test(layer, new Info(this, info))){
 					return true;
 				}
 			}
@@ -213,11 +210,6 @@ public class MultiblockProjection{
 	// STATIC CLASSES
 	
 	public static final class Info{
-		/** Template Position */
-		public final BlockPos templatePos;
-		
-		/** Transformed Template Position */
-		public final BlockPos tPos;
 		
 		/** Currently applied template transformation */
 		public final PlacementSettings settings;
@@ -225,14 +217,30 @@ public class MultiblockProjection{
 		/** The multiblock being processed */
 		public final IMultiblock multiblock;
 		
+		/** Transformed Template Position */
+		public final BlockPos tPos;
+		
 		public final World templateWorld;
 		
-		public Info(IMultiblock multiblock, World templateWorld, PlacementSettings settings, BlockPos templatePos, BlockPos transformedPos){
-			this.multiblock = multiblock;
-			this.templateWorld = templateWorld;
-			this.settings = settings;
-			this.templatePos = templatePos;
-			this.tPos = transformedPos;
+		public final Template.BlockInfo tBlockInfo;
+		
+		public Info(MultiblockProjection projection, Template.BlockInfo templateBlockInfo){
+			this.multiblock = projection.multiblock;
+			this.templateWorld = projection.templateWorld;
+			this.settings = projection.settings;
+			this.tBlockInfo = templateBlockInfo;
+			this.tPos = Template.transformedBlockPos(this.settings, templateBlockInfo.pos).subtract(projection.offset);
+		}
+		
+		/** Convenience method for getting the state with mirror and rotation already applied */
+		public BlockState getModifiedState(World realWorld, BlockPos realPos){
+			return this.templateWorld.getBlockState(this.tBlockInfo.pos)
+					.mirror(this.settings.getMirror())
+					.rotate(realWorld, realPos, this.settings.getRotation());
+		}
+		
+		public BlockState getRawState(){
+			return this.templateWorld.getBlockState(this.tBlockInfo.pos);
 		}
 	}
 }

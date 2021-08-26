@@ -6,41 +6,42 @@ import static flaxbeard.immersivepetroleum.common.blocks.tileentities.Distillati
 import static flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity.INV_3;
 import static flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity.TANK_INPUT;
 
-import blusunrize.immersiveengineering.common.gui.IESlot;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
+import flaxbeard.immersivepetroleum.common.gui.IPSlot.FluidContainer.FluidFilter;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.FluidUtil;
 
 public class DistillationTowerContainer extends MultiblockAwareGuiContainer<DistillationTowerTileEntity>{
 	public DistillationTowerContainer(int id, PlayerInventory playerInventory, final DistillationTowerTileEntity tile){
 		super(playerInventory, tile, id, DistillationTowerMultiblock.INSTANCE);
 		
-		this.addSlot(new IESlot.FluidContainer(this, this.inv, INV_0, 12, 17, 2){
+		addSlot(new IPSlot(this.inv, INV_0, 12, 17){
 			@Override
-			public boolean isItemValid(ItemStack itemStack){
-				return itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).map(h -> {
-					if(h.getTanks() <= 0)
+			public boolean isItemValid(ItemStack stack){
+				return FluidUtil.getFluidHandler(stack).map(h -> {
+					if(h.getTanks() <= 0){
 						return false;
-					FluidStack fs = h.getFluidInTank(0);
-					if(fs.isEmpty())
-						return false;
-					if(tile.tanks[TANK_INPUT].getFluidAmount() > 0 && !fs.isFluidEqual(tile.tanks[TANK_INPUT].getFluid()))
-						return false;
+					}
 					
-					DistillationRecipe incomplete = DistillationRecipe.findRecipe(fs);
-					return incomplete != null;
+					FluidStack fs = h.getFluidInTank(0);
+					if(fs.isEmpty() || (tile.tanks[TANK_INPUT].getFluidAmount() > 0 && !fs.isFluidEqual(tile.tanks[TANK_INPUT].getFluid()))){
+						return false;
+					}
+					
+					DistillationRecipe recipe = DistillationRecipe.findRecipe(fs);
+					return recipe != null;
 				}).orElse(false);
 			}
 		});
-		this.addSlot(new IESlot.Output(this, this.inv, INV_1, 12, 53));
+		addSlot(new IPSlot.ItemOutput(this.inv, INV_1, 12, 53));
 		
-		this.addSlot(new IESlot.FluidContainer(this, this.inv, INV_2, 134, 17, 0));
-		this.addSlot(new IESlot.Output(this, this.inv, INV_3, 134, 53));
+		addSlot(new IPSlot.FluidContainer(this.inv, INV_2, 134, 17, FluidFilter.EMPTY));
+		addSlot(new IPSlot.ItemOutput(this.inv, INV_3, 134, 53));
 		
 		slotCount = 4;
 		

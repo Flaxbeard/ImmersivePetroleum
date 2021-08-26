@@ -10,6 +10,9 @@
 	"block.immersivepetroleum.fluid_napalm": "凝固汽油",
 	
 	"block.immersivepetroleum.asphalt": "沥青混凝土",
+	"block.immersivepetroleum.asphalt_slab": "沥青混凝土台阶",
+	"block.immersivepetroleum.asphalt_stairs": "沥青混凝土楼梯",
+	"block.immersivepetroleum.petcoke_block": "石油焦块",
 	
 	"block.immersivepetroleum.auto_lubricator": "自动润滑器",
 	"block.immersivepetroleum.gas_generator": "便携式发电机",
@@ -17,13 +20,16 @@
 	
 	"block.immersivepetroleum.pumpjack": "钻井",
 	"block.immersivepetroleum.distillationtower": "精馏塔",
+	"block.immersivepetroleum.cokerunit": "焦化器",
+	"block.immersivepetroleum.hydrotreater": "硫磺回收装置",
 	
 	"fluid.immersivepetroleum.diesel": "柴油",
+	"fluid.immersivepetroleum.diesel_sulfur": "硫化柴油",
 	"fluid.immersivepetroleum.oil": "原油",
 	"fluid.immersivepetroleum.lubricant": "润滑油",
 	"fluid.immersivepetroleum.gasoline": "汽油",
 	"fluid.immersivepetroleum.napalm": "凝固汽油",
-	
+
 	"_comment": "################## Items ##################",
 	
 	"item.immersivepetroleum.projector": "投影仪",
@@ -33,6 +39,8 @@
 	
 	"item.immersivepetroleum.bitumen": "沥青",
 	"item.immersivepetroleum.petcoke": "石油焦",
+	"item.immersivepetroleum.petcoke_dust": "石油焦粉",
+	"item.immersivepetroleum.diesel_sulfur_bucket": "硫化柴油桶",
 	"item.immersivepetroleum.diesel_bucket": "柴油桶",
 	"item.immersivepetroleum.oil_bucket": "原油桶",
 	"item.immersivepetroleum.lubricant_bucket": "润滑油桶",
@@ -50,6 +58,8 @@
 	"_comment":"Replaced the IP with IE to save me from headaches. ~TwistedGate",
 	"desc.immersiveengineering.info.multiblock.IE:DistillationTower": "精馏塔",
 	"desc.immersiveengineering.info.multiblock.IE:Pumpjack": "钻井",
+	"desc.immersiveengineering.info.multiblock.IE:CokerUnit": "焦化器",
+	"desc.immersiveengineering.info.multiblock.IE:HydroTreater": "硫磺回收装置",
 	
 	"desc.immersivepetroleum.info.reservoir.oil": "油藏",
 	"desc.immersivepetroleum.info.reservoir.aquifer": "含水层",
@@ -117,6 +127,7 @@
 	
 	"ie.manual.entry.reservoirs.oil0": "当你在基岩附近挖矿时，你偶尔会看到一种粘稠的黑色易燃物质：石油。石油只是这坚不可摧的基岩下方的数种液体之一，但凭你自己的力量无法触及这些储藏在深层的石油。\n\n在<link;immersivepetroleum:pumpjack;§o§n经过特别设计的机器§r>的帮助下，你才能把这些石油收入囊中。<np>",
 	"ie.manual.entry.reservoirs.oil1": "<link;minerals;§o§n岩芯钻井§r>会测定出在被测定区块中是否能找到液体储层，并测出液体的存量。\n\n虽然每个区块中的石油会开采殆尽，但钻井仍能从枯竭的油藏中抽出非常少量的石油。在一个石油已枯竭的区块使用多个钻井不会有任何产量增益。<np>",
+	
 	"ie.manual.entry.reservoirs.consonant": "",
 	"ie.manual.entry.reservoirs.vowel": "",
 	
@@ -133,7 +144,7 @@
 	
 	"_comment": "################## Chat ##################",
 	
-	"chat.immersivepetroleum.command.help.help": "§6用法：/ip help <command> [sub-commands ...]§r\n来获取更多关于所选命令（或其子命令）的信息",
+	"chat.immersivepetroleum.command.ip.help": "§6用法：/ip help <command> [sub-commands ...]§r\n来获取更多关于所选命令（或其子命令）的信息",
 	"chat.immersivepetroleum.command.reservoir.help": "§6用法：/ip reservoir <list|get|set|setAmount|setCapacity>§r",
 	"chat.immersivepetroleum.command.reservoir.list.help": "§6用法：/ip reservoir list§r<br> 显示所有已注册的液体储层",
 	"chat.immersivepetroleum.command.reservoir.get.help": "§6用法：/ip reservoir get§r<br> 显示当前区块的液体储层信息",

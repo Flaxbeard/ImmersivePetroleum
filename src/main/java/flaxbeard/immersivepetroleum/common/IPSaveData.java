@@ -68,7 +68,9 @@ public class IPSaveData extends WorldSavedData{
 	private static IPSaveData INSTANCE;
 	
 	public static void markInstanceAsDirty(){
-		INSTANCE.markDirty();
+		if(INSTANCE != null){
+			INSTANCE.markDirty();
+		}
 	}
 	
 	public static void setInstance(IPSaveData in){

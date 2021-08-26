@@ -104,9 +104,9 @@ minecraft {
 dependencies {
 	minecraft "net.minecraftforge:forge:1.16.5-36.1.0"
 	
-	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.2-137")
+	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.3-138")
 	//compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-135:api")
-	datagenCompile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.2-137:datagen")
+	datagenCompile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.3-138:datagen")
 	
 	compile fg.deobf(group: "com.blamejared.crafttweaker", name: "CraftTweaker-1.16.5", version: "7.1.0.103")
 	

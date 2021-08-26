@@ -61,15 +61,16 @@ public class CokerUnitRecipeTweaker implements IRecipeManager{
 	}
 	
 	/**
+	 * Adds a recipe to the Coker
 	 * 
-	 * @param recipePath The recipe name, without the resource location
+	 * @param name The recipe name, without the resource location
 	 * @param inputItem The input ingredient
 	 * @param outputItem The output ingredient
 	 * @param inputFluid The input fluid
 	 * @param outputFluid The output fluid
 	 * @param energy energy required per tick
 	 * 
-	 * @docParam recipePath "clay_from_sand"
+	 * @docParam name "clay_from_sand"
 	 * @docParam inputItem <item:minecraft:sand>
 	 * @docParam outputItem <item:minecraft:clay_ball>
 	 * @docParam inputFluid <tag:fluids:minecraft:water> * 125
@@ -77,8 +78,8 @@ public class CokerUnitRecipeTweaker implements IRecipeManager{
 	 * @docParam energy 1024
 	 */
 	@Method
-	public void addRecipe(String recipePath, IItemStack inputItem, IItemStack outputItem, MCTagWithAmount<Fluid> inputFluid, MCTagWithAmount<Fluid> outputFluid, int energy){
-		ResourceLocation id = TweakerUtils.ctLoc("cokerunit/" + recipePath);
+	public void addRecipe(String name, IItemStack inputItem, IItemStack outputItem, MCTagWithAmount<Fluid> inputFluid, MCTagWithAmount<Fluid> outputFluid, int energy){
+		ResourceLocation id = TweakerUtils.ctLoc("cokerunit/" + name);
 		FluidTagInput outFluid = new FluidTagInput(outputFluid.getTag().getId(), outputFluid.getAmount());
 		FluidTagInput inFluid = new FluidTagInput(inputFluid.getTag().getId(), inputFluid.getAmount());
 		

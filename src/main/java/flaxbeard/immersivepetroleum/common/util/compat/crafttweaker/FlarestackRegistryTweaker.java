@@ -15,15 +15,21 @@ import net.minecraft.tags.ITag;
 @Name("mods.immersivepetroleum.Flarestack")
 public class FlarestackRegistryTweaker{
 	
+	/**
+	 * Adds a fluid tag to the Flarestacks "burnable fluids" list
+	 * 
+	 * @param tag The fluidtag to be added
+	 * 
+	 * @docParam tag <tag:fluids:minecraft:water>
+	 */
 	@SuppressWarnings("unchecked")
 	@Method
-	public static void register(MCTag<Fluid> tag, int amount){
+	public static void register(MCTag<Fluid> tag){
 		if(tag == null){
 			CraftTweakerAPI.logError("§cFlarestackHandler: Expected fluidtag as input fluid!§r");
-		}else if(amount <= 0){
-			CraftTweakerAPI.logError("§cFlarestackHandler: Amount must atleast be 1mB!§r");
-		}else{
-			FlarestackHandler.register((ITag<Fluid>) tag.getInternal());
+			return;
 		}
+		
+		FlarestackHandler.register((ITag<Fluid>) tag.getInternal());
 	}
 }

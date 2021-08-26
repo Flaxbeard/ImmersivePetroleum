@@ -28,13 +28,13 @@ import net.minecraftforge.fluids.FluidStack;
 public class DistillationRecipeTweaker{
 	
 	@Method
-	public static boolean remove(String recipeName){
+	public static boolean remove(String name){
 		List<ResourceLocation> test = DistillationRecipe.recipes.keySet().stream()
-				.filter(loc -> loc.getPath().contains(recipeName))
+				.filter(loc -> loc.getPath().contains(name))
 				.collect(Collectors.toList());
 		
 		if(test.size() > 1){
-			CraftTweakerAPI.logError("§cMultiple results for \"%s\"§r", recipeName);
+			CraftTweakerAPI.logError("§cMultiple results for \"%s\"§r", name);
 		}else if(test.size() == 1){
 			ResourceLocation id = test.get(0);
 			if(DistillationRecipe.recipes.containsKey(id)){
@@ -44,7 +44,7 @@ public class DistillationRecipeTweaker{
 				CraftTweakerAPI.logError("§c%s does not exist, or was already removed.§r", id);
 			}
 		}else{
-			CraftTweakerAPI.logInfo("\"%s\" does not exist or could not be found.", recipeName);
+			CraftTweakerAPI.logInfo("\"%s\" does not exist or could not be found.", name);
 		}
 		
 		return false;
@@ -126,7 +126,7 @@ public class DistillationRecipeTweaker{
 		
 		@Method
 		public DistillationRecipeBuilder setEnergy(int flux){
-			if(flux <= 0){
+			if(flux < 1){
 				CraftTweakerAPI.logError("§cEnergy usage must be atleast 1 flux/tick!§r");
 				this.isValid = false;
 			}else{
@@ -137,7 +137,7 @@ public class DistillationRecipeTweaker{
 		
 		@Method
 		public DistillationRecipeBuilder setTime(int ticks){
-			if(ticks <= 0){
+			if(ticks < 1){
 				CraftTweakerAPI.logError("§cProcessing time must be atleast 1 tick!§r");
 				this.isValid = false;
 			}else{
@@ -147,8 +147,8 @@ public class DistillationRecipeTweaker{
 		}
 		
 		@Method
-		public void build(String recipeName){
-			if(recipeName.isEmpty()){
+		public void build(String name){
+			if(name.isEmpty()){
 				CraftTweakerAPI.logError("§cDistillation name can not be empty string!§r");
 				this.isValid = false;
 			}
@@ -176,7 +176,7 @@ public class DistillationRecipeTweaker{
 					fluidOutStacks = this.fluidOutputs.toArray(new FluidStack[0]);
 				}
 				
-				ResourceLocation id = TweakerUtils.ctLoc("distillationtower/" + recipeName);
+				ResourceLocation id = TweakerUtils.ctLoc("distillationtower/" + name);
 				
 				DistillationRecipe recipe = new DistillationRecipe(id, fluidOutStacks, outStacks, fluidInTag, this.fluxEnergy, this.timeTicks, chances);
 				DistillationRecipe.recipes.put(id, recipe);

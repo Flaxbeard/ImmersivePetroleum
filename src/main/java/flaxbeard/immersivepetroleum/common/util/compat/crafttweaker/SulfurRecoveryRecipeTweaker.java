@@ -46,8 +46,8 @@ public class SulfurRecoveryRecipeTweaker implements IRecipeManager{
 	}
 	
 	@Method
-	public void addRecipe(String recipePath, IFluidStack output, IItemStack outputItem, double chance, MCTagWithAmount<Fluid> inputFluid, int energy){
-		ResourceLocation id = TweakerUtils.ctLoc("hydrotreater/" + recipePath);
+	public void addRecipe(String name, IFluidStack output, IItemStack outputItem, double chance, MCTagWithAmount<Fluid> inputFluid, int energy){
+		ResourceLocation id = TweakerUtils.ctLoc("hydrotreater/" + name);
 		
 		FluidTagInput primary = new FluidTagInput(inputFluid.getTag().getId(), inputFluid.getAmount());
 		
@@ -55,8 +55,8 @@ public class SulfurRecoveryRecipeTweaker implements IRecipeManager{
 	}
 	
 	@Method
-	public void addRecipeWithSecondary(String recipePath, IFluidStack output, IItemStack outputItem, double chance, MCTagWithAmount<Fluid> inputFluid, MCTagWithAmount<Fluid> inputFluidSecondary, int energy){
-		ResourceLocation id = TweakerUtils.ctLoc("hydrotreater/" + recipePath);
+	public void addRecipeWithSecondary(String name, IFluidStack output, IItemStack outputItem, double chance, MCTagWithAmount<Fluid> inputFluid, MCTagWithAmount<Fluid> inputFluidSecondary, int energy){
+		ResourceLocation id = TweakerUtils.ctLoc("hydrotreater/" + name);
 		
 		FluidTagInput primary = new FluidTagInput(inputFluid.getTag().getId(), inputFluid.getAmount());
 		FluidTagInput secondary = new FluidTagInput(inputFluidSecondary.getTag().getId(), inputFluidSecondary.getAmount());

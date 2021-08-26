@@ -16,33 +16,28 @@ public class FuelTweaker{
 	
 	@Method
 	public static void registerGeneratorFuel(IFluidStack fluid, int fluxPerTick){
-		boolean isValid = true;
 		if(fluid == null){
 			CraftTweakerAPI.logError("§cGeneratorFuel fluid can not be null!§r");
-			isValid = false;
-		}
-		if(fluxPerTick <= 0){
-			CraftTweakerAPI.logError("§cGeneratorFuel fluxPerTick has to be at least 1!§r");
-			isValid = false;
+			return;
 		}
 		
-		if(isValid){
-			FluidStack fstack = fluid.getInternal();
-			FuelHandler.registerPortableGeneratorFuel(fstack.getFluid(), fluxPerTick, fstack.getAmount());
+		if(fluxPerTick < 1){
+			CraftTweakerAPI.logError("§cGeneratorFuel fluxPerTick has to be at least 1!§r");
+			return;
 		}
+		
+		FluidStack fstack = fluid.getInternal();
+		FuelHandler.registerPortableGeneratorFuel(fstack.getFluid(), fluxPerTick, fstack.getAmount());
 	}
 	
 	@Method
 	public static void registerMotorboatFuel(IFluidStack fluid){
-		boolean isValid = true;
 		if(fluid == null){
 			CraftTweakerAPI.logError("§cMotorboatFuel fluid can not be null!§r");
-			isValid = false;
+			return;
 		}
 		
-		if(isValid){
-			FluidStack fstack = fluid.getInternal();
-			FuelHandler.registerMotorboatFuel(fstack.getFluid(), fstack.getAmount());
-		}
+		FluidStack fstack = fluid.getInternal();
+		FuelHandler.registerMotorboatFuel(fstack.getFluid(), fstack.getAmount());
 	}
 }

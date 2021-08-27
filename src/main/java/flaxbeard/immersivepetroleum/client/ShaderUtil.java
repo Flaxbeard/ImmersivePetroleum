@@ -16,23 +16,24 @@ public class ShaderUtil{
 	
 	public static int alpha = -1;
 	
-	private static void init(){
-		alpha = createShader(null, "/assets/immersivepetroleum/shaders/alpha.frag");
-	}
-	
 	public static void alpha_static(float av, float ticks){
-		if(alpha == -1)
-			init();
+		if(alpha == -1){
+			alpha = createShader(null, "/assets/immersivepetroleum/shaders/alpha.frag");
+		}
 		
-		ARBShaderObjects.glUseProgramObjectARB(alpha);
-		int a = ARBShaderObjects.glGetUniformLocationARB(alpha, "alpha");
-		int b = ARBShaderObjects.glGetUniformLocationARB(alpha, "time");
-		ARBShaderObjects.glUniform1fARB(a, av);
-		ARBShaderObjects.glUniform1fARB(b, ticks);
+		if(alpha > 0){
+			ARBShaderObjects.glUseProgramObjectARB(alpha);
+			int a = ARBShaderObjects.glGetUniformLocationARB(alpha, "alpha");
+			int b = ARBShaderObjects.glGetUniformLocationARB(alpha, "time");
+			ARBShaderObjects.glUniform1fARB(a, av);
+			ARBShaderObjects.glUniform1fARB(b, ticks);
+		}
 	}
 	
 	public static void releaseShader(){
-		ARBShaderObjects.glUseProgramObjectARB(0);
+		if(alpha > 0){
+			ARBShaderObjects.glUseProgramObjectARB(0);
+		}
 	}
 	
 	private static int createShader(String vert, String frag){

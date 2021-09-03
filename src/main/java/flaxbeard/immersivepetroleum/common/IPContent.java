@@ -52,13 +52,21 @@ import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
+import flaxbeard.immersivepetroleum.common.particle.IPParticleTypes;
+import flaxbeard.immersivepetroleum.common.particle.FlareFire;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.Effect;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -268,5 +276,21 @@ public class IPContent{
 	@SubscribeEvent
 	public static void registerEffects(RegistryEvent.Register<Effect> event){
 		IPEffects.init();
+	}
+	
+	@SubscribeEvent
+	public static void registerParticles(RegistryEvent.Register<ParticleType<?>> event){
+		ImmersivePetroleum.log.info("IPContent.registerParticles()");
+		
+		event.getRegistry().register(IPParticleTypes.FLARE_FIRE);
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	@SubscribeEvent
+	public static void registerParticleFactories(ParticleFactoryRegisterEvent event){
+		ImmersivePetroleum.log.info("IPContent.registerParticleFactories()");
+		ParticleManager manager = Minecraft.getInstance().particles;
+		
+		manager.registerFactory(IPParticleTypes.FLARE_FIRE, FlareFire.Factory::new);
 	}
 }

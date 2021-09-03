@@ -24,6 +24,7 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntit
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
+import flaxbeard.immersivepetroleum.common.particle.IPParticleTypes;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -211,13 +212,21 @@ public class DebugItem extends IPItemBase{
 		TileEntity te = context.getWorld().getTileEntity(context.getPos());
 		switch(mode){
 			case GENERAL_TEST:{
-				if(context.getWorld().isRemote){
+				World world = context.getWorld();
+				if(world.isRemote){
 					// Client
+					BlockPos pos = context.getPos();
+
+					float xa = 0.0625F * (float) Math.random();
+					float ya = 0.0625F;
+					float za = 0.0625F * (float) Math.random();
+					
+					world.addParticle(IPParticleTypes.FLARE_FIRE, true, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, xa, ya, za);
 				}else{
 					// Server
 				}
 				
-				return ActionResultType.PASS;
+				return ActionResultType.SUCCESS;
 			}
 			case INFO_TE_DISTILLATION_TOWER:{
 				if(te instanceof DistillationTowerTileEntity && !context.getWorld().isRemote){

@@ -59,7 +59,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class CommonEventHandler{
-	
 	@SubscribeEvent
 	public void onSave(WorldEvent.Save event){
 		if(!event.getWorld().isRemote()){

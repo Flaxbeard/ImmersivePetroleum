@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -22,6 +23,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class FlarestackTileEntity extends IPTileEntityBase implements ITickableTileEntity{
+	static final DamageSource FLARESTACK = new DamageSource("ipFlarestack").setDamageBypassesArmor().setFireDamage();
+	
 	protected boolean isActive;
 	protected FluidTank tank = new FluidTank(1000, fstack -> (fstack != null && FlarestackHandler.isBurnable(fstack)));
 	
@@ -145,14 +148,15 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ITickableT
 			}
 			
 			if(this.isActive && this.world.getGameTime() % 10 == 0){
-				// Set anything ablaze that's in the danger zone
+				// Set *anything* ablaze that's in the danger zone
 				BlockPos min = this.pos.add(-1, 2, -1);
 				BlockPos max = min.add(3, 3, 3);
 				List<Entity> list = this.getWorld().getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(min, max));
 				if(!list.isEmpty()){
 					list.forEach(e -> {
 						if(!e.isImmuneToFire()){
-							e.setFire(8);
+							e.setFire(15);
+							e.attackEntityFrom(FLARESTACK, 6.0F * (this.drained / (float)this.tank.getCapacity()));
 						}
 					});
 				}

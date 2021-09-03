@@ -112,7 +112,7 @@
 	"gui.immersivepetroleum.projector.button.rcw": "Rotate Clockwise",
 	"gui.immersivepetroleum.projector.button.rccw": "Rotate Counter-Clockwise",
 	
-	"_comment": "################## IE-Manual ##################",
+	"_comment": "################## Effects ##################",
 	
 	"effect.immersivepetroleum.anti_fire": "",
 	
@@ -165,5 +165,8 @@
 	"chat.immersivepetroleum.info.coresample.noOil": "No Fluid Reservoir",
 	
 	"key.categories.immersivepetroleum": "Immersive Petroleum",
-	"key.immersivepetroleum.projector.flip": "Mirror Projection"
+	"key.immersivepetroleum.projector.flip": "Mirror Projection",
+	
+	"death.attack.ipFlarestack":"%1$s was flared out of existence",
+	"death.attack.ipFlarestack.player":"%1$s was flared out of existence by %2$s"
 }

@@ -1,44 +1,51 @@
 {
 	"itemGroup.immersivepetroleum": "Immersive Petroleum",
 	
-
-	"_comment": "################## Блоки ##################",
+	"_comment": "################## Blocks ##################",
 	
-	"block.immersivepetroleum.fluid_diesel": "Дизель",
+	"block.immersivepetroleum.fluid_diesel": "Дизельное топливо",
 	"block.immersivepetroleum.fluid_crude_oil": "Сырая нефть",
 	"block.immersivepetroleum.fluid_lubricant": "Смазка",
 	"block.immersivepetroleum.fluid_gasoline": "Бензин",
 	"block.immersivepetroleum.fluid_napalm": "Напалм",
 	
 	"block.immersivepetroleum.asphalt": "Асфальтобетон",
+	"block.immersivepetroleum.asphalt_slab": "Плита из асфальтобетона",
+	"block.immersivepetroleum.asphalt_stairs": "Ступеньки из асфальтобетона",
+	"block.immersivepetroleum.petcoke_block": "Блок нефтяного кокса",
 	
-	"block.immersivepetroleum.auto_lubricator": "Смазочный автомат",
-	"block.immersivepetroleum.gas_generator": "Портативный генератор",
-	"block.immersivepetroleum.flarestack": "Сжигательный факел",
+	"block.immersivepetroleum.auto_lubricator": "Смазочное устройство",
+	"block.immersivepetroleum.gas_generator": "Переносной генератор",
+	"block.immersivepetroleum.flarestack": "Факельная установка",
 	
 	"block.immersivepetroleum.pumpjack": "Штанговый насос",
-	"block.immersivepetroleum.distillationtower": "Дистилляционная башня",
+	"block.immersivepetroleum.distillationtower": "Ректификационная колонна",
+	"block.immersivepetroleum.cokerunit": "Установка для коксования",
+	"block.immersivepetroleum.hydrotreater": "Установка для извлечения серы",
 	
-	"fluid.immersivepetroleum.diesel": "Дизель",
-	"fluid.immersivepetroleum.oil": "Сырая нефть",
+	"fluid.immersivepetroleum.diesel": "Дизельное топливо",
+	"fluid.immersivepetroleum.diesel_sulfur": "Сернистое дизельное топливо",
+	"fluid.immersivepetroleum.oil": "Нефть",
 	"fluid.immersivepetroleum.lubricant": "Смазка",
 	"fluid.immersivepetroleum.gasoline": "Бензин",
 	"fluid.immersivepetroleum.napalm": "Напалм",
 	
-	"_comment": "################## Предметы ##################",
+	"_comment": "################## Items ##################",
 	
 	"item.immersivepetroleum.projector": "Проектор",
 	"item.immersivepetroleum.projector.specific": "Проектор: %s",
 	"item.immersivepetroleum.speedboat": "Моторная лодка",
-	"item.immersivepetroleum.oil_can": "Маслёнка",
+	"item.immersivepetroleum.oil_can": "Канистра для смазки",
 	
 	"item.immersivepetroleum.bitumen": "Битум",
 	"item.immersivepetroleum.petcoke": "Нефтяной кокс",
-	"item.immersivepetroleum.diesel_bucket": "Ведро дизеля",
-	"item.immersivepetroleum.oil_bucket": "Ведро сырой нефти",
+	"item.immersivepetroleum.petcoke_dust": "Пыль нефтяного кокса",
+	"item.immersivepetroleum.diesel_bucket": "Ведро дизельного топлива",
+	"item.immersivepetroleum.oil_bucket": "Ведро нефти",
 	"item.immersivepetroleum.lubricant_bucket": "Ведро смазки",
 	"item.immersivepetroleum.gasoline_bucket": "Ведро бензина",
 	"item.immersivepetroleum.napalm_bucket": "Ведро напалма",
+	"item.immersivepetroleum.diesel_sulfur_bucket": "Ведро сернистого дезельного топлива",
 	
 	"item.immersivepetroleum.upgrade_reinforced_hull": "Укреплённый корпус",
 	"item.immersivepetroleum.upgrade_icebreaker": "Ледокольный нос",
@@ -51,6 +58,8 @@
 	"_comment":"Replaced the IP with IE to save me from headaches. ~TwistedGate",
 	"desc.immersiveengineering.info.multiblock.IE:DistillationTower": "Ректификационная колонна",
 	"desc.immersiveengineering.info.multiblock.IE:Pumpjack": "Штанговый насос",
+	"desc.immersiveengineering.info.multiblock.IE:CokerUnit": "Установка для коксования",
+	"desc.immersiveengineering.info.multiblock.IE:HydroTreater": "Установка для извлечения серы",
 	
 	"desc.immersivepetroleum.info.reservoir.oil": "Нефтеносный пласт",
 	"desc.immersivepetroleum.info.reservoir.aquifer": "Водоносный пласт",

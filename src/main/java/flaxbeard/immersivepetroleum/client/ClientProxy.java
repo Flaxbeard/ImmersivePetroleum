@@ -96,6 +96,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -128,10 +129,10 @@ public class ClientProxy extends CommonProxy{
 		ScreenManager.registerFactory(type, factory);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void completed(){
-		
-		ManualHelper.addConfigGetter(str -> {
+		DeferredWorkQueue.runLater(() -> ManualHelper.addConfigGetter(str -> {
 			switch(str){
 				case "distillationtower_operationcost":{
 					return Integer.valueOf((int) (2048 * IPServerConfig.REFINING.distillationTower_energyModifier.get()));
@@ -179,7 +180,7 @@ public class ClientProxy extends CommonProxy{
 				return cfg.get(str);
 			}
 			return null;
-		});
+		}));
 		
 		setupManualPages();
 	}

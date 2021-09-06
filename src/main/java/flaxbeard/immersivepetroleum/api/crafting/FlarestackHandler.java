@@ -15,7 +15,6 @@ import net.minecraftforge.fluids.FluidStack;
  * @author TwistedGate
  */
 public class FlarestackHandler{
-	// Can contain both Tags and Direct Fluids
 	static final Set<ITag<Fluid>> burnables = new HashSet<>();
 	
 	/**

@@ -141,7 +141,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ITickableT
 			this.isActive = false;
 			
 			int redstone = this.world.getRedstonePowerFromNeighbors(this.pos);
-			if((this.isRedstoneInverted ? redstone == 0 : redstone > 0) && this.tank.getFluidAmount() > 0){
+			if(redstone > 0 && this.tank.getFluidAmount() > 0){
 				float signal = getSignalStrength(redstone);
 				FluidStack fs = this.tank.drain((int) (this.tank.getCapacity() * signal), FluidAction.SIMULATE);
 				if(fs.getAmount() > 0){

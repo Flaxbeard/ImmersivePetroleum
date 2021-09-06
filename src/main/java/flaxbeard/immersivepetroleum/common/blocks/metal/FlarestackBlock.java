@@ -3,10 +3,14 @@ package flaxbeard.immersivepetroleum.common.blocks.metal;
 import java.util.Collections;
 import java.util.List;
 
+import blusunrize.immersiveengineering.api.Lib;
+import blusunrize.immersiveengineering.common.util.ChatUtils;
+import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.FlarestackTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -23,13 +27,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -76,6 +84,28 @@ public class FlarestackBlock extends IPBlockBase{
 	@OnlyIn(Dist.CLIENT)
 	public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos){
 		return 1.0F;
+	}
+	
+	@Override
+	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit){
+		if(Utils.isScrewdriver(player.getHeldItem(handIn))){
+			if(state.get(SLAVE)){
+				pos = pos.offset(Direction.DOWN);
+			}
+			
+			if(!worldIn.isRemote){
+				TileEntity te = worldIn.getTileEntity(pos);
+				if(te != null && te instanceof FlarestackTileEntity){
+					FlarestackTileEntity flare = ((FlarestackTileEntity) te);
+					flare.invertRedstone();
+					
+					ChatUtils.sendServerNoSpamMessages(player, new TranslationTextComponent(Lib.CHAT_INFO + "rsControl." + (flare.isRedstoneInverted() ? "invertedOn" : "invertedOff")));
+				}
+			}
+			
+			return ActionResultType.SUCCESS;
+		}
+		return ActionResultType.PASS;
 	}
 	
 	@Override

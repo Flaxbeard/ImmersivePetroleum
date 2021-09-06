@@ -26,16 +26,27 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 public class FlarestackTileEntity extends IPTileEntityBase implements ITickableTileEntity{
 	static final DamageSource FLARESTACK = new DamageSource("ipFlarestack").setDamageBypassesArmor().setFireDamage();
 	
+	protected boolean isRedstoneInverted;
 	protected boolean isActive;
 	protected short drained;
 	protected FluidTank tank = new FluidTank(250, fstack -> (fstack != FluidStack.EMPTY && FlarestackHandler.isBurnable(fstack)));
 	
 	public FlarestackTileEntity(){
 		super(IPTileTypes.FLARE.get());
+		this.isRedstoneInverted = true;
+	}
+	
+	public void invertRedstone(){
+		this.isRedstoneInverted = !this.isRedstoneInverted;
+		this.markDirty();
+	}
+	
+	public boolean isRedstoneInverted(){
+		return this.isRedstoneInverted;
 	}
 	
 	public boolean isActive(){
-		return false;
+		return this.isActive;
 	}
 	
 	public short getFlow(){
@@ -44,6 +55,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ITickableT
 	
 	@Override
 	public void readCustom(BlockState state, CompoundNBT nbt){
+		this.isRedstoneInverted = nbt.getBoolean("inverted");
 		this.isActive = nbt.getBoolean("active");
 		this.drained = nbt.getShort("drained");
 		this.tank.readFromNBT(nbt.getCompound("tank"));
@@ -51,6 +63,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ITickableT
 	
 	@Override
 	public void writeCustom(CompoundNBT nbt){
+		nbt.putBoolean("inverted", this.isRedstoneInverted);
 		nbt.putBoolean("active", this.isActive);
 		nbt.putShort("drained", this.drained);
 		
@@ -105,17 +118,13 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ITickableT
 	@Override
 	public void tick(){
 		if(this.world.isRemote){
-			boolean debug = false;
-			if((debug || this.isActive)){
+			if(this.isActive){
 				if(this.world.getGameTime() % 2 == 0){
 					float xPos = (this.pos.getX() + 0.50F) + (this.world.rand.nextFloat() - 0.5F) * .4375F;
 					float zPos = (this.pos.getZ() + 0.50F) + (this.world.rand.nextFloat() - 0.5F) * .4375F;
 					float yPos = (this.pos.getY() + 1.875F) + (0.2F * this.world.rand.nextFloat());
 					
-					if(debug)
-						this.drained = 100;
-					
-					this.world.addParticle(IPParticleTypes.FLARE_FIRE, xPos, yPos, zPos, 0.0, this.drained / 1000F, 0.0);
+					this.world.addParticle(IPParticleTypes.FLARE_FIRE, xPos, yPos, zPos, 0.0, 0.0625 + (0.5 * (this.drained / 1000F)), 0.0);
 				}
 				
 			}else if(this.world.getGameTime() % 5 == 0){
@@ -130,8 +139,11 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ITickableT
 		}else{
 			boolean lastActive = this.isActive;
 			this.isActive = false;
-			if(!this.world.isBlockPowered(this.pos) && this.tank.getFluidAmount() > 0){
-				FluidStack fs = this.tank.drain(this.tank.getCapacity(), FluidAction.SIMULATE);
+			
+			int redstone = this.world.getRedstonePowerFromNeighbors(this.pos);
+			if((this.isRedstoneInverted ? redstone == 0 : redstone > 0) && this.tank.getFluidAmount() > 0){
+				float signal = getSignalStrength(redstone);
+				FluidStack fs = this.tank.drain((int) (this.tank.getCapacity() * signal), FluidAction.SIMULATE);
 				if(fs.getAmount() > 0){
 					this.tank.drain(fs.getAmount(), FluidAction.EXECUTE);
 					this.drained = (short) fs.getAmount();
@@ -148,7 +160,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ITickableT
 					list.forEach(e -> {
 						if(!e.isImmuneToFire()){
 							e.setFire(15);
-							e.attackEntityFrom(FLARESTACK, 6.0F * (this.drained / (float)this.tank.getCapacity()));
+							e.attackEntityFrom(FLARESTACK, 6.0F * (this.drained / (float) this.tank.getCapacity()));
 						}
 					});
 				}
@@ -158,5 +170,13 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ITickableT
 				markDirty();
 			}
 		}
+	}
+	
+	private float getSignalStrength(int redstone){
+		float signal = redstone / 15F;
+		if(this.isRedstoneInverted){
+			signal = 1F - signal;
+		}
+		return signal;
 	}
 }

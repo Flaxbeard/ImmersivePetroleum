@@ -66,13 +66,6 @@ public class FlareFire extends SimpleAnimatedParticle{
 		
 		this.move(vec.getX() * f, this.ogMotionY * (1F - f), vec.getZ() * f);
 		this.particleAngle += this.rotation;
-		
-		// float inF = 1F - f;
-		// this.particleRed = this.red * inF;
-		// this.particleGreen = this.green * inF;
-		// this.particleBlue = this.blue * inF;
-		
-		// this.setAlphaF(1.0F - (this.age / (float) this.maxAge));
 	}
 	
 	@OnlyIn(Dist.CLIENT)

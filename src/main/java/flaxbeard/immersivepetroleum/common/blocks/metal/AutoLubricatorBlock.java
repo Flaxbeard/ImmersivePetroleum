@@ -83,7 +83,7 @@ public class AutoLubricatorBlock extends IPBlockBase{
 	@Override
 	public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player){
 		if(state.get(SLAVE)){
-			worldIn.destroyBlock(pos.add(0, -1, 0), true);
+			worldIn.destroyBlock(pos.add(0, -1, 0), !player.isCreative());
 		}else{
 			worldIn.destroyBlock(pos.add(0, 1, 0), false);
 		}

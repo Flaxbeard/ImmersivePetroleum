@@ -33,7 +33,6 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ITickableT
 	
 	public FlarestackTileEntity(){
 		super(IPTileTypes.FLARE.get());
-		this.isRedstoneInverted = true;
 	}
 	
 	public void invertRedstone(){

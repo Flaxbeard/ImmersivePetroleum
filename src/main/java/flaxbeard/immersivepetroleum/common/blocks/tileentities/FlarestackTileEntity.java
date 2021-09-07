@@ -141,8 +141,12 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ITickableT
 			this.isActive = false;
 			
 			int redstone = this.world.getRedstonePowerFromNeighbors(this.pos);
+			if(this.isRedstoneInverted()){
+				redstone = 15 - redstone;
+			}
+			
 			if(redstone > 0 && this.tank.getFluidAmount() > 0){
-				float signal = getSignalStrength(redstone);
+				float signal = redstone / 15F;
 				FluidStack fs = this.tank.drain((int) (this.tank.getCapacity() * signal), FluidAction.SIMULATE);
 				if(fs.getAmount() > 0){
 					this.tank.drain(fs.getAmount(), FluidAction.EXECUTE);
@@ -170,13 +174,5 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ITickableT
 				markDirty();
 			}
 		}
-	}
-	
-	private float getSignalStrength(int redstone){
-		float signal = redstone / 15F;
-		if(this.isRedstoneInverted){
-			signal = 1F - signal;
-		}
-		return signal;
 	}
 }

@@ -2,9 +2,12 @@ package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
 import java.util.List;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.particle.IPParticleTypes;
+import flaxbeard.immersivepetroleum.common.util.sounds.IPSounds;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
@@ -23,7 +26,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class FlarestackTileEntity extends IPTileEntityBase implements ITickableTileEntity{
+public class FlarestackTileEntity extends IPTileEntityBase implements ITickableTileEntity, ISoundTile{
 	static final DamageSource FLARESTACK = new DamageSource("ipFlarestack").setDamageBypassesArmor().setFireDamage();
 	
 	protected boolean isRedstoneInverted;
@@ -117,6 +120,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ITickableT
 	@Override
 	public void tick(){
 		if(this.world.isRemote){
+			ImmersiveEngineering.proxy.handleTileSound(IPSounds.FLARESTACK, this, this.isActive, 1.0F, 0.75F);
 			if(this.isActive){
 				if(this.world.getGameTime() % 2 == 0){
 					float xPos = (this.pos.getX() + 0.50F) + (this.world.rand.nextFloat() - 0.5F) * .4375F;
@@ -173,5 +177,10 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ITickableT
 				markDirty();
 			}
 		}
+	}
+	
+	@Override
+	public boolean shouldPlaySound(String sound){
+		return true;
 	}
 }

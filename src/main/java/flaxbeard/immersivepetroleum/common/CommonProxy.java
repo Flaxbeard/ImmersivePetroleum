@@ -65,7 +65,10 @@ public class CommonProxy{
 	public void renderTile(TileEntity te, IVertexBuilder iVertexBuilder, MatrixStack transform, IRenderTypeBuffer buffer){
 	}
 	
-	public void handleEntitySound(SoundEvent soundEvent, Entity e, boolean active, float volume, float pitch){
+	public void handleEntitySound(SoundEvent soundEvent, Entity entity, boolean active, float volume, float pitch){
+	}
+	
+	public void handleTileSound(SoundEvent soundEvent, TileEntity te, boolean active, float volume, float pitch){
 	}
 	
 	public void drawUpperHalfSlab(MatrixStack transform, ItemStack stack){

@@ -280,15 +280,12 @@ public class IPContent{
 	
 	@SubscribeEvent
 	public static void registerParticles(RegistryEvent.Register<ParticleType<?>> event){
-		ImmersivePetroleum.log.info("IPContent.registerParticles()");
-		
 		event.getRegistry().register(IPParticleTypes.FLARE_FIRE);
 	}
 	
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void registerParticleFactories(ParticleFactoryRegisterEvent event){
-		ImmersivePetroleum.log.info("IPContent.registerParticleFactories()");
 		ParticleManager manager = Minecraft.getInstance().particles;
 		
 		manager.registerFactory(IPParticleTypes.FLARE_FIRE, FlareFire.Factory::new);

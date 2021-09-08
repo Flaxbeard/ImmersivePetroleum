@@ -167,6 +167,11 @@
 	"key.categories.immersivepetroleum": "Immersive Petroleum",
 	"key.immersivepetroleum.projector.flip": "Mirror Projection",
 	
-	"death.attack.ipFlarestack":"%1$s was flared out of existence",
-	"death.attack.ipFlarestack.player":"%1$s was flared out of existence by %2$s"
+	"death.attack.ipFlarestack": "%1$s was flared out of existence",
+	"death.attack.ipFlarestack.player": "%1$s was flared out of existence by %2$s",
+	
+	"_comment": "################## Subtitles ##################",
+	
+	"subtitle.immersivepetroleum.projector": "Projector whirring",
+	"subtitle.immersivepetroleum.flarestack_fire":"Flarestack fire wooshing"
 }

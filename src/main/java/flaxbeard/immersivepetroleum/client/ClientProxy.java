@@ -72,6 +72,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.Container;
@@ -82,6 +83,7 @@ import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.text.ITextComponent;
@@ -276,6 +278,16 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	public PlayerEntity getClientPlayer(){
 		return Minecraft.getInstance().player;
+	}
+	
+	@Override
+	public void handleEntitySound(SoundEvent soundEvent, Entity entity, boolean active, float volume, float pitch){
+		// TODO Restore sound for the Motorboat
+	}
+	
+	@Override
+	public void handleTileSound(SoundEvent soundEvent, TileEntity te, boolean active, float volume, float pitch){
+		// TODO
 	}
 	
 	public void setupManualPages(){

@@ -5,5 +5,12 @@
       "immersivepetroleum:projector"
     ],
     "subtitle": "subtitle.immersivepetroleum.projector"
+  },
+  "flarestack_fire": {
+    "category": "player",
+    "sounds": [
+      "immersivepetroleum:flarestack_fire"
+    ],
+    "subtitle": "subtitle.immersivepetroleum.flarestack_fire"
   }
 }

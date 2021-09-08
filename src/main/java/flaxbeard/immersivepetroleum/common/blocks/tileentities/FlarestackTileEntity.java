@@ -127,7 +127,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ITickableT
 					float zPos = (this.pos.getZ() + 0.50F) + (this.world.rand.nextFloat() - 0.5F) * .4375F;
 					float yPos = (this.pos.getY() + 1.875F) + (0.2F * this.world.rand.nextFloat());
 					
-					this.world.addParticle(IPParticleTypes.FLARE_FIRE, xPos, yPos, zPos, 0.0, 0.0625 + (0.5 * (this.drained / 1000F)), 0.0);
+					this.world.addParticle(IPParticleTypes.FLARE_FIRE, xPos, yPos, zPos, 0.0, 0.0625F + (this.drained / (float) this.tank.getCapacity() * 0.125F), 0.0);
 				}
 				
 			}else if(this.world.getGameTime() % 5 == 0){

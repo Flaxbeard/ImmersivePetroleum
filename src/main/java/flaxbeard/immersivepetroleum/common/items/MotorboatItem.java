@@ -204,13 +204,12 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	}
 	
 	@Override
-	public Slot[] getWorkbenchSlots(Container container, ItemStack stack, Supplier<World> getWorld, Supplier<PlayerEntity> getPlayer){
-		IItemHandler inv = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
+	public Slot[] getWorkbenchSlots(Container container, ItemStack stack, World world, Supplier<PlayerEntity> getPlayer, IItemHandler inv){
 		if(inv != null){
 			return new Slot[]{
-					new IESlot.Upgrades(container, inv, 0, 78, 35 - 5, UPGRADE_TYPE, stack, true, getWorld, getPlayer),
-					new IESlot.Upgrades(container, inv, 1, 98, 35 + 5, UPGRADE_TYPE, stack, true, getWorld, getPlayer),
-					new IESlot.Upgrades(container, inv, 2, 118, 35 - 5, UPGRADE_TYPE, stack, true, getWorld, getPlayer)
+					new IESlot.Upgrades(container, inv, 0, 78, 35 - 5, UPGRADE_TYPE, stack, true, world, getPlayer),
+					new IESlot.Upgrades(container, inv, 1, 98, 35 + 5, UPGRADE_TYPE, stack, true, world, getPlayer),
+					new IESlot.Upgrades(container, inv, 2, 118, 35 - 5, UPGRADE_TYPE, stack, true, world, getPlayer)
 			};
 		}else{
 			return new Slot[0];

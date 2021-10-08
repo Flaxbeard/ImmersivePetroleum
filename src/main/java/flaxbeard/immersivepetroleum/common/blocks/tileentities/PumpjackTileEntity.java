@@ -303,7 +303,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	}
 	
 	@Override
-	public void doGraphicalUpdates(int slot){
+	public void doGraphicalUpdates(){
 		this.markDirty();
 		this.markContainingBlockForUpdate(null);
 	}

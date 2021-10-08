@@ -191,7 +191,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockTileEntity<CokerUnitTi
 	}
 	
 	@Override
-	public void doGraphicalUpdates(int slot){
+	public void doGraphicalUpdates(){
 		updateMasterBlock(null, true);
 	}
 	

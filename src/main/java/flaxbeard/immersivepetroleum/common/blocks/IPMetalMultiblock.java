@@ -16,8 +16,8 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 
 public class IPMetalMultiblock<T extends MultiblockPartTileEntity<T>> extends MetalMultiblockBlock<T>{
-	public IPMetalMultiblock(String name, Supplier<TileEntityType<T>> te, Property<?>... additionalProperties){
-		super(name, te, additionalProperties);
+	public IPMetalMultiblock(String name, Supplier<TileEntityType<T>> te){
+		super(name, te);
 		
 		// Nessesary hacks
 		IEContent.registeredIEBlocks.remove(this);

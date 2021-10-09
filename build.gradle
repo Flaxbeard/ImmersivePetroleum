@@ -53,7 +53,8 @@ minecraft {
 			property 'forge.logging.markers', ''
 			property 'forge.logging.console.level', 'info'
 			property 'fml.earlyprogresswindow', 'false'
-			property 'mixin.env.disableRefMap', 'true'
+			property 'mixin.env.remapRefMap', 'true'
+			property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 			mods {
 				immersivepetroleum {
 					source sourceSets.main
@@ -66,7 +67,8 @@ minecraft {
 			property 'forge.logging.markers', ''
 			property 'forge.logging.console.level', 'info'
 			property 'fml.earlyprogresswindow', 'false'
-			property 'mixin.env.disableRefMap', 'true'
+			property 'mixin.env.remapRefMap', 'true'
+			property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 			
 			arg '-nogui'
 			
@@ -82,7 +84,8 @@ minecraft {
 			property 'forge.logging.markers', ''
 			property 'forge.logging.console.level', 'info'
 			property 'fml.earlyprogresswindow', 'false'
-			property 'mixin.env.disableRefMap', 'true'
+			property 'mixin.env.remapRefMap', 'true'
+			property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 			
 			args '--mod', 'immersivepetroleum',
 				 '--all',
@@ -104,9 +107,9 @@ minecraft {
 dependencies {
 	minecraft "net.minecraftforge:forge:1.16.5-36.2.0"
 	
-	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.3-138")
+	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.4-139")
 	//compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-135:api")
-	datagenCompile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.3-138:datagen")
+	datagenCompile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.4-139:datagen")
 	
 	compile fg.deobf(group: "com.blamejared.crafttweaker", name: "CraftTweaker-1.16.5", version: "7.1.0.103")
 	

@@ -115,7 +115,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 	}
 	
 	@Override
-	public void doGraphicalUpdates(int slot){
+	public void doGraphicalUpdates(){
 		this.markDirty();
 		this.markContainingBlockForUpdate(null);
 	}

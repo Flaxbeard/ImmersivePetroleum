@@ -142,34 +142,37 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 		
 		checkForNeedlessTicking();
 		
-		if(this.world.isRemote || isDummy() || isRSDisabled()){
+		if(this.world.isRemote || isDummy()){
 			return;
 		}
 		
 		boolean update = false;
-		if(this.energyStorage.getEnergyStored() > 0 && this.processQueue.size() < getProcessQueueMaxLength()){
-			if(this.tanks[TANK_INPUT].getFluidAmount() > 0){
-				DistillationRecipe recipe = DistillationRecipe.findRecipe(this.tanks[TANK_INPUT].getFluid());
-				if(recipe != null && this.tanks[TANK_INPUT].getFluidAmount() >= recipe.getInputFluid().getAmount() && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()){
-					MultiblockProcessInMachine<DistillationRecipe> process = new MultiblockProcessInMachine<DistillationRecipe>(recipe).setInputTanks(TANK_INPUT);
-					if(addProcessToQueue(process, true)){
-						addProcessToQueue(process, false);
-						update = true;
+		
+		if(!isRSDisabled()){
+			if(this.energyStorage.getEnergyStored() > 0 && this.processQueue.size() < getProcessQueueMaxLength()){
+				if(this.tanks[TANK_INPUT].getFluidAmount() > 0){
+					DistillationRecipe recipe = DistillationRecipe.findRecipe(this.tanks[TANK_INPUT].getFluid());
+					if(recipe != null && this.tanks[TANK_INPUT].getFluidAmount() >= recipe.getInputFluid().getAmount() && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()){
+						MultiblockProcessInMachine<DistillationRecipe> process = new MultiblockProcessInMachine<DistillationRecipe>(recipe).setInputTanks(TANK_INPUT);
+						if(addProcessToQueue(process, true)){
+							addProcessToQueue(process, false);
+							update = true;
+						}
 					}
 				}
 			}
+			
+			if(!this.processQueue.isEmpty()){
+				this.wasActive = true;
+				this.cooldownTicks = 6;
+				update = true;
+			}else if(this.wasActive){
+				this.wasActive = false;
+				update = true;
+			}
+			
+			super.tick();
 		}
-		
-		if(!this.processQueue.isEmpty()){
-			this.wasActive = true;
-			this.cooldownTicks = 6;
-			update = true;
-		}else if(this.wasActive){
-			this.wasActive = false;
-			update = true;
-		}
-		
-		super.tick();
 		
 		if(this.inventory.get(INV_0) != ItemStack.EMPTY && this.tanks[TANK_INPUT].getFluidAmount() < this.tanks[TANK_INPUT].getCapacity()){
 			ItemStack emptyContainer = Utils.drainFluidContainer(this.tanks[TANK_INPUT], this.inventory.get(INV_0), this.inventory.get(INV_1));

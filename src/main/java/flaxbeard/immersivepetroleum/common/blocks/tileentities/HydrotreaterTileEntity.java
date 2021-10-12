@@ -12,10 +12,10 @@ import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
-import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
+import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -256,11 +256,11 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 			update |= FluidUtil.getFluidHandler(this.world, getBlockPosForPos(Fluid_OUT).up(), Direction.DOWN).map(output -> {
 				boolean ret = false;
 				FluidStack target = this.tanks[TANK_OUTPUT].getFluid();
-				target = Utils.copyFluidStackWithAmount(target, Math.min(target.getAmount(), 100), false);
+				target = FluidHelper.copyFluid(target, Math.min(target.getAmount(), 100));
 				
 				int accepted = output.fill(target, FluidAction.SIMULATE);
 				if(accepted > 0){
-					int drained = output.fill(Utils.copyFluidStackWithAmount(target, Math.min(target.getAmount(), accepted), false), FluidAction.EXECUTE);
+					int drained = output.fill(FluidHelper.copyFluid(target, Math.min(target.getAmount(), accepted), true), FluidAction.EXECUTE);
 					
 					this.tanks[TANK_OUTPUT].drain(new FluidStack(target.getFluid(), drained), FluidAction.EXECUTE);
 					ret |= true;

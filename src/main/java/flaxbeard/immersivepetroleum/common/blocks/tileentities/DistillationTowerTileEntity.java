@@ -21,6 +21,7 @@ import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
+import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.ItemStackHelper;
@@ -233,11 +234,11 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 					
 					// Tries to Output the output-fluids in parallel
 					for(FluidStack target:this.tanks[TANK_OUTPUT].fluids){
-						FluidStack outStack = Utils.copyFluidStackWithAmount(target, Math.min(target.getAmount(), 100), false);
+						FluidStack outStack = FluidHelper.copyFluid(target, Math.min(target.getAmount(), 100));
 						
 						int accepted = output.fill(outStack, FluidAction.SIMULATE);
 						if(accepted > 0){
-							int drained = output.fill(Utils.copyFluidStackWithAmount(outStack, Math.min(outStack.getAmount(), accepted), false), FluidAction.EXECUTE);
+							int drained = output.fill(FluidHelper.copyFluid(outStack, Math.min(outStack.getAmount(), accepted), true), FluidAction.EXECUTE);
 							
 							toDrain.add(new FluidStack(target.getFluid(), drained));
 							ret |= true;
@@ -388,7 +389,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			outputAmount += outputFluid.getAmount();
 		}
 
-		return (this.tanks[TANK_OUTPUT].getCapacity() >= this.tanks[TANK_OUTPUT].getFluidAmount() + outputAmount);
+		return this.tanks[TANK_OUTPUT].getCapacity() >= (this.tanks[TANK_OUTPUT].getFluidAmount() + outputAmount);
 	}
 	
 	@Override

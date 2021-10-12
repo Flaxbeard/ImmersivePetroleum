@@ -11,22 +11,24 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.state.Property;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.loading.FMLLoader;
 
 public class IPMetalMultiblock<T extends MultiblockPartTileEntity<T>> extends MetalMultiblockBlock<T>{
 	public IPMetalMultiblock(String name, Supplier<TileEntityType<T>> te){
 		super(name, te);
 		
 		// Nessesary hacks
-		IEContent.registeredIEBlocks.remove(this);
-		Iterator<Item> it = IEContent.registeredIEItems.iterator();
-		while(it.hasNext()){
-			Item item = it.next();
-			if(item instanceof BlockItemIE && ((BlockItemIE) item).getBlock() == this){
-				it.remove();
-				break;
+		if(!FMLLoader.isProduction()){
+			IEContent.registeredIEBlocks.remove(this);
+			Iterator<Item> it = IEContent.registeredIEItems.iterator();
+			while(it.hasNext()){
+				Item item = it.next();
+				if(item instanceof BlockItemIE && ((BlockItemIE) item).getBlock() == this){
+					it.remove();
+					break;
+				}
 			}
 		}
 		

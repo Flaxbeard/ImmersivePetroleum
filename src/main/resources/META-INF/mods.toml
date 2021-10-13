@@ -17,14 +17,14 @@ license="All rights reserved"
 [[dependencies.immersivepetroleum]]
 	modId="immersiveengineering"
 	mandatory=true
-	versionRange="[1.16.5-5.0.4,)"
+	versionRange="[1.16.5-5.0.4-139,)"
 	ordering="BEFORE"
 	side="BOTH"
 
 [[dependencies.immersivepetroleum]]
 	modId="forge"
 	mandatory=true
-	versionRange="[36.1.0,)"
+	versionRange="[36.2.0,)"
 	ordering="NONE"
 	side="BOTH"
 

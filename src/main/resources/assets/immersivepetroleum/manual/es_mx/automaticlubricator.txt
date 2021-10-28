@@ -1,0 +1,4 @@
+§lLubricador automático§r
+§oManos libres§r
+<&automaticlubricator0>Aplicar manualmente §1<link;immersivepetroleum:distillationtower;lubricante>§r a las máquinas puede ser agotador y a menudo frustrante. El §llubricador automático§r hará esta tarea por usted una vez acoplado a una máquina. El punto en el que se debe acoplar está resaltado mientras se sostiene el §llubricador§r en la mano.<np>
+Si se coloca correctamente, se formarán §ltubos de lubricación§r alrededor de la máquina. En este punto, simplemente suministre §llubricante de petróleo§r o §1<link;squeezer;aceite vegetal§r>§r.

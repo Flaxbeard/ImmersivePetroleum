@@ -1,0 +1,13 @@
+§lUnidad de coquización§r
+§oMaterial muy pegajoso§r
+<&cokerunit0>La §lunidad de coquización§r es una estructura multibloque muy grande que transforma el §lbetún§r en §lcoque de petróleo§r y §ldiésel§r como subproducto. Lo hace calentando el §lbetún§r hasta su temperatura de craqueo térmico. De este modo, las moléculas de hidrocarburos pesados y de cadena larga se convierten en §lcoque de petróleo§r y §ldiésel§r.
+
+Se construye como se muestra en la página anterior y se forma usando el §lMartillo del Ingeniero§r en el §lbloque de hormigón§r del centro, junto al §lbloque de ingeniería de redstone§r.<np>
+La aplicación de una señal de redstone al panel de control detendrá el proceso de la máquina, este comportamiento puede invertirse mediante el uso del §lDestornillador del Ingeniero§r.
+
+La entrada de agua se ubica por la parte trasera, el puerto está marcado con un punto azul y el §lbetún§r se puede introducir por la escotilla del centro.
+El §lcoque de petróleo§r se deja caer por debajo de los conductos de la cámara.<np>
+La §lunidad de coquización§r usa <config;i;coker_operationcost> Flux/t y 125mB de agua por cámara durante la conversión del §lbetún§r en §lcoque de petróleo§r.
+
+No es necesario llenar completamente una cámara para que la coquización inicie el proceso, y se puede añadir más durante la primera fase.
+Si una cámara se llena por completo, intentará llenar la cámara secundaria en su lugar.

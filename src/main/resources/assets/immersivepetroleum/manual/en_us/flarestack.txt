@@ -1,5 +1,6 @@
 Flarestack
 Burns away your problems
-<&flarestack0>This simple device burns away excess or unwanted Lubricant.
+<&flarestack0>This simple device burns away excess or unwanted fluids at a rate of 100mB/t which are pumped in through the bottom.
 
-Lubricant is pumped in through the bottom, it will automatically start burning it at a rate of 100mB per Tick.
+It can be turned off by applying a redstone signal to it's base.<np>
+<&flarestack1>Below is a list of fluids which can be burned by the flarestack

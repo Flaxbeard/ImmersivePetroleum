@@ -1,0 +1,14 @@
+§lTorre de destilación§r
+§oNo respeta el medio ambiente§r
+<&distillationtower0>La §ltorre de destilación§r es una gran estructura de varios bloques que separa el §lpetróleo crudo§r en una serie de subproductos.<np>
+Se construye como se muestra y se forma utilizando el §lMartillo del Ingeniero§r en el §lbloque de ingeniería de redstone§r.
+
+La aplicación de una señal de redstone al panel de control detendrá el proceso de la máquina, este comportamiento puede invertirse mediante el uso del §lDestornillador del ingeniero§r.
+
+El §lpetróleo crudo§r puede introducirse en la §ltorre de destilación§r por la escotilla trasera marcada con un punto azul, donde se calentará hasta que se separe en varias capas. Esto produce una variedad de fluidos y tiene la posibilidad de producir §lbetún§r como subproducto.
+
+La §ltorre de destilación§r utiliza <config;i;distillationtower_operationcost> Flux por operación, convirtiendo hasta 75 mB de §lpetróleo crudo§r en §ldiésel§r, §llubricante§r, §lgasolina§r, y §lbetún§r por tick. La mezcla de fluidos producida sale por la escotilla lateral marcada con un punto naranja; el §lbetún§r por la escotilla delantera.<np>
+
+El §ldiésel§r puede ser usado como §1<link;diesel_generator;generador de energía>§r, lubricante para §1<link;immersivepetroleum:lubricant;máquinas aceitadoras>, y §lgasolina§r para §1<link;immersivepetroleum:portablegenerator;encender motores>§r, §1<link;immersivepetroleum:speedboat;vehículos>§r, o §1<link;immersivepetroleum:napalm;napalm>§r.
+El §lbetún§r se utiliza para hacer §1<link;immersivepetroleum:asphalt;hormigón asfáltico>§r y se puede seguir procesando para obtener §lcoque de petróleo§r en la §1<link;immersivepetroleum:cokerunit;unidad de coquización>§r.<np>
+<&distillationtower1>A continuación se detallan las operaciones que puede realizar la §ltorre de destilación§r:

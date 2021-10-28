@@ -1,0 +1,8 @@
+§lUnidad de bombeo§r
+§oBombea, bombea§r
+<&pumpjack0>La §lunidad de bombeo§r es un multibloque que extrae el §lpetróleo§r de los depósitos situados bajo el lecho rocoso. La estructura se forma utilizando el §lMartillo del Ingeniero§r en el §lbloque de ingeniería pesada§r de la segunda capa.<np>
+La §lunidad de bombeo§r utiliza <config;i;pumpjack_consumption> Flux/t para bombear §lpetróleo crudo§r a una tasa de <config;i;pumpjack_speed> mB/t. El §lpetróleo§r producido se expulsa automáticamente a través de los dos puertos laterales con puntos naranjas.
+
+El depósito de petróleo promedio tomará <config;i;pumpjack_days> días para agotarse, aunque añadir más §lunidades de bombeo§r puede acelerar el proceso.
+
+La aplicación de una señal de redstone al panel de control detendrá el proceso de la máquina, este comportamiento puede invertirse mediante el uso del §lDestornillador del Ingeniero§r.

@@ -1,48 +1,159 @@
 {
-    "block.immersivepetroleum.fluid_diesel": "軽油",
-    "block.immersivepetroleum.fluid_crude_oil": "原油",
-
-    "block.immersivepetroleum.stone_decoration.asphalt": "アスファルト",
-
-    "block.immersivepetroleum.metal_multiblock.pumpjack": "ポンプジャック",
-    "block.immersivepetroleum.metal_multiblock.distillation_tower": "蒸留塔",
-    "block.immersivepetroleum.metal_multiblock.pumpjack_parent": "ポンプジャック",
-    "block.immersivepetroleum.metal_multiblock.distillation_tower_parent": "蒸留塔",
-
-    "chat.immersivepetroleum.info.coresample.oil": "%s mB オイル",
-    "chat.immersivepetroleum.info.coresample.noOil": "オイル無し",
-
-    "fluid.diesel": "軽油",
-    "fluid.oil": "原油",
-
-    "item.immersivepetroleum.material.bitumen": "瀝青",
-    "item.immersivepetroleum.material.petcoke": "石油コークス",
-
-    "itemGroup.immersivepetroleum": "Immersive Petroleum",
-
-    "ie.manual.entry.blank_text": "",
-
-    "desc.immersiveengineering.info.multiblock.IP:DistillationTower": "蒸留塔",
-
-    "ie.manual.entry.distillationTower": "蒸留塔",
-    "ie.manual.entry.distillationTower.subtext": "環境にやさしくない",
-    "ie.manual.entry.distillationTower0": "蒸留塔は、原油を多くの副生成物に分離する大規模なマルチブロック構造です。これは図示のように構築し、Engineer's HammerをRedstone Engineering Blockで使用することで形成されます。<br><br>原油は、青い点で示される後部のハッチから蒸留塔に注入することができます。蒸留塔では、それが複数の層に分離するまで加熱されます。これは軽油を生産し、副生成物として瀝青を生産することがあります。",
-    "ie.manual.entry.distillationTower1": "蒸留塔では、操作ごとに<config;i;distillationTower_operationCost>RFを使用し、ティックごとに原油をディーゼルに 25 mB変換します。生成された軽油は、オレンジ色の点で示される側面ハッチから排出されます。瀝青は前面ハッチから排出されます。これらの出力はそれぞれ<link;dieselgen;§o§n電力生産§r>や<link;asphalt;§o§nアスファルト§r>に使用できます。 <br><br>前面のコントロールパネルにレッドストーン信号を入力すると、機械のプロセスが停止しますが、この動作はEngineer's Hammerを使用して反転できます。",
-
-    "ie.manual.entry.pumpjack": "ポンプジャック",
-    "ie.manual.entry.pumpjack.subtext": "ポンプ、汲み上げるもの",
-    "ie.manual.entry.pumpjack0": "ポンプジャックは、岩盤の下から原油を抽出するマルチブロックです。これは図示のように構築し、Engineer's Hammerを第二層のHeavy Engineering Blockに使用することで形成されます。",
-    "ie.manual.entry.pumpjack1": "ポンプジャックタワーは、<config;i;pumpjack_speed> mB/tで原油を輸送するために<config;i;pumpjack_consumption> RF/t を使用します。 生成された原油は、オレンジ色の点で示される2つの側面ポートから自動的に排出されます。<br><br>埋蔵しているいる原油は平均<config;i;pumpjack_days>日程で枯渇するでしょう。さらに、ポンプジャックを増やすと高速化されます。<br><br>前面のコントロールパネルにレッドストーン信号を入力すると、機械のプロセスが停止しますが、この動作はEngineer's Hammerを使用して反転できます。",
-
-    "": "/linkできたら()と()内消して",
-    "ie.manual.entry.oil": "原油溜まり",
-    "ie.manual.entry.oil.subtext": "黒い金",
-    "ie.manual.entry.oil0": "岩盤の近くで採掘すると、滑らかな黒い可燃性物質、原油に気づくかもしれません。あなたは、岩盤の下に、より多くが閉じ込められていると思ってもあなた自身で石油溜まりに行くことはできません。あなたは<link;pumpjack;§o§n特別に設計された機械§o§n(ポンプジャック)§r>を使って貴重な燃料を手に入れることができます。",
-    "ie.manual.entry.oil1": "<link;minerals;§o§nボーリングマシン§r>は、オイルがチャンクに含まれているかどうかを判断し、石油溜まりのサイズを把握します。<br><br>各石油溜まりの原油の量にかかわらず、枯渇したチャンクから少量（最大<config;i;oil_replenish> mB/t)が引き続き回収される可能性があります。枯渇チャンク内に複数のポンプジャックを使用しても、何のメリットもありません。",
-
-    "ie.manual.entry.asphalt": "アスファルト",
-    "ie.manual.entry.asphalt.subtext": "道路の材料",
-    "ie.manual.entry.asphalt0": "アスファルトは、べたつく瀝青によって作られ、コンクリートよりも暗い色です。<link;distillationTower;§n§o蒸留塔§r>で原油を処理した副産物、瀝青によって作られます。",
-
-    "ie.manual.category.ip": "原油処理"
+	"itemGroup.immersivepetroleum": "Immersive Petroleum",
+	
+	"_comment": "################## Blocks ##################",
+	
+	"block.immersivepetroleum.fluid_diesel": "ディーゼル",
+	"block.immersivepetroleum.fluid_crude_oil": "原油",
+	"block.immersivepetroleum.fluid_lubricant": "潤滑油",
+	"block.immersivepetroleum.fluid_gasoline": "ガソリン",
+	"block.immersivepetroleum.fluid_napalm": "ナパーム",
+	
+	"block.immersivepetroleum.asphalt": "アスファルトコンクリート",
+	
+	"block.immersivepetroleum.auto_lubricator": "自動給油器",
+	"block.immersivepetroleum.gas_generator": "ポータブル発電機",
+	"block.immersivepetroleum.flarestack": "フレアスタック",
+	
+	"block.immersivepetroleum.pumpjack": "ポンプジャック",
+	"block.immersivepetroleum.distillationtower": "蒸留塔",
+	
+	"fluid.immersivepetroleum.diesel": "ディーゼル",
+	"fluid.immersivepetroleum.oil": "原油",
+	"fluid.immersivepetroleum.lubricant": "潤滑油",
+	"fluid.immersivepetroleum.gasoline": "ガソリン",
+	"fluid.immersivepetroleum.napalm": "ナパーム",
+	
+	"_comment": "################## Items ##################",
+	
+	"item.immersivepetroleum.projector": "プロジェクター",
+	"item.immersivepetroleum.projector.specific": "%sのプロジェクター",
+	"item.immersivepetroleum.speedboat": "モーターボート",
+	"item.immersivepetroleum.oil_can": "潤滑油缶",
+	
+	"item.immersivepetroleum.bitumen": "瀝青",
+	"item.immersivepetroleum.petcoke": "石油コークス",
+	"item.immersivepetroleum.diesel_bucket": "ディーゼル入りバケツ",
+	"item.immersivepetroleum.oil_bucket": "原油入りバケツ",
+	"item.immersivepetroleum.lubricant_bucket": "潤滑油入りバケツ",
+	"item.immersivepetroleum.gasoline_bucket": "ガソリン入りバケツ",
+	"item.immersivepetroleum.napalm_bucket": "ナパーム入りバケツ",
+	
+	"item.immersivepetroleum.upgrade_reinforced_hull": "強化筐体",
+	"item.immersivepetroleum.upgrade_icebreaker": "砕氷用の船首",
+	"item.immersivepetroleum.upgrade_tank": "拡張燃料タンク",
+	"item.immersivepetroleum.upgrade_rudders": "操縦用の舵",
+	"item.immersivepetroleum.upgrade_paddles": "緊急パドル",
+	
+	"_comment": "################## Descriptions ##################",
+	
+	"_comment":"Replaced the IP with IE to save me from headaches. ~TwistedGate",
+	"desc.immersiveengineering.info.multiblock.IE:DistillationTower": "蒸留塔",
+	"desc.immersiveengineering.info.multiblock.IE:Pumpjack": "ポンプジャック",
+	
+	"desc.immersivepetroleum.info.reservoir.oil": "オイル溜まり",
+	"desc.immersivepetroleum.info.reservoir.aquifer": "帯水層",
+	"desc.immersivepetroleum.info.reservoir.lava": "マグマ溜まり",
+	
+	"desc.immersivepetroleum.flavour.upgrade_reinforced_hull": "モーターボートに火炎耐性を与え、体力を増やす",
+	"desc.immersivepetroleum.flavour.upgrade_icebreaker": "モーターボートで氷を破壊し、敵を攻撃できるようにする",
+	"desc.immersivepetroleum.flavour.upgrade_tank": "モーターボートの燃料タンクの容量を増やす",
+	"desc.immersivepetroleum.flavour.upgrade_rudders": "モーターボートをより小回りが利くようにする",
+	"desc.immersivepetroleum.flavour.upgrade_paddles": "燃料がなくなった際にモーターボートを漕げるようにする",
+	
+	"desc.immersivepetroleum.flavour.asphalt": "歩行速度を%1$s増やす",
+	
+	"_comment": "This is for the upgrade list of the speedboat tooltip",
+	"desc.immersivepetroleum.flavour.speedboat0": "アップグレード",
+	
+	"desc.immersivepetroleum.info.projector.noMultiblock": "右クリックでメニューを開く",
+	"desc.immersivepetroleum.info.projector.size": "サイズ: %d x %d x %d",
+	"desc.immersivepetroleum.info.projector.build0": "以下の構造物のイメージを表示",
+	"desc.immersivepetroleum.info.projector.build1": "%s",
+	"desc.immersivepetroleum.info.projector.center": "中心: [%d, %d, %d]",
+	
+	"desc.immersivepetroleum.info.projector.flipped.true": "鏡像: はい",
+	"desc.immersivepetroleum.info.projector.flipped.false": "鏡像: いいえ",
+	
+	"desc.immersivepetroleum.info.projector.rotated.north":"北向き",
+	"desc.immersivepetroleum.info.projector.rotated.east":  "東向き",
+	"desc.immersivepetroleum.info.projector.rotated.south": "南向き",
+	"desc.immersivepetroleum.info.projector.rotated.west": "西向き",
+	
+	"desc.immersivepetroleum.info.projector.mode_0": "選択モード",
+	"desc.immersivepetroleum.info.projector.mode_1": "投影モード",
+	
+	"desc.immersivepetroleum.info.projector.holdshift": "Shiftを押下",
+	"desc.immersivepetroleum.info.projector.holdshift.text": "設定",
+	
+	"desc.immersivepetroleum.info.projector.holdctrl": "Ctrlを押下",
+	"desc.immersivepetroleum.info.projector.holdctrl.text": "操作方法",
+	
+	"desc.immersivepetroleum.info.projector.control1": "シフト + マウスホイールUP/DOWNで回転",
+	"desc.immersivepetroleum.info.projector.control2": "%sで鏡像",
+	"desc.immersivepetroleum.info.projector.control3": "空中でスニーク + 右クリックでモードを変更",
+	
+	"_comment": "################## GUI ##################",
+	
+	"gui.immersivepetroleum.projector.search": "検索",
+	"gui.immersivepetroleum.projector.button.confirm": "確認",
+	"gui.immersivepetroleum.projector.button.cancel": "キャンセル",
+	"gui.immersivepetroleum.projector.button.mirror": "鏡像",
+	"gui.immersivepetroleum.projector.button.rcw": "時計回りに回転",
+	"gui.immersivepetroleum.projector.button.rccw": "反時計回りに回転",
+	
+	"_comment": "################## IE-Manual ##################",
+	
+	"effect.immersivepetroleum.anti_fire": "",
+	
+	"_comment": "################## IE-Manual ##################",
+	
+	"manual.immersivepetroleum.main": "オイル処理",
+	
+	"ie.manual.entry.blank_text": "",
+	
+	"ie.manual.entry.reservoirs.title": "液体貯留層",
+	"ie.manual.entry.reservoirs.subtitle": "黒い黄金",
+	
+	"ie.manual.entry.reservoirs.oil0": "岩盤の近くを採掘していると、滑らかな黒い可燃性物質、石油に気付くことがあります。 石油は、破壊できない岩の下にある多くの液体の１つに過ぎませんが、自らがその貯留層に辿り着くことはできません。\n\n<link;immersivepetroleum:pumpjack;§o§n特別にデザインされた機械§r>を用いることで、この貯留層の液体を手に入れることができるかもしれません。<np>",
+	"ie.manual.entry.reservoirs.oil1": "<link;minerals;§o§n地質試料ドリル§r>は、特定のチャンクに貯留層があるか、ある場合はその液体の埋蔵量がどれくらいか、を教えてくれます。\n\n各チャンクに含まれる液体の量は有限ですが、特定のタイプの貯留層の場合は、液体を取り尽くしてもなお微量の液体を抽出し続けられる場合があります。 枯渇したチャンクでは、複数のポンプジャックを用いてもメリットはありません。<np>",
+	
+	"ie.manual.entry.reservoirs.consonant": "",
+	"ie.manual.entry.reservoirs.vowel": "",
+	
+	"ie.manual.entry.reservoirs.dim.valid": "%3$s §l%1$s§r は、%2$sで見つかる液体貯留層です。",
+	"ie.manual.entry.reservoirs.dim.invalid": "%3$s §l%1$s§r は、%2$s以外で見つかる液体貯留層です。",
+	"ie.manual.entry.reservoirs.dim.any": "%2$s §l%1$s§r は、任意のディメンジョンで見つかる液体貯留層です。",
+	
+	"ie.manual.entry.reservoirs.bio.valid": "この貯留層は、%sバイオームで生成されます。",
+	"ie.manual.entry.reservoirs.bio.invalid": "この貯留層は、%sバイオームで生成されません。",
+	"ie.manual.entry.reservoirs.bio.any": "この貯留層は、あらゆるバイオームで生成されます。",
+	
+	"ie.manual.entry.reservoirs.content": "%1$s %6$s\nこの貯留層は、%3$s ～ %4$smBの%2$sを含みます。",
+	"ie.manual.entry.reservoirs.replenish": "\n貯留層が枯渇した後でも、単一のポンプジャックを用いて%1$d mB/tickで微量の%2$sを抽出できます。",
+	
+	"_comment": "################## Chat ##################",
+	
+	"chat.immersivepetroleum.command.help.help": "§6使用法: /ip help <command> [sub-commands ...]§r\n特定のコマンド、オプション、サブコマンドの情報を表示",
+	"chat.immersivepetroleum.command.reservoir.help": "§6Usage: /ip reservoir <list|get|set|setAmount|setCapacity>§r",
+	"chat.immersivepetroleum.command.reservoir.list.help": "§6Usage: /ip reservoir list§r<br> 登録されている貯留層の一覧を表示します。",
+	"chat.immersivepetroleum.command.reservoir.get.help": "§6Usage: /ip reservoir get§r<br> チャンクに含まれる貯留層を表示します。",
+	"chat.immersivepetroleum.command.reservoir.set.help": "§6Usage: /ip reservoir set [reservoir]§r<br> チャンクの貯留層を指定した値で上書きします。上書きする元の貯留層は指定できません。",
+	"chat.immersivepetroleum.command.reservoir.setAmount.help": "§6Usage: /ip reservoir setAmount <number>§r<br> チャンクに残存する液体の量をmB単位で設定します。",
+	"chat.immersivepetroleum.command.reservoir.setCapacity.help": "§6Usage: /ip reservoir setCapacity <number>§r<br> チャンクの液体の最大埋蔵量をmB単位で設定します。",
+	"chat.immersivepetroleum.command.reservoir.get": "チャンク内の液体: %1$s <br>上書き: %2$s <br>量: %3$s",
+	"chat.immersivepetroleum.command.reservoir.set.invalidReservoir": "§c'%1$s'は無効な帯水層の識別子です。'/ip reservoir list'コマンドを実行し、識別子の一覧を取得してください。§r",
+	"chat.immersivepetroleum.command.reservoir.set.sucess": "貯留層の内容を上書き: %1$s",
+	"chat.immersivepetroleum.command.reservoir.set.clear": "貯留層の上書きをクリアしました。 (%1$s)",
+	"chat.immersivepetroleum.command.reservoir.setAmount.sucess": "貯留層の量を以下に設定: %1$s",
+	"chat.immersivepetroleum.command.reservoir.setAmount.NFE": "エラー。'%1$s'は妥当な数字ではありません。",
+	"chat.immersivepetroleum.command.reservoir.setCapacity.sucess": "貯留層の最大埋蔵量を以下に設定: %1$s",
+	"chat.immersivepetroleum.command.reservoir.setCapacity.NFE": "エラー。'%1$s'は妥当な数字ではありません。",
+	
+	"chat.immersivepetroleum.info.coresample.oil": "%s 貯留層",
+	"chat.immersivepetroleum.info.coresample.oilRep": "最大%d mB/tickで抽出できる微量の%s",
+	"chat.immersivepetroleum.info.coresample.noOil": "液体貯留層なし",
+	
+	"key.categories.immersivepetroleum": "Immersive Petroleum",
+	"key.immersivepetroleum.projector.flip": "鏡像投影"
 }

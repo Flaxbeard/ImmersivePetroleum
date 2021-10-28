@@ -1,0 +1,10 @@
+§lLancha§r
+§oJinete de las olas§r
+<&speedboat0>Ahora puedes recorrer los mares a gran velocidad con la ayuda de la §llancha§r. La §llancha§r funciona con §1<link;immersivepetroleum:distillationtower;gasolina>§r que puede añadirse con un §lcubo§r o un §1<link;jerrycan;bidón>§r. La §lgasolina§r se consume al conducir la §llancha§r hacia delante o hacia atrás. Manteniendo pulsada la tecla de salto se incrementa la velocidad de la embarcación, aunque a costa de un mayor consumo de combustible y un mayor radio de giro.
+Al igual que otros dispositivos, la lancha puede ser modificada en el §1<link;workbench;banco de trabajo del ingeniero>§r.<np>
+
+<&speedboat1>El §ldepósito de combustible ampliado§r permite que la §llancha§r retenga el doble de §lcombustible§r.<np>
+<&speedboat2>Un conjunto de §ltimones de maniobra§r da a la §llancha§r la capacidad de cambiar de dirección mucho más rápidamente, mejorando drásticamente su manejo. Con esta mejora, el radio de giro de la embarcación se reduce de forma impresionante.<np>
+<&speedboat3>La navegación por climas más fríos se convierte en una tarea trivial con la §lproa rompehielos§r, que permite a la §llancha§r atravesar el §lhielo§r. Además de sus ventajas de movilidad, la §lproa§r permite dañar a las criaturas con los que se topa.<np>
+<&speedboat4>Si busca explorar más allá de este reino, o simplemente desea que su lancha sea más resistente a los objetos, considera la instalación de un §lcasco reforzado§r. El casco de acero otorga una mayor salud y resistencia al fuego a la embarcación, lo que permite navegar por los vastos lagos de lava del Nether.<np>
+<&speedboat5>Equipar su lancha con un par de §lremos de emergencia§r significa que quedarse sin §lcombustible§r ya no es el desastre que era antes. Si el depósito de combustible de la embarcación está vacío, puedes remar como una barca tradicional.

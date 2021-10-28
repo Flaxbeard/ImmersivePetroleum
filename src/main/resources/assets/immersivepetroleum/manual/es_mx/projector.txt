@@ -1,0 +1,17 @@
+§lProyector de multibloques§r
+§oInstrucciones invaluables§r
+<&projector0>Cuando se trata de construir grandes estructuras de varios bloques, consultar una y otra vez el §lManual del Ingeniero§r se puede volver tedioso. Al crear un dispositivo proyector primitivo, puedes proyectar los esquemas de estas estructuras en el mundo para utilizarlos como plantilla.<np>
+Su interfaz gráfica puede resultar abrumadora al principio, pero es muy sencilla.
+
+La parte izquierda muestra una lista de todos los §nmultibloques§r existentes.
+Al seleccionar uno se mostrará el §nmultibloque§r terminado en el lado derecho, y también el nombre del §nmultibloque§r actualmente seleccionado se mostrará sobre la propia interfaz.
+
+El centro alberga botones para cambiar la rotación y el espejado, la rotación actual se indica con §lN§r, §lS§r, §lE§r u §lO§r sobre los botones de rotación.<np>
+Cuando esté satisfecho con su decisión, haga clic en §lConfirmar§r, que bloqueará su selección y cerrará la interfaz.
+Clic en §lCancelar§r cerrará la interfaz sin hacer nada.
+Agacharse y hacer clic con derecho en el aire cambia entre el §lmodo de proyección o de selección§r.<np>
+Si se mantiene un §lproyector§r en la mano, se mostrará la estructura. Pulsando <keybind;key.immersivepetroleum.projector.flip> dará la vuelta a la estructura, y si usas mayús izq + rueda de desplazamiento del ratón, la girará. Al hacer clic derecho se bloqueará la imagen en su lugar, donde se mostrará siempre que el proyector esté en su inventario rápido.
+
+Mayús izq + clic derecho con un §lproyector§r que tenga una imagen bloqueada, desbloqueará la imagen.
+
+En el modo Creativo, mayús izq mientras se bloquea la imagen construirá el multibloque automáticamente.

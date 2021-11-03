@@ -56,7 +56,7 @@ public class DistillationRecipe extends IPMultiblockRecipe{
 		this.outputList = NonNullList.from(ItemStack.EMPTY, itemOutput);
 		
 		timeAndEnergy(time, energy);
-		modifyTimeAndEnergy(IPServerConfig.REFINING.distillationTower_energyModifier::get, IPServerConfig.REFINING.distillationTower_timeModifier::get);
+		modifyTimeAndEnergy(IPServerConfig.REFINING.distillationTower_timeModifier::get, IPServerConfig.REFINING.distillationTower_energyModifier::get);
 	}
 	
 	@Override

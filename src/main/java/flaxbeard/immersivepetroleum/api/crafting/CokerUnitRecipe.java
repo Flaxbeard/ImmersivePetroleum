@@ -98,7 +98,7 @@ public class CokerUnitRecipe extends IPMultiblockRecipe{
 		this.outputItem = outputItem;
 		
 		timeAndEnergy(time, energy);
-		modifyTimeAndEnergy(IPServerConfig.REFINING.cokerUnit_energyModifier::get, IPServerConfig.REFINING.cokerUnit_timeModifier::get);
+		modifyTimeAndEnergy(IPServerConfig.REFINING.cokerUnit_timeModifier::get, IPServerConfig.REFINING.cokerUnit_energyModifier::get);
 	}
 	
 	@Override

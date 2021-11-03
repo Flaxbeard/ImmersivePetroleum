@@ -88,7 +88,7 @@ public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
 		this.fluidInputList = Arrays.asList(inputFluidSecondary != null ? new FluidTagInput[]{inputFluid, inputFluidSecondary} : new FluidTagInput[]{inputFluid});
 		
 		timeAndEnergy(time, energy);
-		modifyTimeAndEnergy(IPServerConfig.REFINING.hydrotreater_energyModifier::get, IPServerConfig.REFINING.hydrotreater_energyModifier::get);
+		modifyTimeAndEnergy(IPServerConfig.REFINING.hydrotreater_timeModifier::get, IPServerConfig.REFINING.hydrotreater_energyModifier::get);
 	}
 	
 	@Override

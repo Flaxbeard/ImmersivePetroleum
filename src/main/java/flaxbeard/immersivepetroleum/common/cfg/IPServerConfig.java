@@ -62,23 +62,23 @@ public class IPServerConfig{
 			builder.push("Extraction");
 			
 			reservoir_chance = builder
-					.comment("The chance that a chunk contains a fluid reservoir, default=0.5")
+					.comment("The chance that a chunk contains a fluid reservoir", "Default: 0.5")
 					.define("reservoir_chance", Double.valueOf(0.5));
 			
 			pumpjack_consumption = builder
-					.comment("The Flux the Pumpjack requires each tick to pump, default=1024")
+					.comment("The Flux the Pumpjack requires each tick to pump", "Default: 1024")
 					.define("pumpjack_consumption", Integer.valueOf(1024));
 			
 			pumpjack_speed = builder
-					.comment("The amount of mB of oil a Pumpjack extracts per tick, default=15")
+					.comment("The amount of mB of oil a Pumpjack extracts per tick", "Default: 15")
 					.define("pumpjack_speed", Integer.valueOf(15));
 			
 			required_pipes = builder
-					.comment("Require a pumpjack to have pipes built down to Bedrock, default=false")
+					.comment("Require a pumpjack to have pipes built down to Bedrock", "Default: false")
 					.define("req_pipes", false);
 			
 			pipe_check_ticks = builder
-					.comment("Number of ticks between checking for pipes below pumpjack if required, default=100 (5 secs)")
+					.comment("Number of ticks between checking for pipes below pumpjack if required", "Default: 100")
 					.define("pipe_check_ticks", Integer.valueOf(100));
 			
 			builder.pop();
@@ -96,27 +96,27 @@ public class IPServerConfig{
 			builder.push("Refining");
 			
 			distillationTower_energyModifier = builder
-					.comment("A modifier to apply to the energy costs of every Distillation Tower recipe, default=1")
+					.comment("A modifier to apply to the energy costs of every Distillation Tower recipe", "Default: 1.0")
 					.define("distillationTower_energyModifier", Double.valueOf(1.0));
 			
 			distillationTower_timeModifier = builder
-					.comment("A modifier to apply to the time of every Distillation recipe. Can't be lower than 1, default=1")
+					.comment("A modifier to apply to the time of every Distillation recipe. Can't be lower than 1", "Default: 1.0")
 					.define("distillationTower_timeModifier", Double.valueOf(1.0));
 			
 			cokerUnit_energyModifier = builder
-					.comment("A modifier to apply to the energy costs of every Coker Tower recipe, default=1")
+					.comment("A modifier to apply to the energy costs of every Coker Tower recipe", "Default: 1.0")
 					.define("cokerUnit_energyModifier", Double.valueOf(1.0));
 			
 			cokerUnit_timeModifier = builder
-					.comment("A modifier to apply to the time of every Coker recipe. Can't be lower than 1, default=1")
+					.comment("A modifier to apply to the time of every Coker recipe. Can't be lower than 1", "Default: 1.0")
 					.define("cokerUnit_timeModifier", Double.valueOf(1.0));
 			
 			hydrotreater_energyModifier = builder
-					.comment("A modifier to apply to the energy costs of every Sulfur Recovery Unit recipe, default=1")
+					.comment("A modifier to apply to the energy costs of every Sulfur Recovery Unit recipe", "Default: 1.0")
 					.define("hydrotreater_energyModifier", Double.valueOf(1.0));
 			
 			hydrotreater_timeModifier = builder
-					.comment("A modifier to apply to the time of every Sulfur Recovery Unit recipe. Can't be lower than 1, default=1")
+					.comment("A modifier to apply to the time of every Sulfur Recovery Unit recipe. Can't be lower than 1", "Default: 1.0")
 					.define("hydrotreater_timeModifier", Double.valueOf(1.0));
 			
 			builder.pop();
@@ -152,11 +152,11 @@ public class IPServerConfig{
 					}), o -> true);
 			
 			autounlock_recipes = builder
-					.comment("Automatically unlock IP recipes for new players, default=true")
+					.comment("Automatically unlock IP recipes for new players", "Default: true")
 					.define("autounlock_recipes", true);
 			
 			asphalt_speed = builder
-					.comment("Set to false to disable the asphalt block boosting player speed, default=true")
+					.comment("Set to false to disable the asphalt block boosting player speed", "Default: true")
 					.define("asphalt_speed", true);
 			
 			builder.pop();

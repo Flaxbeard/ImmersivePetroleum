@@ -26,7 +26,7 @@ public class IPClientConfig{
 			builder.push("Miscellaneous");
 			
 			sample_displayBorder = builder
-					.comment("Unused for now!", "Display chunk border while holding Core Samples, default=true")
+					.comment("Unused for now!", "Display chunk border while holding Core Samples", "Default: true")
 					.define("sample_displayBorder", true);
 			
 			builder.pop();

@@ -1,3 +1,3 @@
 네이팜
 강의 신을 조심하세요.
-네이팜은 <link;immersivepetroleum:distillationtower;§n§o가솔린§r>과 세 개의 알루미늄 가루를 사용하여<link;mixer;§n§o믹서§r>에서 만들 수 있습니다. 무자비한 방화와 파괴에 쓰는 것 외에는 거의 쓸모가 없습니다. 네이팜에 불을 붙이면 불이 빠르게 퍼져나가 삼림을 빠르게 제거할 수 있습니다. 또한 <link;chemthrower;§n§o화학 §n§o투척기§r>의 매우 효과적인 연료 역활을 할 수 있습니다.
+네이팜은 <link;immersivepetroleum:distillationtower;§n§o휘발유§r>와 세 개의 알루미늄 가루를 사용하여<link;mixer;§n§o혼합기§r>에서 만들 수 있습니다. 무자비한 방화와 파괴에 쓰는 것 외에는 거의 쓸모가 없습니다. 네이팜에 불을 붙이면 불이 빠르게 퍼져나가 삼림을 빠르게 제거할 수 있습니다. 또한 <link;chemthrower;§n§o화학 §n§o투척기§r>의 매우 효과적인 연료 역활을 할 수 있습니다.

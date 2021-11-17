@@ -1,9 +1,9 @@
 {
-	"itemGroup.immersivepetroleum": "이머시브 페트롤레움",
+	"itemGroup.immersivepetroleum": "이머시브 페트롤리움",
 	
 	"_comment": "################## Blocks ##################",
 	
-	"block.immersivepetroleum.fluid_diesel": "디젤",
+	"block.immersivepetroleum.fluid_diesel": "경유",
 	"block.immersivepetroleum.fluid_crude_oil": "원유",
 	"block.immersivepetroleum.fluid_lubricant": "윤활유",
 	"block.immersivepetroleum.fluid_gasoline": "휘발유",
@@ -12,19 +12,19 @@
 	"block.immersivepetroleum.asphalt": "아스팔트 콘크리트",
 	"block.immersivepetroleum.asphalt_slab": "아스팔트 콘크리트 반블록",
 	"block.immersivepetroleum.asphalt_stairs": "아스팔트 콘크리트 계단",
-	"block.immersivepetroleum.petcoke_block": "페트코크스 블록",
+	"block.immersivepetroleum.petcoke_block": "석유 코크스 블록",
 	
 	"block.immersivepetroleum.auto_lubricator": "자동 윤활기",
 	"block.immersivepetroleum.gas_generator": "휴대용 발전기",
-	"block.immersivepetroleum.flarestack": "플레어스택",
+	"block.immersivepetroleum.flarestack": "연소탑",
 	
-	"block.immersivepetroleum.pumpjack": "펌프잭",
-	"block.immersivepetroleum.distillationtower": "증류탑",
-	"block.immersivepetroleum.cokerunit": "코커",
-	"block.immersivepetroleum.hydrotreater": "유황 회수 장치",
+	"block.immersivepetroleum.pumpjack": "시추기",
+	"block.immersivepetroleum.distillationtower": "정유탑",
+	"block.immersivepetroleum.cokerunit": "코크스 생성기",
+	"block.immersivepetroleum.hydrotreater": "황 추출기",
 	
-	"fluid.immersivepetroleum.diesel": "디젤",
-	"fluid.immersivepetroleum.diesel_sulfur": "황화 디젤",
+	"fluid.immersivepetroleum.diesel": "경유",
+	"fluid.immersivepetroleum.diesel_sulfur": "황화 경유",
 	"fluid.immersivepetroleum.oil": "원유",
 	"fluid.immersivepetroleum.lubricant": "윤활유",
 	"fluid.immersivepetroleum.gasoline": "휘발유",
@@ -32,38 +32,38 @@
 	
 	"_comment": "################## Items ##################",
 	
-	"item.immersivepetroleum.projector": "프로젝터",
-	"item.immersivepetroleum.projector.specific": "%s 프로젝터",
+	"item.immersivepetroleum.projector": "투영기",
+	"item.immersivepetroleum.projector.specific": "%s 투영기",
 	"item.immersivepetroleum.speedboat": "모터보트",
 	"item.immersivepetroleum.oil_can": "윤활유 캔",
 	
 	"item.immersivepetroleum.bitumen": "역청",
-	"item.immersivepetroleum.petcoke": "페트코크스",
-	"item.immersivepetroleum.petcoke_dust": "페트코크스 가루",
-	"item.immersivepetroleum.diesel_bucket": "디젤 양동이",
-	"item.immersivepetroleum.diesel_sulfur_bucket": "황화 디젤 양동이",
+	"item.immersivepetroleum.petcoke": "석유 코크스",
+	"item.immersivepetroleum.petcoke_dust": "석유 코크스 가루",
+	"item.immersivepetroleum.diesel_bucket": "경유 양동이",
+	"item.immersivepetroleum.diesel_sulfur_bucket": "황화 경유 양동이",
 	"item.immersivepetroleum.oil_bucket": "원유 양동이",
 	"item.immersivepetroleum.lubricant_bucket": "윤활유 양동이",
 	"item.immersivepetroleum.gasoline_bucket": "휘발유 양동이",
 	"item.immersivepetroleum.napalm_bucket": "네이팜 양동이",
 	
 	"item.immersivepetroleum.upgrade_reinforced_hull": "강화된 선체",
-	"item.immersivepetroleum.upgrade_icebreaker": "쇄빙선 선수",
+	"item.immersivepetroleum.upgrade_icebreaker": "쇄빙 선수",
 	"item.immersivepetroleum.upgrade_tank": "확장 연료 탱크",
-	"item.immersivepetroleum.upgrade_rudders": "기동 방향타",
+	"item.immersivepetroleum.upgrade_rudders": "방향타",
 	"item.immersivepetroleum.upgrade_paddles": "비상용 노",
 	
 	"_comment": "################## Descriptions ##################",
 	
 	"_comment":"Replaced the IP with IE to save me from headaches. ~TwistedGate",
-	"desc.immersiveengineering.info.multiblock.IE:DistillationTower": "증류탑",
-	"desc.immersiveengineering.info.multiblock.IE:Pumpjack": "펌프잭",
-	"desc.immersiveengineering.info.multiblock.IE:CokerUnit": "코커",
-	"desc.immersiveengineering.info.multiblock.IE:HydroTreater": "유황 회수 장치",
+	"desc.immersiveengineering.info.multiblock.IE:DistillationTower": "정유탑",
+	"desc.immersiveengineering.info.multiblock.IE:Pumpjack": "시추기",
+	"desc.immersiveengineering.info.multiblock.IE:CokerUnit": "코크스 생성기",
+	"desc.immersiveengineering.info.multiblock.IE:HydroTreater": "황 추출기",
 	
-	"desc.immersivepetroleum.info.reservoir.oil": "유전",
+	"desc.immersivepetroleum.info.reservoir.oil": "유정",
 	"desc.immersivepetroleum.info.reservoir.aquifer": "대수층",
-	"desc.immersivepetroleum.info.reservoir.lava": "마그마굄",
+	"desc.immersivepetroleum.info.reservoir.lava": "마그마층",
 	
 	"desc.immersivepetroleum.flavour.upgrade_reinforced_hull": "모터보트의 내구도가 증가하고 화염저항을 가집니다.",
 	"desc.immersivepetroleum.flavour.upgrade_icebreaker": "모터보트가 얼음을 부수고 몹에게 피해를 줍니다.",
@@ -74,32 +74,32 @@
 	"desc.immersivepetroleum.flavour.asphalt": "위에 있을 때 이동속도 %1$s 증가",
 	
 	"_comment": "This is for the upgrade list of the speedboat tooltip",
-	"desc.immersivepetroleum.flavour.speedboat0": "Upgrades",
+	"desc.immersivepetroleum.flavour.speedboat0": "업그레이드",
 	
 	"desc.immersivepetroleum.info.projector.noMultiblock": "우클릭으로 메뉴 열기",
 	"desc.immersivepetroleum.info.projector.size": "크기: %d x %d x %d",
-	"desc.immersivepetroleum.info.projector.build0": "디스플레이 설명",
-	"desc.immersivepetroleum.info.projector.build1": "%s을(를) 목표로 설정",
-	"desc.immersivepetroleum.info.projector.center": "[%d, %d, %d]위치를 센터로 지정",
+	"desc.immersivepetroleum.info.projector.build0": "실루엣 표시:",
+	"desc.immersivepetroleum.info.projector.build1": "%s",
+	"desc.immersivepetroleum.info.projector.center": "중심 [%d, %d, %d]",
 	
-	"desc.immersivepetroleum.info.projector.flipped.true": "반전: 네.",
-	"desc.immersivepetroleum.info.projector.flipped.false": "반전: 아니오.",
+	"desc.immersivepetroleum.info.projector.flipped.true": "좌우반전됨",
+	"desc.immersivepetroleum.info.projector.flipped.false": "좌우반전되지 않음",
 	
-	"desc.immersivepetroleum.info.projector.rotated.north":"북측으로 회전",
-	"desc.immersivepetroleum.info.projector.rotated.east":  "동측으로 회전",
-	"desc.immersivepetroleum.info.projector.rotated.south": "남측으로 회전",
-	"desc.immersivepetroleum.info.projector.rotated.west": "서측으로 회전",
+	"desc.immersivepetroleum.info.projector.rotated.north":"북쪽 방향",
+	"desc.immersivepetroleum.info.projector.rotated.east":  "동쪽 방향",
+	"desc.immersivepetroleum.info.projector.rotated.south": "남쪽 방향",
+	"desc.immersivepetroleum.info.projector.rotated.west": "서쪽 방향",
 	
-	"desc.immersivepetroleum.info.projector.mode_0": "선택모드",
-	"desc.immersivepetroleum.info.projector.mode_1": "프로젝션 모드",
+	"desc.immersivepetroleum.info.projector.mode_0": "선택 모드",
+	"desc.immersivepetroleum.info.projector.mode_1": "투영 모드",
 	
 	"desc.immersivepetroleum.info.projector.holdshift": "shift",
 	"desc.immersivepetroleum.info.projector.holdshift.text": "현재 상태 보기",
 	
 	"desc.immersivepetroleum.info.projector.holdctrl": "ctrl",
-	"desc.immersivepetroleum.info.projector.holdctrl.text": "도면 조작 보기",
+	"desc.immersivepetroleum.info.projector.holdctrl.text": "키 배치",
 	
-	"desc.immersivepetroleum.info.projector.control1": "Shift를 누른 상태로 휠 위/아래로 회전 ",
+	"desc.immersivepetroleum.info.projector.control1": "Shift를 누른 상태로 휠 위/아래로 회전",
 	"desc.immersivepetroleum.info.projector.control2": "%s키로 반전",
 	"desc.immersivepetroleum.info.projector.control3": "웅크린 상태로 우클릭하여 모드 변경",
 	
@@ -108,7 +108,7 @@
 	"gui.immersivepetroleum.projector.search": "검색",
 	"gui.immersivepetroleum.projector.button.confirm": "확인",
 	"gui.immersivepetroleum.projector.button.cancel": "취소",
-	"gui.immersivepetroleum.projector.button.mirror": "반전",
+	"gui.immersivepetroleum.projector.button.mirror": "좌우반전",
 	"gui.immersivepetroleum.projector.button.rcw": "시계방향으로 회전",
 	"gui.immersivepetroleum.projector.button.rccw": "시계 반대방향으로 회전",
 	
@@ -118,15 +118,15 @@
 	
 	"_comment": "################## IE-Manual ##################",
 	
-	"manual.immersivepetroleum.main": "기름 정제",
+	"manual.immersivepetroleum.main": "석유 가공",
 	
 	"ie.manual.entry.blank_text": "",
 	
 	"ie.manual.entry.reservoirs.title": "수맥",
 	"ie.manual.entry.reservoirs.subtitle": "검은 금",
 	
-	"ie.manual.entry.reservoirs.oil0": "배드락 근처에서 채광하는 도중 당신은 가끔 보이는 검은색의 미끌거리는 인화성의 물질, 석유를 발견하였습니다. 석유는 이 뚫을 수 없는 암석 아래에서 발견할 수 있는 많은 액체 중 하나입니다. 하지만, 이 매장된 액체는 직접 얻으러 갈 수는 없습니다.\n\n이 <link;immersivepetroleum:pumpjack;§o§n특별한 §o§n용도로 §o§n사용되는 §o§n기계§r>의 도움을 받는다면 수맥에 차 있는 내용물을 손에 넣을 수 있을겁니다.<np>",
-	"ie.manual.entry.reservoirs.oil1": "<link;minerals;§o§n코어 §o§n샘플 §o§n드릴§r>은 특정 청크에서 저수지의 존재 여부를 결정하고 액체의 매장량이 얼마나 되는 지 보여줍니다.\n\n각 청크에 있는 유체는 그 양이 제한되어 있지만, 특정 유형의 저수지는 청크의 액체가 고갈된 후에도 여전히 수집이 가능한 미량의 유체가 있을 수도 있습니다. 액체가 고갈된 청크에서 둘 이상의 펌프잭을 사용하는것은 어떠한 이득도 제공하지 않음을 주의하세요.<np>",
+	"ie.manual.entry.reservoirs.oil0": "기반암 근처에서 채광하는 도중 당신은 가끔 보이는 검은색의 미끌거리는 인화성의 물질, 석유를 발견하였습니다. 석유는 이 뚫을 수 없는 암석 아래에서 발견할 수 있는 많은 액체 중 하나입니다. 하지만, 이 매장된 액체는 직접 얻으러 갈 수는 없습니다.\n\n이 <link;immersivepetroleum:pumpjack;§o§n특별한 §o§n용도로 §o§n사용되는 §o§n기계§r>의 도움을 받는다면 수맥에 차 있는 내용물을 손에 넣을 수 있을겁니다.<np>",
+	"ie.manual.entry.reservoirs.oil1": "<link;minerals;§o§n코어 §o§n견본 §o§n드릴§r>은 특정 청크에서 수맥의 존재 여부를 결정하고 액체의 매장량이 얼마나 되는지 보여줍니다.\n\n각 청크에 있는 유체는 그 양이 제한되어 있지만, 특정 유형의 수맥은 청크의 액체가 고갈된 후에도 여전히 수집이 가능한 미량의 유체가 있을 수도 있습니다. 액체가 고갈된 청크에서 둘 이상의 시추기를 사용하는것은 어떠한 이득도 제공하지 않음을 주의하세요.<np>",
 	
 	"ie.manual.entry.reservoirs.consonant": "",
 	"ie.manual.entry.reservoirs.vowel": "",
@@ -135,12 +135,12 @@
 	"ie.manual.entry.reservoirs.dim.invalid": "§l%1$s§r은(는) %2$s 차원을 제외한 모든 차원에서 찾을 수 있는 수맥입니다.",
 	"ie.manual.entry.reservoirs.dim.any": "§l%1$s§r은(는) 모든 종류의 차원에서 찾을 수 있는 수맥입니다.",
 	
-	"ie.manual.entry.reservoirs.bio.valid": "이 수맥은 in %s 바이옴에서 생성됩니다.",
-	"ie.manual.entry.reservoirs.bio.invalid": "이 수맥은 %s 바이옴에서는 생성되지 않습니다.",
-	"ie.manual.entry.reservoirs.bio.any": "이 수맥은 모든 종류의 바이옴에서 생성됩니다.",
+	"ie.manual.entry.reservoirs.bio.valid": "이 수맥은 in %s 생물 군계에서 생성됩니다.",
+	"ie.manual.entry.reservoirs.bio.invalid": "이 수맥은 %s 생물 군계에서는 생성되지 않습니다.",
+	"ie.manual.entry.reservoirs.bio.any": "이 수맥은 모든 종류의 생물 군계에서 생성됩니다.",
 	
 	"ie.manual.entry.reservoirs.content": "%1$s %6$s\n이 수맥에는 %2$s이(가) %3$s ~ %4$s mB 만큼 있습니다.%5$s",
-	"ie.manual.entry.reservoirs.replenish": "\n수맥이 고갈된 후에는, 한 펌프잭에서 %2$s을(를) %1$d mB/t 만큼 뽑아낼 수 있습니다.",
+	"ie.manual.entry.reservoirs.replenish": "\n수맥이 고갈된 후에는, 한 시추기에서 %2$s을(를) %1$d mB/t 만큼 뽑아낼 수 있습니다.",
 	
 	"_comment": "################## Chat ##################",
 	
@@ -149,21 +149,29 @@
 	"chat.immersivepetroleum.command.reservoir.list.help": "§6사용법: /ip reservoir list§r\n등록된 모든 수맥의 종류를 확인합니다.",
 	"chat.immersivepetroleum.command.reservoir.get.help": "§6사용법: /ip reservoir get§r\n해당 청크에 있는 수맥의 정보를 표시합니다.",
 	"chat.immersivepetroleum.command.reservoir.set.help": "§6사용법: /ip reservoir set <reservoir>§r\n/해당 청크의 수맥을 재정의합니다. 본래 존재하는 수맥은 지워지지 않습니다.",
-	"chat.immersivepetroleum.command.reservoir.setAmount.help": "§6사용법: /ip reservoir setAmount <숫자>§r\n청크 내에 남아있는 액체의 양을 mB 단위로 설정합니다.",
-	"chat.immersivepetroleum.command.reservoir.setCapacity.help": "§6사용법: /ip reservoir setCapacity <숫자>§r\n청크 내 액체의 최대량을 mB 단위로 설정합니다.",
-	"chat.immersivepetroleum.command.reservoir.get": "청크 뵤유 수맥: %1$s <br>재정의: %2$s <br>매장량: %3$s",
-	"chat.immersivepetroleum.command.reservoir.set.invalidReservoir": "§c올바르지 않은 수맥: '%1$s' 식별되지 않은 항목입니다. '/ip reservoir list'를 이용해 모든 식별자 목록을 확인하세요.§r",
+	"chat.immersivepetroleum.command.reservoir.setAmount.help": "§6사용법: /ip reservoir setAmount <숫자>§r\n청크 내에 남아있는 유체의 양을 mB 단위로 설정합니다.",
+	"chat.immersivepetroleum.command.reservoir.setCapacity.help": "§6사용법: /ip reservoir setCapacity <숫자>§r\n청크 내 유체의 최대량을 mB 단위로 설정합니다.",
+	"chat.immersivepetroleum.command.reservoir.get": "청크 보유 수맥: %1$s <br>재정의: %2$s <br>매장량: %3$s",
+	"chat.immersivepetroleum.command.reservoir.set.invalidReservoir": "§c올바르지 않은 수맥: '%1$s' 식별되지 않은 항목입니다. '/ip reservoir list'를 이용해 모든 수맥 목록을 확인하세요.§r",
 	"chat.immersivepetroleum.command.reservoir.set.sucess": "수맥 재정의를 %1$s로 설정하였습니다.",
 	"chat.immersivepetroleum.command.reservoir.set.clear": "수맥 우선도를 초기화하였습니다. (%1$s)",
 	"chat.immersivepetroleum.command.reservoir.setAmount.sucess": "수맥 매장량을 %1$s로 설정하였습니다.",
-	"chat.immersivepetroleum.command.reservoir.setAmount.NFE": "에러: '%1$s' 은(는) 유호한 숫자가 아닙니다.",
+	"chat.immersivepetroleum.command.reservoir.setAmount.NFE": "오류: '%1$s' 은(는) 유호한 숫자가 아닙니다.",
 	"chat.immersivepetroleum.command.reservoir.setCapacity.sucess": "수맥 초기 매장량을 %1$s로 설정하였습니다.",
-	"chat.immersivepetroleum.command.reservoir.setCapacity.NFE": "에러: '%1$s' 은(는) 유호한 숫자가 아닙니다.",
+	"chat.immersivepetroleum.command.reservoir.setCapacity.NFE": "오류: '%1$s' 은(는) 유호한 숫자가 아닙니다.",
 	
 	"chat.immersivepetroleum.info.coresample.oil": "%s 수맥",
 	"chat.immersivepetroleum.info.coresample.oilRep": "최대 %d mB/t of trace %s",
 	"chat.immersivepetroleum.info.coresample.noOil": "수맥 없음",
 	
-	"key.categories.immersivepetroleum": "이머시브 패트롤레움",
-	"key.immersivepetroleum.projector.flip": "프로젝션 반전"
+	"key.categories.immersivepetroleum": "이머시브 패트롤리움",
+	"key.immersivepetroleum.projector.flip": "투영 반전",
+
+	"death.attack.ipFlarestack": "%1$s이(가) 연소되었습니다",
+	"death.attack.ipFlarestack.player": "%1$s이(가) %2$s에 의해 연소되었습니다",
+	
+	"_comment": "################## Subtitles ##################",
+	
+	"subtitle.immersivepetroleum.projector": "투영기가 작동하고 있음",
+	"subtitle.immersivepetroleum.flarestack_fire":"연소탑이 연소중임"
 }

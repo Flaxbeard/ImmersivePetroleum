@@ -11,7 +11,6 @@ import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
@@ -65,10 +64,12 @@ public class ReservoirCommand{
 	static int get(ServerPlayerEntity playerEntity){
 		ReservoirWorldInfo info = getOilWorldInfo(playerEntity);
 		
-		String h = I18n.format("chat.immersivepetroleum.command.reservoir.get",
+		TranslationTextComponent cmp = new TranslationTextComponent("chat.immersivepetroleum.command.reservoir.get",
 				TextFormatting.GOLD + (info.type != null ? info.type.name : "null") + TextFormatting.RESET,
 				TextFormatting.GOLD + (info.overrideType != null ? info.overrideType.name : "null") + TextFormatting.RESET,
 				TextFormatting.GOLD + (info.current + "/" + info.capacity + " mB") + TextFormatting.RESET);
+		
+		String h = cmp.getString();
 		
 		for(String g:h.split("<br>")){
 			playerEntity.sendMessage(new StringTextComponent(g), Util.DUMMY_UUID);

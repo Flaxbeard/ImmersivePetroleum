@@ -1,6 +1,6 @@
 휴대용 발전기
 가스 채워!
-<&portablegenerator0>휴대용 발전기는 가지고 다닐 수 있는 일체형 전원 솔루션입니다. 이 <link;immersivepetroleum:distillationtower;§n§ognlqkfdb§r> 발전기는 <config;i;portablegenerator_flux> Flux/t 의 전력을 생산하며, 내부 전력 버퍼는 100,000 RF 입니다.<np>
+<&portablegenerator0>휴대용 발전기는 가지고 다닐 수 있는 일체형 전원 솔루션입니다. 이 <link;immersivepetroleum:distillationtower;§n§o휘발유§r> 발전기는 <config;i;portablegenerator_flux> Flux/t 의 전력을 생산하며, 내부 전력 버퍼는 100,000 RF 입니다.<np>
 휴대용 발전기는 양동이로 간단히 마우스 오른쪽 버튼을 클릭하여 연료를 집어넣을 수 있습니다. 휘발유 혹은 기타 연료를 윗면을 통해 공급할 수도 있습니다. 전원은 저압 또는 중압 전선을 통해 직접 출력되며 연결기가 필요하지 않습니다. 레드스톤 신호를 적용하면 발전이 중단됩니다.
 
 웅크린 상태로 우클릭하여 발전기를 집어 들 수 있으며, 이 때 저장된 모든 전력과 연료가 보존됩니다.

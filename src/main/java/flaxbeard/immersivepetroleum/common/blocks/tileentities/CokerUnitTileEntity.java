@@ -352,12 +352,13 @@ public class CokerUnitTileEntity extends PoweredMultiblockTileEntity<CokerUnitTi
 				}
 			}
 			
-			update |= FluidUtil.getFluidHandler(this.world, getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite()), getFacing().getOpposite()).map(out -> {
+			BlockPos outPos = getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite());
+			update |= FluidUtil.getFluidHandler(this.world, outPos, getFacing()).map(out -> {
 				if(this.bufferTanks[TANK_OUTPUT].getFluidAmount() > 0){
-					FluidStack fs = FluidHelper.copyFluid(this.bufferTanks[TANK_OUTPUT].getFluid(), 100);
+					FluidStack fs = FluidHelper.copyFluid(this.bufferTanks[TANK_OUTPUT].getFluid(), 1000);
 					int accepted = out.fill(fs, FluidAction.SIMULATE);
 					if(accepted > 0){
-						int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted), true), FluidAction.EXECUTE);
+						int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted)), FluidAction.EXECUTE);
 						this.bufferTanks[TANK_OUTPUT].drain(FluidHelper.copyFluid(fs, drained), FluidAction.EXECUTE);
 						return true;
 					}

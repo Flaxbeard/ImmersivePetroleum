@@ -227,18 +227,19 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 				}
 			}
 			
-			update |= FluidUtil.getFluidHandler(this.world, getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite()), getFacing()).map(output -> {
+			BlockPos outPos = getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite());
+			update |= FluidUtil.getFluidHandler(this.world, outPos, getFacing()).map(output -> {
 				boolean ret = false;
 				if(this.tanks[TANK_OUTPUT].fluids.size() > 0){
 					List<FluidStack> toDrain = new ArrayList<>();
 					
 					// Tries to Output the output-fluids in parallel
 					for(FluidStack target:this.tanks[TANK_OUTPUT].fluids){
-						FluidStack outStack = FluidHelper.copyFluid(target, Math.min(target.getAmount(), 100));
+						FluidStack outStack = FluidHelper.copyFluid(target, Math.min(target.getAmount(), 1000));
 						
 						int accepted = output.fill(outStack, FluidAction.SIMULATE);
 						if(accepted > 0){
-							int drained = output.fill(FluidHelper.copyFluid(outStack, Math.min(outStack.getAmount(), accepted), true), FluidAction.EXECUTE);
+							int drained = output.fill(FluidHelper.copyFluid(outStack, Math.min(outStack.getAmount(), accepted)), FluidAction.EXECUTE);
 							
 							toDrain.add(new FluidStack(target.getFluid(), drained));
 							ret |= true;

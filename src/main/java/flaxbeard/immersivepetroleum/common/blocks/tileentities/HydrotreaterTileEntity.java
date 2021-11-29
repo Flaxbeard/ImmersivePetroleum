@@ -253,14 +253,15 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 		super.tick();
 		
 		if(this.tanks[TANK_OUTPUT].getFluidAmount() > 0){
-			update |= FluidUtil.getFluidHandler(this.world, getBlockPosForPos(Fluid_OUT).up(), Direction.DOWN).map(output -> {
+			BlockPos outPos = getBlockPosForPos(Fluid_OUT).up();
+			update |= FluidUtil.getFluidHandler(this.world, outPos, Direction.DOWN).map(output -> {
 				boolean ret = false;
 				FluidStack target = this.tanks[TANK_OUTPUT].getFluid();
-				target = FluidHelper.copyFluid(target, Math.min(target.getAmount(), 100));
+				target = FluidHelper.copyFluid(target, Math.min(target.getAmount(), 1000));
 				
 				int accepted = output.fill(target, FluidAction.SIMULATE);
 				if(accepted > 0){
-					int drained = output.fill(FluidHelper.copyFluid(target, Math.min(target.getAmount(), accepted), true), FluidAction.EXECUTE);
+					int drained = output.fill(FluidHelper.copyFluid(target, Math.min(target.getAmount(), accepted)), FluidAction.EXECUTE);
 					
 					this.tanks[TANK_OUTPUT].drain(new FluidStack(target.getFluid(), drained), FluidAction.EXECUTE);
 					ret |= true;

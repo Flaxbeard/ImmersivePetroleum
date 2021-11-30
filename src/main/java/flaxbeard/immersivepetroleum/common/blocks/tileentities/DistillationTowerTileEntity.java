@@ -165,7 +165,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			
 			if(!this.processQueue.isEmpty()){
 				this.wasActive = true;
-				this.cooldownTicks = 6;
+				this.cooldownTicks = 10;
 				update = true;
 			}else if(this.wasActive){
 				this.wasActive = false;

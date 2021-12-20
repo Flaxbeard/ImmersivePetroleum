@@ -14,7 +14,7 @@ apply plugin: 'maven-publish'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 //----------------------------------------------------------------------------------------------------------------------
 
-version = '3.3.0-8'
+version = '3.3.0-9'
 group = 'flaxbeard.immersivepetroleum'
 archivesBaseName = 'ImmersivePetroleum-1.16.5'
 
@@ -115,6 +115,8 @@ dependencies {
 	
 	runtimeOnly fg.deobf("mezz.jei:jei-1.16.5:7.6.4.88")
 	compileOnly fg.deobf("mezz.jei:jei-1.16.5:7.6.4.88:api")
+	
+	runtimeOnly fg.deobf("ignored:immersiveposts-1.16.5:4.2.2")
 }
 
 processResources {

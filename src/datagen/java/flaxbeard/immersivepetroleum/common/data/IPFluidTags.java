@@ -43,5 +43,9 @@ public class IPFluidTags extends FluidTagsProvider{
 			.addTag(IETags.fluidPlantoil)
 			.addTag(IETags.fluidCreosote)
 			.addTag(IETags.fluidEthanol);
+		
+		getOrCreateBuilder(IETags.drillFuel)
+			.addTag(IPTags.Fluids.diesel)
+			.addTag(IPTags.Fluids.diesel_sulfur);
 	}
 }

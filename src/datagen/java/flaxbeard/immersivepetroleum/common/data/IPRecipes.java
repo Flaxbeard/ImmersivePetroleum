@@ -11,6 +11,7 @@ import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.crafting.builders.ArcFurnaceRecipeBuilder;
 import blusunrize.immersiveengineering.api.crafting.builders.BlastFurnaceFuelBuilder;
 import blusunrize.immersiveengineering.api.crafting.builders.CrusherRecipeBuilder;
+import blusunrize.immersiveengineering.api.crafting.builders.GeneratorFuelBuilder;
 import blusunrize.immersiveengineering.api.crafting.builders.MixerRecipeBuilder;
 import blusunrize.immersiveengineering.api.crafting.builders.SqueezerRecipeBuilder;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
@@ -70,6 +71,11 @@ public class IPRecipes extends RecipeProvider{
 			.addInput(new IngredientWithSize(IETags.getTagsFor(EnumMetals.ALUMINUM).dust, 3))
 			.setEnergy(3200)
 			.build(this.out, rl("mixer/napalm"));
+		
+		GeneratorFuelBuilder.builder(IPTags.Fluids.diesel, 320)
+			.build(this.out, rl("fuels/diesel"));
+		GeneratorFuelBuilder.builder(IPTags.Fluids.diesel_sulfur, 320)
+			.build(this.out, rl("fuels/diesel_sulfur"));
 	}
 	
 	private void reservoirs(){

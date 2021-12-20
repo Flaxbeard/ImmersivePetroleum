@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import blusunrize.immersiveengineering.api.IETags;
-import blusunrize.immersiveengineering.api.energy.DieselHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect_Potion;
@@ -210,12 +209,6 @@ public class IPContent{
 		
 		//ConfigUtils.addFuel(IPServerConfig.GENERATION.fuels.get());
 		//ConfigUtils.addBoatFuel(IPServerConfig.MISCELLANEOUS.boat_fuels.get());
-		
-		DieselHandler.registerFuel(IPTags.Fluids.diesel, 320);
-		DieselHandler.registerDrillFuel(IPTags.Fluids.diesel);
-		
-		DieselHandler.registerFuel(IPTags.Fluids.diesel_sulfur, 320);
-		DieselHandler.registerDrillFuel(IPTags.Fluids.diesel_sulfur);
 		
 		LubricantHandler.register(IPTags.Fluids.lubricant, 3);
 		LubricantHandler.register(IETags.fluidPlantoil, 12);

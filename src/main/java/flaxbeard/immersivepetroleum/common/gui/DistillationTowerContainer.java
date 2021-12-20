@@ -18,7 +18,7 @@ import net.minecraftforge.fluids.FluidUtil;
 
 public class DistillationTowerContainer extends MultiblockAwareGuiContainer<DistillationTowerTileEntity>{
 	public DistillationTowerContainer(int id, PlayerInventory playerInventory, final DistillationTowerTileEntity tile){
-		super(playerInventory, tile, id, DistillationTowerMultiblock.INSTANCE);
+		super(tile, id, DistillationTowerMultiblock.INSTANCE);
 		
 		addSlot(new IPSlot(this.inv, INV_0, 12, 17){
 			@Override

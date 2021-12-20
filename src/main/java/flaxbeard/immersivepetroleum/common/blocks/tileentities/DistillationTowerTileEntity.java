@@ -454,7 +454,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	}
 	
 	@Override
-	public boolean shouldRenderAsActive(){
+	public boolean shouldRenderAsActiveImpl(){
 		return this.cooldownTicks > 0 || super.shouldRenderAsActive();
 	}
 	

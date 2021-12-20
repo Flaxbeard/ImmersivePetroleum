@@ -4,7 +4,6 @@ import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTi
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import blusunrize.immersiveengineering.common.gui.IEBaseContainer;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3i;
@@ -16,8 +15,8 @@ public class MultiblockAwareGuiContainer<T extends PoweredMultiblockTileEntity<T
 	static final Vector3i ONE = new Vector3i(1, 1, 1);
 	
 	protected BlockPos templateSize;
-	public MultiblockAwareGuiContainer(PlayerInventory inventoryPlayer, T tile, int id, IETemplateMultiblock template){
-		super(inventoryPlayer, tile, id);
+	public MultiblockAwareGuiContainer(T tile, int id, IETemplateMultiblock template){
+		super(tile, id);
 		
 		this.templateSize = new BlockPos(template.getSize(this.tile.getWorldNonnull())).subtract(ONE);
 	}

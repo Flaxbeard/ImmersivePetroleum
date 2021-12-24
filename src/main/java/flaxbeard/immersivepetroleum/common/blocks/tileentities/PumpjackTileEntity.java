@@ -186,7 +186,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 					
 					FluidStack out = new FluidStack(getFluidType(), Math.min(IPServerConfig.EXTRACTION.pumpjack_speed.get(), oilAmnt));
 					Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
-					BlockPos outputPos = master().getBlockPosForPos(East_Port).offset(facing);
+					BlockPos outputPos = getBlockPosForPos(East_Port).offset(facing);
 					IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, facing.getOpposite()).orElse(null);
 					if(output != null){
 						int accepted = output.fill(out, FluidAction.SIMULATE);
@@ -199,7 +199,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 					}
 					
 					facing = getIsMirrored() ? getFacing().rotateY() : getFacing().rotateYCCW();
-					outputPos = master().getBlockPosForPos(West_Port).offset(facing);
+					outputPos = getBlockPosForPos(West_Port).offset(facing);
 					output = FluidUtil.getFluidHandler(this.world, outputPos, facing.getOpposite()).orElse(null);
 					if(output != null){
 						int accepted = output.fill(out, FluidAction.SIMULATE);

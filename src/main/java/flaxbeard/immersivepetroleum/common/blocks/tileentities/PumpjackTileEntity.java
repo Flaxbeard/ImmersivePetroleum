@@ -20,13 +20,11 @@ import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
@@ -66,7 +64,6 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	public float activeTicks = 0;
 	private int pipeTicks = 0;
 	private boolean lastHadPipes = true;
-	public BlockState state = null;
 	public PumpjackTileEntity(){
 		super(PumpjackMultiblock.INSTANCE, 16000, true, null);
 	}
@@ -123,17 +120,6 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		if(!wasActive && lastActive){
 			this.activeTicks++;
 		}
-		this.state = null;
-		if(nbt.hasUniqueId("comp")){
-			ItemStack stack = ItemStack.read(nbt.getCompound("comp"));
-			
-			if(!stack.isEmpty()){
-				Block block = Block.getBlockFromItem(stack.getItem());
-				if(block != Blocks.AIR){
-					this.state = block.getDefaultState();
-				}
-			}
-		}
 	}
 	
 	@Override
@@ -141,12 +127,6 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.putBoolean("wasActive", this.wasActive);
 		nbt.putBoolean("lastHadPipes", this.lastHadPipes);
-		if(getFluidType() != null){
-			FluidStack stack = new FluidStack(getFluidType(), 0);
-			CompoundNBT comp = new CompoundNBT();
-			stack.writeToNBT(comp);
-			nbt.put("comp", comp);
-		}
 	}
 	
 	@Override
@@ -155,16 +135,6 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		
 		if((this.world.isRemote || isDummy()) && this.wasActive){
 			this.activeTicks++;
-			
-			if(this.state != null){
-				// What is this whole thing even for? I've never seen the
-				// pumpjack spawning particles anywhere.
-				float r1 = (this.world.rand.nextFloat() - .5F) * 2F;
-				float r2 = (this.world.rand.nextFloat() - .5F) * 2F;
-				
-				this.world.addParticle(ParticleTypes.SMOKE, this.pos.getX() + .5, this.pos.getY() + .5, this.pos.getZ() + .5, r1 * 0.04D, 0.25D, r2 * 0.025D);
-			}
-			
 			return;
 		}
 		

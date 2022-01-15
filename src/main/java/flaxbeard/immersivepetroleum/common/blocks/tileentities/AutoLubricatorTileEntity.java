@@ -226,7 +226,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements ITicka
 	
 	@Override
 	public void tick(){
-		if(!this.world.isRemote && this.isSlave){
+		if(this.isSlave){
 			// See ApiUtils.checkForNeedlessTicking(te);
 			EventHandler.REMOVE_FROM_TICKING.add(this);
 			return;

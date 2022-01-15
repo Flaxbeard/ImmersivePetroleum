@@ -63,10 +63,10 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 	
 	@Override
 	public void lubricate(World world, int ticks, CrusherTileEntity mbte){
-		Iterator<MultiblockProcess<CrusherRecipe>> processIterator = mbte.processQueue.iterator();
-		MultiblockProcess<CrusherRecipe> process = processIterator.next();
-		
 		if(!world.isRemote){
+			Iterator<MultiblockProcess<CrusherRecipe>> processIterator = mbte.processQueue.iterator();
+			MultiblockProcess<CrusherRecipe> process = processIterator.next();
+			
 			if(ticks % 4 == 0){
 				int consume = mbte.energyStorage.extractEnergy(process.energyPerTick, true);
 				if(consume >= process.energyPerTick){

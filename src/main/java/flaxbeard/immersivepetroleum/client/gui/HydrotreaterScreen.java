@@ -45,7 +45,7 @@ public class HydrotreaterScreen extends IEContainerScreen<HydrotreaterContainer>
 		
 		// Power Stored
 		if(mx > this.guiLeft + 121 && mx < this.guiLeft + 129 && my > this.guiTop + 11 && my < this.guiTop + 58){
-			tooltip.add(new StringTextComponent(this.tile.energyStorage.getEnergyStored() + "/" + this.tile.energyStorage.getMaxEnergyStored() + " RF"));
+			tooltip.add(new StringTextComponent(this.tile.energyStorage.getEnergyStored() + "/" + this.tile.energyStorage.getMaxEnergyStored() + " IF"));
 		}
 		
 		if(!tooltip.isEmpty()){

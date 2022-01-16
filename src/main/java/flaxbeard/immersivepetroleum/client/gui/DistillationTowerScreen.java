@@ -60,7 +60,7 @@ public class DistillationTowerScreen extends IEContainerScreen<DistillationTower
 		}
 		
 		if(mx > guiLeft + 157 && mx < guiLeft + 164 && my > guiTop + 21 && my < guiTop + 67)
-			tooltip.add(new StringTextComponent(tile.getEnergyStored(null) + "/" + tile.getMaxEnergyStored(null) + " RF"));
+			tooltip.add(new StringTextComponent(tile.getEnergyStored(null) + "/" + tile.getMaxEnergyStored(null) + " IF"));
 		
 		if(!tooltip.isEmpty()){
 			GuiUtils.drawHoveringText(matrix, tooltip, mx, my, width, height, -1, font);

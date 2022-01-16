@@ -54,7 +54,7 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 		
 		// Power Stored
 		if(mx > guiLeft + 167 && mx < guiLeft + 175 && my > guiTop + 66 && my < guiTop + 88){
-			tooltip.add(new StringTextComponent(tile.energyStorage.getEnergyStored() + "/" + tile.energyStorage.getMaxEnergyStored() + " RF"));
+			tooltip.add(new StringTextComponent(tile.energyStorage.getEnergyStored() + "/" + tile.energyStorage.getMaxEnergyStored() + " IF"));
 		}
 		
 		if(!tooltip.isEmpty()){

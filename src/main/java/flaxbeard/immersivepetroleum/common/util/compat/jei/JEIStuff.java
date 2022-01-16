@@ -8,6 +8,7 @@ import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
 import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
+import flaxbeard.immersivepetroleum.client.gui.HydrotreaterScreen;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -55,5 +56,6 @@ public class JEIStuff implements IModPlugin{
 	public void registerGuiHandlers(IGuiHandlerRegistration registration){
 		registration.addRecipeClickArea(DistillationTowerScreen.class, 85, 19, 18, 51, DistillationRecipeCategory.ID);
 		registration.addRecipeClickArea(CokerUnitScreen.class, 59, 21, 82, 67, CokerUnitRecipeCategory.ID);
+		registration.addRecipeClickArea(HydrotreaterScreen.class, 55, 9, 32, 51, SulfurRecoveryRecipeCategory.ID);
 	}
 }

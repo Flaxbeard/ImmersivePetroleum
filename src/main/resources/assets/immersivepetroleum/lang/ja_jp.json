@@ -10,6 +10,9 @@
 	"block.immersivepetroleum.fluid_napalm": "ナパーム",
 	
 	"block.immersivepetroleum.asphalt": "アスファルトコンクリート",
+	"block.immersivepetroleum.asphalt_slab": "アスファルトコンクリートのハーフブロック",
+	"block.immersivepetroleum.asphalt_stairs": "アスファルトコンクリートの階段",
+	"block.immersivepetroleum.petcoke_block": "石油コークスブロック",
 	
 	"block.immersivepetroleum.auto_lubricator": "自動給油器",
 	"block.immersivepetroleum.gas_generator": "ポータブル発電機",
@@ -17,8 +20,11 @@
 	
 	"block.immersivepetroleum.pumpjack": "ポンプジャック",
 	"block.immersivepetroleum.distillationtower": "蒸留塔",
+	"block.immersivepetroleum.cokerunit": "コーカー",
+	"block.immersivepetroleum.hydrotreater": "硫黄回収装置",
 	
 	"fluid.immersivepetroleum.diesel": "ディーゼル",
+	"fluid.immersivepetroleum.diesel_sulfur": "硫化ディーゼル",
 	"fluid.immersivepetroleum.oil": "原油",
 	"fluid.immersivepetroleum.lubricant": "潤滑油",
 	"fluid.immersivepetroleum.gasoline": "ガソリン",
@@ -33,7 +39,9 @@
 	
 	"item.immersivepetroleum.bitumen": "瀝青",
 	"item.immersivepetroleum.petcoke": "石油コークス",
+	"item.immersivepetroleum.petcoke_dust": "石油コークスの粉末",
 	"item.immersivepetroleum.diesel_bucket": "ディーゼル入りバケツ",
+	"item.immersivepetroleum.diesel_sulfur_bucket": "硫化ディーゼル入りバケツ",
 	"item.immersivepetroleum.oil_bucket": "原油入りバケツ",
 	"item.immersivepetroleum.lubricant_bucket": "潤滑油入りバケツ",
 	"item.immersivepetroleum.gasoline_bucket": "ガソリン入りバケツ",
@@ -50,6 +58,8 @@
 	"_comment":"Replaced the IP with IE to save me from headaches. ~TwistedGate",
 	"desc.immersiveengineering.info.multiblock.IE:DistillationTower": "蒸留塔",
 	"desc.immersiveengineering.info.multiblock.IE:Pumpjack": "ポンプジャック",
+	"desc.immersiveengineering.info.multiblock.IE:CokerUnit": "コーカー",
+	"desc.immersiveengineering.info.multiblock.IE:HydroTreater": "硫黄回収装置",
 	
 	"desc.immersivepetroleum.info.reservoir.oil": "オイル溜まり",
 	"desc.immersivepetroleum.info.reservoir.aquifer": "帯水層",
@@ -102,7 +112,7 @@
 	"gui.immersivepetroleum.projector.button.rcw": "時計回りに回転",
 	"gui.immersivepetroleum.projector.button.rccw": "反時計回りに回転",
 	
-	"_comment": "################## IE-Manual ##################",
+	"_comment": "################## Effects ##################",
 	
 	"effect.immersivepetroleum.anti_fire": "",
 	
@@ -134,26 +144,34 @@
 	
 	"_comment": "################## Chat ##################",
 	
-	"chat.immersivepetroleum.command.help.help": "§6使用法: /ip help <command> [sub-commands ...]§r\n特定のコマンド、オプション、サブコマンドの情報を表示",
-	"chat.immersivepetroleum.command.reservoir.help": "§6Usage: /ip reservoir <list|get|set|setAmount|setCapacity>§r",
-	"chat.immersivepetroleum.command.reservoir.list.help": "§6Usage: /ip reservoir list§r<br> 登録されている貯留層の一覧を表示します。",
-	"chat.immersivepetroleum.command.reservoir.get.help": "§6Usage: /ip reservoir get§r<br> チャンクに含まれる貯留層を表示します。",
-	"chat.immersivepetroleum.command.reservoir.set.help": "§6Usage: /ip reservoir set [reservoir]§r<br> チャンクの貯留層を指定した値で上書きします。上書きする元の貯留層は指定できません。",
-	"chat.immersivepetroleum.command.reservoir.setAmount.help": "§6Usage: /ip reservoir setAmount <number>§r<br> チャンクに残存する液体の量をmB単位で設定します。",
-	"chat.immersivepetroleum.command.reservoir.setCapacity.help": "§6Usage: /ip reservoir setCapacity <number>§r<br> チャンクの液体の最大埋蔵量をmB単位で設定します。",
-	"chat.immersivepetroleum.command.reservoir.get": "チャンク内の液体: %1$s <br>上書き: %2$s <br>量: %3$s",
-	"chat.immersivepetroleum.command.reservoir.set.invalidReservoir": "§c'%1$s'は無効な帯水層の識別子です。'/ip reservoir list'コマンドを実行し、識別子の一覧を取得してください。§r",
+	"chat.immersivepetroleum.command.ip.help": "§6使用法: /ip <reservoir>§r",
+	"chat.immersivepetroleum.command.reservoir.help": "§6使用法: /ip reservoir <list|get|set|setAmount|setCapacity>§r",
+	"chat.immersivepetroleum.command.reservoir.list.help": "§6使用法: /ip reservoir list§r\n登録されている貯留層の一覧を表示します。",
+	"chat.immersivepetroleum.command.reservoir.get.help": "§6使用法: /ip reservoir get§r\nチャンクに含まれる貯留層を表示します。",
+	"chat.immersivepetroleum.command.reservoir.set.help": "§6使用法: /ip reservoir set <reservoir>§r\nチャンクの貯留層を指定した値で上書きします。上書きする元の貯留層は指定できません。",
+	"chat.immersivepetroleum.command.reservoir.setAmount.help": "§6使用法: /ip reservoir setAmount <number>§r\nチャンクに残存する液体の量をmB単位で設定します。",
+	"chat.immersivepetroleum.command.reservoir.setCapacity.help": "§6使用法: /ip reservoir setCapacity <number>§r\nチャンクの液体の最大埋蔵量をmB単位で設定します。",
+	"chat.immersivepetroleum.command.reservoir.get": "チャンク内の液体: %1$s <br>上書き: %2$s\n量: %3$s",
+	"chat.immersivepetroleum.command.reservoir.set.invalidReservoir": "§c「%1$s」は無効な帯水層の識別子です。「/ip reservoir list」コマンドを実行し、識別子の一覧を取得してください。§r",
 	"chat.immersivepetroleum.command.reservoir.set.sucess": "貯留層の内容を上書き: %1$s",
 	"chat.immersivepetroleum.command.reservoir.set.clear": "貯留層の上書きをクリアしました。 (%1$s)",
-	"chat.immersivepetroleum.command.reservoir.setAmount.sucess": "貯留層の量を以下に設定: %1$s",
-	"chat.immersivepetroleum.command.reservoir.setAmount.NFE": "エラー。'%1$s'は妥当な数字ではありません。",
-	"chat.immersivepetroleum.command.reservoir.setCapacity.sucess": "貯留層の最大埋蔵量を以下に設定: %1$s",
-	"chat.immersivepetroleum.command.reservoir.setCapacity.NFE": "エラー。'%1$s'は妥当な数字ではありません。",
+	"chat.immersivepetroleum.command.reservoir.setAmount.sucess": "貯留層の量を設定: %1$s",
+	"chat.immersivepetroleum.command.reservoir.setAmount.NFE": "エラー。「%1$s」は妥当な数字ではありません。",
+	"chat.immersivepetroleum.command.reservoir.setCapacity.sucess": "貯留層の最大埋蔵量を設定: %1$s",
+	"chat.immersivepetroleum.command.reservoir.setCapacity.NFE": "エラー。「%1$s」は妥当な数字ではありません。",
 	
 	"chat.immersivepetroleum.info.coresample.oil": "%s 貯留層",
 	"chat.immersivepetroleum.info.coresample.oilRep": "最大%d mB/tickで抽出できる微量の%s",
 	"chat.immersivepetroleum.info.coresample.noOil": "液体貯留層なし",
 	
 	"key.categories.immersivepetroleum": "Immersive Petroleum",
-	"key.immersivepetroleum.projector.flip": "鏡像投影"
+	"key.immersivepetroleum.projector.flip": "鏡像投影",
+	
+	"death.attack.ipFlarestack": "%1$sは存在を燃やし尽くされた",
+	"death.attack.ipFlarestack.player": "%1$sは%2$sによって存在を燃やし尽くされた",
+	
+	"_comment": "################## Subtitles ##################",
+	
+	"subtitle.immersivepetroleum.projector": "プロジェクターが音を立てる",
+	"subtitle.immersivepetroleum.flarestack_fire":"フレアスタックの火が鳴り響く"
 }

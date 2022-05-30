@@ -1,0 +1,61 @@
+name: Crash Report
+description: Your game crashed as a result of using this mod?
+title: "[Minecraft-Version][CRASH] TitleHere"
+labels: Crash
+body:
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: "Please search to see if an issue already exists for the bug you encountered."
+      options:
+        - label: Yes, i have searched for already existing issues.
+          required: true
+  - type: checkboxes
+    attributes:
+      label: Are you using the most recent version of X?
+      description: "Please check to see if any newer version fixes the issue you're experiencing."
+      options:
+        - label: Yes, i am using the most recent version.
+          required: true
+        - label: Yes, it still happens in the most recent version.
+          required: true
+  - type: dropdown
+    attributes:
+      label: Minecraft Version
+      description: |
+        Select the Minecraft version.
+        
+        *If your version does not show up here, support for it has been closed.*
+      options: [1.16.5]
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Forge Version
+      description: |
+        The Forge version you are using.
+        
+        *Saying "latest" is not valid.*
+      placeholder: "xx.xx.xx"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Immersive Engineering Version
+      description: |
+        The Immersive Engineering version you are using.
+        
+        *Saying "latest" is not valid.*
+      placeholder: "xx.xx.xx-xxx"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Crash Log
+      description: |
+        A file will have been generated in the folder **`crash-reports`** of your minecraft folder.
+        
+        *To understand what has happened, i/we need to know the content of that file.*
+      placeholder: <gist or pastebin link>
+    validations:
+      required: true

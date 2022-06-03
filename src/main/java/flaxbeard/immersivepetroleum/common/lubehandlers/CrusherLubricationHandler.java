@@ -13,11 +13,9 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationH
 import flaxbeard.immersivepetroleum.client.model.IPModel;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
-import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.particles.BlockParticleData;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
@@ -30,9 +28,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fluids.FluidStack;
 
 public class CrusherLubricationHandler implements ILubricationHandler<CrusherTileEntity>{
 	private static Vector3i size = new Vector3i(3, 3, 5);
@@ -64,45 +62,47 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 	}
 	
 	@Override
-	public void lubricate(World world, int ticks, CrusherTileEntity mbte){
-		lubricate(world, ticks, mbte, null);
+	public void lubricate(World world, int ticks, CrusherTileEntity mbte){}
+	
+	@Override
+	public void lubricate(World world, Fluid lubricant, int ticks, CrusherTileEntity mbte){}
+	
+	@Override
+	public void lubricateClient(ClientWorld world, Fluid lubricant, int ticks, CrusherTileEntity mbte){
+		mbte.animation_barrelRotation += 18f / 4f;
+		mbte.animation_barrelRotation %= 360f;
 	}
 	
 	@Override
-	public void lubricate(World world, int ticks, CrusherTileEntity mbte, Fluid lubrication){
-		if(!world.isRemote){
-			Iterator<MultiblockProcess<CrusherRecipe>> processIterator = mbte.processQueue.iterator();
-			MultiblockProcess<CrusherRecipe> process = processIterator.next();
-			
-			if(ticks % 4 == 0){
-				int consume = mbte.energyStorage.extractEnergy(process.energyPerTick, true);
-				if(consume >= process.energyPerTick){
-					mbte.energyStorage.extractEnergy(process.energyPerTick, false);
+	public void lubricateServer(ServerWorld world, Fluid lubricant, int ticks, CrusherTileEntity mbte){
+		Iterator<MultiblockProcess<CrusherRecipe>> processIterator = mbte.processQueue.iterator();
+		MultiblockProcess<CrusherRecipe> process = processIterator.next();
+		
+		if(ticks % 4 == 0){
+			int consume = mbte.energyStorage.extractEnergy(process.energyPerTick, true);
+			if(consume >= process.energyPerTick){
+				mbte.energyStorage.extractEnergy(process.energyPerTick, false);
+				
+				if(process.processTick < process.maxTicks)
+					process.processTick++;
+				
+				if(process.processTick >= process.maxTicks && mbte.processQueue.size() > 1){
+					process = processIterator.next();
 					
 					if(process.processTick < process.maxTicks)
 						process.processTick++;
-					
-					if(process.processTick >= process.maxTicks && mbte.processQueue.size() > 1){
-						process = processIterator.next();
-						
-						if(process.processTick < process.maxTicks)
-							process.processTick++;
-					}
 				}
 			}
-		}else{
-			mbte.animation_barrelRotation += 18f / 4f;
-			mbte.animation_barrelRotation %= 360f;
 		}
 	}
 	
 	@Override
-	public void spawnLubricantParticles(World world, AutoLubricatorTileEntity lubricator, Direction facing, CrusherTileEntity mbte){
+	public void spawnLubricantParticles(ClientWorld world, AutoLubricatorTileEntity lubricator, Direction facing, CrusherTileEntity mbte){
 		Direction f = mbte.getIsMirrored() ? facing : facing.getOpposite();
 		
 		float location = world.rand.nextFloat();
 		
-		boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.POSITIVE ^ !mbte.getIsMirrored();
+		boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.NEGATIVE ^ !mbte.getIsMirrored();
 		float xO = 2.5F;
 		float zO = -0.1F;
 		float yO = 1.3F;

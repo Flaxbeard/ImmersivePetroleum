@@ -28,12 +28,12 @@ import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.tags.FluidTags;
@@ -45,6 +45,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -185,7 +186,11 @@ public class CommonEventHandler{
 				ILubricationHandler lubeHandler = LubricatedHandler.getHandlerForTile(te);
 				if(lubeHandler != null){
 					if(lubeHandler.isMachineEnabled(world, te)){
-						lubeHandler.lubricate(world, info.ticks, te);
+						if(world.isRemote){
+							lubeHandler.lubricateClient((ClientWorld) world, info.lubricant, info.ticks, te);
+						}else{
+							lubeHandler.lubricateServer((ServerWorld) world, info.lubricant, info.ticks, te);
+						}
 					}
 					
 					if(world.isRemote){

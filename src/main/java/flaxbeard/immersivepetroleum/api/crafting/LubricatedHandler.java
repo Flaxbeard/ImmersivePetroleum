@@ -13,10 +13,12 @@ import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileE
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
@@ -31,9 +33,10 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class LubricatedHandler{
 	public interface ILubricationHandler<E extends TileEntity> {
@@ -45,29 +48,39 @@ public class LubricatedHandler{
 		
 		TileEntity isPlacedCorrectly(World world, AutoLubricatorTileEntity lubricator, Direction direction);
 		
+		/**
+		 * @deprecated Use {@link #lubricateClient(ClientWorld, Fluid, int, TileEntity)} and {@link #lubricateServer(ServerWorld, Fluid, int, TileEntity)} instead.
+		 */
 		void lubricate(World world, int ticks, E mbte);
 		
-		void lubricate(World world, int ticks, E mbte, Fluid lubrication);
+		/**
+		 * @deprecated Use {@link #lubricateClient(ClientWorld, Fluid, int, TileEntity)} and {@link #lubricateServer(ServerWorld, Fluid, int, TileEntity)} instead.
+		 */
+		void lubricate(World world, Fluid lubricant, int ticks, E mbte);
+		
+		void lubricateClient(ClientWorld world, Fluid lubricant, int ticks, E mbte);
+		
+		void lubricateServer(ServerWorld world, Fluid lubricant, int ticks, E mbte);
 		
 		@OnlyIn(Dist.CLIENT)
 		void renderPipes(AutoLubricatorTileEntity lubricator, E mbte, MatrixStack matrix, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay);
 		
-		void spawnLubricantParticles(World world, AutoLubricatorTileEntity lubricator, Direction direction, E mbte);
+		void spawnLubricantParticles(ClientWorld world, AutoLubricatorTileEntity lubricator, Direction direction, E mbte);
 	}
 	
 	static final Map<Class<? extends TileEntity>, ILubricationHandler<? extends TileEntity>> lubricationHandlers = new HashMap<>();
 	
-	public static <E extends TileEntity> void registerLubricatedTile(Class<E> tileClass, Supplier<ILubricationHandler<E>> handler){
-		ILubricationHandler<E> instance = handler.get();
+	public static <T extends TileEntity> void registerLubricatedTile(Class<T> tileClass, Supplier<ILubricationHandler<T>> handler){
+		ILubricationHandler<T> instance = handler.get();
 		lubricationHandlers.put(tileClass, instance);
 	}
 	
-	public static ILubricationHandler<TileEntity> getHandlerForTile(TileEntity te){
+	public static <T extends TileEntity> ILubricationHandler<T> getHandlerForTile(T te){
 		if(te != null){
 			Class<? extends TileEntity> teClass = te.getClass();
 			if(lubricationHandlers.containsKey(teClass)){
 				@SuppressWarnings("unchecked")
-				ILubricationHandler<TileEntity> tmp = (ILubricationHandler<TileEntity>) lubricationHandlers.get(teClass);
+				ILubricationHandler<T> tmp = (ILubricationHandler<T>) lubricationHandlers.get(teClass);
 				return tmp;
 			}
 		}
@@ -75,14 +88,19 @@ public class LubricatedHandler{
 	}
 	
 	public static class LubricatedTileInfo{
-		public BlockPos pos;
 		public RegistryKey<World> world;
+		public BlockPos pos;
+		public Fluid lubricant = Fluids.EMPTY;
 		public int ticks;
 		
-		public LubricatedTileInfo(RegistryKey<World> registryKey, BlockPos pos, int ticks){
+		public LubricatedTileInfo(RegistryKey<World> registryKey, BlockPos pos, Fluid lubricant, int ticks){
 			this.world = registryKey;
 			this.pos = pos;
 			this.ticks = ticks;
+			
+			if(lubricant != null && lubricant != Fluids.EMPTY){
+				this.lubricant = lubricant;
+			}
 		}
 		
 		public LubricatedTileInfo(CompoundNBT tag){
@@ -90,11 +108,17 @@ public class LubricatedHandler{
 			int x = tag.getInt("x");
 			int y = tag.getInt("y");
 			int z = tag.getInt("z");
-			String name = tag.getString("world");
+			String worldName = tag.getString("world");
+			String lubricantName = tag.getString("lubricant");
 			
-			this.world = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(name));
+			this.world = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(worldName));
 			this.pos = new BlockPos(x, y, z);
 			this.ticks = ticks;
+			
+			this.lubricant = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(lubricantName));
+			if(this.lubricant == null){
+				this.lubricant = Fluids.EMPTY;
+			}
 		}
 		
 		public CompoundNBT writeToNBT(){
@@ -105,6 +129,7 @@ public class LubricatedHandler{
 			tag.putInt("y", this.pos.getY());
 			tag.putInt("z", this.pos.getZ());
 			tag.putString("world", this.world.getRegistryName().toString());
+			tag.putString("lubricant", this.lubricant.getRegistryName().toString());
 			
 			return tag;
 		}
@@ -112,11 +137,11 @@ public class LubricatedHandler{
 	
 	public static List<LubricatedTileInfo> lubricatedTiles = new ArrayList<LubricatedTileInfo>();
 	
-	public static boolean lubricateTile(TileEntity tile, int ticks){
-		return lubricateTile(tile, ticks, false, -1);
+	public static boolean lubricateTile(TileEntity tile, Fluid lubricant, int ticks){
+		return lubricateTile(tile, lubricant, ticks, false, -1);
 	}
 	
-	public static boolean lubricateTile(TileEntity tile, int ticks, boolean additive, int cap){
+	public static boolean lubricateTile(TileEntity tile, Fluid lubricant, int ticks, boolean additive, int cap){
 		if(tile instanceof MultiblockPartTileEntity){
 			tile = ((MultiblockPartTileEntity<?>) tile).master();
 		}
@@ -145,7 +170,7 @@ public class LubricatedHandler{
 				}
 			}
 			
-			LubricatedTileInfo lti = new LubricatedTileInfo(tile.getWorld().getDimensionKey(), tile.getPos(), ticks);
+			LubricatedTileInfo lti = new LubricatedTileInfo(tile.getWorld().getDimensionKey(), tile.getPos(), lubricant, ticks);
 			lubricatedTiles.add(lti);
 			
 			return true;
@@ -159,18 +184,18 @@ public class LubricatedHandler{
 		public void applyToEntity(LivingEntity target, PlayerEntity shooter, ItemStack thrower, Fluid fluid){
 			if(target instanceof IronGolemEntity){
 				if(LubricantHandler.isValidLube(fluid)){
-					int amount = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 4) / 3;
+					int ticks = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 4) / 3;
 					
 					EffectInstance activeSpeed = target.getActivePotionEffect(Effects.SPEED);
-					int ticksSpeed = amount;
+					int ticksSpeed = ticks;
 					if(activeSpeed != null && activeSpeed.getAmplifier() <= 1){
-						ticksSpeed = Math.min(activeSpeed.getDuration() + amount, 60 * 20);
+						ticksSpeed = Math.min(activeSpeed.getDuration() + ticks, 60 * 20);
 					}
 					
 					EffectInstance activeStrength = target.getActivePotionEffect(Effects.STRENGTH);
-					int ticksStrength = amount;
+					int ticksStrength = ticks;
 					if(activeStrength != null && activeStrength.getAmplifier() <= 1){
-						ticksStrength = Math.min(activeStrength.getDuration() + amount, 60 * 20);
+						ticksStrength = Math.min(activeStrength.getDuration() + ticks, 60 * 20);
 					}
 					
 					target.addPotionEffect(new EffectInstance(Effects.SPEED, ticksSpeed, 1));
@@ -183,8 +208,8 @@ public class LubricatedHandler{
 		@Override
 		public void applyToBlock(World world, RayTraceResult mop, PlayerEntity shooter, ItemStack thrower, Fluid fluid){
 			if(LubricantHandler.isValidLube(fluid)){
-				int amount = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 2) / 3;
-				LubricatedHandler.lubricateTile(world.getTileEntity(new BlockPos(mop.getHitVec())), amount, true, 20 * 60);
+				int ticks = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 2) / 3;
+				LubricatedHandler.lubricateTile(world.getTileEntity(new BlockPos(mop.getHitVec())), fluid, ticks, true, 20 * 60);
 			}
 		}
 	}

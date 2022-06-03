@@ -32,6 +32,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -91,10 +92,11 @@ public class OilCanItem extends IPItemBase{
 					ActionResultType ret = FluidUtil.getFluidHandler(stack).map(handler -> {
 						if(handler instanceof FluidHandlerItemStack){
 							FluidHandlerItemStack can = (FluidHandlerItemStack) handler;
+							FluidStack fs = can.getFluid();
 							
-							if(can.getFluid() != null && LubricantHandler.isValidLube(can.getFluid().getFluid())){
-								int amountNeeded = (LubricantHandler.getLubeAmount(can.getFluid().getFluid()) * 5 * 20);
-								if(can.getFluid().getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getTileEntity(pos), 20 * 30)){
+							if(fs != null && LubricantHandler.isValidLube(fs)){
+								int amountNeeded = (LubricantHandler.getLubeAmount(fs) * 5 * 20);
+								if(fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getTileEntity(pos), fs.getFluid(), 20 * 30)){
 									player.playSound(SoundEvents.ITEM_BUCKET_EMPTY, 1f, 1f);
 									if(!player.isCreative()){
 										can.drain(amountNeeded, FluidAction.EXECUTE);

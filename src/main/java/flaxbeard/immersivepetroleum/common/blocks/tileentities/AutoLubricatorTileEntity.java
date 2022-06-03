@@ -15,6 +15,7 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationH
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -31,11 +32,11 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -174,8 +175,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements ITicka
 	@Override
 	public AxisAlignedBB getRenderBoundingBox(){
 		BlockPos pos = getPos();
-		int size = 3;
-		return new AxisAlignedBB(pos.getX() - size, pos.getY() - size, pos.getZ() - size, pos.getX() + size, pos.getY() + size, pos.getZ() + size);
+		return new AxisAlignedBB(pos.add(-3, -3, -3), pos.add(3, 3, 3));
 	}
 	
 	@Override
@@ -232,45 +232,65 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements ITicka
 			return;
 		}
 		
-		if(isMaster()){
-			if((this.tank.getFluid() != null && this.tank.getFluid() != FluidStack.EMPTY) && this.tank.getFluidAmount() >= LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid()) && LubricantHandler.isValidLube(this.tank.getFluid().getFluid())){
-				BlockPos target = this.pos.offset(this.facing);
-				TileEntity te = this.world.getTileEntity(target);
-				
-				ILubricationHandler<TileEntity> handler = LubricatedHandler.getHandlerForTile(te);
-				if(handler != null){
-					TileEntity master = handler.isPlacedCorrectly(this.world, this, this.facing);
-					if(master != null && handler.isMachineEnabled(this.world, master)){
-						this.count++;
-						handler.lubricate(this.world, this.count, master, this.tank.getFluid().getFluid());
-						
-						if(!this.world.isRemote && this.count % 4 == 0){
-							this.tank.drain(LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid()), FluidAction.EXECUTE);
-							markDirty();
-						}
-						
-						this.countClient++;
-						if(this.countClient % 50 == 0){
-							this.countClient = this.world.rand.nextInt(40);
-							handler.spawnLubricantParticles(this.world, this, this.facing, master);
-						}
+		if(this.world.isRemote){
+			this.tickClient();
+		}else{
+			this.tickServer();
+		}
+	}
+	
+	private void tickClient(){
+		if(!this.tank.isEmpty() && LubricantHandler.isValidLube(this.tank.getFluid()) && this.tank.getFluidAmount() >= LubricantHandler.getLubeAmount(this.tank.getFluid())){
+			BlockPos target = this.pos.offset(this.facing);
+			TileEntity te = this.world.getTileEntity(target);
+			
+			ILubricationHandler<TileEntity> handler = LubricatedHandler.getHandlerForTile(te);
+			if(handler != null){
+				TileEntity master = handler.isPlacedCorrectly(this.world, this, this.facing);
+				if(master != null && handler.isMachineEnabled(this.world, master)){
+					handler.lubricateClient((ClientWorld) this.world, this.tank.getFluid().getFluid(), this.count, master);
+					
+					if(this.countClient++ % 50 == 0){
+						this.countClient = this.world.rand.nextInt(40);
+						handler.spawnLubricantParticles((ClientWorld) this.world, this, this.facing, master);
 					}
 				}
 			}
-			
-			/*
-			if(!this.world.isRemote && this.lastTank != this.tank.getFluidAmount()){
-				if(this.predictablyDraining && !this.tank.isEmpty() && this.lastTank - this.tank.getFluidAmount() == LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid())){
-					this.lastTank = this.tank.getFluidAmount();
-				}
-				
-				if(Math.abs(this.lastTankUpdate - this.tank.getFluidAmount()) > 25){
-					this.predictablyDraining = !this.tank.isEmpty() && this.lastTank - this.tank.getFluidAmount() == LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid());
-					this.lastTankUpdate = this.tank.getFluidAmount();
-				}
-				markDirty();
-			}
-			*/
 		}
+	}
+	
+	private void tickServer(){
+		if(!this.tank.isEmpty() && LubricantHandler.isValidLube(this.tank.getFluid()) && this.tank.getFluidAmount() >= LubricantHandler.getLubeAmount(this.tank.getFluid())){
+			BlockPos target = this.pos.offset(this.facing);
+			TileEntity te = this.world.getTileEntity(target);
+			
+			ILubricationHandler<TileEntity> handler = LubricatedHandler.getHandlerForTile(te);
+			if(handler != null){
+				TileEntity master = handler.isPlacedCorrectly(this.world, this, this.facing);
+				if(master != null && handler.isMachineEnabled(this.world, master)){
+					handler.lubricateServer((ServerWorld) this.world, this.tank.getFluid().getFluid(), this.count, master);
+					
+					if(this.count++ % 4 == 0){
+						this.tank.drain(LubricantHandler.getLubeAmount(this.tank.getFluid()), FluidAction.EXECUTE);
+					}
+					
+					markDirty();
+				}
+			}
+		}
+		
+		/*// Unused
+		if(!this.level.isClientSide && this.lastTank != this.tank.getFluidAmount()){
+			if(this.predictablyDraining && !this.tank.isEmpty() && this.lastTank - this.tank.getFluidAmount() == LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid())){
+				this.lastTank = this.tank.getFluidAmount();
+			}
+			
+			if(Math.abs(this.lastTankUpdate - this.tank.getFluidAmount()) > 25){
+				this.predictablyDraining = !this.tank.isEmpty() && this.lastTank - this.tank.getFluidAmount() == LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid());
+				this.lastTankUpdate = this.tank.getFluidAmount();
+			}
+			setChanged();
+		}
+		*/
 	}
 }

@@ -12,6 +12,7 @@ import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
@@ -24,9 +25,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fluids.FluidStack;
 
 public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackTileEntity>{
 	private static Vector3i size = new Vector3i(4, 6, 3);
@@ -60,23 +61,25 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 	}
 	
 	@Override
-	public void lubricate(World world, int ticks, PumpjackTileEntity mbte) {
-		lubricate(world, ticks, mbte, null);
+	public void lubricate(World world, int ticks, PumpjackTileEntity mbte){}
+	
+	@Override
+	public void lubricate(World world, Fluid lubricant, int ticks, PumpjackTileEntity mbte){}
+	
+	@Override
+	public void lubricateClient(ClientWorld world, Fluid lubricant, int ticks, PumpjackTileEntity mbte){
+		mbte.activeTicks += 1F / 4F;
 	}
 	
 	@Override
-	public void lubricate(World world, int ticks, PumpjackTileEntity mbte, Fluid lubrication){
-		if(!world.isRemote){
-			if(ticks % 4 == 0){
-				mbte.tick();
-			}
-		}else{
-			mbte.activeTicks += 1F / 4F;
+	public void lubricateServer(ServerWorld world, Fluid lubricant, int ticks, PumpjackTileEntity mbte){
+		if(ticks % 4 == 0){
+			mbte.tick();
 		}
 	}
 	
 	@Override
-	public void spawnLubricantParticles(World world, AutoLubricatorTileEntity lubricator, Direction facing, PumpjackTileEntity mbte){
+	public void spawnLubricantParticles(ClientWorld world, AutoLubricatorTileEntity lubricator, Direction facing, PumpjackTileEntity mbte){
 		Direction f = mbte.getIsMirrored() ? facing : facing.getOpposite();
 		float location = world.rand.nextFloat();
 		

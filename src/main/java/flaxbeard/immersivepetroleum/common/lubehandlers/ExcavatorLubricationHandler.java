@@ -30,6 +30,7 @@ import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fluids.FluidStack;
 
 public class ExcavatorLubricationHandler implements ILubricationHandler<ExcavatorTileEntity>{
 	private static Vector3i size = new Vector3i(3, 6, 3);
@@ -77,6 +78,11 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	
 	@Override
 	public void lubricate(World world, int ticks, ExcavatorTileEntity mbte){
+		lubricate(world, ticks, mbte, null);
+	}
+	
+	@Override
+	public void lubricate(World world, int ticks, ExcavatorTileEntity mbte, FluidStack lubrication){
 		BlockPos wheelPos = mbte.getWheelCenterPos();
 		TileEntity center = world.getTileEntity(wheelPos);
 		

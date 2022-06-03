@@ -242,7 +242,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements ITicka
 					TileEntity master = handler.isPlacedCorrectly(this.world, this, this.facing);
 					if(master != null && handler.isMachineEnabled(this.world, master)){
 						this.count++;
-						handler.lubricate(this.world, this.count, master);
+						handler.lubricate(this.world, this.count, master, this.tank.getFluid());
 						
 						if(!this.world.isRemote && this.count % 4 == 0){
 							this.tank.drain(LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid()), FluidAction.EXECUTE);

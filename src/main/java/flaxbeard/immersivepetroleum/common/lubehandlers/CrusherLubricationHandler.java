@@ -31,6 +31,7 @@ import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fluids.FluidStack;
 
 public class CrusherLubricationHandler implements ILubricationHandler<CrusherTileEntity>{
 	private static Vector3i size = new Vector3i(3, 3, 5);
@@ -63,6 +64,11 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 	
 	@Override
 	public void lubricate(World world, int ticks, CrusherTileEntity mbte){
+		lubricate(world, ticks, mbte, null);
+	}
+	
+	@Override
+	public void lubricate(World world, int ticks, CrusherTileEntity mbte, FluidStack lubrication){
 		if(!world.isRemote){
 			Iterator<MultiblockProcess<CrusherRecipe>> processIterator = mbte.processQueue.iterator();
 			MultiblockProcess<CrusherRecipe> process = processIterator.next();

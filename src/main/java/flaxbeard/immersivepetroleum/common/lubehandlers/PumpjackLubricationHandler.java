@@ -25,6 +25,7 @@ import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fluids.FluidStack;
 
 public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackTileEntity>{
 	private static Vector3i size = new Vector3i(4, 6, 3);
@@ -58,7 +59,12 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 	}
 	
 	@Override
-	public void lubricate(World world, int ticks, PumpjackTileEntity mbte){
+	public void lubricate(World world, int ticks, PumpjackTileEntity mbte) {
+		lubricate(world, ticks, mbte, null);
+	}
+	
+	@Override
+	public void lubricate(World world, int ticks, PumpjackTileEntity mbte, FluidStack lubrication){
 		if(!world.isRemote){
 			if(ticks % 4 == 0){
 				mbte.tick();

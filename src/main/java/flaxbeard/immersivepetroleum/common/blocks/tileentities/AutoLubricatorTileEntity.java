@@ -44,8 +44,8 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class AutoLubricatorTileEntity extends IPTileEntityBase implements ITickableTileEntity, IPlayerInteraction, IBlockOverlayText, ITileDrop{
 	public boolean isSlave;
-	public boolean isActive;
-	public boolean predictablyDraining = false;
+//	public boolean isActive;
+//	public boolean predictablyDraining = false;
 	public Direction facing;
 	public FluidTank tank = new FluidTank(8000, fluid -> (fluid != null && LubricantHandler.isValidLube(fluid.getFluid())));
 	
@@ -56,8 +56,8 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements ITicka
 	@Override
 	protected void readCustom(BlockState state, CompoundNBT compound){
 		this.isSlave = compound.getBoolean("slave");
-		this.isActive = compound.getBoolean("active");
-		this.predictablyDraining = compound.getBoolean("predictablyDraining");
+//		this.isActive = compound.getBoolean("active");
+//		this.predictablyDraining = compound.getBoolean("predictablyDraining");
 		
 		Direction facing = Direction.byName(compound.getString("facing"));
 		if(facing.getHorizontalIndex() == -1)
@@ -70,8 +70,8 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements ITicka
 	@Override
 	protected void writeCustom(CompoundNBT compound){
 		compound.putBoolean("slave", this.isSlave);
-		compound.putBoolean("active", this.isActive);
-		compound.putBoolean("predictablyDraining", this.predictablyDraining);
+//		compound.putBoolean("active", this.isActive);
+//		compound.putBoolean("predictablyDraining", this.predictablyDraining);
 		compound.putString("facing", this.facing.getName2());
 		compound.putInt("count", this.count);
 		
@@ -258,6 +258,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements ITicka
 				}
 			}
 			
+			/*
 			if(!this.world.isRemote && this.lastTank != this.tank.getFluidAmount()){
 				if(this.predictablyDraining && !this.tank.isEmpty() && this.lastTank - this.tank.getFluidAmount() == LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid())){
 					this.lastTank = this.tank.getFluidAmount();
@@ -269,6 +270,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements ITicka
 				}
 				markDirty();
 			}
+			*/
 		}
 	}
 }

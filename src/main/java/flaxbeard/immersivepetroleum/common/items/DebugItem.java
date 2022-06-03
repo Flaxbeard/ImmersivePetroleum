@@ -295,9 +295,9 @@ public class DebugItem extends IPItemBase{
 					World world = context.getWorld();
 					IFormattableTextComponent out = new StringTextComponent(world.isRemote ? "CLIENT: " : "SERVER: ");
 					out.appendString(lube.facing + ", ");
-					out.appendString((lube.isActive ? "Active" : "Inactive") + ", ");
+//					out.appendString((lube.isActive ? "Active" : "Inactive") + ", ");
 					out.appendString((lube.isSlave ? "Slave" : "Master") + ", ");
-					out.appendString((lube.predictablyDraining ? "Predictably Draining, " : ""));
+//					out.appendString((lube.predictablyDraining ? "Predictably Draining, " : ""));
 					if(!lube.tank.isEmpty()){
 						out.appendSibling(lube.tank.getFluid().getDisplayName()).appendString(" " + lube.tank.getFluidAmount() + "/" + lube.tank.getCapacity() + "mB");
 					}else{

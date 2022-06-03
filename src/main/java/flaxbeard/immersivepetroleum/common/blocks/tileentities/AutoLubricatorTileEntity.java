@@ -205,7 +205,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements ITicka
 	public boolean interact(Direction side, PlayerEntity player, Hand hand, ItemStack heldItem, float hitX, float hitY, float hitZ){
 		TileEntity master = this.isSlave ? this.world.getTileEntity(getPos().add(0, -1, 0)) : this;
 		if(master != null && master instanceof AutoLubricatorTileEntity){
-			if(!getWorld().isRemote && FluidUtil.interactWithFluidHandler(player, hand, ((AutoLubricatorTileEntity) master).tank)){
+			if(!this.world.isRemote && FluidUtil.interactWithFluidHandler(player, hand, ((AutoLubricatorTileEntity) master).tank)){
 				markDirty();
 			}
 			return true;

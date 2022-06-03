@@ -10,7 +10,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.ItemOverlayUtils;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
@@ -34,6 +33,7 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -128,11 +128,11 @@ public class ClientEventHandler{
 				boolean off = (secondItem != null && !secondItem.isEmpty()) && secondItem.getItem() == IPContent.Blocks.auto_lubricator.asItem();
 				
 				if(main || off){
-					BlockRendererDispatcher blockDispatcher = ClientUtils.mc().getBlockRendererDispatcher();
+					BlockRendererDispatcher blockDispatcher = MCUtil.getBlockRenderer();
 					IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
 					
 					// Anti-Jiggle when moving
-					Vector3d renderView = ClientUtils.mc().gameRenderer.getActiveRenderInfo().getProjectedView();
+					Vector3d renderView = MCUtil.getGameRenderer().getActiveRenderInfo().getProjectedView();
 					transform.translate(-renderView.x, -renderView.y, -renderView.z);
 					
 					BlockPos base = mc.player.getPosition();
@@ -181,7 +181,7 @@ public class ClientEventHandler{
 	}
 	
 	public void renderChunkBorder(MatrixStack transform, int chunkX, int chunkZ){
-		PlayerEntity player = ClientUtils.mc().player;
+		PlayerEntity player = MCUtil.getPlayer();
 		
 		double px = player.getPosX();
 		double py = player.getPosY();
@@ -270,12 +270,12 @@ public class ClientEventHandler{
 	
 	@SubscribeEvent
 	public void renderInfoOverlays(RenderGameOverlayEvent.Post event){
-		if(ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
-			PlayerEntity player = ClientUtils.mc().player;
+		if(MCUtil.getPlayer() != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
+			PlayerEntity player = MCUtil.getPlayer();
 			
-			if(ClientUtils.mc().objectMouseOver != null){
+			if(MCUtil.getHitResult() != null){
 				boolean hammer = player.getHeldItem(Hand.MAIN_HAND) != null && Utils.isHammer(player.getHeldItem(Hand.MAIN_HAND));
-				RayTraceResult mop = ClientUtils.mc().objectMouseOver;
+				RayTraceResult mop = MCUtil.getHitResult();
 				
 				if(mop != null){
 					switch(mop.getType()){
@@ -313,10 +313,10 @@ public class ClientEventHandler{
 										}
 										
 										int fx = event.getWindow().getScaledWidth() / 2 + 8;
-										int fy = event.getWindow().getScaledHeight() / 2 + 8 + i * ClientUtils.font().FONT_HEIGHT;
+										int fy = event.getWindow().getScaledHeight() / 2 + 8 + i * MCUtil.getFont().FONT_HEIGHT;
 										
 										IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-										ClientUtils.font().drawEntityText(LanguageMap.getInstance().func_241870_a(display), fx, fy, 0xFFFFFFFF, true, event.getMatrixStack().getLast().getMatrix(), buffer, false, 0, 0xF000F0);
+										MCUtil.getFont().drawEntityText(LanguageMap.getInstance().func_241870_a(display), fx, fy, 0xFFFFFFFF, true, event.getMatrixStack().getLast().getMatrix(), buffer, false, 0, 0xF000F0);
 										buffer.finish();
 									}
 								}
@@ -329,7 +329,7 @@ public class ClientEventHandler{
 								String[] text = ((MotorboatEntity) rtr.getEntity()).getOverlayText(player, mop);
 								
 								if(text != null && text.length > 0){
-									FontRenderer font = ClientUtils.font();
+									FontRenderer font = MCUtil.getFont();
 									int col = 0xffffff;
 									for(int i = 0;i < text.length;i++){
 										if(text[i] != null){
@@ -352,8 +352,8 @@ public class ClientEventHandler{
 	
 	@SubscribeEvent
 	public void onRenderOverlayPost(RenderGameOverlayEvent.Post event){
-		if(ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
-			PlayerEntity player = ClientUtils.mc().player;
+		if(MCUtil.getPlayer() != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
+			PlayerEntity player = MCUtil.getPlayer();
 			MatrixStack matrix = event.getMatrixStack();
 			
 			if(player.getRidingEntity() instanceof MotorboatEntity){
@@ -380,15 +380,15 @@ public class ClientEventHandler{
 				
 				matrix.push();
 				{
-					int scaledWidth = ClientUtils.mc().getMainWindow().getScaledWidth();
-					int scaledHeight = ClientUtils.mc().getMainWindow().getScaledHeight();
+					int scaledWidth = MCUtil.getWindow().getScaledWidth();
+					int scaledHeight = MCUtil.getWindow().getScaledHeight();
 					
 					MotorboatEntity boat = (MotorboatEntity) player.getRidingEntity();
 					IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
 					IVertexBuilder builder = ItemOverlayUtils.getHudElementsBuilder(buffer);
 					
 					int rightOffset = 0;
-					if(ClientUtils.mc().gameSettings.showSubtitles)
+					if(MCUtil.getOptions().showSubtitles)
 						rightOffset += 100;
 					float dx = scaledWidth - rightOffset - 16;
 					float dy = scaledHeight + offset;
@@ -421,7 +421,7 @@ public class ClientEventHandler{
 						matrix.push();
 						{
 							matrix.translate(dx, dy, 0);
-							FontRenderer font = Minecraft.getInstance().fontRenderer;
+							FontRenderer font = MCUtil.getFont();
 							
 							int capacity = boat.getMaxFuel();
 							FluidStack fs = boat.getContainedFluid();
@@ -473,7 +473,7 @@ public class ClientEventHandler{
 	@SubscribeEvent
 	public void handleLubricatingMachinesClient(ClientTickEvent event){
 		if(event.phase == Phase.END && Minecraft.getInstance().world != null){
-			CommonEventHandler.handleLubricatingMachines(Minecraft.getInstance().world);
+			CommonEventHandler.handleLubricatingMachines(MCUtil.getWorld());
 		}
 	}
 	

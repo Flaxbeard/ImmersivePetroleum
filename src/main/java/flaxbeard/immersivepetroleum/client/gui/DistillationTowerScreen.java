@@ -7,11 +7,11 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.DistillationTowerContainer;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.PlayerInventory;
@@ -70,7 +70,7 @@ public class DistillationTowerScreen extends IEContainerScreen<DistillationTower
 	@Override
 	protected void drawGuiContainerBackgroundLayer(MatrixStack matrix, float f, int mx, int my){
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		ClientUtils.bindTexture(GUI_TEXTURE);
+		MCUtil.bindTexture(GUI_TEXTURE);
 		this.blit(matrix, guiLeft, guiTop, 0, 0, xSize, ySize);
 		
 		int stored = (int) (46 * (tile.getEnergyStored(null) / (float) tile.getMaxEnergyStored(null)));

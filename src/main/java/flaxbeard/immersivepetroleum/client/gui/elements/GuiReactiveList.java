@@ -13,7 +13,7 @@ import java.util.function.Function;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.client.ClientUtils;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -48,7 +48,7 @@ public class GuiReactiveList extends Button{
 	}
 	
 	private void recalculateEntries(){
-		perPage = (int) ((this.height - padding[0] - padding[1]) / (ClientUtils.mc().fontRenderer.FONT_HEIGHT * textScale));
+		perPage = (int) ((this.height - padding[0] - padding[1]) / (MCUtil.getFont().FONT_HEIGHT * textScale));
 		if(perPage < entries.length){
 			needsSlider = true;
 			maxOffset = entries.length - perPage;
@@ -123,12 +123,12 @@ public class GuiReactiveList extends Button{
 	
 	@Override
 	public void render(MatrixStack transform, int mx, int my, float partialTicks){
-		FontRenderer fr = ClientUtils.mc().fontRenderer;
+		FontRenderer fr = MCUtil.getFont();
 		
 		int mmY = my - this.y;
 		int strWidth = width - padding[2] - padding[3] - (needsSlider ? 6 : 0);
 		if(needsSlider){
-			ClientUtils.bindTexture(TEXTURE);
+			MCUtil.bindTexture(TEXTURE);
 			this.blit(transform, x + width - 6, y, 16, 136, 6, 4);
 			this.blit(transform, x + width - 6, y + height - 4, 16, 144, 6, 4);
 			for(int i = 0;i < height - 8;i += 2)
@@ -204,7 +204,7 @@ public class GuiReactiveList extends Button{
 		if(this.active && this.visible)
 			if(this.isValidClickButton(key) && this.clicked(mx, my)){
 				
-				FontRenderer fr = ClientUtils.mc().fontRenderer;
+				FontRenderer fr = MCUtil.getFont();
 				double mmY = my - this.y;
 				for(int i = 0;i < Math.min(perPage, entries.length);i++)
 					if(mmY >= i * fr.FONT_HEIGHT && mmY < (i + 1) * fr.FONT_HEIGHT)

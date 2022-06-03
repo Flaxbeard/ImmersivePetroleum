@@ -7,7 +7,6 @@ import java.util.Set;
 import org.lwjgl.glfw.GLFW;
 
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
@@ -24,6 +23,7 @@ import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
 import flaxbeard.immersivepetroleum.common.particle.IPParticleTypes;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
@@ -292,7 +292,8 @@ public class DebugItem extends IPItemBase{
 				if(te instanceof AutoLubricatorTileEntity){
 					AutoLubricatorTileEntity lube = (AutoLubricatorTileEntity) te;
 					
-					IFormattableTextComponent out = new StringTextComponent(context.getWorld().isRemote ? "CLIENT: " : "SERVER: ");
+					World world = context.getWorld();
+					IFormattableTextComponent out = new StringTextComponent(world.isRemote ? "CLIENT: " : "SERVER: ");
 					out.appendString(lube.facing + ", ");
 					out.appendString((lube.isActive ? "Active" : "Inactive") + ", ");
 					out.appendString((lube.isSlave ? "Slave" : "Master") + ", ");
@@ -313,7 +314,8 @@ public class DebugItem extends IPItemBase{
 				if(te instanceof GasGeneratorTileEntity){
 					GasGeneratorTileEntity gas = (GasGeneratorTileEntity) te;
 					
-					IFormattableTextComponent out = new StringTextComponent(context.getWorld().isRemote ? "CLIENT: " : "SERVER: ");
+					World world = context.getWorld();
+					IFormattableTextComponent out = new StringTextComponent(world.isRemote ? "CLIENT: " : "SERVER: ");
 					out.appendString(gas.getFacing() + ", ");
 					out.appendString(gas.getEnergyStored(null) + ", ");
 					out.appendString(gas.getMaxEnergyStored(null) + ", ");
@@ -397,7 +399,7 @@ public class DebugItem extends IPItemBase{
 			double delta = event.getScrollDelta();
 			
 			if(shiftHeld && delta != 0.0){
-				PlayerEntity player = ClientUtils.mc().player;
+				PlayerEntity player = MCUtil.getPlayer();
 				ItemStack mainItem = player.getHeldItemMainhand();
 				ItemStack secondItem = player.getHeldItemOffhand();
 				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.debugItem;

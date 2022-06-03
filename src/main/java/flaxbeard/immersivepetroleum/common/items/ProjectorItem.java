@@ -17,7 +17,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.event.ProjectorEvent;
@@ -26,6 +25,7 @@ import flaxbeard.immersivepetroleum.client.ShaderUtil;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.projector.MultiblockProjection;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings.Mode;
@@ -363,27 +363,25 @@ public class ProjectorItem extends IPItemBase{
 	public static class ClientRenderHandler{
 		@SubscribeEvent
 		public static void renderLast(RenderWorldLastEvent event){
-			Minecraft mc = ClientUtils.mc();
-			
-			if(mc.player != null){
+			if(MCUtil.getPlayer() != null){
 				MatrixStack matrix = event.getMatrixStack();
 				matrix.push();
 				{
 					// Anti-Jiggle when moving
-					Vector3d renderView = ClientUtils.mc().gameRenderer.getActiveRenderInfo().getProjectedView();
+					Vector3d renderView = MCUtil.getGameRenderer().getActiveRenderInfo().getProjectedView();
 					matrix.translate(-renderView.x, -renderView.y, -renderView.z);
 					
-					ItemStack secondItem = mc.player.getHeldItemOffhand();
+					ItemStack secondItem = MCUtil.getPlayer().getHeldItemOffhand();
 					boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.projector && ItemNBTHelper.hasKey(secondItem, "settings");
 					
 					for(int i = 0;i <= 10;i++){
-						ItemStack stack = (i == 10 ? secondItem : mc.player.inventory.getStackInSlot(i));
+						ItemStack stack = (i == 10 ? secondItem : MCUtil.getPlayer().inventory.getStackInSlot(i));
 						if(!stack.isEmpty() && stack.getItem() == Items.projector && ItemNBTHelper.hasKey(stack, "settings")){
 							Settings settings = getSettings(stack);
 							matrix.push();
 							{
-								boolean renderMoving = i == mc.player.inventory.currentItem || (i == 10 && off);
-								renderSchematic(matrix, settings, mc.player, mc.player.world, event.getPartialTicks(), renderMoving);
+								boolean renderMoving = i == MCUtil.getPlayer().inventory.currentItem || (i == 10 && off);
+								renderSchematic(matrix, settings, MCUtil.getPlayer(), MCUtil.getPlayer().world, event.getPartialTicks(), renderMoving);
 							}
 							matrix.pop();
 						}
@@ -405,8 +403,8 @@ public class ProjectorItem extends IPItemBase{
 				hit.setPos(settings.getPos());
 				isPlaced.setTrue();
 				
-			}else if(renderMoving && ClientUtils.mc().objectMouseOver != null && ClientUtils.mc().objectMouseOver.getType() == Type.BLOCK){
-				BlockRayTraceResult blockRTResult = (BlockRayTraceResult) ClientUtils.mc().objectMouseOver;
+			}else if(renderMoving && MCUtil.getHitResult() != null && MCUtil.getHitResult().getType() == Type.BLOCK){
+				BlockRayTraceResult blockRTResult = (BlockRayTraceResult) MCUtil.getHitResult();
 				
 				BlockPos pos = (BlockPos) blockRTResult.getPos();
 				
@@ -587,9 +585,9 @@ public class ProjectorItem extends IPItemBase{
 		}
 		
 		private static void renderPhantom(MatrixStack matrix, World realWorld, MultiblockProjection.Info rInfo, boolean mirror, float flicker, float alpha, float partialTicks){
-			BlockRendererDispatcher dispatcher = ClientUtils.mc().getBlockRendererDispatcher();
+			BlockRendererDispatcher dispatcher = MCUtil.getBlockRenderer();
 			BlockModelRenderer blockRenderer = dispatcher.getBlockModelRenderer();
-			BlockColors blockColors = ClientUtils.mc().getBlockColors();
+			BlockColors blockColors = MCUtil.getBlockColors();
 			
 			// Centers the preview block
 			matrix.translate(rInfo.tPos.getX(), rInfo.tPos.getY(), rInfo.tPos.getZ());
@@ -630,7 +628,7 @@ public class ProjectorItem extends IPItemBase{
 				}
 			}
 			
-			ShaderUtil.alpha_static(flicker * alpha, ClientUtils.mc().player.ticksExisted + partialTicks);
+			ShaderUtil.alpha_static(flicker * alpha, MCUtil.getPlayer().ticksExisted + partialTicks);
 			buffer.finish();
 			ShaderUtil.releaseShader();
 		}
@@ -738,7 +736,7 @@ public class ProjectorItem extends IPItemBase{
 		
 		@SubscribeEvent
 		public static void onPlayerTick(TickEvent.PlayerTickEvent event){
-			if(event.side == LogicalSide.CLIENT && event.player != null && event.player == ClientUtils.mc().getRenderViewEntity()){
+			if(event.side == LogicalSide.CLIENT && event.player != null && event.player == MCUtil.getRenderViewEntity()){
 				if(event.phase == Phase.END){
 					if(!ClientProxy.keybind_preview_flip.isInvalid() && ClientProxy.keybind_preview_flip.isPressed()){
 						doAFlip();
@@ -752,7 +750,7 @@ public class ProjectorItem extends IPItemBase{
 			double delta = event.getScrollDelta();
 			
 			if(shiftHeld && delta != 0.0){
-				PlayerEntity player = ClientUtils.mc().player;
+				PlayerEntity player = MCUtil.getPlayer();
 				ItemStack mainItem = player.getHeldItemMainhand();
 				ItemStack secondItem = player.getHeldItemOffhand();
 				
@@ -800,7 +798,7 @@ public class ProjectorItem extends IPItemBase{
 		}
 		
 		private static void doAFlip(){
-			PlayerEntity player = ClientUtils.mc().player;
+			PlayerEntity player = MCUtil.getPlayer();
 			ItemStack mainItem = player.getHeldItemMainhand();
 			ItemStack secondItem = player.getHeldItemOffhand();
 			

@@ -7,11 +7,11 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.HydrotreaterContainer;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -62,7 +62,7 @@ public class HydrotreaterScreen extends IEContainerScreen<HydrotreaterContainer>
 	@Override
 	protected void drawGuiContainerBackgroundLayer(MatrixStack matrix, float partialTicks, int mx, int my){
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		ClientUtils.bindTexture(GUI_TEXTURE);
+		MCUtil.bindTexture(GUI_TEXTURE);
 		this.blit(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 		
 		GuiHelper.handleGuiTank(matrix, this.tile.tanks[HydrotreaterTileEntity.TANK_INPUT_A], this.guiLeft + 34, this.guiTop + 11, 16, 47, 140, 0, 20, 51, mx, my, GUI_TEXTURE, null);

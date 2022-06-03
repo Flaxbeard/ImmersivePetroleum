@@ -54,8 +54,8 @@ import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.particle.FlareFire;
 import flaxbeard.immersivepetroleum.common.particle.IPParticleTypes;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
@@ -279,7 +279,7 @@ public class IPContent{
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void registerParticleFactories(ParticleFactoryRegisterEvent event){
-		ParticleManager manager = Minecraft.getInstance().particles;
+		ParticleManager manager = MCUtil.getParticleEngine();
 		
 		manager.registerFactory(IPParticleTypes.FLARE_FIRE, FlareFire.Factory::new);
 	}

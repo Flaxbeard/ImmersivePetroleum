@@ -16,6 +16,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
 public class DistillationRecipe extends IPMultiblockRecipe{
@@ -72,8 +73,9 @@ public class DistillationRecipe extends IPMultiblockRecipe{
 	@Override
 	public NonNullList<ItemStack> getActualItemOutputs(TileEntity tile){
 		NonNullList<ItemStack> output = NonNullList.create();
+		World world = tile.getWorld();
 		for(int i = 0;i < itemOutput.length;i++){
-			if(tile.getWorld().rand.nextFloat() <= chances[i]){
+			if(world.rand.nextFloat() <= chances[i]){
 				output.add(itemOutput[i]);
 			}
 		}

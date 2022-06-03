@@ -3,7 +3,7 @@ package flaxbeard.immersivepetroleum.common.particle;
 import java.util.Random;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import net.minecraft.client.Minecraft;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.particle.Particle;
@@ -101,7 +101,7 @@ public class FlareFire extends SimpleAnimatedParticle{
 		@SubscribeEvent
 		public static void clientTick(TickEvent.ClientTickEvent event){
 			if(event.side == LogicalSide.CLIENT && event.phase == TickEvent.Phase.START){
-				ClientWorld world = Minecraft.getInstance().world;
+				ClientWorld world = MCUtil.getWorld();
 				if(world == null)
 					return;
 				

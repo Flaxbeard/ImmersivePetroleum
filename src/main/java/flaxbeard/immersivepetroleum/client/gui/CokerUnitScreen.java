@@ -12,12 +12,12 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
 import flaxbeard.immersivepetroleum.common.gui.CokerUnitContainer;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -66,7 +66,7 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 		CokingChamber chamber = tile.chambers[chamberId];
 		
 		// Vertical Bar for Content amount.
-		ClientUtils.bindTexture(GUI_TEXTURE);
+		MCUtil.bindTexture(GUI_TEXTURE);
 		int scale = 38;
 		int off = (int) (chamber.getTotalAmount() / (float) chamber.getCapacity() * scale);
 		this.blit(matrix, x, y + scale - off, 200, 51, 6, off);
@@ -97,7 +97,7 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 	@Override
 	protected void drawGuiContainerBackgroundLayer(MatrixStack matrix, float partialTicks, int mx, int my){
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		ClientUtils.bindTexture(GUI_TEXTURE);
+		MCUtil.bindTexture(GUI_TEXTURE);
 		this.blit(matrix, guiLeft, guiTop, 0, 0, xSize, ySize);
 		
 		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_INPUT], guiLeft + 32, guiTop + 14, 16, 47, 202, 2, 16, 47, mx, my, GUI_TEXTURE, null);

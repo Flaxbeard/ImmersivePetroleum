@@ -6,12 +6,12 @@ import java.util.Random;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.utils.RenderUtils;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -23,7 +23,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.EmptyModelData;
@@ -62,13 +61,12 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 		
 		if(this.list == null){
 			BlockState state = IPContent.Multiblock.pumpjack.getDefaultState().with(IEProperties.FACING_HORIZONTAL, Direction.NORTH);
-			IBakedModel model = ClientUtils.mc().getBlockRendererDispatcher().getModelForState(state);
+			IBakedModel model = MCUtil.getBlockRenderer().getModelForState(state);
 			this.list = model.getQuads(state, null, RAND, EmptyModelData.INSTANCE);
 		}
 		
 		if(this.list != null && this.list.size() > 0){
-			World world = ClientUtils.mc().world;
-			if(world != null){
+			if(MCUtil.getWorld() != null){
 				transform.push();
 				transform.translate(1, 0, 0);
 				RenderUtils.renderModelTESRFast(this.list, buffer.getBuffer(RenderType.getSolid()), transform, 0xF000F0, OverlayTexture.NO_OVERLAY);

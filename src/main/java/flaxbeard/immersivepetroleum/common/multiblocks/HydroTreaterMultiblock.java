@@ -2,11 +2,11 @@ package flaxbeard.immersivepetroleum.common.multiblocks;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Multiblock;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -47,7 +47,7 @@ public class HydroTreaterMultiblock extends IETemplateMultiblock{
 		// "Undo" the GUI Perspective Transform
 		transform.translate(1.5, 0.5, 2.5);
 		
-		ClientUtils.mc().getItemRenderer().renderItem(
+		MCUtil.getItemRenderer().renderItem(
 				renderStack,
 				ItemCameraTransforms.TransformType.NONE,
 				0xf000f0,

@@ -56,6 +56,7 @@ import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
@@ -234,8 +235,8 @@ public class ClientProxy extends CommonProxy{
 			transform.translate(1, 1, -2);
 			
 			float pt = 0;
-			if(Minecraft.getInstance().player != null){
-				((PumpjackTileEntity) te).activeTicks = Minecraft.getInstance().player.ticksExisted;
+			if(MCUtil.getPlayer() != null){
+				((PumpjackTileEntity) te).activeTicks = MCUtil.getPlayer().ticksExisted;
 				pt = Minecraft.getInstance().getRenderPartialTicks();
 			}
 			
@@ -274,12 +275,12 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public World getClientWorld(){
-		return Minecraft.getInstance().world;
+		return MCUtil.getWorld();
 	}
 	
 	@Override
 	public PlayerEntity getClientPlayer(){
-		return Minecraft.getInstance().player;
+		return MCUtil.getPlayer();
 	}
 	
 	@Override

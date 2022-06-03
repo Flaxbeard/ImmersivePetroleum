@@ -4,10 +4,10 @@ import java.util.Iterator;
 
 import javax.annotation.Nullable;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.items.EarmuffsItem;
 import blusunrize.immersiveengineering.common.items.IEItems;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.client.audio.ITickableSound;
 import net.minecraft.client.audio.Sound;
 import net.minecraft.client.audio.SoundEventAccessor;
@@ -119,8 +119,8 @@ public class IPEntitySound implements ITickableSound{
 	
 	public void evaluateVolume(){
 		volumeAjustment = 1f;
-		if(ClientUtils.mc().player != null && ClientUtils.mc().player.getItemStackFromSlot(EquipmentSlotType.HEAD) != null){
-			ItemStack stack = ClientUtils.mc().player.getItemStackFromSlot(EquipmentSlotType.HEAD);
+		if(MCUtil.getPlayer() != null && MCUtil.getPlayer().getItemStackFromSlot(EquipmentSlotType.HEAD) != null){
+			ItemStack stack = MCUtil.getPlayer().getItemStackFromSlot(EquipmentSlotType.HEAD);
 			if(ItemNBTHelper.hasKey(stack, "IE:Earmuffs"))
 				stack = ItemNBTHelper.getItemStack(stack, "IE:Earmuffs");
 			if(stack != null && IEItems.Misc.earmuffs.equals(stack.getItem()))
@@ -130,7 +130,7 @@ public class IPEntitySound implements ITickableSound{
 		if(volumeAjustment > .1f)
 			for(int dx = (int) Math.floor(entity.getPosX() - 8) >> 4;dx <= (int) Math.floor(entity.getPosX() + 8) >> 4;dx++){
 				for(int dz = (int) Math.floor(entity.getPosZ() - 8) >> 4;dz <= (int) Math.floor(entity.getPosZ() + 8) >> 4;dz++){
-					Iterator<TileEntity> it = ClientUtils.mc().player.world.getChunk(dx, dz).getTileEntityMap().values().iterator();
+					Iterator<TileEntity> it = MCUtil.getPlayer().world.getChunk(dx, dz).getTileEntityMap().values().iterator();
 					while(it.hasNext()){
 						TileEntity tile = it.next();
 						if(tile != null && tile.getClass().getName().contains("SoundMuffler")){
@@ -150,7 +150,7 @@ public class IPEntitySound implements ITickableSound{
 	
 	@Override
 	public void tick(){
-		if(ClientUtils.mc().player != null && ClientUtils.mc().player.world.getDayTime() % 40 == 0)
+		if(MCUtil.getPlayer() != null && MCUtil.getPlayer().world.getDayTime() % 40 == 0)
 			evaluateVolume();
 	}
 	

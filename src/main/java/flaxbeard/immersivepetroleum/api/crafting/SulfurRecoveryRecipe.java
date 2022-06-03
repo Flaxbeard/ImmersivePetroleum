@@ -18,6 +18,7 @@ import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
 public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
@@ -108,7 +109,8 @@ public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
 	@Override
 	public NonNullList<ItemStack> getActualItemOutputs(TileEntity tile){
 		NonNullList<ItemStack> list = NonNullList.create();
-		if(tile.getWorld().rand.nextFloat() <= chance){
+		World world = tile.getWorld();
+		if(world.rand.nextFloat() <= this.chance){
 			list.add(this.outputItem);
 		}
 		return list;

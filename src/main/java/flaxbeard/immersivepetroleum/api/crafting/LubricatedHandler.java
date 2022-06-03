@@ -47,7 +47,7 @@ public class LubricatedHandler{
 		
 		void lubricate(World world, int ticks, E mbte);
 		
-		void lubricate(World world, int ticks, E mbte, FluidStack lubrication);
+		void lubricate(World world, int ticks, E mbte, Fluid lubrication);
 		
 		@OnlyIn(Dist.CLIENT)
 		void renderPipes(AutoLubricatorTileEntity lubricator, E mbte, MatrixStack matrix, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay);

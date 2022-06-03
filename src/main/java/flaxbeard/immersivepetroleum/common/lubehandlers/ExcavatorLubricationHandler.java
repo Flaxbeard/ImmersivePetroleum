@@ -17,6 +17,7 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTil
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.particles.BlockParticleData;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -82,7 +83,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	}
 	
 	@Override
-	public void lubricate(World world, int ticks, ExcavatorTileEntity mbte, FluidStack lubrication){
+	public void lubricate(World world, int ticks, ExcavatorTileEntity mbte, Fluid lubrication){
 		BlockPos wheelPos = mbte.getWheelCenterPos();
 		TileEntity center = world.getTileEntity(wheelPos);
 		

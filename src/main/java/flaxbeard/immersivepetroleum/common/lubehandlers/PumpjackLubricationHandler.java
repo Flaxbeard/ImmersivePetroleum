@@ -12,6 +12,7 @@ import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -64,7 +65,7 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 	}
 	
 	@Override
-	public void lubricate(World world, int ticks, PumpjackTileEntity mbte, FluidStack lubrication){
+	public void lubricate(World world, int ticks, PumpjackTileEntity mbte, Fluid lubrication){
 		if(!world.isRemote){
 			if(ticks % 4 == 0){
 				mbte.tick();

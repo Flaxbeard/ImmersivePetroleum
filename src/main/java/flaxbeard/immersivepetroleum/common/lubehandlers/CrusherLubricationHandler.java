@@ -18,6 +18,7 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTil
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.particles.BlockParticleData;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -68,7 +69,7 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherTil
 	}
 	
 	@Override
-	public void lubricate(World world, int ticks, CrusherTileEntity mbte, FluidStack lubrication){
+	public void lubricate(World world, int ticks, CrusherTileEntity mbte, Fluid lubrication){
 		if(!world.isRemote){
 			Iterator<MultiblockProcess<CrusherRecipe>> processIterator = mbte.processQueue.iterator();
 			MultiblockProcess<CrusherRecipe> process = processIterator.next();

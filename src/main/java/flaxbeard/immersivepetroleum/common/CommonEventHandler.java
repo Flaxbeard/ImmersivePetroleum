@@ -192,11 +192,8 @@ public class CommonEventHandler{
 						if(te instanceof MultiblockPartTileEntity){
 							MultiblockPartTileEntity<?> part = (MultiblockPartTileEntity<?>) te;
 							
-							BlockParticleData lubeParticle = new BlockParticleData(ParticleTypes.FALLING_DUST, IPContent.Fluids.lubricant.block.getDefaultState());
 							Vector3i size = lubeHandler.getStructureDimensions();
-							
 							int numBlocks = (int) (size.getX() * size.getY() * size.getZ() * 0.25F);
-							
 							for(int i = 0;i < numBlocks;i++){
 								BlockPos pos = part.getBlockPosForPos(new BlockPos(size.getX() * random.nextFloat(), size.getY() * random.nextFloat(), size.getZ() * random.nextFloat()));
 								if(world.getBlockState(pos) == Blocks.AIR.getDefaultState())
@@ -206,9 +203,9 @@ public class CommonEventHandler{
 								if(te2 != null && te2 instanceof MultiblockPartTileEntity){
 									if(((MultiblockPartTileEntity<?>) te2).master() == part.master()){
 										for(Direction facing:Direction.Plane.HORIZONTAL){
-											if(world.rand.nextInt(30) == 0){// && world.getBlockState(pos.offset(facing)).getBlock().isReplaceable(world, pos.offset(facing))){
+											if(world.rand.nextInt(30) == 0){
 												Vector3i direction = facing.getDirectionVec();
-												world.addParticle(lubeParticle,
+												world.addParticle(ParticleTypes.FALLING_HONEY,
 														pos.getX() + .5f + direction.getX() * .65f,
 														pos.getY() + 1,
 														pos.getZ() + .5f + direction.getZ() * .65f,

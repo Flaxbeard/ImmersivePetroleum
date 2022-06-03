@@ -108,7 +108,7 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 			//world.addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, n), x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
 			
 			// Because making your own particles is so convoluted and confusing
-			world.addParticle(ParticleTypes.DRIPPING_HONEY, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
+			world.addParticle(ParticleTypes.FALLING_HONEY, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
 		}
 	}
 	

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Link to Gist
+    url: https://gist.github.com/
+    about: Got a Crash-Log file? Please open this link and drop it in there.
+  - name: Link to Pastebin
+    url: https://pastebin.com/
+    about: Alternatively you can use Pastebin.

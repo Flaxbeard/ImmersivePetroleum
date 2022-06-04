@@ -493,7 +493,7 @@ public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 		float zO = (float) (MathHelper.cos(this.rotationYaw * 0.017453292F));
 		Vector3f vec = normalizeVector(new Vector3f(xO, zO, 0.0F));
 		
-		if(this.hasIcebreaker && !isEmergency()){
+		if(!this.world.isRemote && this.hasIcebreaker && !isEmergency()){
 			AxisAlignedBB bb = getBoundingBox().grow(0.1);
 			BlockPos.Mutable mutableBlockPos0 = new BlockPos.Mutable(bb.minX + 0.001D, bb.minY + 0.001D, bb.minZ + 0.001D);
 			BlockPos.Mutable mutableBlockPos1 = new BlockPos.Mutable(bb.maxX - 0.001D, bb.maxY - 0.001D, bb.maxZ - 0.001D);
@@ -522,30 +522,33 @@ public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 		}
 		
 		this.doBlockCollisions();
-		List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getBoundingBox().grow((double) 0.2F, (double) -0.01F, (double) 0.2F), EntityPredicates.pushableBy(this));
-		if(!list.isEmpty()){
-			boolean flag = !this.world.isRemote && !(this.getControllingPassenger() instanceof PlayerEntity);
-			
-			for(int j = 0;j < list.size();++j){
-				Entity entity = list.get(j);
+		
+		if(!this.world.isRemote){
+			List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getBoundingBox().grow((double) 0.2F, (double) -0.01F, (double) 0.2F), EntityPredicates.pushableBy(this));
+			if(!list.isEmpty()){
+				boolean flag = !(this.getControllingPassenger() instanceof PlayerEntity);
 				
-				if(!entity.isPassenger(this)){
-					if(flag && this.getPassengers().size() < 2 && !entity.isPassenger() && entity.getWidth() < this.getWidth() && entity instanceof LivingEntity && !(entity instanceof WaterMobEntity) && !(entity instanceof PlayerEntity)){
-						entity.startRiding(this);
-					}else{
-						this.applyEntityCollision(entity);
-						
-						if(this.hasIcebreaker){
-							if(entity instanceof LivingEntity && !(entity instanceof PlayerEntity) && this.getControllingPassenger() instanceof PlayerEntity){
-								Vector3f vec2 = new Vector3f((float) (entity.getPosX() - getPosX()), (float) (entity.getPosZ() - getPosZ()), 0.0F);
-								normalizeVector(vec2);
-								
-								float sim = dotVector(vec2, vec);
-								
-								if(sim > .5f){
-									Vector3d motion = entity.getMotion();
-									entity.attackEntityFrom(DamageSource.causePlayerDamage((PlayerEntity) this.getControllingPassenger()), 4);
-									entity.setMotion(new Vector3d(motion.x + (vec2.getX() * .75F), motion.y, motion.z + (vec2.getY() * .75F)));
+				for(int j = 0;j < list.size();++j){
+					Entity entity = list.get(j);
+					
+					if(!entity.isPassenger(this)){
+						if(flag && this.getPassengers().size() < 2 && !entity.isPassenger() && entity.getWidth() < this.getWidth() && entity instanceof LivingEntity && !(entity instanceof WaterMobEntity) && !(entity instanceof PlayerEntity)){
+							entity.startRiding(this);
+						}else{
+							this.applyEntityCollision(entity);
+							
+							if(this.hasIcebreaker){
+								if(entity instanceof LivingEntity && !(entity instanceof PlayerEntity) && this.getControllingPassenger() instanceof PlayerEntity){
+									Vector3f vec2 = new Vector3f((float) (entity.getPosX() - getPosX()), (float) (entity.getPosZ() - getPosZ()), 0.0F);
+									normalizeVector(vec2);
+									
+									float sim = dotVector(vec2, vec);
+									
+									if(sim > .5f){
+										Vector3d motion = entity.getMotion();
+										entity.attackEntityFrom(DamageSource.causePlayerDamage((PlayerEntity) this.getControllingPassenger()), 4);
+										entity.setMotion(new Vector3d(motion.x + (vec2.getX() * .75F), motion.y, motion.z + (vec2.getY() * .75F)));
+									}
 								}
 							}
 						}
@@ -558,11 +561,11 @@ public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	/** Because fuck you for making that client side only */
 	private Vector3f normalizeVector(Vector3f vec){
 		float f = vec.getX() * vec.getX() + vec.getY() * vec.getY() + vec.getZ() * vec.getZ();
-		if(!((double) f < 1.0E-5D)){
-			float f1 = 1 / MathHelper.sqrt(f);
-			vec.setX(vec.getX() * f1);
-			vec.setX(vec.getY() * f1);
-			vec.setX(vec.getZ() * f1);
+		if(f >= 1.0E-5F){
+			f = 1 / MathHelper.sqrt(f);
+			vec.setX(vec.getX() * f);
+			vec.setY(vec.getY() * f);
+			vec.setZ(vec.getZ() * f);
 		}
 		return vec;
 	}

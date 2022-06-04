@@ -49,12 +49,14 @@ public class LubricatedHandler{
 		TileEntity isPlacedCorrectly(World world, AutoLubricatorTileEntity lubricator, Direction direction);
 		
 		/**
-		 * @deprecated Use {@link #lubricateClient(ClientWorld, Fluid, int, TileEntity)} and {@link #lubricateServer(ServerWorld, Fluid, int, TileEntity)} instead.
+		 * @deprecated Use {@link #lubricateClient(ClientWorld, Fluid, int, TileEntity)} and {@link #lubricateServer(ServerWorld, Fluid, int, TileEntity)} instead.<br>
+		 * Will be removed in 1.18.2!
 		 */
 		void lubricate(World world, int ticks, E mbte);
 		
 		/**
-		 * @deprecated Use {@link #lubricateClient(ClientWorld, Fluid, int, TileEntity)} and {@link #lubricateServer(ServerWorld, Fluid, int, TileEntity)} instead.
+		 * @deprecated Use {@link #lubricateClient(ClientWorld, Fluid, int, TileEntity)} and {@link #lubricateServer(ServerWorld, Fluid, int, TileEntity)} instead.<br>
+		 * Will be removed in 1.18.2!
 		 */
 		void lubricate(World world, Fluid lubricant, int ticks, E mbte);
 		
@@ -142,16 +144,16 @@ public class LubricatedHandler{
 	}
 	
 	public static boolean lubricateTile(TileEntity tile, Fluid lubricant, int ticks, boolean additive, int cap){
-		if(tile instanceof MultiblockPartTileEntity){
+		if(tile instanceof MultiblockPartTileEntity && ((MultiblockPartTileEntity<?>) tile).offsetToMaster != BlockPos.ZERO){
 			tile = ((MultiblockPartTileEntity<?>) tile).master();
 		}
 		
 		if(getHandlerForTile(tile) != null){
 			BlockPos pos = tile.getPos();
 			
-			for(int i = 0;i < lubricatedTiles.size();i++){
-				LubricatedTileInfo info = lubricatedTiles.get(i);
-				if(info.pos.equals(pos) && info.world == tile.getWorld().getDimensionKey()){
+			RegistryKey<World> key = tile.getWorld().getDimensionKey();
+			for(LubricatedTileInfo info:lubricatedTiles){
+				if(info.pos.equals(pos) && info.world == key){
 					if(info.ticks >= ticks){
 						if(additive){
 							if(cap == -1){
@@ -189,13 +191,13 @@ public class LubricatedHandler{
 					EffectInstance activeSpeed = target.getActivePotionEffect(Effects.SPEED);
 					int ticksSpeed = ticks;
 					if(activeSpeed != null && activeSpeed.getAmplifier() <= 1){
-						ticksSpeed = Math.min(activeSpeed.getDuration() + ticks, 60 * 20);
+						ticksSpeed = Math.min(activeSpeed.getDuration() + ticks, 1200); // 1 Minute
 					}
 					
 					EffectInstance activeStrength = target.getActivePotionEffect(Effects.STRENGTH);
 					int ticksStrength = ticks;
 					if(activeStrength != null && activeStrength.getAmplifier() <= 1){
-						ticksStrength = Math.min(activeStrength.getDuration() + ticks, 60 * 20);
+						ticksStrength = Math.min(activeStrength.getDuration() + ticks, 1200); // 1 Minute
 					}
 					
 					target.addPotionEffect(new EffectInstance(Effects.SPEED, ticksSpeed, 1));
@@ -209,7 +211,7 @@ public class LubricatedHandler{
 		public void applyToBlock(World world, RayTraceResult mop, PlayerEntity shooter, ItemStack thrower, Fluid fluid){
 			if(LubricantHandler.isValidLube(fluid)){
 				int ticks = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 2) / 3;
-				LubricatedHandler.lubricateTile(world.getTileEntity(new BlockPos(mop.getHitVec())), fluid, ticks, true, 20 * 60);
+				LubricatedHandler.lubricateTile(world.getTileEntity(new BlockPos(mop.getHitVec())), fluid, ticks, true, 1200); // 1 Minute
 			}
 		}
 	}

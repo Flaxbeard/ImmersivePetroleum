@@ -96,8 +96,8 @@ public class OilCanItem extends IPItemBase{
 							
 							if(fs != null && LubricantHandler.isValidLube(fs)){
 								int amountNeeded = (LubricantHandler.getLubeAmount(fs) * 5 * 20);
-								if(fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getTileEntity(pos), fs.getFluid(), 20 * 30)){
-									player.playSound(SoundEvents.ITEM_BUCKET_EMPTY, 1f, 1f);
+								if(fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getTileEntity(pos), fs.getFluid(), 600)){ // 30 Seconds
+									player.playSound(SoundEvents.ITEM_BUCKET_EMPTY, 1F, 1F);
 									if(!player.isCreative()){
 										can.drain(amountNeeded, FluidAction.EXECUTE);
 									}
@@ -137,8 +137,8 @@ public class OilCanItem extends IPItemBase{
 						if(handler.getFluid().getAmount() >= amountNeeded){
 							player.playSound(SoundEvents.ITEM_BUCKET_EMPTY, 1f, 1f);
 							golem.setHealth(Math.max(golem.getHealth() + 2f, golem.getMaxHealth()));
-							golem.addPotionEffect(new EffectInstance(Effects.SPEED, 60 * 20, 1));
-							golem.addPotionEffect(new EffectInstance(Effects.STRENGTH, 60 * 20, 1));
+							golem.addPotionEffect(new EffectInstance(Effects.SPEED, 1200, 1)); // 1 Minute
+							golem.addPotionEffect(new EffectInstance(Effects.STRENGTH, 1200, 1)); // 1 Minute
 							if(!player.isCreative()){
 								handler.drain(amountNeeded, FluidAction.EXECUTE);
 							}

@@ -23,6 +23,8 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 	private static ResourceLocation texture = rl("textures/models/boat_motor.png");
 	private static ResourceLocation textureArmor = rl("textures/models/boat_motor_armor.png");
 	
+	public static final float DEG_TO_RAD = ((float) Math.PI / 180F);
+	
 	/** instance of ModelBoat for rendering */
 	protected final ModelMotorboat modelBoat = new ModelMotorboat();
 	
@@ -45,15 +47,25 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 			
 			{
 				if(!entity.isEmergency()){
-					float a = entity.getRowingTime(0, partialTicks);
-					float b = entity.getRowingTime(1, partialTicks);
+					if(entity.isForwardDown()){
+						entity.propellerXRotSpeed += entity.isBoosting ? 0.2F : 0.1F;
+					}
+					if(entity.isBackDown()){
+						entity.propellerXRotSpeed -= 0.2F;
+					}
 					
-					modelBoat.propeller.rotateAngleX = (a > 0 ? b : a) * 15.0F;
-				}else{
-					modelBoat.propeller.rotateAngleX = 0;
+					entity.propellerXRot += entity.propellerXRotSpeed;
+					entity.propellerXRot %= 360.0F;
 				}
 				
-				float pr = entity.isEmergency() ? 0F : entity.propellerRotation;
+				entity.propellerXRotSpeed *= 0.985F;
+				if(entity.propellerXRotSpeed != 0.0F && entity.propellerXRotSpeed >= -1.0E-3F && entity.propellerXRotSpeed <= 1.0E-3F){
+					entity.propellerXRotSpeed = 0.0F;
+				}
+				
+				this.modelBoat.propeller.rotateAngleX = entity.propellerXRot * DEG_TO_RAD;
+				
+				float pr = entity.isEmergency() ? 0F : entity.propellerYRotation;
 				if(entity.isLeftInDown() && pr > -1)
 					pr = pr - 0.1F * Minecraft.getInstance().getRenderPartialTicks();
 				
@@ -84,7 +96,7 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 			if(entity.hasRudders){
 				this.modelBoat.ruddersBase.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
 				
-				float pr = entity.propellerRotation;
+				float pr = entity.propellerYRotation;
 				if(entity.isLeftInDown() && pr > -1){
 					pr = pr - 0.1F * Minecraft.getInstance().getRenderPartialTicks();
 				}

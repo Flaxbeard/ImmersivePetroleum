@@ -429,7 +429,7 @@ public class ClientEventHandler{
 							
 							Vector3d vec = boat.getMotion();
 							
-							float rot = boat.propellerRotation;
+							float rot = boat.propellerYRotation;
 							
 							float speed = MathHelper.sqrt(vec.x * vec.x + vec.z * vec.z);
 							

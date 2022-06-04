@@ -97,7 +97,10 @@ public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	public boolean hasPaddles = false;
 	public boolean isBoosting = false;
 	public float lastMoving;
-	public float propellerRotation = 0F;
+	
+	public float propellerYRotation = 0F;
+	public float propellerXRot = 0.0F;
+	public float propellerXRotSpeed = 0.0F;
 	
 	public MotorboatEntity(World world){
 		this(TYPE, world);
@@ -644,20 +647,20 @@ public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 					if(this.rightInputDown){
 						this.deltaRotation += 1.1F * speed * (this.hasRudders ? 1.5F : 1F) * (this.isBoosting ? 0.5F : 1) * (this.backInputDown && !this.forwardInputDown ? 2F : 1F);
 						
-						this.propellerRotation = MathHelper.clamp(this.propellerRotation - 0.2F, -1.0F, 1.0F);
+						this.propellerYRotation = MathHelper.clamp(this.propellerYRotation - 0.2F, -1.0F, 1.0F);
 					}
 					
 					if(this.leftInputDown){
 						this.deltaRotation -= 1.1F * speed * (this.hasRudders ? 1.5F : 1F) * (this.isBoosting ? 0.5F : 1) * (this.backInputDown && !this.forwardInputDown ? 2F : 1F);
 						
-						this.propellerRotation = MathHelper.clamp(this.propellerRotation + 0.2F, -1.0F, 1.0F);
+						this.propellerYRotation = MathHelper.clamp(this.propellerYRotation + 0.2F, -1.0F, 1.0F);
 					}
 				}
 				
-				if(!this.leftInputDown && !this.rightInputDown && this.propellerRotation != 0.0F){
-					this.propellerRotation *= 0.7F;
-					if(this.propellerRotation > -1.0E-2F && this.propellerRotation < 1.0E-2F){
-						this.propellerRotation = 0;
+				if(!this.leftInputDown && !this.rightInputDown && this.propellerYRotation != 0.0F){
+					this.propellerYRotation *= 0.7F;
+					if(this.propellerYRotation > -1.0E-2F && this.propellerYRotation < 1.0E-2F){
+						this.propellerYRotation = 0;
 					}
 				}
 				

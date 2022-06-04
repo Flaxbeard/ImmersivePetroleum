@@ -21,20 +21,8 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 	
 	@Nonnull
 	private Runnable onChange = EMPTY_RUN;
-	public IPItemStackHandler(){
-		super();
-		int idealSize = getSlots();
-		NonNullList<ItemStack> list = NonNullList.withSize(idealSize, ItemStack.EMPTY);
-		for(int i = 0;i < Math.min(this.stacks.size(), idealSize);++i){
-			list.set(i, this.stacks.get(i));
-		}
-		
-		this.stacks = list;
-	}
-	
-	@Override
-	public int getSlots(){
-		return 4;
+	public IPItemStackHandler(int invSize){
+		super(invSize);
 	}
 	
 	public void setTile(TileEntity tile){
@@ -55,7 +43,12 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 	@Nullable
 	@Override
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing){
-		return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.orEmpty(capability, handler);
+		if(capability != null){
+			if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+				return this.handler.cast();
+			}
+		}
+		return LazyOptional.empty();
 	}
 	
 	public NonNullList<ItemStack> getContainedItems(){

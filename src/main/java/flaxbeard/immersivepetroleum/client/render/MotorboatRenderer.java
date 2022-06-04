@@ -75,7 +75,7 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 				if(!entity.isLeftInDown() && !entity.isRightInDown())
 					pr = (float) (pr * Math.pow(0.7, Minecraft.getInstance().getRenderPartialTicks()));
 				
-				modelBoat.propellerAssembly.rotateAngleY = (float) Math.toRadians(pr * 15);
+				this.modelBoat.propellerAssembly.rotateAngleY = (float) Math.toRadians(pr * 15);
 			}
 			
 			this.modelBoat.render(matrix, bufferIn.getBuffer(this.modelBoat.getRenderType(getEntityTexture(entity.isFireproof))), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);

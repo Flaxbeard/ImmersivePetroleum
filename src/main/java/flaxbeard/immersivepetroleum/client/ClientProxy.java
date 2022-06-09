@@ -298,21 +298,23 @@ public class ClientProxy extends CommonProxy{
 		
 		IP_CATEGORY = man.getRoot().getOrCreateSubnode(modLoc("main"), 100);
 		
-		pumpjack(modLoc("pumpjack"), 0);
-		distillation(modLoc("distillationtower"), 1);
-		coker(modLoc("cokerunit"), 2);
-		hydrotreater(modLoc("hydrotreater"), 3);
+		int priority = 0;
 		
-		handleReservoirManual(modLoc("reservoir"), 3);
+		pumpjack(modLoc("pumpjack"), priority++);
+		distillation(modLoc("distillationtower"), priority++);
+		coker(modLoc("cokerunit"), priority++);
+		hydrotreater(modLoc("hydrotreater"), priority++);
 		
-		lubricant(modLoc("lubricant"), 4);
-		man.addEntry(IP_CATEGORY, modLoc("asphalt"), 5);
-		projector(modLoc("projector"), 5);
-		speedboat(modLoc("speedboat"), 6);
-		man.addEntry(IP_CATEGORY, modLoc("napalm"), 7);
-		generator(modLoc("portablegenerator"), 8);
-		autolube(modLoc("automaticlubricator"), 9);
-		flarestack(modLoc("flarestack"), 10);
+		handleReservoirManual(modLoc("reservoir"), priority++);
+		
+		lubricant(modLoc("lubricant"), priority++);
+		man.addEntry(IP_CATEGORY, modLoc("asphalt"), priority++);
+		projector(modLoc("projector"), priority++);
+		speedboat(modLoc("speedboat"), priority++);
+		man.addEntry(IP_CATEGORY, modLoc("napalm"), priority++);
+		generator(modLoc("portablegenerator"), priority++);
+		autolube(modLoc("automaticlubricator"), priority++);
+		flarestack(modLoc("flarestack"), priority++);
 	}
 	
 	private static void flarestack(ResourceLocation location, int priority){

@@ -12,6 +12,7 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -19,7 +20,6 @@ import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
@@ -32,7 +32,7 @@ public class PumpjackMultiblock extends IETemplateMultiblock{
 	public static final PumpjackMultiblock INSTANCE = new PumpjackMultiblock();
 	
 	private PumpjackMultiblock(){
-		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/pumpjack"),
+		super(ResourceUtils.ip("multiblocks/pumpjack"),
 				new BlockPos(1, 0, 0), new BlockPos(1, 1, 4), new BlockPos(3, 4, 6), () -> IPContent.Multiblock.pumpjack.getDefaultState());
 	}
 	

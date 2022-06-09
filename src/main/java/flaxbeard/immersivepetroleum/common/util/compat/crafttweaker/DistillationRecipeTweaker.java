@@ -17,6 +17,7 @@ import com.blamejared.crafttweaker.impl.tag.MCTag;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -176,7 +177,7 @@ public class DistillationRecipeTweaker{
 					fluidOutStacks = this.fluidOutputs.toArray(new FluidStack[0]);
 				}
 				
-				ResourceLocation id = TweakerUtils.ctLoc("distillationtower/" + name);
+				ResourceLocation id = ResourceUtils.ct("distillationtower/" + name);
 				
 				DistillationRecipe recipe = new DistillationRecipe(id, fluidOutStacks, outStacks, fluidInTag, this.fluxEnergy, this.timeTicks, chances);
 				DistillationRecipe.recipes.put(id, recipe);

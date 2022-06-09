@@ -14,6 +14,7 @@ import com.blamejared.crafttweaker_annotations.annotations.Document;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.ResourceLocation;
@@ -47,7 +48,7 @@ public class SulfurRecoveryRecipeTweaker implements IRecipeManager{
 	
 	@Method
 	public void addRecipe(String name, IFluidStack output, IItemStack outputItem, double chance, MCTagWithAmount<Fluid> inputFluid, int energy){
-		ResourceLocation id = TweakerUtils.ctLoc("hydrotreater/" + name);
+		ResourceLocation id = ResourceUtils.ct("hydrotreater/" + name);
 		
 		FluidTagInput primary = new FluidTagInput(inputFluid.getTag().getId(), inputFluid.getAmount());
 		
@@ -56,7 +57,7 @@ public class SulfurRecoveryRecipeTweaker implements IRecipeManager{
 	
 	@Method
 	public void addRecipeWithSecondary(String name, IFluidStack output, IItemStack outputItem, double chance, MCTagWithAmount<Fluid> inputFluid, MCTagWithAmount<Fluid> inputFluidSecondary, int energy){
-		ResourceLocation id = TweakerUtils.ctLoc("hydrotreater/" + name);
+		ResourceLocation id = ResourceUtils.ct("hydrotreater/" + name);
 		
 		FluidTagInput primary = new FluidTagInput(inputFluid.getTag().getId(), inputFluid.getAmount());
 		FluidTagInput secondary = new FluidTagInput(inputFluidSecondary.getTag().getId(), inputFluidSecondary.getAmount());

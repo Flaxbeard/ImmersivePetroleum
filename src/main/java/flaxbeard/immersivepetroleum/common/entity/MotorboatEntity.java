@@ -14,6 +14,7 @@ import flaxbeard.immersivepetroleum.common.items.MotorboatItem;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageConsumeBoatFuel;
 import flaxbeard.immersivepetroleum.common.util.IPItemStackHandler;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -70,7 +71,7 @@ public class MotorboatEntity extends BoatEntity implements IEntityAdditionalSpaw
 	
 	private static EntityType<MotorboatEntity> createType(){
 		EntityType<MotorboatEntity> ret = EntityType.Builder.<MotorboatEntity> create(MotorboatEntity::new, EntityClassification.MISC).size(1.375F, 0.5625F).build(ImmersivePetroleum.MODID + ":speedboat");
-		ret.setRegistryName(ImmersivePetroleum.MODID, "speedboat");
+		ret.setRegistryName(ResourceUtils.ip("speedboat"));
 		return ret;
 	}
 	

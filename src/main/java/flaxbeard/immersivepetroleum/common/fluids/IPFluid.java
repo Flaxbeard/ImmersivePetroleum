@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -51,8 +52,8 @@ public class IPFluid extends FlowingFluid{
 	
 	public IPFluid(String name, int density, int viscosity){
 		this(name,
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/" + name + "_still"),
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/" + name + "_flow"), IPFluid.createBuilder(density, viscosity));
+				ResourceUtils.ip("block/fluid/" + name + "_still"),
+				ResourceUtils.ip("block/fluid/" + name + "_flow"), IPFluid.createBuilder(density, viscosity));
 	}
 	
 	protected IPFluid(String name, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidAttributes.Builder> buildAttributes){
@@ -67,14 +68,14 @@ public class IPFluid extends FlowingFluid{
 		IPContent.registeredIPFluids.add(this);
 		if(!isSource){
 			flowing = this;
-			setRegistryName(ImmersivePetroleum.MODID, this.fluidName + "_flowing");
+			setRegistryName(ResourceUtils.ip(this.fluidName + "_flowing"));
 		}else{
 			this.source = this;
 			this.block = createFluidBlock();
 			this.bucket = createBucketItem();
 			this.flowing = createFlowingFluid();
 			
-			setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, this.fluidName));
+			setRegistryName(ResourceUtils.ip(this.fluidName));
 			
 			FLUIDS.add(this);
 			IPContent.registeredIPBlocks.add(this.block);
@@ -188,7 +189,7 @@ public class IPFluid extends FlowingFluid{
 		public IPFluidBlock(IPFluid fluid, String fluidName){
 			super(supplier(fluid), AbstractBlock.Properties.create(Material.WATER));
 			this.fluid = fluid;
-			setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, fluidName + "_fluid_block"));
+			setRegistryName(ResourceUtils.ip(fluidName + "_fluid_block"));
 		}
 		
 		@Override
@@ -222,7 +223,7 @@ public class IPFluid extends FlowingFluid{
 		
 		public IPBucketItem(IPFluid fluid, String fluidName){
 			super(() -> fluid, PROPS);
-			setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, fluidName + "_bucket"));
+			setRegistryName(ResourceUtils.ip(fluidName + "_bucket"));
 		}
 		
 		@Override

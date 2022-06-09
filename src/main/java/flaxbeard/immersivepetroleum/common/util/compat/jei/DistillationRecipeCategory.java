@@ -3,9 +3,9 @@ package flaxbeard.immersivepetroleum.common.util.compat.jei;
 import java.util.ArrayList;
 import java.util.List;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
@@ -17,12 +17,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRecipe>{
-	public static final ResourceLocation ID = new ResourceLocation(ImmersivePetroleum.MODID, "distillation");
+	public static final ResourceLocation ID = ResourceUtils.ip("distillation");
 	
 	private final IDrawableStatic tankOverlay;
 	public DistillationRecipeCategory(IGuiHelper guiHelper){
 		super(DistillationRecipe.class, guiHelper, ID, "block.immersivepetroleum.distillationtower");
-		ResourceLocation background = new ResourceLocation(ImmersivePetroleum.MODID, "textures/gui/distillation.png");
+		ResourceLocation background = ResourceUtils.ip("textures/gui/distillation.png");
 		setBackground(guiHelper.createDrawable(background, 51, 0, 81, 77));
 		setIcon(new ItemStack(IPContent.Multiblock.distillationtower));
 		this.tankOverlay = guiHelper.createDrawable(background, 177, 31, 20, 51);

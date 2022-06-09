@@ -19,7 +19,6 @@ import blusunrize.immersiveengineering.common.blocks.IEBlocks.MetalDecoration;
 import blusunrize.immersiveengineering.common.crafting.fluidaware.IngredientFluidStack;
 import blusunrize.immersiveengineering.common.items.IEItems;
 import blusunrize.immersiveengineering.data.recipebuilder.FluidAwareShapedRecipeBuilder;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.api.crafting.builders.CokerUnitRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationRecipeBuilder;
@@ -28,6 +27,7 @@ import flaxbeard.immersivepetroleum.api.crafting.builders.SulfurRecoveryRecipeBu
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Blocks;
 import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
@@ -351,10 +351,10 @@ public class IPRecipes extends RecipeProvider{
 		if(PATH_COUNT.containsKey(str)){
 			int count = PATH_COUNT.get(str) + 1;
 			PATH_COUNT.put(str, count);
-			return new ResourceLocation(ImmersivePetroleum.MODID, str + count);
+			return ResourceUtils.ip(str + count);
 		}
 		PATH_COUNT.put(str, 1);
-		return new ResourceLocation(ImmersivePetroleum.MODID, str);
+		return ResourceUtils.ip(str);
 	}
 	
 	private String toPath(IItemProvider src){

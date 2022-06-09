@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum.common.blocks;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -9,7 +10,6 @@ import net.minecraft.block.SlabBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.state.properties.SlabType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 
@@ -18,7 +18,7 @@ public class IPBlockSlab<B extends IPBlockBase> extends SlabBlock{
 	
 	public IPBlockSlab(B base){
 		super(Properties.from(base).setSuffocates(causesSuffocation(base)).setOpaque(isNormalCube(base)));
-		setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, base.getRegistryName().getPath() + "_slab"));
+		setRegistryName(ResourceUtils.ip(base.getRegistryName().getPath() + "_slab"));
 		
 		IPContent.registeredIPBlocks.add(this);
 		

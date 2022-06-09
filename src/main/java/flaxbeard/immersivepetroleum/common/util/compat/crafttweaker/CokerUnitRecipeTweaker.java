@@ -15,6 +15,7 @@ import com.blamejared.crafttweaker_annotations.annotations.Document;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeType;
@@ -79,7 +80,7 @@ public class CokerUnitRecipeTweaker implements IRecipeManager{
 	 */
 	@Method
 	public void addRecipe(String name, IItemStack inputItem, IItemStack outputItem, MCTagWithAmount<Fluid> inputFluid, MCTagWithAmount<Fluid> outputFluid, int energy){
-		ResourceLocation id = TweakerUtils.ctLoc("cokerunit/" + name);
+		ResourceLocation id = ResourceUtils.ct("cokerunit/" + name);
 		FluidTagInput outFluid = new FluidTagInput(outputFluid.getTag().getId(), outputFluid.getAmount());
 		FluidTagInput inFluid = new FluidTagInput(inputFluid.getTag().getId(), inputFluid.getAmount());
 		

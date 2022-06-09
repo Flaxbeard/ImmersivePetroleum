@@ -6,10 +6,10 @@ import java.util.List;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -25,13 +25,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
-	public static final ResourceLocation ID = new ResourceLocation(ImmersivePetroleum.MODID, "cokerunit");
+	public static final ResourceLocation ID = ResourceUtils.ip("cokerunit");
 	
 	private final IDrawableStatic tankOverlay;
 	public CokerUnitRecipeCategory(IGuiHelper guiHelper){
 		super(CokerUnitRecipe.class, guiHelper, ID, "block.immersivepetroleum.cokerunit");
-		ResourceLocation background = new ResourceLocation(ImmersivePetroleum.MODID, "textures/gui/jei/coker.png");
-		ResourceLocation coker = new ResourceLocation(ImmersivePetroleum.MODID, "textures/gui/coker.png");
+		ResourceLocation background = ResourceUtils.ip("textures/gui/jei/coker.png");
+		ResourceLocation coker = ResourceUtils.ip("textures/gui/coker.png");
 		
 		setBackground(guiHelper.createDrawable(background, 0, 0, 150, 77));
 		setIcon(new ItemStack(IPContent.Multiblock.cokerunit));

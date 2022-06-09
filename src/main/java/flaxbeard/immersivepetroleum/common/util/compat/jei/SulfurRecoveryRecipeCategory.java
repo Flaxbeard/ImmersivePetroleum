@@ -6,10 +6,10 @@ import java.util.Locale;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -25,12 +25,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<SulfurRecoveryRecipe>{
-	public static final ResourceLocation ID = new ResourceLocation(ImmersivePetroleum.MODID, "hydrotreater");
+	public static final ResourceLocation ID = ResourceUtils.ip("hydrotreater");
 	
 	private final IDrawableStatic tankOverlay;
 	public SulfurRecoveryRecipeCategory(IGuiHelper guiHelper){
 		super(SulfurRecoveryRecipe.class, guiHelper, ID, "block.immersivepetroleum.hydrotreater");
-		ResourceLocation background = new ResourceLocation(ImmersivePetroleum.MODID, "textures/gui/jei/hydrotreater.png");
+		ResourceLocation background = ResourceUtils.ip("textures/gui/jei/hydrotreater.png");
 		setBackground(guiHelper.createDrawable(background, 0, 0, 113, 75));
 		setIcon(new ItemStack(IPContent.Multiblock.hydrotreater));
 		

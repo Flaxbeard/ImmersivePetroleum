@@ -18,6 +18,7 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEnti
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
 import flaxbeard.immersivepetroleum.common.gui.CokerUnitContainer;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -25,7 +26,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
-	static final ResourceLocation GUI_TEXTURE = new ResourceLocation("immersivepetroleum", "textures/gui/coker.png");
+	static final ResourceLocation GUI_TEXTURE = ResourceUtils.ip("textures/gui/coker.png");
 	
 	CokerUnitTileEntity tile;
 	public CokerUnitScreen(CokerUnitContainer inventorySlotsIn, PlayerInventory inv, ITextComponent title){

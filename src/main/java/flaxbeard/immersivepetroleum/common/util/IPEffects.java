@@ -1,12 +1,10 @@
 package flaxbeard.immersivepetroleum.common.util;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.EffectType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class IPEffects{
@@ -44,7 +42,7 @@ public class IPEffects{
 	public static class IPEffect extends Effect{
 		protected IPEffect(String name, EffectType type, int color){
 			super(type, color);
-			ForgeRegistries.POTIONS.register(this.setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, name)));
+			ForgeRegistries.POTIONS.register(this.setRegistryName(ResourceUtils.ip(name)));
 		}
 	}
 }

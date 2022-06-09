@@ -3,8 +3,8 @@ package flaxbeard.immersivepetroleum.common.items;
 import blusunrize.immersiveengineering.common.items.IEItemInterfaces.IColouredItem;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
 
 public class IPItemBase extends Item implements IColouredItem{
 	/** For basic items */
@@ -15,7 +15,7 @@ public class IPItemBase extends Item implements IColouredItem{
 	/** For items that require special attention */
 	public IPItemBase(String name, Item.Properties properties){
 		super(properties.group(ImmersivePetroleum.creativeTab));
-		setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, name));
+		setRegistryName(ResourceUtils.ip(name));
 		
 		IPContent.registeredIPItems.add(this);
 	}

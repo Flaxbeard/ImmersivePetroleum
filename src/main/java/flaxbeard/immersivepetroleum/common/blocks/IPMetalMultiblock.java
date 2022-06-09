@@ -9,6 +9,7 @@ import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileE
 import blusunrize.immersiveengineering.common.blocks.metal.MetalMultiblockBlock;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
@@ -40,6 +41,6 @@ public class IPMetalMultiblock<T extends MultiblockPartTileEntity<T>> extends Me
 	
 	@Override
 	public ResourceLocation createRegistryName(){
-		return new ResourceLocation(ImmersivePetroleum.MODID, name);
+		return ResourceUtils.ip(this.name);
 	}
 }

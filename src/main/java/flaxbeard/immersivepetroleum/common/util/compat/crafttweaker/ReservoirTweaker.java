@@ -14,6 +14,7 @@ import com.blamejared.crafttweaker.api.fluid.IFluidStack;
 
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 
@@ -139,7 +140,7 @@ public class ReservoirTweaker{
 			}
 			
 			if(this.isValid){
-				ResourceLocation id = TweakerUtils.ctLoc(name);
+				ResourceLocation id = ResourceUtils.ct(name);
 				
 				if(!PumpjackHandler.reservoirs.containsKey(id)){
 					ReservoirType type = new ReservoirType(name, id, this.iFluidStack.getFluid(), this.minSize, this.maxSize, this.traceAmount, this.weight);

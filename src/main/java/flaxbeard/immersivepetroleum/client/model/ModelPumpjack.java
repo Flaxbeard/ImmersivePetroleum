@@ -3,14 +3,14 @@ package flaxbeard.immersivepetroleum.client.model;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
 
 public class ModelPumpjack extends IPModel{
 	public static final String ID = "pumpjackarm";
-	public static final ResourceLocation TEXTURE = new ResourceLocation(ImmersivePetroleum.MODID, "textures/models/pumpjack_armature.png");
+	public static final ResourceLocation TEXTURE = ResourceUtils.ip("textures/models/pumpjack_armature.png");
 	
 	public ModelRenderer origin;
 	public ModelRenderer swingy;

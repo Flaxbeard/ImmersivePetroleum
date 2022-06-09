@@ -7,7 +7,7 @@ import java.util.function.BiConsumer;
 
 import com.google.common.base.Preconditions;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.block.Block;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
@@ -22,28 +22,28 @@ public class IPTags{
 	private static final Map<ITag.INamedTag<Block>, ITag.INamedTag<Item>> toItemTag = new HashMap<>();
 	
 	public static class Blocks{
-		public static final ITag.INamedTag<Block> asphalt = createBlockTag(forgeLoc("asphalt"));
-		public static final ITag.INamedTag<Block> petcoke = createBlockTag(forgeLoc("storage_blocks/petcoke"));
+		public static final ITag.INamedTag<Block> asphalt = createBlockTag(ResourceUtils.forge("asphalt"));
+		public static final ITag.INamedTag<Block> petcoke = createBlockTag(ResourceUtils.forge("storage_blocks/petcoke"));
 	}
 	
 	public static class Items{
-		public static final ITag.INamedTag<Item> bitumen = createItemWrapper(forgeLoc("bitumen"));
-		public static final ITag.INamedTag<Item> petcoke = createItemWrapper(forgeLoc("coal_petcoke"));
-		public static final ITag.INamedTag<Item> petcokeDust = createItemWrapper(forgeLoc("dusts/coal_petcoke"));
-		public static final ITag.INamedTag<Item> petcokeStorage = createItemWrapper(forgeLoc("storage_blocks/coal_petcoke"));
+		public static final ITag.INamedTag<Item> bitumen = createItemWrapper(ResourceUtils.forge("bitumen"));
+		public static final ITag.INamedTag<Item> petcoke = createItemWrapper(ResourceUtils.forge("coal_petcoke"));
+		public static final ITag.INamedTag<Item> petcokeDust = createItemWrapper(ResourceUtils.forge("dusts/coal_petcoke"));
+		public static final ITag.INamedTag<Item> petcokeStorage = createItemWrapper(ResourceUtils.forge("storage_blocks/coal_petcoke"));
 	}
 	
 	public static class Fluids{
-		public static final ITag.INamedTag<Fluid> crudeOil = createFluidWrapper(forgeLoc("crude_oil"));
-		public static final ITag.INamedTag<Fluid> diesel = createFluidWrapper(forgeLoc("diesel"));
-		public static final ITag.INamedTag<Fluid> diesel_sulfur = createFluidWrapper(forgeLoc("diesel_sulfur"));
-		public static final ITag.INamedTag<Fluid> gasoline = createFluidWrapper(forgeLoc("gasoline"));
-		public static final ITag.INamedTag<Fluid> lubricant = createFluidWrapper(forgeLoc("lubricant"));
-		public static final ITag.INamedTag<Fluid> napalm = createFluidWrapper(forgeLoc("napalm"));
+		public static final ITag.INamedTag<Fluid> crudeOil = createFluidWrapper(ResourceUtils.forge("crude_oil"));
+		public static final ITag.INamedTag<Fluid> diesel = createFluidWrapper(ResourceUtils.forge("diesel"));
+		public static final ITag.INamedTag<Fluid> diesel_sulfur = createFluidWrapper(ResourceUtils.forge("diesel_sulfur"));
+		public static final ITag.INamedTag<Fluid> gasoline = createFluidWrapper(ResourceUtils.forge("gasoline"));
+		public static final ITag.INamedTag<Fluid> lubricant = createFluidWrapper(ResourceUtils.forge("lubricant"));
+		public static final ITag.INamedTag<Fluid> napalm = createFluidWrapper(ResourceUtils.forge("napalm"));
 	}
 	
 	public static class Utility{
-		public static final ITag.INamedTag<Fluid> burnableInFlarestack = createFluidWrapper(modLoc("burnable_in_flarestack"));
+		public static final ITag.INamedTag<Fluid> burnableInFlarestack = createFluidWrapper(ResourceUtils.ip("burnable_in_flarestack"));
 	}
 	
 	public static ITag.INamedTag<Item> getItemTag(ITag.INamedTag<Block> blockTag){
@@ -72,13 +72,5 @@ public class IPTags{
 	
 	private static ITag.INamedTag<Fluid> createFluidWrapper(ResourceLocation name){
 		return FluidTags.makeWrapperTag(name.toString());
-	}
-	
-	private static ResourceLocation forgeLoc(String path){
-		return new ResourceLocation("forge", path);
-	}
-	
-	private static ResourceLocation modLoc(String path){
-		return new ResourceLocation(ImmersivePetroleum.MODID, path);
 	}
 }

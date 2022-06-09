@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.common.util.compat.jei;
 
 import java.util.ArrayList;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
@@ -10,6 +9,7 @@ import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
 import flaxbeard.immersivepetroleum.client.gui.HydrotreaterScreen;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -22,7 +22,7 @@ import net.minecraft.util.ResourceLocation;
 
 @JeiPlugin
 public class JEIStuff implements IModPlugin{
-	private static final ResourceLocation ID = new ResourceLocation(ImmersivePetroleum.MODID, "main");
+	private static final ResourceLocation ID = ResourceUtils.ip("main");
 	
 	@Override
 	public ResourceLocation getPluginUid(){

@@ -2,15 +2,14 @@ package flaxbeard.immersivepetroleum.common.data;
 
 import javax.annotation.Nullable;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
@@ -204,20 +203,12 @@ public class IPItemModels extends ItemModelProvider{
 	}
 	
 	private void createBucket(Fluid f){
-		withExistingParent(f.getFilledBucket().asItem().getRegistryName().getPath(), forgeLoc("item/bucket"))
+		withExistingParent(f.getFilledBucket().asItem().getRegistryName().getPath(), ResourceUtils.forge("item/bucket"))
 			.customLoader(DynamicBucketModelBuilder::begin)
 			.fluid(f);
 	}
 	
 	private String name(IItemProvider item){
 		return item.asItem().getRegistryName().getPath();
-	}
-	
-	protected ResourceLocation ieLoc(String str){
-		return new ResourceLocation(ImmersiveEngineering.MODID, str);
-	}
-	
-	protected ResourceLocation forgeLoc(String str){
-		return new ResourceLocation("forge", str);
 	}
 }

@@ -14,13 +14,13 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileE
 import flaxbeard.immersivepetroleum.common.gui.CokerUnitContainer;
 import flaxbeard.immersivepetroleum.common.gui.DistillationTowerContainer;
 import flaxbeard.immersivepetroleum.common.gui.HydrotreaterContainer;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -35,9 +35,9 @@ public class CommonProxy{
 	}
 	
 	public void registerContainersAndScreens(){
-		GuiHandler.register(DistillationTowerTileEntity.class, new ResourceLocation(ImmersivePetroleum.MODID, "distillationtower"), DistillationTowerContainer::new);
-		GuiHandler.register(CokerUnitTileEntity.class, new ResourceLocation(ImmersivePetroleum.MODID, "cokerunit"), CokerUnitContainer::new);
-		GuiHandler.register(HydrotreaterTileEntity.class, new ResourceLocation(ImmersivePetroleum.MODID, "hydrotreater"), HydrotreaterContainer::new);
+		GuiHandler.register(DistillationTowerTileEntity.class, ResourceUtils.ip("distillationtower"), DistillationTowerContainer::new);
+		GuiHandler.register(CokerUnitTileEntity.class, ResourceUtils.ip("cokerunit"), CokerUnitContainer::new);
+		GuiHandler.register(HydrotreaterTileEntity.class, ResourceUtils.ip("hydrotreater"), HydrotreaterContainer::new);
 	}
 	
 	public void preInit(){
@@ -86,9 +86,5 @@ public class CommonProxy{
 	
 	public PlayerEntity getClientPlayer(){
 		return null;
-	}
-	
-	protected static ResourceLocation modLoc(String str){
-		return new ResourceLocation(ImmersivePetroleum.MODID, str);
 	}
 }

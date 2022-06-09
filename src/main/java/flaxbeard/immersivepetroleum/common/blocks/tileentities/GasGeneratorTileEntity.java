@@ -44,6 +44,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
@@ -394,5 +395,10 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableTileEntity imple
 		float xo = facing.getDirectionVec().getX() * .5f + .5f;
 		float zo = facing.getDirectionVec().getZ() * .5f + .5f;
 		return new Vector3d(xo, .5f, zo);
+	}
+	
+	@Override
+	public Collection<ResourceLocation> getRequestedHandlers(){
+		return ImmutableList.of(EnergyTransferHandler.ID);
 	}
 }

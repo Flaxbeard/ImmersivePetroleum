@@ -1,7 +1,7 @@
 name: Feature Suggestion
 description: Do you have a Feature idea you'd like to tell me about?
 title: "[Suggestion] TitleHere"
-labels: Enhancement
+labels: ["Enhancement"]
 body:
   - type: checkboxes
     attributes:

@@ -1,24 +1,13 @@
 name: Bug Report
-description: If you have a reproducible in-game issue.
-title: "[Minecraft-Version][BUG] TitleHere"
-labels: Bug
+description: If you experienced a bug while playing with Immersive Petroleum
+labels: ["Bug :lady_beetle:"]
 body:
-  - type: checkboxes
+  - type: markdown
     attributes:
-      label: Is there an existing issue for this?
-      description: "Please search to see if an issue already exists for the bug you encountered."
-      options:
-        - label: Yes, i have searched for already existing issues.
-          required: true
-  - type: checkboxes
-    attributes:
-      label: Are you using the most recent version of X?
-      description: "Please check to see if any newer version fixes the issue you're experiencing."
-      options:
-        - label: Yes, i am using the most recent version.
-          required: true
-        - label: Yes, it still happens in the most recent version.
-          required: true
+      value: |
+        Before reporting, please use the search function to make sure an issue hasn't been reported already.
+        This avoids duplicates.
+
   - type: dropdown
     attributes:
       label: Minecraft Version
@@ -29,80 +18,75 @@ body:
       options: [1.16.5]
     validations:
       required: true
-  - type: input
-    attributes:
-      label: Forge Version
-      description: |
-        The Forge version you are using.
-        
-        Saying "latest" is not valid.
-      placeholder: "xx.xx.xx"
-    validations:
-      required: true
+
   - type: input
     attributes:
       label: Immersive Engineering Version
       description: |
         The Immersive Engineering version you are using.
         
-        Saying "latest" is not valid.
+        *Saying "latest" is not valid.*
       placeholder: "xx.xx.xx-xxx"
     validations:
       required: true
-  - type: textarea
+
+  - type: input
     attributes:
-      label: Related Mods and their Versions
-      description: Potential mod versions that may interact.
-      placeholder: |
-        1. FirstMod Version:
-        2. SecondMod Version:
-        3. ...
+      label: Immersive Petroleum Version
+      description: |
+        The Immersive Petroleum version you are using.
+        
+        *Saying "latest" is not valid.*
+      placeholder: "xx.xx.xx-xxx"
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Current Behaviour
       description: "A concise description of what you're experiencing. Please provide screenshots and videos if possible."
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Expected Behaviour
       description: A concise description of what you expected to happen.
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Reproduction Steps
-      description: "What should we do to make this issue show up in our own game? Try to give as much detail as possible here too so it's easier for us to reproduce this issue."
+      description: |
+        Explain in easy steps how to reproduce this issue.
+        Provide pictures if you believe that they help with visualization.
       placeholder: |
-        1. Do this...
-        2. then this....
-        3. So that this happens
+        1. First I did...
+        2. Then I did...
+        3. And then it broke
     validations:
       required: true
+
   - type: input
     attributes:
-      label: Logs
+      label: Debug Crash Log
       description: |
-        Please provide your latest.log related to the time during which you experienced the issue.
-        Upload to gist (https://gist.github.com/) or pastebin (https://pastebin.com/) and paste the link here.
+        You can generate a debug crashlog ingame by holding down F3 and C for about 10 seconds.
+        The log contains a lot of useful information, such as your complete mod list, and certain technical details about your PC.
+        Please upload that log to [Gist](https://gist.github.com/), [Pastebin](https://pastebin.com/) or a similar site and enter the link here.
       placeholder: <gist or pastebin link>
     validations:
       required: true
+
   - type: textarea
     attributes:
-      label: Additional Informations
+      label: Information for the reader.
       description: |
-        Links? References? Anything that will give us more context about the issue you are encountering!
-        
-        Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+        **Do not remove/edit the text contained within this!**
+        *It has its purpose!*
       value: |
-        
-        
-        
-        
-        * Add a thumbs-up to the bug report if you are also affected. This helps show the severity of this bug report and doesn't clutter the comments.
-        * Add a comment if you have any insights or background information that isn't already part of the conversation.
+        * Add a :thumbsup: to the bug report if you are also affected. This helps show the severity of this bug report and doesn't clutter the comments.
+        * Add a comment *if* you have any insights or background information that *isn't already part of the conversation*.
     validations:
       required: false

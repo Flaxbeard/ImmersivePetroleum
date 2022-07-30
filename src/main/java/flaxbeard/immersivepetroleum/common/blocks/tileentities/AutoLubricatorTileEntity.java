@@ -279,18 +279,9 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements ITicka
 			}
 		}
 		
-		/*// Unused
-		if(!this.level.isClientSide && this.lastTank != this.tank.getFluidAmount()){
-			if(this.predictablyDraining && !this.tank.isEmpty() && this.lastTank - this.tank.getFluidAmount() == LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid())){
-				this.lastTank = this.tank.getFluidAmount();
-			}
-			
-			if(Math.abs(this.lastTankUpdate - this.tank.getFluidAmount()) > 25){
-				this.predictablyDraining = !this.tank.isEmpty() && this.lastTank - this.tank.getFluidAmount() == LubricantHandler.getLubeAmount(this.tank.getFluid().getFluid());
-				this.lastTankUpdate = this.tank.getFluidAmount();
-			}
-			setChanged();
+		if(!this.world.isRemote && this.lastTank != this.tank.getFluidAmount()){
+			this.lastTank = this.tank.getFluidAmount();
+			markDirty();
 		}
-		*/
 	}
 }

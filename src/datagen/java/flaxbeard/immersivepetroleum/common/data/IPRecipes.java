@@ -110,7 +110,7 @@ public class IPRecipes extends RecipeProvider{
 		CokerUnitRecipeBuilder.builder(new ItemStack(IPContent.Items.petcoke), IPTags.Fluids.diesel_sulfur, 27)
 			.addInputItem(IPTags.Items.bitumen, 2)
 			.addInputFluid(FluidTags.WATER, 125)
-			.setTimeAndEnergy(30, 1024)
+			.setTimeAndEnergy(30, 512)
 			.build(this.out, rl("coking/petcoke"));
 		
 		// Petcoke Compression and Decompression
